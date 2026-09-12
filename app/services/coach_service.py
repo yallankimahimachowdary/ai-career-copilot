@@ -108,7 +108,8 @@ def _extract_resume_skills(resume: Resume) -> List[str]:
 
 def _extract_job_requirements(job: JobPosting) -> Dict[str, List[str]]:
     """Extract skill tokens from job description using regex taxonomy."""
-    desc = (job.description or "") + " " + (job.skills_desc or "")
+    skills_list = job.skills if isinstance(job.skills, list) else []
+    desc = (job.description or "") + " " + " ".join(str(s) for s in skills_list)
     desc_lower = desc.lower()
 
     found: List[str] = [

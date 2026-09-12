@@ -41,7 +41,7 @@ def _mock_job():
     j.title = "Software Engineer"
     j.company_name = "Acme Corp"
     j.description = "Requires Python, JavaScript, SQL, and React experience. Docker is a plus."
-    j.skills_desc = ""
+    j.skills = []
     return j
 
 

@@ -57,7 +57,7 @@ def _make_job(title="Software Engineer", description="", company="TestCorp"):
         "SQL, HTML/CSS, Git/GitHub, React, and REST API development. "
         "Required: strong communication and problem-solving skills."
     )
-    job.skills_desc = ""
+    job.skills = []
     return job
 
 
