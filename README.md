@@ -1,121 +1,130 @@
 # AI Career Copilot 🚀
-
-An AI-powered Career Copilot designed to assist users in resume optimization, job matching, skills gap analysis, and personalized interview preparation.
-
----
-
-## 🛠️ Tech Stack (Sprint 1)
-
-- **Backend Framework**: [FastAPI](https://fastapi.tiangolo.com/) (Python 3.12)
-- **ASGI Server**: [Uvicorn](https://www.uvicorn.org/)
-- **Configuration & Validation**: [Pydantic v2](https://docs.pydantic.dev/) & `pydantic-settings`
-- **Database & ORM**: PostgreSQL with [pgvector](https://github.com/pgvector/pgvector) & [SQLAlchemy 2.0 (Async)](https://docs.sqlalchemy.org/)
-- **Caching & Brokers**: Redis 7
-- **Database Migrations**: Alembic
-- **Testing**: Pytest & `pytest-asyncio` + HTTPX
-- **Containerization**: Docker & Docker Compose
+### An Explainable, Multi-Agent Retrieval-Augmented System for Personalized Career Guidance, Resume Optimization, and Interview Preparation
 
 ---
 
-## 📁 Project Structure
+## 👥 Team & Project Contributions
+
+**Institution:** Vel Tech University, Chennai  
+**Program:** B.Tech Artificial Intelligence and Data Science  
+
+| Member | Core Responsibilities |
+|---|---|
+| **Bala Maan Shree M** | React 18 + Vite Frontend Dashboard, UI/UX Design, Adaptive Query Intent Router (`/chat/query`), API Gateway Integration, Text Extraction & Preprocessing |
+| **Yallanki Mahima Chowdary** | Multi-Agent Orchestration Architecture, XGBoost Matcher Re-ranking Model, TreeSHAP Local Explainability, PostgreSQL `pgvector` Embeddings, Local LLM Benchmarking |
+
+---
+
+## 🧠 System Architecture Overview
 
 ```
-ai-career-copilot/
-├── .env.example               # Template environment configuration
-├── .env                       # Local environment file (git-ignored)
-├── .gitignore                 # Standard Python / Docker ignores
-├── Dockerfile                 # Python 3.12-slim container build
-├── docker-compose.yml         # Multi-container local orchestration (Postgres, Redis, FastAPI)
-├── requirements.txt           # Production and testing dependencies
-├── README.md                  # Project documentation
-├── app/
-│   ├── __init__.py            # Package root (version 0.1.0)
-│   ├── main.py                # FastAPI entry point, lifespan, CORS, and router mount
-│   ├── core/                  # Core configurations and logging
-│   │   ├── config.py          # Pydantic BaseSettings
-│   │   └── logging.py         # Standardized logger
-│   ├── api/                   # API versioning and routes
-│   │   └── v1/
-│   │       ├── api.py         # API v1 router aggregation
-│   │       └── endpoints/
-│   │           └── health.py  # Health check route (/api/v1/health)
-│   ├── db/                    # Database session & engine
-│   │   ├── base.py            # SQLAlchemy DeclarativeBase
-│   │   └── session.py         # Async engine & get_db dependency
-│   ├── models/                # SQLAlchemy ORM models
-│   ├── schemas/               # Pydantic schemas (e.g. HealthCheckResponse)
-│   └── services/              # Business logic, AI agents, LLM integrations
-└── tests/
-    ├── conftest.py            # Test fixtures & async client
-    └── test_health.py         # Health check and root endpoint tests
+                      ┌────────────────────────────────────────┐
+                      │    React 18 + Vite Web Dashboard       │
+                      │ (Tailwind CSS, shadcn/ui, Recharts XAI)│
+                      └──────────────────┬─────────────────────┘
+                                         │ HTTP REST / JSON
+                                         ▼
+                      ┌────────────────────────────────────────┐
+                      │       FastAPI Gateway (/api/v1)        │
+                      └──────────────────┬─────────────────────┘
+                                         │
+               ┌─────────────────────────┼─────────────────────────┐
+               ▼                         ▼                         ▼
+   ┌──────────────────────┐  ┌──────────────────────┐  ┌──────────────────────┐
+   │     Parser Agent     │  │    Matcher Agent     │  │     Coach Agent      │
+   │  - PyMuPDF / docx    │  │  - pgvector Cosine   │  │  - Skill Diagnostics │
+   │  - NLP Entity Rules  │  │  - XGBoost Ranker    │  │  - QA Bank (STAR)    │
+   │  - 1536-dim vectors  │  │  - TreeSHAP XAI      │  │  - 0-10 Rubric Eval  │
+   └──────────┬───────────┘  └──────────┬───────────┘  └──────────┬───────────┘
+              │                         │                         │
+              └─────────────────────────┼─────────────────────────┘
+                                         ▼
+                      ┌────────────────────────────────────────┐
+                      │    Adaptive Query Intent Router        │
+                      │       (/api/v1/chat/query)             │
+                      │  - Strategy 1: Job Search & Match      │
+                      │  - Strategy 2: Skill Progression Path  │
+                      │  - Strategy 3: Interview STAR Coaching │
+                      │  - Strategy 4: Macro Market Dynamics   │
+                      └──────────────────┬─────────────────────┘
+                                         │
+                                         ▼
+                      ┌────────────────────────────────────────┐
+                      │           Data & Storage Tier          │
+                      │  - PostgreSQL 16 + pgvector (Jobs/Emb) │
+                      │  - Redis 7 (Caching & Rate Limiting)   │
+                      │  - Kaggle LinkedIn 4,000+ Postings     │
+                      └────────────────────────────────────────┘
 ```
+
+---
+
+## 🛠️ Complete Technology Stack
+
+### Backend Tier
+- **Framework**: [FastAPI](https://fastapi.tiangolo.com/) (Python 3.11 / 3.12)
+- **Database & Storage**: PostgreSQL 16 with [pgvector](https://github.com/pgvector/pgvector) & [SQLAlchemy 2.0 Async](https://docs.sqlalchemy.org/)
+- **Machine Learning**: `xgboost` 2.0+ (Ranker & Regression), `shap` 0.44+ (`TreeExplainer` for local attribution), `scikit-learn`
+- **Embedding Vectors**: 1536-dimensional dense vectors via OpenAI `text-embedding-3-small` / Google Gemini with fallback L2 normalization
+- **LLM Inference**: Hybrid cloud/local architecture (Google Gemini 1.5/2.0 API + Ollama `llama3.2:3b` / `phi3:mini`)
+- **Task Queue & Caching**: Redis 7
+- **Migrations**: Alembic
+
+### Frontend Tier
+- **Framework**: [React 18](https://react.dev/) + [Vite 8](https://vite.dev/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Component Primitives**: Radix / shadcn/ui custom components
+- **Visualizations**: [Recharts](https://recharts.org/) (TreeSHAP diverging attribution waterfall, salary percentiles, radar rubrics)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **File Upload**: `react-dropzone` with client-side PDF validation
 
 ---
 
 ## 🚀 Getting Started
 
-### 1. Prerequisites
-- Python 3.12+
-- Docker Desktop (for containerized PostgreSQL & Redis)
+### 1. Start Database Services (Docker Compose)
+Ensure Docker Desktop is running, then execute:
+```powershell
+docker compose up -d postgres redis
+```
 
-### 2. Local Setup (Virtual Environment)
+### 2. Launch FastAPI Backend
+```powershell
+# Create & activate Python virtual environment
+python -m venv venv
+.\venv\Scripts\Activate.ps1
 
-1. Activate your virtual environment:
-   ```powershell
-   # Windows PowerShell
-   .\venv\Scripts\Activate.ps1
-   ```
+# Install requirements
+pip install -r requirements.txt
 
-2. Install dependencies:
-   ```powershell
-   pip install -r requirements.txt
-   ```
+# Run database schema migrations
+alembic upgrade head
 
-3. Ensure `.env` is configured:
-   ```powershell
-   # By default, .env is copied from .env.example
-   ```
+# Start FastAPI server
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+- Interactive Swagger UI: [http://localhost:8000/docs](http://localhost:8000/docs)
+- Health Check: [http://localhost:8000/api/v1/health](http://localhost:8000/api/v1/health)
 
-4. Start the local FastAPI development server:
-   ```powershell
-   uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
-   ```
-
-5. Access interactive API documentation:
-   - Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-   - ReDoc: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
-   - Health Check: [http://127.0.0.1:8000/api/v1/health](http://127.0.0.1:8000/api/v1/health)
+### 3. Launch React Frontend
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+- Open browser at: [http://localhost:3000](http://localhost:3000)
+- The frontend features an **offline demonstration mode** (`mockData.js`) that operates seamlessly even when the backend is offline.
 
 ---
 
-### 3. Docker Compose Setup
+## 🧪 Testing
 
-To start the full stack (PostgreSQL with `pgvector`, Redis, and the FastAPI application):
-
+Run the automated test suite:
 ```powershell
-docker compose up --build -d
-```
-
-Check container status:
-```powershell
-docker compose ps
-```
-
-View API logs:
-```powershell
-docker compose logs -f api
-```
-
-Stop services:
-```powershell
-docker compose down
+pytest tests/ -v
 ```
 
 ---
 
-## 🧪 Running Tests
-
-Run the asynchronous test suite:
-```powershell
-pytest
-```
+## 📜 License
+Academic Research & Engineering Project — Vel Tech University (2024–2025).
