@@ -8,11 +8,8 @@
 **Institution:** Vel Tech University, Chennai  
 **Program:** B.Tech Artificial Intelligence and Data Science  
 
-| Member | 
-|---|---|
-| **Bala Maan Shree M** | 
-| **Yallanki Mahima Chowdary** |
-
+Members: Bala Maan Shree M
+         Yallanki Mahima Chowdary
 ---
 
 ## 🧠 System Architecture Overview
