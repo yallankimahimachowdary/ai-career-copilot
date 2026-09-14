@@ -9,7 +9,7 @@
 **Program:** B.Tech Artificial Intelligence and Data Science  
 
 Members: Bala Maan Shree M
-         Yallanki Mahima Chowdary
+        & Yallanki Mahima Chowdary
 ---
 
 ## 🧠 System Architecture Overview
