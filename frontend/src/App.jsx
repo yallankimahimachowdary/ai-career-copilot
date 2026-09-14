@@ -6,6 +6,7 @@ import { ResumePage } from "@/pages/ResumePage"
 import { MatchesPage } from "@/pages/MatchesPage"
 import { CoachPage } from "@/pages/CoachPage"
 import { MarketPage } from "@/pages/MarketPage"
+import { CopilotChatDrawer } from "@/components/chat/CopilotChatDrawer"
 import { apiClient } from "@/api/client"
 import { mockResumes, mockJobs } from "@/data/mockData"
 
@@ -13,6 +14,7 @@ export function App() {
   const [activeResume, setActiveResume] = useState(null)
   const [targetJobForCoach, setTargetJobForCoach] = useState(mockJobs[0])
   const [isConnected, setIsConnected] = useState(false)
+  const [isChatOpen, setIsChatOpen] = useState(false)
   const navigate = useNavigate()
 
   // Check backend health on initial mount
@@ -97,6 +99,13 @@ export function App() {
           </Routes>
         </main>
       </div>
+
+      {/* Interactive Adaptive RAG Career Copilot Assistant */}
+      <CopilotChatDrawer
+        activeResume={activeResume}
+        isOpen={isChatOpen}
+        onToggle={() => setIsChatOpen(!isChatOpen)}
+      />
     </div>
   )
 }
