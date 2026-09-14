@@ -10,8 +10,8 @@
 
 | Member | Core Responsibilities |
 |---|---|
-| **Bala Maan Shree M** | React 18 + Vite Frontend Dashboard, UI/UX Design, Adaptive Query Intent Router (`/chat/query`), API Gateway Integration, Text Extraction & Preprocessing |
-| **Yallanki Mahima Chowdary** | Multi-Agent Orchestration Architecture, XGBoost Matcher Re-ranking Model, TreeSHAP Local Explainability, PostgreSQL `pgvector` Embeddings, Local LLM Benchmarking |
+| **Bala Maan Shree M** | 
+| **Yallanki Mahima Chowdary** |
 
 ---
 
