@@ -3,12 +3,12 @@
 
 ---
 
-## 👥 Team & Project Contributions
+## 👥 Team 
 
 **Institution:** Vel Tech University, Chennai  
 **Program:** B.Tech Artificial Intelligence and Data Science  
 
-| Member | Core Responsibilities |
+| Member | 
 |---|---|
 | **Bala Maan Shree M** | 
 | **Yallanki Mahima Chowdary** |
