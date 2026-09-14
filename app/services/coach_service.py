@@ -35,53 +35,11 @@ from app.schemas.coach import (
 # Module-level constants
 # ---------------------------------------------------------------------------
 
-_STOP_WORDS: set = {
-    "a", "an", "the", "and", "or", "for", "in", "on", "at", "to", "of",
-    "with", "by", "is", "are", "was", "be", "have", "has", "from", "that",
-    "this", "it", "as", "we", "our", "your", "their", "will", "can", "may",
-    "including", "experience", "skills", "knowledge", "ability", "work",
-    "team", "strong", "must", "preferred", "required", "proven",
-}
-
-_CATEGORY_CODES: set = {
-    "ART", "DSGN", "ADVR", "PRDM", "DIST", "EDU", "TRNG", "PRJM",
-    "CNSL", "PRCH", "SUPL", "ANLS", "HCPR", "RSCH", "SCI", "GENB",
-    "CUST", "STRA", "FIN", "OTHR", "LGL", "ENG", "QA", "BD",
-    "IT", "ADM", "PROD", "MRKT", "PR", "WRT", "ACCT", "HR",
-    "MNFC", "SALE", "MGMT",
-}
-
-# Regex skill taxonomy (mirrors matcher_service)
-_SKILL_PATTERNS: Dict[str, str] = {
-    "Python": r"\bpython\b",
-    "Java": r"\bjava\b(?!\s*script)",
-    "JavaScript": r"\b(javascript|js|ecmascript)\b",
-    "TypeScript": r"\b(typescript|ts)\b",
-    "C/C++": r"\b(c\+\+|c\s*programming|embedded\s*c)\b",
-    "C#": r"\b(c#|c\s*sharp|\.net)\b",
-    "SQL": r"\b(sql|mysql|postgresql|postgres|sqlite|pl\/sql)\b",
-    "HTML/CSS": r"\b(html5?|css3?)\b",
-    "React": r"\breact(?:\.js|js|\s*native)?\b",
-    "FastAPI": r"\b(fastapi|fast\s*api)\b",
-    "Django": r"\bdjango\b",
-    "Flask": r"\bflask\b",
-    "Spring Boot": r"\b(spring\s*boot|spring\s*framework)\b",
-    "Node.js": r"\b(node(?:\.js|js)?)\b",
-    "Docker": r"\bdocker\b",
-    "Kubernetes": r"\b(kubernetes|k8s)\b",
-    "AWS": r"\b(aws|amazon\s*web\s*services)\b",
-    "Azure": r"\bazure\b",
-    "GCP": r"\b(gcp|google\s*cloud)\b",
-    "Git/GitHub": r"\b(git|github|gitlab)\b",
-    "Linux": r"\b(linux|unix|ubuntu|centos)\b",
-    "REST API": r"\b(rest(?:\s*api|\s*framework)?|restful|graphql|microservices)\b",
-    "Machine Learning": r"\b(machine\s*learning|deep\s*learning|pytorch|tensorflow|keras|scikit.learn|nlp|computer\s*vision)\b",
-    "Data Science": r"\b(data\s*science|data\s*analytics?|pandas|numpy|spark)\b",
-    "Agile/Scrum": r"\b(agile|scrum|kanban|jira)\b",
-    "Communication": r"\b(communication|collaboration|teamwork|interpersonal)\b",
-    "Problem Solving": r"\b(problem.solving|analytical|critical\s*thinking)\b",
-    "Leadership": r"\b(leadership|mentoring|team\s*lead)\b",
-}
+from app.core.taxonomy import (
+    CANONICAL_SKILL_PATTERNS as _SKILL_PATTERNS,
+    COMMON_STOP_WORDS as _STOP_WORDS,
+    LINKEDIN_CATEGORY_CODES as _CATEGORY_CODES,
+)
 
 
 # ---------------------------------------------------------------------------

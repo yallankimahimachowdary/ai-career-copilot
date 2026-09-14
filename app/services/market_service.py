@@ -45,14 +45,7 @@ from app.schemas.market import (
 # Constants
 # ---------------------------------------------------------------------------
 
-# Mirror from matcher_service to avoid circular imports
-_CATEGORY_CODES: set = {
-    "ART", "DSGN", "ADVR", "PRDM", "DIST", "EDU", "TRNG", "PRJM",
-    "CNSL", "PRCH", "SUPL", "ANLS", "HCPR", "RSCH", "SCI", "GENB",
-    "CUST", "STRA", "FIN", "OTHR", "LGL", "ENG", "QA", "BD",
-    "IT", "ADM", "PROD", "MRKT", "PR", "WRT", "ACCT", "HR",
-    "MNFC", "SALE", "MGMT",
-}
+from app.core.taxonomy import LINKEDIN_CATEGORY_CODES as _CATEGORY_CODES
 
 # Hours per year for HOURLY → YEARLY conversion
 _HOURS_PER_YEAR: float = 2080.0

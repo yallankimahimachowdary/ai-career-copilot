@@ -23,6 +23,9 @@ from app.schemas.matcher import (
 from app.services.embedding_service import embedding_service
 
 
+from app.core.taxonomy import LINKEDIN_CATEGORY_CODES
+
+
 # ------------------------------------------------------------------------------
 # Feature Extractor
 # ------------------------------------------------------------------------------
@@ -30,13 +33,7 @@ class FeatureExtractor:
     """Extracts granular candidate and job alignment features."""
 
     # LinkedIn internal industry / domain category codes from Kaggle dataset mappings
-    KNOWN_CATEGORY_CODES = {
-        "ART", "DSGN", "ADVR", "PRDM", "DIST", "EDU", "TRNG", "PRJM",
-        "CNSL", "PRCH", "SUPL", "ANLS", "HCPR", "RSCH", "SCI", "GENB",
-        "CUST", "STRA", "FIN", "OTHR", "LGL", "ENG", "QA", "BD",
-        "IT", "ADM", "PROD", "MRKT", "PR", "WRT", "ACCT", "HR",
-        "MNFC", "SALE", "MGMT",
-    }
+    KNOWN_CATEGORY_CODES = LINKEDIN_CATEGORY_CODES
 
     # Curated regex taxonomy for extracting genuine professional and technical skills
     REGEX_SKILL_PATTERNS = {
