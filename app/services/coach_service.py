@@ -14,6 +14,7 @@ import re
 from typing import Any, Dict, List, Optional, Tuple
 
 import httpx
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.logging import logger
@@ -570,6 +571,18 @@ class CoachAgent:
 
         return _rule_based_gap_report(resume, job, resume_skills, job_reqs)
 
+    async def get_skill_gap_report(
+        self, db: AsyncSession, resume_id: str, job_id: str
+    ) -> SkillGapReport:
+        """Fetch Resume and JobPosting from DB and produce a skill-gap report."""
+        resume = await db.get(Resume, resume_id)
+        job = await db.get(JobPosting, job_id)
+        if not resume:
+            raise ValueError(f"Resume {resume_id} not found.")
+        if not job:
+            raise ValueError(f"Job posting {job_id} not found.")
+        return await self.generate_skill_gap_report(resume, job)
+
     async def generate_question_bank(
         self,
         resume: Resume,
@@ -816,3 +829,4 @@ class CoachAgent:
 
 # Module-level singleton
 coach_agent = CoachAgent()
+coach_service = coach_agent

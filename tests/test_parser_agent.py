@@ -61,3 +61,26 @@ async def test_parser_agent_experience_and_education():
     assert any("TechCorp" in exp.company or "TechCorp" in exp.title for exp in parsed.experience)
     assert len(parsed.education) >= 1
     assert any("Berkeley" in edu.institution for edu in parsed.education)
+
+
+def test_parser_initial_name_and_location():
+    resume_text = """S.Deepika
+sdeepika3057 @gmail.com
+7639506998
+Chennai,Tamil Nadu
+linkedin.com/in/s-deepika-4256b63ab
+
+SUMMARY
+Enthusiastic Biotechnology student with knowledge in molecular biology.
+
+EDUCATION
+B.Tech-Biotechnology
+Vel Tech Institute
+"""
+    parsed = parser_agent._parse_with_rules(resume_text)
+    assert parsed.contact_info.name == "S. Deepika"
+    assert parsed.contact_info.email == "sdeepika3057@gmail.com"
+    assert parsed.contact_info.phone == "7639506998"
+    assert parsed.contact_info.location == "Chennai, Tamil Nadu"
+    assert parsed.contact_info.linkedin_url == "https://linkedin.com/in/s-deepika-4256b63ab"
+

@@ -39,26 +39,31 @@ export function MarketPage({ activeResume }) {
       if (heatmap.status === "fulfilled" && heatmap.value) {
         setHeatmapData(heatmap.value)
       }
-
-      // If active resume exists, query positioning
-      if (activeResume?.id) {
-        try {
-          const positioning = await marketApi.getResumePositioning(activeResume.id)
-          setPositioningData(positioning)
-        } catch (e) {
-          // Generate realistic candidate positioning based on resume skills
-          generateMockPositioning(activeResume)
-        }
-      } else {
-        generateMockPositioning(activeResume)
-      }
     } catch (err) {
       console.warn("Market API failed, falling back to mock dataset:", err.message)
       setError("Connected to cached market baseline dataset.")
       setOverviewData(mockMarketOverview)
-      generateMockPositioning(activeResume)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const fetchPositioningData = async (resume) => {
+    if (!resume?.id) {
+      generateMockPositioning(resume)
+      return
+    }
+
+    try {
+      const positioning = await marketApi.getResumePositioning(resume.id)
+      if (positioning) {
+        setPositioningData(positioning)
+      } else {
+        generateMockPositioning(resume)
+      }
+    } catch (e) {
+      console.warn("Resume positioning API failed, falling back to heuristic:", e.message)
+      generateMockPositioning(resume)
     }
   }
 
@@ -105,6 +110,10 @@ export function MarketPage({ activeResume }) {
 
   useEffect(() => {
     fetchMarketData()
+  }, [])
+
+  useEffect(() => {
+    fetchPositioningData(activeResume)
   }, [activeResume?.id])
 
   return (

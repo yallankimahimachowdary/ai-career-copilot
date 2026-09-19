@@ -117,15 +117,108 @@ class ParserAgent:
 
     def _enrich_contact_info(self, parsed: ParsedResume, raw_text: str) -> ParsedResume:
         """Backfill any contact info fields missed by LLM using deterministic regex extraction."""
+        lines = [line.strip() for line in raw_text.split("\n") if line.strip()]
         if not parsed.contact_info.linkedin_url:
-            parsed.contact_info.linkedin_url = self._extract_pattern(raw_text, r"https?://(?:www\.)?linkedin\.com/in/[a-zA-Z0-9_-]+")
+            parsed.contact_info.linkedin_url = self._extract_pattern(
+                raw_text, r"(?:https?://)?(?:www\.)?linkedin\.com/in/[a-zA-Z0-9_-]+"
+            )
         if not parsed.contact_info.github_url:
-            parsed.contact_info.github_url = self._extract_pattern(raw_text, r"https?://(?:www\.)?github\.com/[a-zA-Z0-9_-]+")
+            parsed.contact_info.github_url = self._extract_pattern(
+                raw_text, r"(?:https?://)?(?:www\.)?github\.com/[a-zA-Z0-9_-]+"
+            )
         if not parsed.contact_info.email:
             parsed.contact_info.email = self._extract_email(raw_text)
         if not parsed.contact_info.phone:
             parsed.contact_info.phone = self._extract_phone(raw_text)
+        if not parsed.contact_info.location:
+            parsed.contact_info.location = self._extract_location(lines)
+
+        location_words = {"nadu", "tamil", "chennai", "bangalore", "mumbai", "delhi", "california", "texas"}
+        current_name = (parsed.contact_info.name or "").lower()
+        if not parsed.contact_info.name or any(kw in current_name for kw in location_words):
+            extracted = self._extract_name(raw_text, lines)
+            if extracted:
+                parsed.contact_info.name = extracted
+
         return parsed
+
+    def _extract_name(self, raw_text: str, lines: Optional[List[str]] = None) -> Optional[str]:
+        """Robust candidate name extractor handling initials (e.g. S.Deepika), prefixes, and filtering locations/titles."""
+        if lines is None:
+            lines = [line.strip() for line in raw_text.split("\n") if line.strip()]
+
+        disallowed_keywords = {
+            "@", "http", "www.", "linkedin", "github", "phone", "email", "tel:", "mobile",
+            "resume", "curriculum vitae", "cv", "portfolio", "summary", "objective",
+            "education", "skills", "experience", "projects", "certifications", "profile",
+        }
+        location_keywords = {
+            "nadu", "tamil", "chennai", "bangalore", "bengaluru", "mumbai", "delhi", "hyderabad",
+            "pune", "kolkata", "california", "texas", "york", "india", "usa", "remote", "san francisco",
+        }
+        role_keywords = {
+            "engineer", "developer", "student", "intern", "manager", "architect", "lead",
+            "specialist", "scientist", "analyst", "consultant", "designer", "administrator",
+        }
+
+        # Check top header lines
+        for line in lines[:10]:
+            line_lower = line.lower()
+            if any(kw in line_lower for kw in disallowed_keywords):
+                continue
+            # Location or compound lines with commas should not be candidate names
+            if "," in line:
+                continue
+            # Lines with numbers (dates, phone numbers, addresses) are not names
+            if re.search(r"\d", line):
+                continue
+
+            # Normalize dotted initials without space: "S.Deepika" -> "S. Deepika"
+            norm = re.sub(r"([A-Za-z]\.)([A-Za-z])", r"\1 \2", line).strip()
+            # Clean non-alphabetic except spaces and dots
+            cleaned = re.sub(r"[^a-zA-Z\s\.]", " ", norm).strip()
+            words = cleaned.split()
+
+            if 1 <= len(words) <= 4:
+                total_letters = sum(len(w.rstrip(".")) for w in words)
+                has_substantive_word = any(len(w.rstrip(".")) >= 2 for w in words)
+                if total_letters >= 3 and has_substantive_word:
+                    # Filter out location words
+                    if any(w.lower().rstrip(".") in location_keywords for w in words):
+                        continue
+                    # Filter out job roles
+                    if any(w.lower().rstrip(".") in role_keywords for w in words):
+                        continue
+                    return " ".join(words)
+
+        # Fallback: check summary or self-introduction in raw_text
+        intro_match = re.search(
+            r"(?:i\s+am|my\s+name\s+is)\s+([A-Z][a-zA-Z\.]*(?:\s+[A-Z][a-zA-Z\.]*){1,3})",
+            raw_text,
+            re.IGNORECASE,
+        )
+        if intro_match:
+            return intro_match.group(1).strip()
+
+        return None
+
+    def _extract_location(self, lines: List[str]) -> Optional[str]:
+        """Extract location if present in top contact lines."""
+        location_keywords = {
+            "nadu", "tamil", "chennai", "bangalore", "bengaluru", "mumbai", "delhi", "hyderabad",
+            "pune", "kolkata", "california", "texas", "york", "india", "usa", "remote", "san francisco",
+        }
+        for line in lines[:10]:
+            line_lower = line.lower()
+            if any(kw in line_lower for kw in ["@", "http", "linkedin", "github", "phone", "email"]):
+                continue
+            if "," in line or any(kw in line_lower for kw in location_keywords):
+                cleaned = re.sub(r"\s*,\s*", ", ", line).strip()
+                cleaned = re.sub(r"[^a-zA-Z0-9\s,\.-]", "", cleaned).strip()
+                words = cleaned.split()
+                if 2 <= len(words) <= 6:
+                    return cleaned
+        return None
 
     def _parse_with_rules(self, raw_text: str) -> ParsedResume:
         """High-precision heuristic rule-based extraction fallback."""
@@ -134,22 +227,16 @@ class ParserAgent:
         # 1. Contact Info Extraction
         email = self._extract_email(raw_text)
         phone = self._extract_phone(raw_text)
-        linkedin = self._extract_pattern(raw_text, r"https?://(?:www\.)?linkedin\.com/in/[a-zA-Z0-9_-]+")
-        github = self._extract_pattern(raw_text, r"https?://(?:www\.)?github\.com/[a-zA-Z0-9_-]+")
-
-        # Candidate name heuristic: first non-contact line with letters
-        candidate_name = None
-        for line in lines[:5]:
-            if not any(x in line.lower() for x in ["@", "http", "resume", "curriculum", "phone", "email"]):
-                cleaned = re.sub(r"[^a-zA-Z\s\.]", "", line).strip()
-                if 2 <= len(cleaned.split()) <= 4:
-                    candidate_name = cleaned
-                    break
+        linkedin = self._extract_pattern(raw_text, r"(?:https?://)?(?:www\.)?linkedin\.com/in/[a-zA-Z0-9_-]+")
+        github = self._extract_pattern(raw_text, r"(?:https?://)?(?:www\.)?github\.com/[a-zA-Z0-9_-]+")
+        location = self._extract_location(lines)
+        candidate_name = self._extract_name(raw_text, lines)
 
         contact_info = ContactInfo(
             name=candidate_name,
             email=email,
             phone=phone,
+            location=location,
             linkedin_url=linkedin,
             github_url=github,
         )
@@ -183,8 +270,8 @@ class ParserAgent:
         )
 
     def _extract_email(self, text: str) -> Optional[str]:
-        match = re.search(r"[\w\.-]+@[\w\.-]+\.[a-zA-Z]{2,}", text)
-        return match.group(0) if match else None
+        match = re.search(r"([\w\.-]+)\s*@\s*([\w\.-]+\.[a-zA-Z]{2,})", text)
+        return f"{match.group(1)}@{match.group(2)}" if match else None
 
     def _extract_phone(self, text: str) -> Optional[str]:
         match = re.search(r"(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}", text)
@@ -192,7 +279,12 @@ class ParserAgent:
 
     def _extract_pattern(self, text: str, pattern: str) -> Optional[str]:
         match = re.search(pattern, text, re.IGNORECASE)
-        return match.group(0) if match else None
+        if not match:
+            return None
+        val = match.group(0).strip()
+        if ("linkedin.com" in val.lower() or "github.com" in val.lower()) and not val.lower().startswith("http"):
+            val = f"https://{val}"
+        return val
 
     def _split_into_sections(self, lines: List[str]) -> dict:
         """Split document lines into logical resume sections."""

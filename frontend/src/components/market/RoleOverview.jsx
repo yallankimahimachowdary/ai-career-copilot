@@ -144,15 +144,20 @@ export function RoleOverview({ overview }) {
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
-              {top_companies.map((company, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/60 border border-slate-700/60 text-xs text-slate-200"
-                >
-                  <Building className="h-3 w-3 text-slate-400" />
-                  <span>{company}</span>
-                </div>
-              ))}
+              {top_companies.map((company, idx) => {
+                const name = typeof company === "object" && company !== null
+                  ? (company.company_name || company.name || "Company")
+                  : String(company)
+                return (
+                  <div
+                    key={idx}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/60 border border-slate-700/60 text-xs text-slate-200"
+                  >
+                    <Building className="h-3 w-3 text-slate-400" />
+                    <span>{name}</span>
+                  </div>
+                )
+              })}
             </div>
           </CardContent>
         </Card>
