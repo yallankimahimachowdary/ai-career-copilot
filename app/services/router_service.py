@@ -40,9 +40,9 @@ from app.schemas.chat import (
     IntentType,
     RouterDecision,
 )
-from app.services.coach_service import coach_service
+from app.services.coach_service import coach_agent
 from app.services.embedding_service import embedding_service
-from app.services.market_service import market_service
+from app.services.market_service import market_agent
 
 
 class AdaptiveRouterService:
@@ -294,7 +294,7 @@ Respond with ONLY a raw JSON object with this exact structure:
         sources = []
         if request.job_id:
             try:
-                report = await coach_service.get_skill_gap_report(db, request.resume_id, request.job_id)
+                report = await coach_agent.get_skill_gap_report(db, request.resume_id, request.job_id)
                 sources.append({
                     "type": "skill_gap_report",
                     "readiness_score": report.overall_readiness_score,
@@ -395,8 +395,8 @@ Respond with ONLY a raw JSON object with this exact structure:
         resume: Optional[Resume],
     ) -> ChatQueryResponse:
         """Strategy 4: Macro market intelligence & compensation bands."""
-        salary_info = await market_service.get_salary_insights(db, title_query=request.query)
-        trending = await market_service.get_trending_skills(db, title_query=request.query, top_n=5)
+        salary_info = await market_agent.get_salary_insights(db, title_query=request.query)
+        trending = await market_agent.get_trending_skills(db, title_query=request.query, top_n=5)
 
         band = salary_info.salary_band
         sources = [

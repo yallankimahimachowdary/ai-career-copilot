@@ -300,8 +300,20 @@ class MarketAgent:
     # -----------------------------------------------------------------------
 
     async def get_salary_insights(
-        self, db: AsyncSession, req: SalaryInsightsRequest
+        self,
+        db: AsyncSession,
+        req: Optional[SalaryInsightsRequest] = None,
+        *,
+        title_query: Optional[str] = None,
+        location: Optional[str] = None,
+        pay_period_filter: Optional[str] = "ALL",
     ) -> SalaryInsightsResponse:
+        if req is None:
+            req = SalaryInsightsRequest(
+                title_query=title_query or "",
+                location=location,
+                pay_period_filter=pay_period_filter,  # type: ignore[arg-type]
+            )
         rows, companies = await self._query_salary_rows(db, req.title_query, req.location)
         band = aggregate_salary(rows)
 
@@ -331,8 +343,20 @@ class MarketAgent:
         )
 
     async def get_trending_skills(
-        self, db: AsyncSession, req: SkillDemandRequest
+        self,
+        db: AsyncSession,
+        req: Optional[SkillDemandRequest] = None,
+        *,
+        title_query: Optional[str] = None,
+        location: Optional[str] = None,
+        top_n: int = 10,
     ) -> SkillDemandResponse:
+        if req is None:
+            req = SkillDemandRequest(
+                title_query=title_query,
+                location=location,
+                top_n=top_n,
+            )
         skills_arrays, total = await self._query_skills_arrays(
             db, req.title_query, req.location
         )
@@ -838,3 +862,4 @@ class MarketAgent:
 
 # Module-level singleton
 market_agent = MarketAgent()
+market_service = market_agent

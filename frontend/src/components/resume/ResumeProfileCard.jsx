@@ -192,14 +192,22 @@ export function ResumeProfileCard({ resume }) {
                   </div>
                 </div>
 
-                {exp.description && exp.description.length > 0 && (
-                  <ul className="space-y-1.5 pt-1 text-sm text-slate-300 list-disc list-outside pl-4">
-                    {exp.description.map((bullet, bIdx) => (
-                      <li key={bIdx} className="leading-relaxed">
-                        {bullet}
-                      </li>
-                    ))}
-                  </ul>
+                {exp.description && (
+                  Array.isArray(exp.description) ? (
+                    exp.description.length > 0 && (
+                      <ul className="space-y-1.5 pt-1 text-sm text-slate-300 list-disc list-outside pl-4">
+                        {exp.description.map((bullet, bIdx) => (
+                          <li key={bIdx} className="leading-relaxed">
+                            {bullet}
+                          </li>
+                        ))}
+                      </ul>
+                    )
+                  ) : (
+                    <p className="pt-1 text-sm text-slate-300 leading-relaxed">
+                      {String(exp.description)}
+                    </p>
+                  )
                 )}
               </div>
             ))}

@@ -51,7 +51,7 @@ export function Header({ activeResume, onSelectDemoResume, isConnected, onRefres
         )}
 
         <a
-          href="http://localhost:8000/docs"
+          href="http://127.0.0.1:8000/docs"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-md hover:bg-slate-900"
