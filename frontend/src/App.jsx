@@ -8,6 +8,7 @@ import { CoachPage } from "@/pages/CoachPage"
 import { MarketPage } from "@/pages/MarketPage"
 import { CopilotChatDrawer } from "@/components/chat/CopilotChatDrawer"
 import { apiClient } from "@/api/client"
+import { resumeApi } from "@/api/resumeApi"
 import { mockResumes, mockJobs } from "@/data/mockData"
 
 export function App() {
@@ -43,7 +44,16 @@ export function App() {
     }
   }, [activeResume])
 
-  const handleSelectDemo = () => {
+  const handleSelectDemo = async () => {
+    try {
+      const full = await resumeApi.getResume(mockResumes[0].id)
+      if (full) {
+        setActiveResume(full)
+        return
+      }
+    } catch (e) {
+      console.warn("Could not fetch designated demo resume from API:", e)
+    }
     setActiveResume(mockResumes[0])
   }
 

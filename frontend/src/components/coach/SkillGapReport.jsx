@@ -13,7 +13,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ReadinessGauge } from "./ReadinessGauge"
 
-export function SkillGapReport({ report, onProceedToQuestions }) {
+export function SkillGapReport({ report, activeResume, onProceedToQuestions }) {
   if (!report) {
     return (
       <div className="p-12 text-center text-xs text-slate-400 border border-slate-800 rounded-xl bg-slate-900/30">
@@ -21,6 +21,18 @@ export function SkillGapReport({ report, onProceedToQuestions }) {
       </div>
     )
   }
+
+  const candidateName =
+    activeResume?.candidate_name ||
+    activeResume?.parsed_data?.contact_info?.name ||
+    report.candidate_name ||
+    "Candidate"
+
+  const executiveSummary = report.executive_summary
+    ? (report.candidate_name && report.candidate_name !== candidateName
+        ? report.executive_summary.replaceAll(report.candidate_name, candidateName)
+        : report.executive_summary)
+    : null
 
   const strengths = report.confirmed_strengths || []
   const criticalGaps = report.critical_gaps || []
@@ -42,12 +54,12 @@ export function SkillGapReport({ report, onProceedToQuestions }) {
               </div>
 
               <h3 className="text-xl font-bold text-white">
-                Readiness Diagnostic for {report.candidate_name || "Candidate"}
+                Readiness Diagnostic for {candidateName}
               </h3>
 
-              {report.executive_summary && (
+              {executiveSummary && (
                 <p className="text-sm text-slate-300 leading-relaxed pt-1">
-                  {report.executive_summary}
+                  {executiveSummary}
                 </p>
               )}
             </div>

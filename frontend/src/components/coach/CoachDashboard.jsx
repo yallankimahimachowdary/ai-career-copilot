@@ -139,6 +139,7 @@ export function CoachDashboard({
         <TabsContent value="gaps" className="pt-2">
           <SkillGapReport
             report={sessionData?.skill_gap_report}
+            activeResume={activeResume}
             onProceedToQuestions={() => setCoachTab("questions")}
           />
         </TabsContent>
