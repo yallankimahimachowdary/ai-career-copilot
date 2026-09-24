@@ -14,7 +14,7 @@ from collections import Counter, defaultdict
 from typing import Any, Dict, List, Optional, Tuple
 
 import httpx
-from sqlalchemy import select, func, text, case
+from sqlalchemy import select, func, text, case, or_, cast, Text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
@@ -561,6 +561,35 @@ class MarketAgent:
     # DB query helpers
     # -----------------------------------------------------------------------
 
+    def _expand_title_terms(self, title_query: Optional[str]) -> List[str]:
+        """Expand title query to include domain synonyms, stems, and related terms."""
+        if not title_query or not title_query.strip():
+            return []
+        raw = title_query.strip()
+        terms = [raw]
+        low = raw.lower()
+
+        if "biotechnology" in low:
+            terms.append(low.replace("biotechnology", "biotech"))
+            terms.append("biotech")
+        elif "biotech" in low:
+            terms.append(low.replace("biotech", "biotechnology"))
+            terms.append("biotechnology")
+
+        if "software engineer" in low:
+            terms.append("software developer")
+        elif "software developer" in low:
+            terms.append("software engineer")
+
+        deduped: List[str] = []
+        seen = set()
+        for t in terms:
+            clean = t.strip()
+            if clean and clean.lower() not in seen:
+                seen.add(clean.lower())
+                deduped.append(clean)
+        return deduped
+
     async def _query_salary_rows(
         self,
         db: AsyncSession,
@@ -568,6 +597,7 @@ class MarketAgent:
         location: Optional[str],
     ) -> Tuple[List[Dict[str, Any]], List[TopPayingCompany]]:
         """Fetch salary-related columns from job_postings."""
+        terms = self._expand_title_terms(title_query)
         stmt = select(
             JobPosting.min_salary,
             JobPosting.max_salary,
@@ -575,13 +605,42 @@ class MarketAgent:
             JobPosting.pay_period,
             JobPosting.company_name,
         )
-        if title_query:
-            stmt = stmt.where(JobPosting.title.ilike(f"%{title_query}%"))
+        if terms:
+            stmt = stmt.where(or_(*[JobPosting.title.ilike(f"%{t}%") for t in terms]))
         if location:
             stmt = stmt.where(JobPosting.location.ilike(f"%{location}%"))
 
         result = await db.execute(stmt)
         raw = result.fetchall()
+
+        # Fallback if no exact title matches
+        if not raw and terms:
+            conditions = []
+            for t in terms:
+                conditions.append(JobPosting.description.ilike(f"%{t}%"))
+                conditions.append(cast(JobPosting.skills, Text).ilike(f"%{t}%"))
+            stmt_fb = select(
+                JobPosting.min_salary,
+                JobPosting.max_salary,
+                JobPosting.med_salary,
+                JobPosting.pay_period,
+                JobPosting.company_name,
+            ).where(or_(*conditions))
+            if location:
+                stmt_fb = stmt_fb.where(JobPosting.location.ilike(f"%{location}%"))
+            res_fb = await db.execute(stmt_fb)
+            raw = res_fb.fetchall()
+
+        if not raw and not title_query:
+            stmt_base = select(
+                JobPosting.min_salary,
+                JobPosting.max_salary,
+                JobPosting.med_salary,
+                JobPosting.pay_period,
+                JobPosting.company_name,
+            ).limit(250)
+            res_base = await db.execute(stmt_base)
+            raw = res_base.fetchall()
 
         rows: List[Dict[str, Any]] = [
             {
@@ -625,14 +684,34 @@ class MarketAgent:
         location: Optional[str],
     ) -> Tuple[List[List[str]], int]:
         """Fetch and extract genuine skills from matching job_postings."""
+        terms = self._expand_title_terms(title_query)
         stmt = select(JobPosting.skills, JobPosting.title, JobPosting.description)
-        if title_query:
-            stmt = stmt.where(JobPosting.title.ilike(f"%{title_query}%"))
+        if terms:
+            stmt = stmt.where(or_(*[JobPosting.title.ilike(f"%{t}%") for t in terms]))
         if location:
             stmt = stmt.where(JobPosting.location.ilike(f"%{location}%"))
 
         result = await db.execute(stmt)
         raw = result.fetchall()
+
+        # Fallback if no exact title matches
+        if not raw and terms:
+            conditions = []
+            for t in terms:
+                conditions.append(JobPosting.description.ilike(f"%{t}%"))
+                conditions.append(cast(JobPosting.skills, Text).ilike(f"%{t}%"))
+            stmt_fb = select(JobPosting.skills, JobPosting.title, JobPosting.description).where(
+                or_(*conditions)
+            )
+            if location:
+                stmt_fb = stmt_fb.where(JobPosting.location.ilike(f"%{location}%"))
+            res_fb = await db.execute(stmt_fb)
+            raw = res_fb.fetchall()
+
+        if not raw and not title_query:
+            stmt_base = select(JobPosting.skills, JobPosting.title, JobPosting.description).limit(250)
+            res_base = await db.execute(stmt_base)
+            raw = res_base.fetchall()
 
         arrays: List[List[str]] = []
         for r in raw:
@@ -664,6 +743,7 @@ class MarketAgent:
         top_n: int,
     ) -> Tuple[List[LocationDemandItem], int]:
         """GROUP BY location, count postings and compute avg salary + remote pct."""
+        terms = self._expand_title_terms(title_query)
         stmt = select(
             JobPosting.location,
             func.count(JobPosting.id).label("cnt"),
@@ -675,11 +755,45 @@ class MarketAgent:
             ).label("remote_avg"),
         ).group_by(JobPosting.location).order_by(func.count(JobPosting.id).desc())
 
-        if title_query:
-            stmt = stmt.where(JobPosting.title.ilike(f"%{title_query}%"))
+        if terms:
+            stmt = stmt.where(or_(*[JobPosting.title.ilike(f"%{t}%") for t in terms]))
 
         result = await db.execute(stmt)
         raw = result.fetchall()
+
+        if not raw and terms:
+            conditions = []
+            for t in terms:
+                conditions.append(JobPosting.description.ilike(f"%{t}%"))
+                conditions.append(cast(JobPosting.skills, Text).ilike(f"%{t}%"))
+            stmt_fb = select(
+                JobPosting.location,
+                func.count(JobPosting.id).label("cnt"),
+                func.avg(
+                    func.coalesce(JobPosting.med_salary, JobPosting.min_salary)
+                ).label("avg_sal"),
+                func.avg(
+                    case((JobPosting.remote_allowed.is_(True), 1.0), else_=0.0)
+                ).label("remote_avg"),
+            ).where(
+                or_(*conditions)
+            ).group_by(JobPosting.location).order_by(func.count(JobPosting.id).desc())
+            res_fb = await db.execute(stmt_fb)
+            raw = res_fb.fetchall()
+
+        if not raw and not title_query:
+            stmt_base = select(
+                JobPosting.location,
+                func.count(JobPosting.id).label("cnt"),
+                func.avg(
+                    func.coalesce(JobPosting.med_salary, JobPosting.min_salary)
+                ).label("avg_sal"),
+                func.avg(
+                    case((JobPosting.remote_allowed.is_(True), 1.0), else_=0.0)
+                ).label("remote_avg"),
+            ).group_by(JobPosting.location).order_by(func.count(JobPosting.id).desc()).limit(20)
+            res_base = await db.execute(stmt_base)
+            raw = res_base.fetchall()
 
         total = sum(r.cnt for r in raw if r.location)
         items: List[LocationDemandItem] = []
@@ -710,14 +824,33 @@ class MarketAgent:
         location: Optional[str],
     ) -> Tuple[WorkTypeBreakdown, float]:
         """Returns WorkTypeBreakdown + overall remote percentage."""
+        terms = self._expand_title_terms(title_query)
         stmt = select(JobPosting.work_type, JobPosting.remote_allowed)
-        if title_query:
-            stmt = stmt.where(JobPosting.title.ilike(f"%{title_query}%"))
+        if terms:
+            stmt = stmt.where(or_(*[JobPosting.title.ilike(f"%{t}%") for t in terms]))
         if location:
             stmt = stmt.where(JobPosting.location.ilike(f"%{location}%"))
 
         result = await db.execute(stmt)
         raw = result.fetchall()
+
+        if not raw and terms:
+            conditions = []
+            for t in terms:
+                conditions.append(JobPosting.description.ilike(f"%{t}%"))
+                conditions.append(cast(JobPosting.skills, Text).ilike(f"%{t}%"))
+            stmt_fb = select(JobPosting.work_type, JobPosting.remote_allowed).where(
+                or_(*conditions)
+            )
+            if location:
+                stmt_fb = stmt_fb.where(JobPosting.location.ilike(f"%{location}%"))
+            res_fb = await db.execute(stmt_fb)
+            raw = res_fb.fetchall()
+
+        if not raw and not title_query:
+            stmt_base = select(JobPosting.work_type, JobPosting.remote_allowed).limit(250)
+            res_base = await db.execute(stmt_base)
+            raw = res_base.fetchall()
 
         breakdown = WorkTypeBreakdown()
         remote_count = 0
@@ -795,7 +928,7 @@ class MarketAgent:
                 },
             }
 
-            async with httpx.AsyncClient(timeout=30.0) as client:
+            async with httpx.AsyncClient(timeout=8.0) as client:
                 resp = await client.post(url, json=payload)
                 # Fallback if the specific model variant rejects thinkingConfig
                 if resp.status_code == 400 and "thinkingConfig" in resp.text:

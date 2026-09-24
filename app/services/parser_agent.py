@@ -343,14 +343,20 @@ class ParserAgent:
         if not exp_lines:
             return entries
 
+        bullet_chars = ("-", "•", "*", "–", "·", "▪", "▫", "\u2022", "\u2023", "\u2043", "\u2219", "\ufffd")
         current_title = None
         current_company = None
         current_bullets: List[str] = []
 
         for line in exp_lines:
-            # Check for bullet point
-            is_bullet = line.startswith(("-", "•", "*", "–")) or len(current_bullets) > 0
-            if " at " in line.lower() or " | " in line or " - " in line and not is_bullet:
+            stripped = line.strip()
+            if not stripped:
+                continue
+
+            starts_bullet = any(stripped.startswith(c) for c in bullet_chars)
+            is_header = (" at " in stripped.lower() or " | " in stripped or " - " in stripped) and not starts_bullet
+
+            if is_header:
                 if current_title and current_company:
                     entries.append(WorkExperience(
                         title=current_title,
@@ -359,19 +365,30 @@ class ParserAgent:
                     ))
                     current_bullets = []
 
-                parts = re.split(r"\s+(?:at|\||-)\s+", line, flags=re.IGNORECASE)
+                parts = re.split(r"\s+(?:at|\||-)\s+", stripped, flags=re.IGNORECASE)
                 current_title = parts[0].strip()
                 current_company = parts[1].strip() if len(parts) > 1 else "Unknown"
-            elif is_bullet:
-                cleaned = line.lstrip("-•*– ").strip()
+            elif starts_bullet:
+                cleaned = re.sub(r"^[\s\-•*–·▪▫\u2022\u2023\u2043\u2219\ufffd]+", "", stripped).strip()
                 if cleaned:
                     current_bullets.append(cleaned)
             else:
-                if not current_title:
-                    current_title = line
+                # Line without bullet prefix
+                is_continuation = False
+                if current_bullets:
+                    prev = current_bullets[-1]
+                    if not prev.endswith((".", "!", "?", ";", ":")):
+                        is_continuation = True
+                    elif stripped[0].islower() or (len(stripped.split()) <= 4 and stripped.endswith(".")):
+                        is_continuation = True
+
+                if is_continuation and current_bullets:
+                    current_bullets[-1] = f"{current_bullets[-1]} {stripped}"
+                elif not current_title:
+                    current_title = stripped
                     current_company = "Organization"
                 else:
-                    current_bullets.append(line)
+                    current_bullets.append(stripped)
 
         if current_title and current_company:
             entries.append(WorkExperience(
@@ -394,13 +411,51 @@ class ParserAgent:
         return entries
 
     def _extract_projects(self, proj_lines: List[str]) -> List[Project]:
-        """Extract projects entries."""
+        """Extract projects entries, cleanly merging multi-line wrapped bullet points into single units."""
         projects: List[Project] = []
-        for line in proj_lines:
-            if not line.startswith(("-", "•", "*")):
-                projects.append(Project(name=line))
-            elif projects:
-                projects[-1].description = line.lstrip("-•* ")
+        if not proj_lines:
+            return projects
+
+        bullet_chars = ("-", "•", "*", "–", "·", "▪", "▫", "\u2022", "\u2023", "\u2043", "\u2219", "\ufffd")
+        current_project: Optional[Project] = None
+        current_bullets: List[str] = []
+
+        for raw_line in proj_lines:
+            line = raw_line.strip()
+            if not line:
+                continue
+
+            starts_bullet = any(line.startswith(c) for c in bullet_chars)
+            if starts_bullet:
+                cleaned = re.sub(r"^[\s\-•*–·▪▫\u2022\u2023\u2043\u2219\ufffd]+", "", line).strip()
+                if cleaned:
+                    current_bullets.append(cleaned)
+            else:
+                # Line does not start with bullet character
+                is_continuation = False
+                if current_bullets:
+                    prev = current_bullets[-1]
+                    if not prev.endswith((".", "!", "?", ";", ":")):
+                        is_continuation = True
+                    elif line[0].islower() or (len(line.split()) <= 4 and line.endswith(".")):
+                        is_continuation = True
+
+                if is_continuation and current_bullets:
+                    current_bullets[-1] = f"{current_bullets[-1]} {line}"
+                else:
+                    # New project title line
+                    if current_project and current_bullets:
+                        current_project.description = " ".join(current_bullets)
+
+                    current_bullets = []
+                    cleaned_title = line.strip(":# -")
+                    if cleaned_title.lower() not in ["projects", "personal projects", "academic projects"]:
+                        current_project = Project(name=cleaned_title, description="")
+                        projects.append(current_project)
+
+        if current_project and current_bullets:
+            current_project.description = " ".join(current_bullets)
+
         return projects
 
 

@@ -1,8 +1,27 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { PageContainer } from "@/components/layout/PageContainer"
 import { MarketDashboard } from "@/components/market/MarketDashboard"
 import { marketApi } from "@/api/marketApi"
 import { mockMarketOverview } from "@/data/mockData"
+
+export function getCandidateDomainRole(resume) {
+  if (!resume) return "Software Engineer"
+  const title = resume.parsed_data?.experience?.[0]?.title || ""
+  const field = resume.parsed_data?.education?.[0]?.field_of_study || ""
+  const skills = resume.parsed_data?.skills || []
+
+  if (/software|developer|full\s*stack|frontend|backend/i.test(title)) return "Software Engineer"
+  if (/data\s*scien|machine\s*learn|ai\b/i.test(title)) return "Data Scientist"
+  if (/biotech|biology|microbiol|chemist/i.test(title)) return "Biotechnology"
+
+  if (/biotech|biology/i.test(field)) return "Biotechnology"
+  if (/computer|software|artificial intelligence|data science/i.test(field)) return "Software Engineer"
+
+  const skillsText = Array.isArray(skills) ? skills.join(" ") : ""
+  if (/pcr|cell culture|microbiology|gel electrophoresis/i.test(skillsText)) return "Biotechnology"
+
+  return title ? title.replace(/\s+intern\b/i, "").trim() : "Software Engineer"
+}
 
 export function MarketPage({ activeResume }) {
   const [overviewData, setOverviewData] = useState(mockMarketOverview)
@@ -12,11 +31,13 @@ export function MarketPage({ activeResume }) {
   const [positioningData, setPositioningData] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
+  const activeRequestIdRef = useRef(0)
 
   const fetchMarketData = async (params = {}) => {
+    const requestId = ++activeRequestIdRef.current
     setIsLoading(true)
     setError(null)
-    const titleQuery = params.titleQuery || "Software Engineer"
+    const titleQuery = params.titleQuery || getCandidateDomainRole(activeResume)
 
     try {
       // Parallel requests for all market insights
@@ -26,6 +47,9 @@ export function MarketPage({ activeResume }) {
         marketApi.getTrendingSkills({ titleQuery, location: params.location, topN: 10 }),
         marketApi.getDemandHeatmap({ titleQuery, topN: 10 }),
       ])
+
+      // Ignore responses from outdated requests
+      if (requestId !== activeRequestIdRef.current) return
 
       if (overview.status === "fulfilled" && overview.value) {
         setOverviewData(overview.value)
@@ -40,11 +64,14 @@ export function MarketPage({ activeResume }) {
         setHeatmapData(heatmap.value)
       }
     } catch (err) {
+      if (requestId !== activeRequestIdRef.current) return
       console.warn("Market API failed, falling back to mock dataset:", err.message)
       setError("Connected to cached market baseline dataset.")
       setOverviewData(mockMarketOverview)
     } finally {
-      setIsLoading(false)
+      if (requestId === activeRequestIdRef.current) {
+        setIsLoading(false)
+      }
     }
   }
 
@@ -108,13 +135,12 @@ export function MarketPage({ activeResume }) {
     })
   }
 
+  // Reactively fetch market intelligence and positioning whenever active profile changes
   useEffect(() => {
-    fetchMarketData()
-  }, [])
-
-  useEffect(() => {
+    const role = getCandidateDomainRole(activeResume)
+    fetchMarketData({ titleQuery: role })
     fetchPositioningData(activeResume)
-  }, [activeResume?.id])
+  }, [activeResume?.id, activeResume?.candidate_name])
 
   return (
     <PageContainer

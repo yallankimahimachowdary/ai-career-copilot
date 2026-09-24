@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import {
   Search,
   MapPin,
@@ -20,6 +20,7 @@ import { SalaryChart } from "./SalaryChart"
 import { TrendingSkills } from "./TrendingSkills"
 import { DemandHeatmap } from "./DemandHeatmap"
 import { ResumePositioning } from "./ResumePositioning"
+import { getCandidateDomainRole } from "@/pages/MarketPage"
 
 export function MarketDashboard({
   overviewData,
@@ -33,8 +34,13 @@ export function MarketDashboard({
   onSearch,
 }) {
   const [activeTab, setActiveTab] = useState("overview")
-  const [roleQuery, setRoleQuery] = useState("Software Engineer")
+  const [roleQuery, setRoleQuery] = useState(() => getCandidateDomainRole(activeResume))
   const [locationQuery, setLocationQuery] = useState("")
+
+  useEffect(() => {
+    const role = getCandidateDomainRole(activeResume)
+    setRoleQuery(role)
+  }, [activeResume?.id, activeResume?.candidate_name])
 
   const handleRunSearch = (e) => {
     e?.preventDefault()

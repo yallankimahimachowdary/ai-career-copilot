@@ -7,6 +7,7 @@ import {
   PieChart,
   Users,
   CheckCircle,
+  Info,
 } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -33,6 +34,22 @@ export function RoleOverview({ overview }) {
 
   return (
     <div className="space-y-6">
+      {total_postings === 0 && (
+        <Card className="border-amber-500/30 bg-amber-950/20 text-amber-200">
+          <CardContent className="p-4 flex items-start gap-3">
+            <Info className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
+            <div className="text-xs space-y-1">
+              <p className="font-semibold text-amber-300">
+                No active postings found directly matching "{title_query}"
+              </p>
+              <p className="text-slate-300">
+                The current labor market dataset does not have indexed postings matching this specific role query. Try searching for related titles, broader domain keywords (such as "Biotechnology", "Scientist", or "Software Engineer"), or clearing the location filter.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* 4 Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="border-blue-500/20 bg-gradient-to-br from-slate-900 to-blue-950/20">
