@@ -26,27 +26,106 @@ class ParserAgent:
     """Intelligent resume parser agent supporting LLM extraction with rule-based fallback."""
 
     def __init__(self):
+        self.ollama_base_url = getattr(settings, "OLLAMA_BASE_URL", "http://localhost:11434")
+        self.ollama_model = getattr(settings, "OLLAMA_MODEL", "llama3.2:3b")
         self.openai_key = settings.OPENAI_API_KEY
         self.openai_model = getattr(settings, "OPENAI_MODEL", "gpt-4o-mini")
-        self.gemini_key = settings.GEMINI_API_KEY
-        self.gemini_model = getattr(settings, "GEMINI_MODEL", "gemini-3.5-flash")
 
     async def parse(self, raw_text: str) -> ParsedResume:
         """Parse raw resume text into a structured ParsedResume object."""
+        # 1. Primary extraction via local Ollama LLM
+        try:
+            return await self._parse_with_ollama(raw_text)
+        except Exception as e:
+            logger.warning(f"Ollama parsing failed: {e}. Falling back to secondary/rule-based parser.")
+
+        # 2. Secondary fallback via OpenAI if configured
         if self.openai_key:
             try:
                 return await self._parse_with_openai(raw_text)
             except Exception as e:
                 logger.warning(f"OpenAI parsing failed: {e}. Falling back to rule-based parser.")
 
-        if self.gemini_key:
-            try:
-                return await self._parse_with_gemini(raw_text)
-            except Exception as e:
-                logger.warning(f"Gemini parsing failed: {e}. Falling back to rule-based parser.")
-
-        # Default fallback to heuristic rule-based extraction
+        # 3. Default fallback to heuristic rule-based extraction
         return self._parse_with_rules(raw_text)
+
+    def _clean_and_parse_json(self, text_content: str) -> dict:
+        """Strip markdown fences, locate JSON delimiters, fix common syntax flaws, and parse."""
+        cleaned = text_content.strip()
+        cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned, flags=re.MULTILINE)
+        cleaned = re.sub(r"\s*```$", "", cleaned, flags=re.MULTILINE)
+        cleaned = cleaned.strip()
+
+        # Attempt direct JSON deserialization
+        try:
+            return json.loads(cleaned)
+        except json.JSONDecodeError:
+            pass
+
+        # Locate outer JSON object
+        match = re.search(r"(\{.*\})", cleaned, re.DOTALL)
+        if match:
+            candidate = match.group(1).strip()
+            try:
+                return json.loads(candidate)
+            except json.JSONDecodeError:
+                # Remove trailing commas before closing braces/brackets
+                fixed = re.sub(r",\s*([\]}])", r"\1", candidate)
+                return json.loads(fixed)
+
+        raise ValueError(f"Could not extract valid JSON from response: {text_content[:200]}")
+
+    async def _parse_with_ollama(self, raw_text: str) -> ParsedResume:
+        """Extract structured resume data using local Ollama model."""
+        url = f"{self.ollama_base_url.rstrip('/')}/api/generate"
+        prompt = (
+            "You are an expert resume parsing agent. Extract the candidate's profile strictly into JSON format "
+            "matching this exact schema:\n"
+            "{\n"
+            '  "contact_info": {"name": "...", "email": "...", "phone": "...", "location": "...", "linkedin_url": "...", "github_url": "...", "portfolio_url": "..."},\n'
+            '  "summary": "...",\n'
+            '  "skills": ["Python", "FastAPI", "PostgreSQL"],\n'
+            '  "experience": [{"title": "Software Engineer", "company": "Acme Inc", "location": "Remote", "start_date": "Jan 2022", "end_date": "Present", "is_current": true, "description": ["Bullet 1", "Bullet 2"]}],\n'
+            '  "education": [{"institution": "MIT", "degree": "B.S.", "field_of_study": "Computer Science", "graduation_year": "2021", "gpa": "3.9"}],\n'
+            '  "projects": [{"name": "Career Copilot", "description": "AI agent platform", "technologies": ["Python", "Docker"], "url": "https://github.com/..."}],\n'
+            '  "certifications": ["AWS Certified Solutions Architect", "CKA"]\n'
+            "}\n\n"
+            "STRICT FORMATTING REQUIREMENTS:\n"
+            "1. 'skills' MUST be a flat JSON array of strings (e.g. [\"Python\", \"Docker\"]). DO NOT group skills by categories or use a dictionary/object.\n"
+            "2. 'projects' array items MUST use the key 'name' (DO NOT use 'title' or 'project_name').\n"
+            "3. 'certifications' MUST be a flat JSON array of plain strings (e.g. [\"AWS Certified Solutions Architect\"]). DO NOT return objects or dictionaries.\n"
+            "4. Return valid JSON only, without any markdown formatting or commentary."
+        )
+
+        max_attempts = 2
+        last_error = None
+
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            for attempt in range(1, max_attempts + 1):
+                try:
+                    payload = {
+                        "model": self.ollama_model,
+                        "prompt": f"{prompt}\n\nResume Text:\n{raw_text}",
+                        "stream": False,
+                        "format": "json",
+                        "options": {
+                            "temperature": 0.0,
+                        },
+                    }
+                    response = await client.post(url, json=payload)
+                    response.raise_for_status()
+                    data = response.json()
+                    text_content = data.get("response", "")
+                    parsed_dict = self._clean_and_parse_json(text_content)
+                    parsed = ParsedResume.model_validate(parsed_dict)
+                    return self._enrich_contact_info(parsed, raw_text)
+                except Exception as exc:
+                    last_error = exc
+                    logger.warning(f"Ollama parsing attempt {attempt}/{max_attempts} failed: {exc}")
+                    if attempt < max_attempts:
+                        continue
+
+        raise RuntimeError(f"Ollama failed after {max_attempts} attempts: {last_error}")
 
     async def _parse_with_openai(self, raw_text: str) -> ParsedResume:
         """Extract structured resume data using OpenAI structured output."""
@@ -77,42 +156,6 @@ class ParserAgent:
             data = response.json()
             content = data["choices"][0]["message"]["content"]
             parsed = ParsedResume.model_validate(json.loads(content))
-            return self._enrich_contact_info(parsed, raw_text)
-
-    async def _parse_with_gemini(self, raw_text: str) -> ParsedResume:
-        """Extract structured resume data using Gemini API."""
-        model_name = self.gemini_model.removeprefix("models/")
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={self.gemini_key}"
-        prompt = (
-            "You are an expert resume parsing agent. Extract the candidate's profile strictly into JSON format "
-            "matching this exact schema:\n"
-            "{\n"
-            '  "contact_info": {"name": "...", "email": "...", "phone": "...", "location": "...", "linkedin_url": "...", "github_url": "...", "portfolio_url": "..."},\n'
-            '  "summary": "...",\n'
-            '  "skills": ["Python", "FastAPI", "PostgreSQL"],\n'
-            '  "experience": [{"title": "Software Engineer", "company": "Acme Inc", "location": "Remote", "start_date": "Jan 2022", "end_date": "Present", "is_current": true, "description": ["Bullet 1", "Bullet 2"]}],\n'
-            '  "education": [{"institution": "MIT", "degree": "B.S.", "field_of_study": "Computer Science", "graduation_year": "2021", "gpa": "3.9"}],\n'
-            '  "projects": [{"name": "Career Copilot", "description": "AI agent platform", "technologies": ["Python", "Docker"], "url": "https://github.com/..."}],\n'
-            '  "certifications": ["AWS Certified Solutions Architect", "CKA"]\n'
-            "}\n\n"
-            "STRICT FORMATTING REQUIREMENTS:\n"
-            "1. 'skills' MUST be a flat JSON array of strings (e.g. [\"Python\", \"Docker\"]). DO NOT group skills by categories or use a dictionary/object.\n"
-            "2. 'projects' array items MUST use the key 'name' (DO NOT use 'title' or 'project_name').\n"
-            "3. 'certifications' MUST be a flat JSON array of plain strings (e.g. [\"AWS Certified Solutions Architect\"]). DO NOT return objects or dictionaries.\n"
-            "4. Return valid JSON only, without any markdown formatting."
-        )
-        payload = {
-            "contents": [{
-                "parts": [{"text": f"{prompt}\n\nResume Text:\n{raw_text}"}]
-            }],
-            "generationConfig": {"response_mime_type": "application/json"}
-        }
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.post(url, json=payload)
-            response.raise_for_status()
-            data = response.json()
-            text_content = data["candidates"][0]["content"]["parts"][0]["text"]
-            parsed = ParsedResume.model_validate(json.loads(text_content))
             return self._enrich_contact_info(parsed, raw_text)
 
     def _enrich_contact_info(self, parsed: ParsedResume, raw_text: str) -> ParsedResume:

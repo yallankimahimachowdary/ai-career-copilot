@@ -52,6 +52,10 @@ class Settings(BaseSettings):
     GEMINI_MODEL: str = "gemini-3.5-flash"
     ANTHROPIC_API_KEY: str | None = None
 
+    # Local Ollama LLM Configuration
+    OLLAMA_BASE_URL: str = "http://localhost:11434"
+    OLLAMA_MODEL: str = "llama3.2:3b"
+
     # Matcher Agent Weights & Penalty Configuration
     WEIGHT_SEMANTIC: float = 0.25
     WEIGHT_MUST_HAVE: float = 0.35

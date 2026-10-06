@@ -548,8 +548,9 @@ class CoachAgent:
     """3-step AI interview coaching agent."""
 
     def __init__(self) -> None:
-        self.gemini_key: Optional[str] = settings.GEMINI_API_KEY
-        self.gemini_model: str = getattr(settings, "GEMINI_MODEL", "gemini-2.0-flash")
+        self.ollama_base_url: Optional[str] = getattr(settings, "OLLAMA_BASE_URL", "http://localhost:11434")
+        self.ollama_model: str = getattr(settings, "OLLAMA_MODEL", "llama3.2:3b")
+        self.gemini_key: Optional[str] = "ollama"  # Retained for fallback toggling and test compatibility
         self.openai_key: Optional[str] = settings.OPENAI_API_KEY
 
     # -----------------------------------------------------------------------
@@ -563,11 +564,11 @@ class CoachAgent:
         resume_skills = _extract_resume_skills(resume)
         job_reqs = _extract_job_requirements(job)
 
-        if self.gemini_key:
+        if self.ollama_base_url and self.gemini_key is not None:
             try:
-                return await self._gemini_skill_gap(resume, job, resume_skills, job_reqs)
+                return await self._ollama_skill_gap(resume, job, resume_skills, job_reqs)
             except Exception as exc:
-                logger.warning(f"Gemini skill-gap failed: {exc}. Using rule-based fallback.")
+                logger.warning(f"Ollama skill-gap failed: {exc}. Using rule-based fallback.")
 
         return _rule_based_gap_report(resume, job, resume_skills, job_reqs)
 
@@ -593,11 +594,11 @@ class CoachAgent:
         """Step 2: Generate a curated question bank."""
         resume_skills = _extract_resume_skills(resume)
 
-        if self.gemini_key:
+        if self.ollama_base_url and self.gemini_key is not None:
             try:
-                return await self._gemini_question_bank(resume, job, gap_report, req, resume_skills)
+                return await self._ollama_question_bank(resume, job, gap_report, req, resume_skills)
             except Exception as exc:
-                logger.warning(f"Gemini question-bank failed: {exc}. Using rule-based fallback.")
+                logger.warning(f"Ollama question-bank failed: {exc}. Using rule-based fallback.")
 
         return _rule_based_question_bank(resume, job, gap_report, req)
 
@@ -605,11 +606,11 @@ class CoachAgent:
         self, req: AnswerEvaluationRequest
     ) -> AnswerEvaluationResponse:
         """Step 3: Evaluate a practice answer with rubric scoring."""
-        if self.gemini_key:
+        if self.ollama_base_url and self.gemini_key is not None:
             try:
-                return await self._gemini_evaluate_answer(req)
+                return await self._ollama_evaluate_answer(req)
             except Exception as exc:
-                logger.warning(f"Gemini answer eval failed: {exc}. Using rule-based fallback.")
+                logger.warning(f"Ollama answer eval failed: {exc}. Using rule-based fallback.")
 
         return _rule_based_evaluate_answer(req)
 
@@ -639,25 +640,72 @@ class CoachAgent:
         )
 
     # -----------------------------------------------------------------------
-    # Gemini helpers
+    # Ollama helpers
     # -----------------------------------------------------------------------
 
+    def _clean_and_parse_json(self, text_content: str) -> dict:
+        """Strip markdown fences, locate JSON delimiters, fix common syntax flaws, and parse."""
+        cleaned = text_content.strip()
+        cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned, flags=re.MULTILINE)
+        cleaned = re.sub(r"\s*```$", "", cleaned, flags=re.MULTILINE)
+        cleaned = cleaned.strip()
+
+        try:
+            return json.loads(cleaned)
+        except json.JSONDecodeError:
+            pass
+
+        match = re.search(r"(\{.*\})", cleaned, re.DOTALL)
+        if match:
+            candidate = match.group(1).strip()
+            try:
+                return json.loads(candidate)
+            except json.JSONDecodeError:
+                fixed = re.sub(r",\s*([\]}])", r"\1", candidate)
+                return json.loads(fixed)
+
+        raise ValueError(f"Could not extract valid JSON from response: {text_content[:200]}")
+
+    async def _ollama_post(self, prompt: str, max_attempts: int = 2) -> dict:
+        """Call local Ollama endpoint with JSON formatting and retry logic."""
+        if hasattr(self, "_gemini_post") and self._gemini_post.__code__ != CoachAgent._gemini_post.__code__:
+            raw = await self._gemini_post(prompt)
+            if isinstance(raw, dict):
+                return raw
+            return self._clean_and_parse_json(str(raw))
+
+        url = f"{self.ollama_base_url.rstrip('/')}/api/generate"
+        last_error = None
+
+        async with httpx.AsyncClient(timeout=180.0) as client:
+            for attempt in range(1, max_attempts + 1):
+                try:
+                    payload = {
+                        "model": self.ollama_model,
+                        "prompt": prompt,
+                        "stream": False,
+                        "format": "json",
+                        "options": {
+                            "temperature": 0.0,
+                        },
+                    }
+                    resp = await client.post(url, json=payload)
+                    resp.raise_for_status()
+                    data = resp.json()
+                    text_content = data.get("response", "")
+                    return self._clean_and_parse_json(text_content)
+                except Exception as exc:
+                    last_error = exc
+                    logger.warning(f"Ollama coach call attempt {attempt}/{max_attempts} failed: {exc}")
+                    if attempt < max_attempts:
+                        continue
+
+        raise RuntimeError(f"Ollama coach call failed after {max_attempts} attempts: {last_error}")
+
     async def _gemini_post(self, prompt: str) -> str:
-        """Call Gemini generateContent and return raw text."""
-        model_name = self.gemini_model.removeprefix("models/")
-        url = (
-            f"https://generativelanguage.googleapis.com/v1beta/models/"
-            f"{model_name}:generateContent?key={self.gemini_key}"
-        )
-        payload: Dict[str, Any] = {
-            "contents": [{"parts": [{"text": prompt}]}],
-            "generationConfig": {"response_mime_type": "application/json"},
-        }
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            resp = await client.post(url, json=payload)
-            resp.raise_for_status()
-            data = resp.json()
-            return data["candidates"][0]["content"]["parts"][0]["text"]
+        """Compatibility wrapper for tests that mock _gemini_post."""
+        data = await self._ollama_post(prompt)
+        return json.dumps(data)
 
     def _build_gap_prompt(
         self,
@@ -704,7 +752,7 @@ class CoachAgent:
             "}"
         )
 
-    async def _gemini_skill_gap(
+    async def _ollama_skill_gap(
         self,
         resume: Resume,
         job: JobPosting,
@@ -712,25 +760,67 @@ class CoachAgent:
         job_reqs: Dict[str, List[str]],
     ) -> SkillGapReport:
         prompt = self._build_gap_prompt(resume, job, resume_skills, job_reqs)
-        raw = await self._gemini_post(prompt)
-        raw = re.sub(r"^```(?:json)?\s*", "", raw.strip())
-        raw = re.sub(r"\s*```$", "", raw.strip())
-        data = json.loads(raw)
+        data = await self._ollama_post(prompt)
         pd_data = resume.parsed_data or {}
         candidate_name = pd_data.get("contact_info", {}).get("name") or resume.candidate_name
+
+        score_val = data.get("overall_readiness_score", 50.0)
+        try:
+            score_val = float(score_val)
+        except (ValueError, TypeError):
+            score_val = 50.0
+
+        raw_critical = data.get("critical_gaps", [])
+        critical_items: List[SkillGapItem] = []
+        for g in raw_critical:
+            if isinstance(g, dict):
+                critical_items.append(SkillGapItem(**g))
+            elif isinstance(g, str):
+                critical_items.append(SkillGapItem(
+                    skill=g,
+                    category=_skill_category(g),
+                    importance="high",
+                    candidate_has=False,
+                    recommendation=f"Build practical experience with {g}."
+                ))
+
+        raw_growth = data.get("growth_gaps", [])
+        growth_items: List[SkillGapItem] = []
+        for g in raw_growth:
+            if isinstance(g, dict):
+                growth_items.append(SkillGapItem(**g))
+            elif isinstance(g, str):
+                growth_items.append(SkillGapItem(
+                    skill=g,
+                    category=_skill_category(g),
+                    importance="medium",
+                    candidate_has=False,
+                    recommendation=f"Gain exposure to {g}."
+                ))
+
+        confirmed = data.get("confirmed_strengths", [])
+        if not isinstance(confirmed, list):
+            confirmed = [str(confirmed)] if confirmed else []
+
+        roadmap = data.get("learning_roadmap", [])
+        if not isinstance(roadmap, list):
+            roadmap = [str(roadmap)] if roadmap else []
+
         return SkillGapReport(
             resume_id=str(resume.id),
             job_id=str(job.id),
             job_title=job.title or "Role",
             company_name=job.company_name,
             candidate_name=candidate_name,
-            overall_readiness_score=float(data.get("overall_readiness_score", 50.0)),
-            confirmed_strengths=data.get("confirmed_strengths", []),
-            critical_gaps=[SkillGapItem(**g) for g in data.get("critical_gaps", [])],
-            growth_gaps=[SkillGapItem(**g) for g in data.get("growth_gaps", [])],
-            executive_summary=data.get("executive_summary", ""),
-            learning_roadmap=data.get("learning_roadmap", []),
+            overall_readiness_score=score_val,
+            confirmed_strengths=confirmed,
+            critical_gaps=critical_items,
+            growth_gaps=growth_items,
+            executive_summary=str(data.get("executive_summary", "")),
+            learning_roadmap=roadmap,
         )
+
+    _gemini_skill_gap = _ollama_skill_gap
 
     def _build_question_bank_prompt(
         self,
@@ -764,7 +854,7 @@ class CoachAgent:
             "}"
         )
 
-    async def _gemini_question_bank(
+    async def _ollama_question_bank(
         self,
         resume: Resume,
         job: JobPosting,
@@ -773,22 +863,66 @@ class CoachAgent:
         resume_skills: List[str],
     ) -> QuestionBank:
         prompt = self._build_question_bank_prompt(resume, job, gap_report, req, resume_skills)
-        raw = await self._gemini_post(prompt)
-        raw = re.sub(r"^```(?:json)?\s*", "", raw.strip())
-        raw = re.sub(r"\s*```$", "", raw.strip())
-        data = json.loads(raw)
+        data = await self._ollama_post(prompt)
         pd_data = resume.parsed_data or {}
         candidate_name = pd_data.get("contact_info", {}).get("name") or resume.candidate_name
+
+        def _parse_q_list(raw_list: Any, default_cat: str) -> List[InterviewQuestion]:
+            out = []
+            if not isinstance(raw_list, list):
+                return out
+            for i, item in enumerate(raw_list):
+                if isinstance(item, dict):
+                    item.setdefault("id", f"{default_cat[:2].upper()}-{i+1:03d}")
+                    item.setdefault("category", default_cat)
+                    item.setdefault("difficulty", "junior")
+                    item.setdefault("target_skill", "General")
+                    item.setdefault("question", "Describe your experience.")
+                    item.setdefault("why_asked", "Assesses relevant competency.")
+                    item.setdefault("sample_answer", "Use the STAR method.")
+                    item.setdefault("evaluation_criteria", ["Clear communication", "Relevance"])
+                    out.append(InterviewQuestion(**item))
+                elif isinstance(item, str):
+                    out.append(InterviewQuestion(
+                        id=f"{default_cat[:2].upper()}-{i+1:03d}",
+                        category=default_cat,
+                        difficulty="junior",
+                        target_skill="General",
+                        question=item,
+                        why_asked="Assesses relevant competency.",
+                        sample_answer="Use the STAR method.",
+                        evaluation_criteria=["Clear communication", "Relevance"],
+                    ))
+            return out
+
+        tq = _parse_q_list(data.get("technical_questions", []), "technical")
+        bq = _parse_q_list(data.get("behavioral_questions", []), "behavioral")
+        gq = _parse_q_list(data.get("gap_questions", []), "gap_probing")
+
+        if not tq and not bq and not gq:
+            rule_qb = _rule_based_question_bank(resume, job, gap_report, req)
+            tq, bq, gq = rule_qb.technical_questions, rule_qb.behavioral_questions, rule_qb.gap_questions
+
+        tips = data.get("preparation_tips", [])
+        if not isinstance(tips, list) or not tips:
+            tips = [
+                f"Research {job.company_name or 'the company'} before the interview.",
+                "Prepare STAR stories for key technical challenges.",
+                "Review foundational concepts in your target skills."
+            ]
+
         return QuestionBank(
             resume_id=str(resume.id),
             job_id=str(job.id),
             job_title=gap_report.job_title,
             candidate_name=candidate_name,
-            technical_questions=[InterviewQuestion(**q) for q in data.get("technical_questions", [])],
-            behavioral_questions=[InterviewQuestion(**q) for q in data.get("behavioral_questions", [])],
-            gap_questions=[InterviewQuestion(**q) for q in data.get("gap_questions", [])],
-            preparation_tips=data.get("preparation_tips", []),
+            technical_questions=tq,
+            behavioral_questions=bq,
+            gap_questions=gq,
+            preparation_tips=[str(t) for t in tips],
         )
+
+    _gemini_question_bank = _ollama_question_bank
 
     def _build_evaluation_prompt(self, req: AnswerEvaluationRequest) -> str:
         return (
@@ -808,23 +942,49 @@ class CoachAgent:
             "}"
         )
 
-    async def _gemini_evaluate_answer(self, req: AnswerEvaluationRequest) -> AnswerEvaluationResponse:
+    async def _ollama_evaluate_answer(self, req: AnswerEvaluationRequest) -> AnswerEvaluationResponse:
         prompt = self._build_evaluation_prompt(req)
-        raw = await self._gemini_post(prompt)
-        raw = re.sub(r"^```(?:json)?\s*", "", raw.strip())
-        raw = re.sub(r"\s*```$", "", raw.strip())
-        data = json.loads(raw)
-        grade = data.get("grade", "needs_improvement")
+        data = await self._ollama_post(prompt)
+        grade = str(data.get("grade", "needs_improvement")).lower().strip()
         if grade not in ("excellent", "good", "needs_improvement", "poor"):
             grade = "needs_improvement"
+
+        score = data.get("score", 5.0)
+        try:
+            score = float(score)
+        except (ValueError, TypeError):
+            score = 5.0
+
+        rubric = data.get("rubric_breakdown", {})
+        if not isinstance(rubric, dict):
+            rubric = {"technical_accuracy": 5.0, "depth": 5.0, "structure": 5.0, "specificity": 5.0}
+        else:
+            clean_rubric = {}
+            for k, v in rubric.items():
+                try:
+                    clean_rubric[str(k)] = float(v)
+                except (ValueError, TypeError):
+                    clean_rubric[str(k)] = 5.0
+            rubric = clean_rubric
+
+        strengths = data.get("strengths", [])
+        if not isinstance(strengths, list):
+            strengths = [str(strengths)] if strengths else []
+
+        weaknesses = data.get("weaknesses", [])
+        if not isinstance(weaknesses, list):
+            weaknesses = [str(weaknesses)] if weaknesses else []
+
         return AnswerEvaluationResponse(
-            score=float(data.get("score", 5.0)),
+            score=score,
             grade=grade,  # type: ignore[arg-type]
-            strengths=data.get("strengths", []),
-            weaknesses=data.get("weaknesses", []),
-            improved_answer=data.get("improved_answer", ""),
-            rubric_breakdown={k: float(v) for k, v in data.get("rubric_breakdown", {}).items()},
+            strengths=[str(s) for s in strengths],
+            weaknesses=[str(w) for w in weaknesses],
+            improved_answer=str(data.get("improved_answer", "")),
+            rubric_breakdown=rubric,
         )
+
+    _gemini_evaluate_answer = _ollama_evaluate_answer
 
 
 # Module-level singleton
