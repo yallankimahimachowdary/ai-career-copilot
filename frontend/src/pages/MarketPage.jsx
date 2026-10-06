@@ -40,32 +40,36 @@ export function MarketPage({ activeResume }) {
     const titleQuery = params.titleQuery || getCandidateDomainRole(activeResume)
 
     try {
-      // Parallel requests for all market insights
-      const [overview, salary, skills, heatmap] = await Promise.allSettled([
-        marketApi.getRoleOverview({ titleQuery, location: params.location }),
-        marketApi.getSalaryInsights({ titleQuery, location: params.location }),
-        marketApi.getTrendingSkills({ titleQuery, location: params.location, topN: 10 }),
-        marketApi.getDemandHeatmap({ titleQuery, topN: 10 }),
-      ])
-
-      // Ignore responses from outdated requests
+      // Step 1: Fetch RoleOverview first. It contains salary band, top skills, locations, and narrative in ~4s.
+      const overview = await marketApi.getRoleOverview({ titleQuery, location: params.location })
       if (requestId !== activeRequestIdRef.current) return
 
-      if (overview.status === "fulfilled" && overview.value) {
-        setOverviewData(overview.value)
+      if (overview) {
+        setOverviewData(overview)
+        setIsLoading(false)
       }
-      if (salary.status === "fulfilled" && salary.value) {
-        setSalaryData(salary.value)
-      }
-      if (skills.status === "fulfilled" && skills.value) {
-        setSkillsData(skills.value)
-      }
-      if (heatmap.status === "fulfilled" && heatmap.value) {
-        setHeatmapData(heatmap.value)
-      }
+
+      // Step 2: Fetch deep-dive endpoints progressively so local Ollama is not congested concurrently
+      marketApi.getSalaryInsights({ titleQuery, location: params.location })
+        .then((res) => {
+          if (requestId === activeRequestIdRef.current && res) setSalaryData(res)
+        })
+        .catch((e) => console.warn("Salary insights progressive fetch notice:", e.message))
+
+      marketApi.getTrendingSkills({ titleQuery, location: params.location, topN: 10 })
+        .then((res) => {
+          if (requestId === activeRequestIdRef.current && res) setSkillsData(res)
+        })
+        .catch((e) => console.warn("Trending skills progressive fetch notice:", e.message))
+
+      marketApi.getDemandHeatmap({ titleQuery, topN: 10 })
+        .then((res) => {
+          if (requestId === activeRequestIdRef.current && res) setHeatmapData(res)
+        })
+        .catch((e) => console.warn("Demand heatmap progressive fetch notice:", e.message))
     } catch (err) {
       if (requestId !== activeRequestIdRef.current) return
-      console.warn("Market API failed, falling back to mock dataset:", err.message)
+      console.warn("Market API failed, falling back to cached baseline dataset:", err.message)
       setError("Connected to cached market baseline dataset.")
       setOverviewData(mockMarketOverview)
     } finally {

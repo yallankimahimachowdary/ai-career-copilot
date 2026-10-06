@@ -20,6 +20,7 @@ export function CoachDashboard({
   activeResume,
   matchedJobs = [],
   initialJobId,
+  onSelectJob,
   onGenerateSession,
   onEvaluateAnswer,
   sessionData,
@@ -28,15 +29,22 @@ export function CoachDashboard({
   evaluationResult,
   error,
 }) {
-  const [selectedJobId, setSelectedJobId] = useState(initialJobId || matchedJobs[0]?.job_id || matchedJobs[0]?.id || "")
+  const [selectedJobId, setSelectedJobId] = useState(
+    initialJobId || matchedJobs[0]?.job_id || matchedJobs[0]?.id || ""
+  )
   const [coachTab, setCoachTab] = useState("gaps")
   const [activePracticeQuestion, setActivePracticeQuestion] = useState(null)
 
   useEffect(() => {
-    if (initialJobId) {
+    if (initialJobId && matchedJobs.some((j) => (j.job_id || j.id) === initialJobId)) {
       setSelectedJobId(initialJobId)
-    } else if (!selectedJobId && matchedJobs.length > 0) {
-      setSelectedJobId(matchedJobs[0].job_id || matchedJobs[0].id)
+    } else if (matchedJobs.length > 0) {
+      const matchExists = matchedJobs.some((j) => (j.job_id || j.id) === selectedJobId)
+      if (!matchExists) {
+        const fallbackId = matchedJobs[0].job_id || matchedJobs[0].id
+        setSelectedJobId(fallbackId)
+        if (onSelectJob) onSelectJob(fallbackId)
+      }
     }
   }, [initialJobId, matchedJobs])
 
@@ -68,7 +76,11 @@ export function CoachDashboard({
               {matchedJobs.length > 0 ? (
                 <select
                   value={selectedJobId}
-                  onChange={(e) => setSelectedJobId(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value
+                    setSelectedJobId(val)
+                    if (onSelectJob) onSelectJob(val)
+                  }}
                   className="w-full sm:max-w-md h-10 rounded-lg border border-slate-700 bg-slate-950 px-3 text-xs text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   {matchedJobs.map((j) => {

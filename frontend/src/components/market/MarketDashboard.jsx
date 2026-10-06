@@ -137,8 +137,8 @@ export function MarketDashboard({
         <TabsContent value="salary" className="pt-2">
           <SalaryChart
             salaryBand={salaryData?.salary_band || overviewData?.salary_band}
-            topPayingCompanies={salaryData?.top_paying_companies}
-            narrative={salaryData?.narrative}
+            topPayingCompanies={salaryData?.top_paying_companies || []}
+            narrative={salaryData?.narrative || overviewData?.narrative}
           />
         </TabsContent>
 
@@ -146,15 +146,15 @@ export function MarketDashboard({
           <TrendingSkills
             skills={skillsData?.skills || overviewData?.top_skills}
             totalPostings={skillsData?.total_postings_analysed || overviewData?.total_postings}
-            narrative={skillsData?.narrative}
+            narrative={skillsData?.narrative || overviewData?.narrative}
           />
         </TabsContent>
 
         <TabsContent value="heatmap" className="pt-2">
           <DemandHeatmap
             locations={heatmapData?.locations || overviewData?.top_locations}
-            hottestMarket={heatmapData?.hottest_market}
-            narrative={heatmapData?.narrative}
+            hottestMarket={heatmapData?.hottest_market || overviewData?.top_locations?.[0]?.location}
+            narrative={heatmapData?.narrative || overviewData?.narrative}
           />
         </TabsContent>
 
