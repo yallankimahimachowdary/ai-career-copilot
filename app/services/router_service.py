@@ -48,30 +48,56 @@ from app.services.market_service import market_agent
 class AdaptiveRouterService:
     """Classifies user queries and executes targeted Adaptive RAG retrieval strategies."""
 
+    def __init__(self) -> None:
+        self.ollama_base_url: Optional[str] = getattr(settings, "OLLAMA_BASE_URL", "http://localhost:11434")
+        self.ollama_model: str = getattr(settings, "OLLAMA_MODEL", "llama3.2:3b")
+        self.gemini_key: Optional[str] = "ollama"  # Retained for fallback toggling and test compatibility
+
     # ---------------------------------------------------------------------------
     # Intent Classification Layer
     # ---------------------------------------------------------------------------
+
+    def _clean_and_parse_json(self, text_content: str) -> dict:
+        """Strip markdown fences, locate JSON delimiters, fix common syntax flaws, and parse."""
+        cleaned = text_content.strip()
+        cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned, flags=re.MULTILINE)
+        cleaned = re.sub(r"\s*```$", "", cleaned, flags=re.MULTILINE)
+        cleaned = cleaned.strip()
+
+        try:
+            return json.loads(cleaned)
+        except json.JSONDecodeError:
+            pass
+
+        match = re.search(r"(\{.*\})", cleaned, re.DOTALL)
+        if match:
+            candidate = match.group(1).strip()
+            try:
+                return json.loads(candidate)
+            except json.JSONDecodeError:
+                fixed = re.sub(r",\s*([\]}])", r"\1", candidate)
+                return json.loads(fixed)
+
+        raise ValueError(f"Could not extract valid JSON from response: {text_content[:200]}")
 
     async def classify_intent(self, query: str) -> RouterDecision:
         """
         Classifies user query intent using LLM with deterministic heuristic fallback.
         """
-        if settings.GEMINI_API_KEY:
+        if self.ollama_base_url and self.gemini_key is not None:
             try:
-                decision = await self._classify_with_gemini(query)
+                decision = await self._classify_with_ollama(query)
                 if decision:
                     return decision
             except Exception as exc:
-                logger.warning("Gemini intent classification failed; falling back to heuristic: %s", exc)
+                logger.warning("Ollama intent classification failed; falling back to heuristic: %s", exc)
 
         return self._classify_heuristic(query)
 
-    async def _classify_with_gemini(self, query: str) -> Optional[RouterDecision]:
-        """Query Gemini to classify intent into one of the 4 canonical enum categories."""
-        url = (
-            f"https://generativelanguage.googleapis.com/v1beta/models/"
-            f"{settings.GEMINI_MODEL}:generateContent?key={settings.GEMINI_API_KEY}"
-        )
+    async def _classify_with_ollama(self, query: str, max_attempts: int = 2) -> Optional[RouterDecision]:
+        """Query Ollama to classify intent into one of the 4 canonical enum categories."""
+        if not self.ollama_base_url:
+            return None
 
         prompt = f"""
 You are the Query Intent Router for an AI Career Copilot multi-agent system.
@@ -93,24 +119,76 @@ Respond with ONLY a raw JSON object with this exact structure:
 }}
 """
 
+        url = f"{self.ollama_base_url.rstrip('/')}/api/generate"
         payload = {
-            "contents": [{"parts": [{"text": prompt}]}],
-            "generationConfig": {"temperature": 0.0, "responseMimeType": "application/json"},
+            "model": self.ollama_model,
+            "prompt": prompt,
+            "stream": False,
+            "format": "json",
+            "options": {
+                "temperature": 0.0,
+            },
         }
 
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            resp = await client.post(url, json=payload)
-            if resp.status_code == 200:
-                data = resp.json()
-                text = data["candidates"][0]["content"]["parts"][0]["text"]
-                parsed = json.loads(text)
-                return RouterDecision(
-                    intent=IntentType(parsed["intent"]),
-                    confidence=float(parsed.get("confidence", 0.9)),
-                    strategy_selected=parsed.get("strategy_selected", "Dynamic agent dispatch"),
-                    reasoning=parsed.get("reasoning", "Classified via semantic intent analysis."),
-                )
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            for attempt in range(1, max_attempts + 1):
+                try:
+                    resp = await client.post(url, json=payload)
+                    resp.raise_for_status()
+                    data = resp.json()
+
+                    if "response" in data:
+                        raw_text = data.get("response", "")
+                    elif "candidates" in data:
+                        raw_text = data["candidates"][0]["content"]["parts"][0]["text"]
+                    else:
+                        raw_text = json.dumps(data)
+
+                    parsed = self._clean_and_parse_json(raw_text)
+
+                    raw_intent = str(parsed.get("intent", "")).strip().upper()
+                    intent_mapping = {
+                        "JOB_SEARCH_AND_MATCH": IntentType.JOB_SEARCH_AND_MATCH,
+                        "JOB_SEARCH": IntentType.JOB_SEARCH_AND_MATCH,
+                        "JOB_MATCH": IntentType.JOB_SEARCH_AND_MATCH,
+                        "SKILL_PROGRESSION_AND_PATH": IntentType.SKILL_PROGRESSION_AND_PATH,
+                        "SKILL_PROGRESSION": IntentType.SKILL_PROGRESSION_AND_PATH,
+                        "SKILL_PATH": IntentType.SKILL_PROGRESSION_AND_PATH,
+                        "INTERVIEW_COACHING": IntentType.INTERVIEW_COACHING,
+                        "INTERVIEW": IntentType.INTERVIEW_COACHING,
+                        "COACHING": IntentType.INTERVIEW_COACHING,
+                        "MACRO_MARKET_DYNAMICS": IntentType.MACRO_MARKET_DYNAMICS,
+                        "MARKET_DYNAMICS": IntentType.MACRO_MARKET_DYNAMICS,
+                        "MARKET": IntentType.MACRO_MARKET_DYNAMICS,
+                    }
+
+                    intent_val = intent_mapping.get(raw_intent)
+                    if not intent_val:
+                        for candidate_enum in IntentType:
+                            if candidate_enum.value.upper() in raw_intent or raw_intent in candidate_enum.value.upper():
+                                intent_val = candidate_enum
+                                break
+
+                    if intent_val:
+                        return RouterDecision(
+                            intent=intent_val,
+                            confidence=float(parsed.get("confidence", 0.95)),
+                            strategy_selected=parsed.get("strategy_selected", "Dynamic agent dispatch"),
+                            reasoning=parsed.get("reasoning", "Classified via semantic intent analysis."),
+                        )
+                except Exception as exc:
+                    logger.warning(
+                        "Ollama intent classification attempt %d/%d failed: %s",
+                        attempt, max_attempts, exc
+                    )
+                    if attempt < max_attempts:
+                        continue
+
         return None
+
+    async def _classify_with_gemini(self, query: str) -> Optional[RouterDecision]:
+        """Backwards compatibility alias for _classify_with_ollama."""
+        return await self._classify_with_ollama(query)
 
     def _classify_heuristic(self, query: str) -> RouterDecision:
         """
