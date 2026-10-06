@@ -13,7 +13,7 @@ import { mockResumes, mockJobs } from "@/data/mockData"
 
 export function App() {
   const [activeResume, setActiveResume] = useState(null)
-  const [targetJobForCoach, setTargetJobForCoach] = useState(mockJobs[0])
+  const [targetJobForCoach, setTargetJobForCoach] = useState(null)
   const [isConnected, setIsConnected] = useState(false)
   const [isChatOpen, setIsChatOpen] = useState(false)
   const navigate = useNavigate()

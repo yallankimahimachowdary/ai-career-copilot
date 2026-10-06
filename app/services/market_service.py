@@ -10,6 +10,7 @@ without network access.
 
 import json
 import re
+import time
 from collections import Counter, defaultdict
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -52,6 +53,15 @@ _HOURS_PER_YEAR: float = 2080.0
 
 # Minimum sample size to trust salary statistics
 _MIN_SALARY_SAMPLE: int = 3
+
+# In-memory narrative cache: cache_key -> (timestamp, narrative_text)
+_NARRATIVE_CACHE: Dict[str, Tuple[float, str]] = {}
+_CACHE_TTL_SECONDS: float = 600.0  # 10 minutes
+
+
+def clear_narrative_cache() -> None:
+    """Clear in-memory narrative cache (useful in tests)."""
+    _NARRATIVE_CACHE.clear()
 
 
 # ---------------------------------------------------------------------------
@@ -882,6 +892,18 @@ class MarketAgent:
         except json.JSONDecodeError:
             pass
 
+        # Handle unclosed or truncated JSON string from local LLM (e.g. num_predict cutoff)
+        match_str = re.search(
+            r'"(?:narrative|insight|insights|summary|overview|market_narrative)":\s*"([^"\\]*(?:\\.[^"\\]*)*)',
+            cleaned,
+        )
+        if match_str:
+            extracted_text = (
+                match_str.group(1).replace('\\"', '"').replace('\\n', '\n').strip()
+            )
+            if len(extracted_text.split()) >= 15:
+                return {"narrative": extracted_text}
+
         match = re.search(r"(\{.*\})", cleaned, re.DOTALL)
         if match:
             candidate = match.group(1).strip()
@@ -893,46 +915,54 @@ class MarketAgent:
 
         raise ValueError(f"Could not extract valid JSON from response: {text_content[:200]}")
 
-    async def _ollama_narrative(self, mode: str, data: Dict[str, Any], max_attempts: int = 2) -> str:
+    async def _ollama_narrative(self, mode: str, data: Dict[str, Any], max_attempts: int = 1) -> str:
         """Generate a market narrative via Ollama (with backwards compatibility for tests)."""
         if not self.gemini_key or not self.ollama_base_url:
             return ""
+
+        # Check in-memory cache for fast response and concurrency deduplication
+        cache_key = f"{mode}:{json.dumps(data, sort_keys=True)}"
+        now = time.time()
+        if cache_key in _NARRATIVE_CACHE:
+            ts, cached_narrative = _NARRATIVE_CACHE[cache_key]
+            if now - ts < _CACHE_TTL_SECONDS:
+                return cached_narrative
 
         instruction = (
             "Requirements:\n"
             "- Write in clear, professional, plain prose paragraphs (no markdown headings, bold labels, bullet points, asterisks, or lists).\n"
             "- Do NOT output any internal drafting thoughts, outlines, preambles, or labels such as 'Drafting:', 'Notes:', or 'Analysis:'.\n"
-            "- Return ONLY valid JSON matching: {\"narrative\": \"paragraph 1...\\n\\nparagraph 2...\"}"
+            "- Return ONLY valid JSON matching: {\"narrative\": \"concise paragraph 1...\\n\\nconcise paragraph 2...\"}"
         )
 
         prompts = {
             "salary": (
-                "You are a professional labor market analyst. Write a concise, cohesive 2-paragraph salary "
-                "market insight for job seekers and hiring managers based on this data:\n"
+                "You are a professional labor market analyst. Write a concise, cohesive 1-2 paragraph salary "
+                "market insight (under 100 words) for job seekers based on this data:\n"
                 f"{json.dumps(data, indent=2)}\n\n"
                 f"{instruction}"
             ),
             "skills": (
-                "You are a tech talent analyst. Write a concise, cohesive 2-paragraph skill-demand "
-                "insight based on this data:\n"
+                "You are a tech talent analyst. Write a concise, cohesive 1-2 paragraph skill-demand "
+                "insight (under 100 words) based on this data:\n"
                 f"{json.dumps(data, indent=2)}\n\n"
                 f"{instruction}"
             ),
             "heatmap": (
-                "You are a job market geographer. Write a concise, cohesive 2-paragraph location "
-                "demand insight based on this data:\n"
+                "You are a job market geographer. Write a concise, cohesive 1-2 paragraph location "
+                "demand insight (under 100 words) based on this data:\n"
                 f"{json.dumps(data, indent=2)}\n\n"
                 f"{instruction}"
             ),
             "overview": (
-                "You are a senior career advisor. Write a concise, cohesive 3-paragraph market overview "
-                "for a job seeker based on this role data:\n"
+                "You are a senior career advisor. Write a concise, cohesive 2-paragraph market overview "
+                "for a job seeker (under 120 words) based on this role data:\n"
                 f"{json.dumps(data, indent=2)}\n\n"
                 f"{instruction}"
             ),
             "positioning": (
-                "You are a career coach specialising in market positioning. Write a concise, cohesive 2-paragraph "
-                "personalised market positioning narrative for this candidate:\n"
+                "You are a career coach specialising in market positioning. Write a concise, cohesive 1-2 paragraph "
+                "personalised market positioning narrative (under 100 words) for this candidate:\n"
                 f"{json.dumps(data, indent=2)}\n\n"
                 f"{instruction}"
             ),
@@ -947,10 +977,11 @@ class MarketAgent:
             "format": "json",
             "options": {
                 "temperature": 0.0,
+                "num_predict": 160,
             },
         }
 
-        async with httpx.AsyncClient(timeout=120.0) as client:
+        async with httpx.AsyncClient(timeout=20.0) as client:
             for attempt in range(1, max_attempts + 1):
                 try:
                     resp = await client.post(url, json=payload)
@@ -1023,6 +1054,7 @@ class MarketAgent:
                         )
                         return ""
 
+                    _NARRATIVE_CACHE[cache_key] = (now, final_text)
                     return final_text
                 except Exception as exc:
                     logger.warning(f"Market narrative attempt {attempt}/{max_attempts} ({mode}) failed: {exc}")

@@ -6,7 +6,7 @@ import { coachApi } from "@/api/coachApi"
 import { jobApi } from "@/api/jobApi"
 import { mockJobs, mockSkillGapReport, mockQuestionBank } from "@/data/mockData"
 
-const generateFallbackSession = (resume, jobId, availableJobs = mockJobs) => {
+const generateFallbackSession = (resume, jobId, availableJobs = []) => {
   const candidateName =
     resume?.candidate_name ||
     resume?.parsed_data?.contact_info?.name ||
@@ -18,9 +18,15 @@ const generateFallbackSession = (resume, jobId, availableJobs = mockJobs) => {
     "SQL",
     "PostgreSQL",
   ]
-  const jobsPool = availableJobs && availableJobs.length > 0 ? availableJobs : mockJobs
+  const jobsPool = availableJobs && availableJobs.length > 0 ? availableJobs : []
   const targetJob =
-    jobsPool.find((j) => (j.job_id || j.id) === jobId) || jobsPool[0] || mockJobs[0]
+    jobsPool.find((j) => (j.job_id || j.id) === jobId) ||
+    jobsPool[0] || {
+      id: jobId || "pending-job",
+      title: "Software Engineer",
+      company_name: "Tech Employer",
+      skills: ["Python", "FastAPI", "AWS", "Docker"],
+    }
   const jobSkills = targetJob.skills || ["Python", "FastAPI", "AWS", "Docker"]
   const candidateSkillsLower = new Set(
     candidateSkills.map((s) => (typeof s === "string" ? s.toLowerCase() : ""))
@@ -58,7 +64,7 @@ const generateFallbackSession = (resume, jobId, availableJobs = mockJobs) => {
   return {
     skill_gap_report: {
       resume_id: resume?.id || "demo-resume",
-      job_id: targetJob.id,
+      job_id: targetJob.id || targetJob.job_id,
       job_title: targetJob.title,
       company_name: targetJob.company_name,
       candidate_name: candidateName,
@@ -87,7 +93,7 @@ const generateFallbackSession = (resume, jobId, availableJobs = mockJobs) => {
     },
     question_bank: {
       resume_id: resume?.id || "demo-resume",
-      job_id: targetJob.id,
+      job_id: targetJob.id || targetJob.job_id,
       job_title: targetJob.title,
       candidate_name: candidateName,
       technical_questions: [
@@ -170,8 +176,10 @@ const generateFallbackSession = (resume, jobId, availableJobs = mockJobs) => {
 export function CoachPage({ activeResume, targetJob }) {
   const [searchParams] = useSearchParams()
   const jobIdFromQuery = searchParams.get("job_id")
-  const activeJobId = jobIdFromQuery || targetJob?.job_id || targetJob?.id || mockJobs[0].id
-  const [jobsList, setJobsList] = useState(mockJobs)
+  const [jobsList, setJobsList] = useState([])
+  const [selectedJobId, setSelectedJobId] = useState(
+    jobIdFromQuery || targetJob?.job_id || targetJob?.id || null
+  )
 
   // Fetch real jobs from backend on mount so dropdown has real DB jobs
   useEffect(() => {
@@ -180,6 +188,12 @@ export function CoachPage({ activeResume, targetJob }) {
         const jobs = await jobApi.listJobs({ limit: 20 })
         if (jobs && jobs.length > 0) {
           setJobsList(jobs)
+          setSelectedJobId((currentId) => {
+            if (currentId && jobs.some((j) => (j.job_id || j.id) === currentId)) {
+              return currentId
+            }
+            return jobs[0].job_id || jobs[0].id
+          })
         }
       } catch (e) {
         console.warn("Could not load real jobs for coach:", e)
@@ -188,8 +202,16 @@ export function CoachPage({ activeResume, targetJob }) {
     loadRealJobs()
   }, [])
 
+  // Sync when targetJob changes from outside (e.g. from Job Matches page)
+  useEffect(() => {
+    const externalId = jobIdFromQuery || targetJob?.job_id || targetJob?.id
+    if (externalId) {
+      setSelectedJobId(externalId)
+    }
+  }, [jobIdFromQuery, targetJob?.job_id, targetJob?.id])
+
   const [sessionData, setSessionData] = useState(() =>
-    generateFallbackSession(activeResume, activeJobId, mockJobs)
+    generateFallbackSession(activeResume, selectedJobId, jobsList)
   )
   const [isLoading, setIsLoading] = useState(false)
   const [isEvaluating, setIsEvaluating] = useState(false)
@@ -199,7 +221,7 @@ export function CoachPage({ activeResume, targetJob }) {
   const handleGenerateSession = async (jobId) => {
     const fallback = generateFallbackSession(activeResume, jobId, jobsList)
     setSessionData(fallback)
-    if (!activeResume?.id) return
+    if (!activeResume?.id || !jobId) return
 
     setIsLoading(true)
     setError(null)
@@ -222,12 +244,12 @@ export function CoachPage({ activeResume, targetJob }) {
 
   // Reactively synchronize coaching session with currently active profile & target job
   useEffect(() => {
-    if (activeResume?.id && activeJobId) {
-      handleGenerateSession(activeJobId)
+    if (activeResume?.id && selectedJobId) {
+      handleGenerateSession(selectedJobId)
     } else {
-      setSessionData(generateFallbackSession(activeResume, activeJobId, jobsList))
+      setSessionData(generateFallbackSession(activeResume, selectedJobId, jobsList))
     }
-  }, [activeResume?.id, activeResume?.candidate_name, activeJobId])
+  }, [activeResume?.id, activeResume?.candidate_name, selectedJobId])
 
   const handleEvaluateAnswer = async (payload) => {
     setIsEvaluating(true)
@@ -273,7 +295,8 @@ export function CoachPage({ activeResume, targetJob }) {
       <CoachDashboard
         activeResume={activeResume}
         matchedJobs={jobsList}
-        initialJobId={activeJobId}
+        initialJobId={selectedJobId}
+        onSelectJob={(id) => setSelectedJobId(id)}
         onGenerateSession={handleGenerateSession}
         onEvaluateAnswer={handleEvaluateAnswer}
         sessionData={sessionData}

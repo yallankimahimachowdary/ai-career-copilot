@@ -7,7 +7,7 @@ export const apiClient = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 60000, // 60s timeout for LLM inference calls
+  timeout: 90000, // 90s timeout for local LLM inference calls
 })
 
 // Interceptor for response handling

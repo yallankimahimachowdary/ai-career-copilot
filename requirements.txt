@@ -38,3 +38,7 @@ xgboost>=2.0.0
 shap>=0.44.0
 scikit-learn>=1.4.0
 
+# Web Scraping & Batch Scheduling
+beautifulsoup4>=4.12.0
+apscheduler>=3.10.0
+
