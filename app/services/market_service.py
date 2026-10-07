@@ -446,21 +446,23 @@ class MarketAgent:
             f"Based on {total} postings with {band.sample_size} salary record(s)."
         )
 
+        data_overview = {
+            "role": req.title_query,
+            "total": total,
+            "remote_pct": remote_pct,
+            "band": band.model_dump(),
+            "top_skills": [s.model_dump() for s in top_skills[:5]],
+            "top_companies": top_companies,
+        }
         narrative = await self._gemini_narrative(
             mode="overview",
-            data={
-                "role": req.title_query,
-                "total": total,
-                "remote_pct": remote_pct,
-                "band": band.model_dump(),
-                "top_skills": [s.model_dump() for s in top_skills[:5]],
-                "top_companies": top_companies,
-            },
+            data=data_overview,
         )
         if not narrative:
             narrative = _rule_based_overview_narrative(
                 req.title_query, total, remote_pct, band, top_skills
             )
+            _NARRATIVE_CACHE[f"overview:{json.dumps(data_overview, sort_keys=True)}"] = (time.time(), narrative)
 
         return RoleOverviewResponse(
             title_query=req.title_query,
@@ -981,7 +983,7 @@ class MarketAgent:
             },
         }
 
-        async with httpx.AsyncClient(timeout=20.0) as client:
+        async with httpx.AsyncClient(timeout=5.0) as client:
             for attempt in range(1, max_attempts + 1):
                 try:
                     resp = await client.post(url, json=payload)

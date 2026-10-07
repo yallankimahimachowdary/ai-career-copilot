@@ -40,33 +40,44 @@ export function MarketPage({ activeResume }) {
     const titleQuery = params.titleQuery || getCandidateDomainRole(activeResume)
 
     try {
-      // Step 1: Fetch RoleOverview first. It contains salary band, top skills, locations, and narrative in ~4s.
+      // Fetch comprehensive RoleOverview: aggregates salary band, top skills, locations, work types and narrative
       const overview = await marketApi.getRoleOverview({ titleQuery, location: params.location })
       if (requestId !== activeRequestIdRef.current) return
 
       if (overview) {
         setOverviewData(overview)
-        setIsLoading(false)
+        if (overview.salary_band) {
+          setSalaryData({
+            role_title: titleQuery,
+            location_filter: params.location,
+            salary_band: overview.salary_band,
+            top_paying_companies: (overview.top_companies || []).map((c) => ({
+              company_name: c,
+              median_salary: overview.salary_band?.median_annual || 0,
+              posting_count: 1,
+            })),
+            narrative: overview.narrative,
+            data_quality_note: overview.data_quality_note,
+          })
+        }
+        if (overview.top_skills) {
+          setSkillsData({
+            role_context: titleQuery,
+            total_postings_analysed: overview.total_postings,
+            skills: overview.top_skills,
+            narrative: overview.narrative,
+          })
+        }
+        if (overview.top_locations) {
+          setHeatmapData({
+            role_context: titleQuery,
+            total_postings_analysed: overview.total_postings,
+            locations: overview.top_locations,
+            hottest_market: overview.top_locations?.[0]?.location,
+            narrative: overview.narrative,
+          })
+        }
       }
-
-      // Step 2: Fetch deep-dive endpoints progressively so local Ollama is not congested concurrently
-      marketApi.getSalaryInsights({ titleQuery, location: params.location })
-        .then((res) => {
-          if (requestId === activeRequestIdRef.current && res) setSalaryData(res)
-        })
-        .catch((e) => console.warn("Salary insights progressive fetch notice:", e.message))
-
-      marketApi.getTrendingSkills({ titleQuery, location: params.location, topN: 10 })
-        .then((res) => {
-          if (requestId === activeRequestIdRef.current && res) setSkillsData(res)
-        })
-        .catch((e) => console.warn("Trending skills progressive fetch notice:", e.message))
-
-      marketApi.getDemandHeatmap({ titleQuery, topN: 10 })
-        .then((res) => {
-          if (requestId === activeRequestIdRef.current && res) setHeatmapData(res)
-        })
-        .catch((e) => console.warn("Demand heatmap progressive fetch notice:", e.message))
     } catch (err) {
       if (requestId !== activeRequestIdRef.current) return
       console.warn("Market API failed, falling back to cached baseline dataset:", err.message)
