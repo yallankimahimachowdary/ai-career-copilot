@@ -6,6 +6,7 @@ from app.api.v1.api import api_router
 from app.api.v1.endpoints.health import health_check
 from app.core.config import settings
 from app.core.logging import logger
+from app.db.neo4j import close_neo4j_driver, init_neo4j_schema
 from app.schemas.health import HealthCheckResponse
 
 
@@ -14,8 +15,14 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan events."""
     logger.info(f"Starting up {settings.PROJECT_NAME} (v{settings.VERSION})...")
     logger.info(f"Environment: {settings.ENVIRONMENT}")
+    # Initialize Neo4j graph schema constraints
+    try:
+        await init_neo4j_schema()
+    except Exception as exc:
+        logger.warning(f"Neo4j schema initialization skipped: {exc}")
     yield
     logger.info(f"Shutting down {settings.PROJECT_NAME}...")
+    await close_neo4j_driver()
 
 
 def create_application() -> FastAPI:

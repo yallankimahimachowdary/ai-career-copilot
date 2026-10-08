@@ -20,6 +20,7 @@ from app.schemas.resume import (
 )
 from app.services.embedding_service import embedding_service
 from app.services.extractor import ExtractionError, extract_text
+from app.services.graph_service import graph_service
 from app.services.parser_agent import parser_agent
 
 router = APIRouter()
@@ -114,6 +115,22 @@ async def upload_resume(
         if os.path.exists(file_path):
             os.remove(file_path)
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to persist resume to database.")
+
+    # 8. Sync Candidate and skills to Neo4j knowledge graph (non-blocking)
+    try:
+        cand_skills = list(parsed_resume.skills)
+        for proj in parsed_resume.projects:
+            for tech in getattr(proj, "technologies", []):
+                if tech and tech not in cand_skills:
+                    cand_skills.append(tech)
+        await graph_service.sync_candidate(
+            candidate_id=resume_record.id,
+            name=resume_record.candidate_name,
+            email=resume_record.email,
+            skills=cand_skills,
+        )
+    except Exception as ge:
+        logger.warning(f"Neo4j candidate sync non-blocking notice: {ge}")
 
     return ResumeUploadResponse(
         id=resume_record.id,
