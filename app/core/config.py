@@ -18,6 +18,11 @@ class Settings(BaseSettings):
     # Redis
     REDIS_URL: str = "redis://localhost:6379/0"
 
+    # Neo4j (Graph Database)
+    NEO4J_URI: str = "bolt://localhost:7687"
+    NEO4J_USER: str = "neo4j"
+    NEO4J_PASSWORD: str = "career_neo4j_2025"
+
     # CORS
     CORS_ORIGINS: Union[List[str], str] = [
         "http://localhost:3000",

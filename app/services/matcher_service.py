@@ -890,6 +890,17 @@ class MatcherAgent:
         for rank_idx, item in enumerate(top_matches, start=1):
             item.rank = rank_idx
 
+        # Record matches in Neo4j graph (non-blocking)
+        try:
+            from app.services.graph_service import graph_service
+            await graph_service.record_matches_for_resume(
+                resume_id=resume.id,
+                matches=top_matches,
+                db=db,
+            )
+        except Exception as ge:
+            logger.warning(f"Neo4j match recording notice: {ge}")
+
         return ResumeMatchResponse(
             resume_id=resume.id,
             candidate_name=resume.candidate_name,
@@ -980,6 +991,16 @@ class MatcherAgent:
         top_candidates = candidate_items[:limit]
         for rank_idx, item in enumerate(top_candidates, start=1):
             item.rank = rank_idx
+
+        # Record candidate matches in Neo4j graph (non-blocking)
+        try:
+            from app.services.graph_service import graph_service
+            await graph_service.record_job_candidate_matches(
+                job=job,
+                candidates=top_candidates,
+            )
+        except Exception as ge:
+            logger.warning(f"Neo4j job candidate match recording notice: {ge}")
 
         return JobCandidatesMatchResponse(
             job_id=job.id,

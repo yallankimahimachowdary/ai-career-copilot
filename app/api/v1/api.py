@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import health, resumes, job_postings, matches, coach, market, chat
+from app.api.v1.endpoints import health, resumes, job_postings, matches, coach, market, chat, graph
 
 api_router = APIRouter()
 
@@ -11,5 +11,6 @@ api_router.include_router(matches.router, prefix="/matches", tags=["Matches & Re
 api_router.include_router(coach.router, prefix="/coach", tags=["Interview Coach Agent"])
 api_router.include_router(market.router, prefix="/market", tags=["Market Intelligence Agent"])
 api_router.include_router(chat.router, prefix="/chat", tags=["Adaptive Intent Router & Chat"])
+api_router.include_router(graph.router, prefix="/graph", tags=["Knowledge Graph Agent"])
 
 
