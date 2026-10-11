@@ -207,7 +207,6 @@ export function CoachPage({ activeResume, targetJob }) {
   return (
     <PageContainer
       title="Interview Coach & Practice Terminal"
-      subtitle="3-step pipeline: Skill-gap diagnostics, curated questions, and rubric-based evaluation"
       badge="Coach Agent"
     >
       <CoachDashboard

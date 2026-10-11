@@ -93,23 +93,22 @@ export function ResumePage({ activeResume, setActiveResume, isConnected }) {
   return (
     <PageContainer
       title="Resume Ingestion & Parsing"
-      subtitle="Autonomous entity extraction, skill taxonomy mapping, and 1536-dimensional vectorization"
       badge="Parser Agent"
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Upload & History (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
-          <Card className="border-blue-500/30 shadow-xl">
+          <Card className="border-[#DDD6E7] shadow-xs">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <UploadCloud className="h-4 w-4 text-blue-400" />
+                <UploadCloud className="h-4 w-4 text-[#7A2D4A]" />
                 Upload Resume Document
               </CardTitle>
             </CardHeader>
             <CardContent>
               <ResumeUploader onUploadSuccess={handleUpload} isUploading={isUploading} />
               {uploadError && (
-                <p className="text-xs text-rose-400 mt-2 font-medium">{uploadError}</p>
+                <p className="text-xs text-rose-500 mt-2 font-medium">{uploadError}</p>
               )}
             </CardContent>
           </Card>
@@ -118,7 +117,7 @@ export function ResumePage({ activeResume, setActiveResume, isConnected }) {
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center justify-between">
                 <span className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-indigo-400" />
+                  <FileText className="h-4 w-4 text-[#7A2D4A]" />
                   Uploaded Profiles ({resumes.length})
                 </span>
               </CardTitle>

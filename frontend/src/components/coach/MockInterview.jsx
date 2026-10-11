@@ -71,20 +71,20 @@ export function MockInterview({
   return (
     <div className="space-y-6">
       {/* Question Prompt Terminal Card */}
-      <Card className="border-blue-500/40 bg-slate-950/80 shadow-2xl">
-        <CardHeader className="p-4 border-b border-slate-800 bg-slate-900/60">
+      <Card className="border-[#DDD6E7] bg-white shadow-md">
+        <CardHeader className="p-4 border-b border-[#DDD6E7] bg-[#FAF7F3]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Terminal className="h-4 w-4 text-blue-400" />
-              <span className="text-xs font-mono font-bold text-slate-300">
+              <Terminal className="h-4 w-4 text-[#7A2D4A]" />
+              <span className="text-xs font-mono font-bold text-[#3A3A52]">
                 Interactive Mock Interview Terminal
               </span>
               <Badge variant="primary" className="text-[10px]">
                 {question.target_skill}
               </Badge>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-slate-400 font-mono">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <div className="flex items-center gap-1.5 text-xs text-[#5C5C7A] font-mono">
+              <span className="h-2 w-2 rounded-full bg-emerald-600 animate-pulse" />
               <span>Target Role: {jobContext}</span>
             </div>
           </div>
@@ -93,20 +93,20 @@ export function MockInterview({
         <CardContent className="p-6 space-y-6">
           {/* Question Text Box */}
           <div className="space-y-2">
-            <div className="text-[11px] font-mono uppercase tracking-wider text-blue-400 font-semibold">
+            <div className="text-[11px] font-mono uppercase tracking-wider text-[#7A2D4A] font-semibold">
               Interviewer Prompt ({question.id || "Question"}):
             </div>
-            <h3 className="text-lg font-bold text-white leading-relaxed">{question.question}</h3>
+            <h3 className="text-lg font-bold text-[#3A3A52] leading-relaxed">{question.question}</h3>
             {question.why_asked && (
-              <p className="text-xs text-slate-400 italic">Interviewer expectation: {question.why_asked}</p>
+              <p className="text-xs text-[#5C5C7A] italic">Interviewer expectation: {question.why_asked}</p>
             )}
           </div>
 
           {/* Answer Input Area */}
           <form onSubmit={handleSubmit} className="space-y-3">
-            <div className="flex items-center justify-between text-xs text-slate-400">
-              <span className="font-semibold text-slate-300">Your Practice Answer:</span>
-              <span className={`font-mono ${wordCount >= 40 ? "text-emerald-400" : "text-slate-400"}`}>
+            <div className="flex items-center justify-between text-xs text-[#5C5C7A]">
+              <span className="font-semibold text-[#3A3A52]">Your Practice Answer:</span>
+              <span className={`font-mono ${wordCount >= 40 ? "text-emerald-700 font-semibold" : "text-[#5C5C7A]"}`}>
                 Word count: {wordCount} (recommended: 60-150 words)
               </span>
             </div>
@@ -117,27 +117,27 @@ export function MockInterview({
               placeholder="Structure your answer clearly: state the direct solution, architectural trade-offs, and quantify your real-world experience (STAR method for behavioral)..."
               rows={6}
               disabled={isEvaluating}
-              className="font-sans text-sm leading-relaxed p-4 bg-slate-900/90 border-slate-800 focus:border-blue-500"
+              className="font-sans text-sm leading-relaxed p-4 bg-white border-[#DDD6E7] text-[#3A3A52] focus:border-[#7A2D4A]"
             />
 
             {errorMsg && (
-              <div className="flex items-center gap-2 text-xs text-rose-400">
+              <div className="flex items-center gap-2 text-xs text-red-700">
                 <AlertCircle className="h-3.5 w-3.5" />
                 <span>{errorMsg}</span>
               </div>
             )}
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
-              <div className="flex items-center gap-2 text-[11px] text-slate-400">
-                <Sparkles className="h-3.5 w-3.5 text-blue-400" />
+              <div className="flex items-center gap-2 text-[11px] text-[#5C5C7A]">
+                <Sparkles className="h-3.5 w-3.5 text-[#7A2D4A]" />
                 <span>Evaluated across Technical Accuracy, Depth, STAR Structure, and Specificity.</span>
               </div>
 
               <Button
                 type="submit"
-                variant="gradient"
+                variant="default"
                 disabled={isEvaluating || !currentAnswer.trim()}
-                className="shrink-0"
+                className="shrink-0 bg-[#7A2D4A] hover:bg-[#63233B] text-white"
               >
                 {isEvaluating ? (
                   <>

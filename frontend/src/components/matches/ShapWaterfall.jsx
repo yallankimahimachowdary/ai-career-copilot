@@ -14,7 +14,7 @@ import { Info } from "lucide-react"
 export function ShapWaterfall({ explanations = [] }) {
   if (!explanations || explanations.length === 0) {
     return (
-      <div className="p-6 text-center text-xs text-slate-400 border border-slate-800 rounded-xl bg-slate-900/30">
+      <div className="p-6 text-center text-xs text-[#5C5C7A] border border-[#DDD6E7] rounded-xl bg-white">
         No SHAP attribution values generated for this match.
       </div>
     )
@@ -33,13 +33,13 @@ export function ShapWaterfall({ explanations = [] }) {
     if (active && payload && payload.length) {
       const d = payload[0].payload
       return (
-        <div className="p-3 rounded-xl bg-slate-900 border border-slate-700 shadow-xl max-w-xs text-xs space-y-1 z-50">
-          <div className="flex items-center justify-between font-bold text-white">
+        <div className="p-3 rounded-xl bg-white border border-[#DDD6E7] shadow-lg max-w-xs text-xs space-y-1 z-50">
+          <div className="flex items-center justify-between font-bold text-[#3A3A52]">
             <span>{d.name}</span>
-            <span className={d.isPositive ? "text-emerald-400" : "text-rose-400"}>{d.impact}</span>
+            <span className={d.isPositive ? "text-emerald-700" : "text-red-700"}>{d.impact}</span>
           </div>
-          <p className="text-slate-300 leading-relaxed">{d.description}</p>
-          <div className="text-[10px] text-slate-400 font-mono pt-1">SHAP value: {d.shap}</div>
+          <p className="text-[#5C5C7A] leading-relaxed">{d.description}</p>
+          <div className="text-[10px] text-[#5C5C7A] font-mono pt-1">SHAP value: {d.shap}</div>
         </div>
       )
     }
@@ -48,22 +48,22 @@ export function ShapWaterfall({ explanations = [] }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between text-xs text-slate-400">
-        <span className="flex items-center gap-1.5 font-medium text-slate-300">
-          <Info className="h-3.5 w-3.5 text-blue-400" />
+      <div className="flex items-center justify-between text-xs text-[#5C5C7A]">
+        <span className="flex items-center gap-1.5 font-medium text-[#3A3A52]">
+          <Info className="h-3.5 w-3.5 text-[#7A2D4A]" />
           TreeSHAP Local Feature Attribution
         </span>
         <div className="flex items-center gap-3 text-[11px]">
           <span className="flex items-center gap-1">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" /> Positive Fit Drivers
+            <span className="h-2 w-2 rounded-full bg-emerald-600" /> Positive Fit Drivers
           </span>
           <span className="flex items-center gap-1">
-            <span className="h-2 w-2 rounded-full bg-rose-500" /> Missing Requirement Penalties
+            <span className="h-2 w-2 rounded-full bg-red-600" /> Missing Requirement Penalties
           </span>
         </div>
       </div>
 
-      <div className="h-64 w-full bg-slate-950/40 rounded-xl p-2 border border-slate-800/80">
+      <div className="h-64 w-full bg-white rounded-xl p-2 border border-[#DDD6E7]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={data}
@@ -73,25 +73,25 @@ export function ShapWaterfall({ explanations = [] }) {
             <XAxis
               type="number"
               domain={["auto", "auto"]}
-              tick={{ fill: "#94a3b8", fontSize: 11 }}
+              tick={{ fill: "#5C5C7A", fontSize: 11 }}
               tickLine={false}
-              axisLine={{ stroke: "#334155" }}
+              axisLine={{ stroke: "#DDD6E7" }}
             />
             <YAxis
               type="category"
               dataKey="name"
-              tick={{ fill: "#cbd5e1", fontSize: 11 }}
+              tick={{ fill: "#3A3A52", fontSize: 11 }}
               tickLine={false}
-              axisLine={{ stroke: "#334155" }}
+              axisLine={{ stroke: "#DDD6E7" }}
               width={100}
             />
             <Tooltip content={<CustomTooltip />} />
-            <ReferenceLine x={0} stroke="#475569" strokeDasharray="3 3" />
+            <ReferenceLine x={0} stroke="#DDD6E7" strokeDasharray="3 3" />
             <Bar dataKey="shap" radius={[4, 4, 4, 4]}>
               {data.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
-                  fill={entry.isPositive ? "#10b981" : "#f43f5e"}
+                  fill={entry.isPositive ? "#059669" : "#DC2626"}
                   fillOpacity={0.85}
                 />
               ))}
@@ -105,20 +105,20 @@ export function ShapWaterfall({ explanations = [] }) {
         {explanations.map((exp, idx) => (
           <div
             key={idx}
-            className="flex items-start gap-2.5 p-2.5 rounded-lg bg-slate-800/40 border border-slate-800/60 text-xs"
+            className="flex items-start gap-2.5 p-2.5 rounded-lg bg-[#FAF7F3] border border-[#DDD6E7] text-xs"
           >
             <span
               className={`font-mono font-bold px-1.5 py-0.5 rounded text-[10px] shrink-0 mt-0.5 ${
                 exp.shap_value >= 0
-                  ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-                  : "bg-rose-500/20 text-rose-300 border border-rose-500/30"
+                  ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                  : "bg-red-50 text-red-700 border border-red-200"
               }`}
             >
               {exp.impact || (exp.shap_value >= 0 ? `+${(exp.shap_value * 100).toFixed(1)}%` : `${(exp.shap_value * 100).toFixed(1)}%`)}
             </span>
             <div className="space-y-0.5">
-              <span className="font-semibold text-slate-200">{exp.display_name}: </span>
-              <span className="text-slate-400">{exp.description}</span>
+              <span className="font-semibold text-[#3A3A52]">{exp.display_name}: </span>
+              <span className="text-[#5C5C7A]">{exp.description}</span>
             </div>
           </div>
         ))}

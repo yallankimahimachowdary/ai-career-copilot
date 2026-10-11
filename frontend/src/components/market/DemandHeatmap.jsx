@@ -16,7 +16,7 @@ import { formatCurrency } from "@/lib/utils"
 export function DemandHeatmap({ locations = [], hottestMarket, narrative }) {
   if (!locations || locations.length === 0) {
     return (
-      <div className="p-8 text-center text-xs text-slate-400 border border-slate-800 rounded-xl bg-slate-900/30">
+      <div className="p-8 text-center text-xs text-[#5C5C7A] border border-[#DDD6E7] rounded-xl bg-white">
         No location demand data available for this query.
       </div>
     )
@@ -34,17 +34,17 @@ export function DemandHeatmap({ locations = [], hottestMarket, narrative }) {
     if (active && payload && payload.length) {
       const d = payload[0].payload
       return (
-        <div className="p-3 rounded-xl bg-slate-900 border border-slate-700 shadow-xl text-xs space-y-1">
-          <div className="font-bold text-white">{d.name}</div>
-          <div className="text-blue-400 font-mono">
+        <div className="p-3 rounded-xl bg-white border border-[#DDD6E7] shadow-lg text-xs space-y-1">
+          <div className="font-bold text-[#3A3A52]">{d.name}</div>
+          <div className="text-[#7A2D4A] font-mono">
             {d.count} job postings ({d.percentage}%)
           </div>
           {d.salary && (
-            <div className="text-emerald-400 font-mono">
+            <div className="text-emerald-800 font-mono">
               Avg Salary: {formatCurrency(d.salary)} / yr
             </div>
           )}
-          <div className="text-slate-400">Remote Percentage: {d.remote}%</div>
+          <div className="text-[#5C5C7A]">Remote Percentage: {d.remote}%</div>
         </div>
       )
     }
@@ -55,25 +55,25 @@ export function DemandHeatmap({ locations = [], hottestMarket, narrative }) {
     <div className="space-y-6">
       {/* Top Callout Banner */}
       {hottestMarket && (
-        <div className="flex items-center justify-between p-4 rounded-xl bg-rose-950/20 border border-rose-500/30 text-xs">
-          <div className="flex items-center gap-2 text-rose-300">
-            <Flame className="h-4 w-4 text-rose-400 shrink-0" />
+        <div className="flex items-center justify-between p-4 rounded-xl bg-[#EDE7F6] border border-[#DDD6E7] text-xs">
+          <div className="flex items-center gap-2 text-[#7A2D4A]">
+            <Flame className="h-4 w-4 text-[#7A2D4A] shrink-0" />
             <span>
-              Highest Concentration Market: <strong className="text-white">{hottestMarket}</strong>
+              Highest Concentration Market: <strong className="text-[#3A3A52]">{hottestMarket}</strong>
             </span>
           </div>
-          <Badge variant="danger" className="text-[10px]">
+          <Badge variant="primary" className="text-[10px]">
             Hottest Hub
           </Badge>
         </div>
       )}
 
       {/* Location Volume Chart */}
-      <Card>
+      <Card className="border-[#DDD6E7] bg-white">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-blue-400" />
+            <CardTitle className="text-base flex items-center gap-2 text-[#3A3A52]">
+              <MapPin className="h-4 w-4 text-[#7A2D4A]" />
               Geographic Concentration of Opportunities
             </CardTitle>
           </div>
@@ -88,24 +88,24 @@ export function DemandHeatmap({ locations = [], hottestMarket, narrative }) {
               >
                 <XAxis
                   type="number"
-                  tick={{ fill: "#94a3b8", fontSize: 11 }}
+                  tick={{ fill: "#5C5C7A", fontSize: 11 }}
                   tickLine={false}
-                  axisLine={{ stroke: "#334155" }}
+                  axisLine={{ stroke: "#DDD6E7" }}
                 />
                 <YAxis
                   type="category"
                   dataKey="name"
-                  tick={{ fill: "#cbd5e1", fontSize: 11 }}
+                  tick={{ fill: "#3A3A52", fontSize: 11 }}
                   tickLine={false}
-                  axisLine={{ stroke: "#334155" }}
+                  axisLine={{ stroke: "#DDD6E7" }}
                   width={100}
                 />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="count" fill="#3b82f6" radius={[0, 6, 6, 0]}>
+                <Bar dataKey="count" fill="#7A2D4A" radius={[0, 6, 6, 0]}>
                   {chartData.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
-                      fill={index === 0 ? "#f43f5e" : index < 3 ? "#3b82f6" : "#6366f1"}
+                      fill={index === 0 ? "#7A2D4A" : index < 3 ? "#5C5C7A" : "#8B8BA3"}
                     />
                   ))}
                 </Bar>
@@ -120,22 +120,22 @@ export function DemandHeatmap({ locations = [], hottestMarket, narrative }) {
         {locations.slice(0, 6).map((loc, idx) => (
           <div
             key={idx}
-            className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2"
+            className="p-3.5 rounded-xl bg-white border border-[#DDD6E7] space-y-2 shadow-sm"
           >
             <div className="flex items-center justify-between">
-              <span className="font-semibold text-white text-sm truncate">{loc.location}</span>
-              <span className="text-xs font-mono text-blue-400 font-bold">{loc.percentage}%</span>
+              <span className="font-semibold text-[#3A3A52] text-sm truncate">{loc.location}</span>
+              <span className="text-xs font-mono text-[#7A2D4A] font-bold">{loc.percentage}%</span>
             </div>
-            <div className="flex items-center justify-between text-xs text-slate-400 pt-1 border-t border-slate-800/60">
+            <div className="flex items-center justify-between text-xs text-[#5C5C7A] pt-1 border-t border-[#DDD6E7]">
               <span>Avg: {formatCurrency(loc.avg_annual_salary)}</span>
-              <span className="text-emerald-400">{loc.remote_pct}% Remote</span>
+              <span className="text-emerald-700 font-medium">{loc.remote_pct}% Remote</span>
             </div>
           </div>
         ))}
       </div>
 
       {narrative && (
-        <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-300 leading-relaxed">
+        <div className="p-4 rounded-xl bg-[#EDE7F6] border border-[#DDD6E7] text-xs text-[#3A3A52] leading-relaxed">
           <p>{narrative}</p>
         </div>
       )}

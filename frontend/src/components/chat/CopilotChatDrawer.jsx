@@ -25,7 +25,7 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
       router_decision: {
         intent: "JOB_SEARCH_AND_MATCH",
         strategy_selected: "Adaptive Intent Router Ready",
-        confidence: 1.0,
+        confidence: null,
       },
       suggested_followups: [
         "What are the highest paying roles in my tech stack?",
@@ -142,13 +142,13 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
   const getIntentColor = (intent) => {
     switch (intent) {
       case "MACRO_MARKET_DYNAMICS":
-        return "text-emerald-400 bg-emerald-500/10 border-emerald-500/30"
+        return "text-emerald-800 bg-emerald-50 border-emerald-200"
       case "INTERVIEW_COACHING":
-        return "text-purple-400 bg-purple-500/10 border-purple-500/30"
+        return "text-[#7A2D4A] bg-[#EDE7F6] border-[#DDD6E7]"
       case "SKILL_PROGRESSION_AND_PATH":
-        return "text-amber-400 bg-amber-500/10 border-amber-500/30"
+        return "text-amber-800 bg-amber-50 border-amber-200"
       default:
-        return "text-blue-400 bg-blue-500/10 border-blue-500/30"
+        return "text-[#3A3A52] bg-[#FAF7F3] border-[#DDD6E7]"
     }
   }
 
@@ -156,43 +156,43 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
     return (
       <button
         onClick={onToggle}
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-sm shadow-2xl shadow-blue-500/40 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer border border-blue-400/30"
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-full bg-[#7A2D4A] hover:bg-[#63233B] text-white font-semibold text-sm shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer border border-[#63233B]"
       >
-        <Sparkles className="h-4 w-4 animate-spin text-cyan-300" />
-        <span>Ask Copilot (Adaptive Router)</span>
+        <Sparkles className="h-4 w-4 animate-spin text-white" />
+        <span>Ask Copilot</span>
       </button>
     )
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-full max-w-lg h-[620px] max-h-[85vh] rounded-2xl border border-slate-700/80 bg-slate-950/95 backdrop-blur-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 text-slate-100">
+    <div className="fixed bottom-6 right-6 z-50 w-full max-w-lg h-[620px] max-h-[85vh] rounded-2xl border border-[#DDD6E7] bg-white shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 text-[#3A3A52]">
       {/* Header */}
-      <div className="p-4 border-b border-slate-800 bg-slate-900/80 flex items-center justify-between">
+      <div className="p-4 border-b border-[#DDD6E7] bg-[#FAF7F3] flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/30">
+          <div className="h-9 w-9 rounded-xl bg-[#7A2D4A] flex items-center justify-center text-white shadow-sm">
             <Bot className="h-5 w-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-sm text-white">AI Career Copilot</span>
-              <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">
+              <span className="font-bold text-sm text-[#3A3A52]">AI Career Copilot</span>
+              <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#EDE7F6] text-[#7A2D4A] border border-[#DDD6E7]">
                 Adaptive RAG
               </span>
             </div>
-            <p className="text-[11px] text-slate-400">Autonomous Intent Routing & Multi-Agent Assistant</p>
+            <p className="text-[11px] text-[#5C5C7A]">Autonomous Intent Routing & Multi-Agent Assistant</p>
           </div>
         </div>
 
         <button
           onClick={onToggle}
-          className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors cursor-pointer"
+          className="p-1.5 rounded-lg text-[#5C5C7A] hover:bg-[#EDE7F6] hover:text-[#3A3A52] transition-colors cursor-pointer"
         >
           <X className="h-5 w-5" />
         </button>
       </div>
 
       {/* Messages Scroll Area */}
-      <div className="flex-1 p-4 overflow-y-auto space-y-4 text-xs">
+      <div className="flex-1 p-4 overflow-y-auto space-y-4 text-xs bg-[#FAF7F3]">
         {messages.map((m, idx) => (
           <div
             key={idx}
@@ -216,20 +216,100 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
             )}
 
             <div
-              className={`p-3.5 rounded-2xl max-w-[88%] leading-relaxed whitespace-pre-line ${
+              className={`p-3.5 rounded-2xl max-w-[88%] leading-relaxed ${
                 m.role === "user"
-                  ? "bg-blue-600 text-white rounded-br-none shadow-md shadow-blue-950/40"
-                  : "bg-slate-900/90 text-slate-200 border border-slate-800 rounded-bl-none shadow-sm"
+                  ? "bg-[#7A2D4A] text-white rounded-br-none shadow-sm whitespace-pre-line"
+                  : "bg-white text-[#3A3A52] border border-[#DDD6E7] rounded-bl-none shadow-sm space-y-2"
               }`}
             >
-              {m.content}
+              {m.role === "user" ? (
+                m.content
+              ) : (
+                <div className="space-y-1.5 leading-relaxed text-xs">
+                  {m.content.split("\n\n").map((block, bIdx) => {
+                    const trimmed = block.trim()
+                    if (!trimmed) return null
+                    if (trimmed.startsWith("### ")) {
+                      return (
+                        <h4 key={bIdx} className="font-bold text-sm text-[#7A2D4A] pt-1">
+                          {trimmed.replace(/^###\s+/, "")}
+                        </h4>
+                      )
+                    }
+                    if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
+                      const items = trimmed.split("\n").filter(Boolean)
+                      return (
+                        <ul key={bIdx} className="list-disc list-inside space-y-1 pl-1 text-[#3A3A52]">
+                          {items.map((item, iIdx) => {
+                            const clean = item.replace(/^[-*]\s+/, "")
+                            // parse **bold**
+                            const parts = clean.split(/(\*\*[^*]+\*\*)/g)
+                            return (
+                              <li key={iIdx}>
+                                {parts.map((p, pIdx) =>
+                                  p.startsWith("**") && p.endsWith("**") ? (
+                                    <strong key={pIdx} className="font-semibold text-[#7A2D4A]">
+                                      {p.slice(2, -2)}
+                                    </strong>
+                                  ) : (
+                                    p
+                                  )
+                                )}
+                              </li>
+                            )
+                          })}
+                        </ul>
+                      )
+                    }
+                    if (/^\d+\.\s+/.test(trimmed)) {
+                      const items = trimmed.split("\n").filter(Boolean)
+                      return (
+                        <ol key={bIdx} className="list-decimal list-inside space-y-1 pl-1 text-[#3A3A52]">
+                          {items.map((item, iIdx) => {
+                            const clean = item.replace(/^\d+\.\s+/, "")
+                            const parts = clean.split(/(\*\*[^*]+\*\*)/g)
+                            return (
+                              <li key={iIdx}>
+                                {parts.map((p, pIdx) =>
+                                  p.startsWith("**") && p.endsWith("**") ? (
+                                    <strong key={pIdx} className="font-semibold text-[#7A2D4A]">
+                                      {p.slice(2, -2)}
+                                    </strong>
+                                  ) : (
+                                    p
+                                  )
+                                )}
+                              </li>
+                            )
+                          })}
+                        </ol>
+                      )
+                    }
+                    // Regular paragraph with bold support
+                    const parts = trimmed.split(/(\*\*[^*]+\*\*)/g)
+                    return (
+                      <p key={bIdx}>
+                        {parts.map((p, pIdx) =>
+                          p.startsWith("**") && p.endsWith("**") ? (
+                            <strong key={pIdx} className="font-semibold text-[#3A3A52]">
+                              {p.slice(2, -2)}
+                            </strong>
+                          ) : (
+                            p
+                          )
+                        )}
+                      </p>
+                    )
+                  })}
+                </div>
+              )}
             </div>
 
             {/* Actionable Recommendations */}
             {m.actionable_recommendations && m.actionable_recommendations.length > 0 && (
-              <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-[11px] space-y-1 max-w-[88%]">
-                <span className="font-semibold text-slate-300 block">Actionable Next Steps:</span>
-                <ul className="list-disc list-inside space-y-0.5 text-slate-400">
+              <div className="p-3 rounded-xl bg-white border border-[#DDD6E7] text-[11px] space-y-1 max-w-[88%] shadow-sm">
+                <span className="font-semibold text-[#3A3A52] block">Actionable Next Steps:</span>
+                <ul className="list-disc list-inside space-y-0.5 text-[#5C5C7A]">
                   {m.actionable_recommendations.map((rec, rIdx) => (
                     <li key={rIdx}>{rec}</li>
                   ))}
@@ -244,7 +324,7 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
                   <button
                     key={fIdx}
                     onClick={() => handleSend(fu)}
-                    className="flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors border border-slate-700/60 cursor-pointer"
+                    className="flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-full bg-white hover:bg-[#EDE7F6] text-[#3A3A52] hover:text-[#7A2D4A] transition-colors border border-[#DDD6E7] cursor-pointer shadow-xs"
                   >
                     <span>{fu}</span>
                     <ArrowRight className="h-2.5 w-2.5 opacity-60" />
@@ -256,8 +336,8 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
         ))}
 
         {isLoading && (
-          <div className="flex items-center gap-2 p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-xs text-slate-400 w-fit">
-            <Loader2 className="h-3.5 w-3.5 animate-spin text-blue-400" />
+          <div className="flex items-center gap-2 p-3 rounded-xl bg-white border border-[#DDD6E7] text-xs text-[#5C5C7A] w-fit shadow-xs">
+            <Loader2 className="h-3.5 w-3.5 animate-spin text-[#7A2D4A]" />
             <span>Evaluating query semantics & executing strategy...</span>
           </div>
         )}
@@ -266,7 +346,7 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
       </div>
 
       {/* Input Bar */}
-      <div className="p-3 border-t border-slate-800 bg-slate-900/90">
+      <div className="p-3 border-t border-[#DDD6E7] bg-white">
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -278,15 +358,15 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
             value={inputQuery}
             onChange={(e) => setInputQuery(e.target.value)}
             placeholder="Ask about jobs, skill gaps, interview practice, salaries..."
-            className="text-xs h-9 bg-slate-950 border-slate-800 focus:border-blue-500"
+            className="text-xs h-9 bg-white border-[#DDD6E7] text-[#3A3A52] focus:border-[#7A2D4A]"
             disabled={isLoading}
           />
           <Button
             type="submit"
             size="sm"
-            variant="gradient"
+            variant="default"
             disabled={isLoading || !inputQuery.trim()}
-            className="h-9 px-3 shrink-0"
+            className="h-9 px-3 shrink-0 bg-[#7A2D4A] hover:bg-[#63233B] text-white"
           >
             <Send className="h-3.5 w-3.5" />
           </Button>

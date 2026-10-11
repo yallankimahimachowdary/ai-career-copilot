@@ -171,7 +171,6 @@ export function MarketPage({ activeResume }) {
   return (
     <PageContainer
       title="Labor Market Intelligence"
-      subtitle={subtitleText}
       badge="Market Agent"
     >
       <MarketDashboard

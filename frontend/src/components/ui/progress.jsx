@@ -7,14 +7,14 @@ export function Progress({ value = 0, max = 100, className, indicatorClassName, 
   return (
     <div className="w-full space-y-1">
       {showLabel && (
-        <div className="flex justify-between text-xs text-slate-400">
+        <div className="flex justify-between text-xs text-[#5C5C7A]">
           <span>Progress</span>
           <span>{Math.round(percentage)}%</span>
         </div>
       )}
-      <div className={cn("relative h-2 w-full overflow-hidden rounded-full bg-slate-800", className)}>
+      <div className={cn("relative h-2 w-full overflow-hidden rounded-full bg-[#EDE7F6]", className)}>
         <div
-          className={cn("h-full bg-blue-600 transition-all duration-500 rounded-full", indicatorClassName)}
+          className={cn("h-full bg-[#7A2D4A] transition-all duration-500 rounded-full", indicatorClassName)}
           style={{ width: `${percentage}%` }}
         />
       </div>
@@ -22,7 +22,7 @@ export function Progress({ value = 0, max = 100, className, indicatorClassName, 
   )
 }
 
-export function CircularProgress({ value = 0, size = 64, strokeWidth = 6, label, sublabel, color = "#3b82f6" }) {
+export function CircularProgress({ value = 0, size = 64, strokeWidth = 6, label, sublabel, color = "#7A2D4A" }) {
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius
   const strokeDashoffset = circumference - (value / 100) * circumference
@@ -36,7 +36,7 @@ export function CircularProgress({ value = 0, size = 64, strokeWidth = 6, label,
           r={radius}
           stroke="currentColor"
           strokeWidth={strokeWidth}
-          className="text-slate-800"
+          className="text-[#EDE7F6]"
           fill="transparent"
         />
         <circle
@@ -53,8 +53,8 @@ export function CircularProgress({ value = 0, size = 64, strokeWidth = 6, label,
         />
       </svg>
       <div className="absolute flex flex-col items-center justify-center text-center">
-        <span className="text-sm font-bold text-white">{label || `${Math.round(value)}%`}</span>
-        {sublabel && <span className="text-[10px] text-slate-400 leading-tight">{sublabel}</span>}
+        <span className="text-sm font-bold text-[#3A3A52]">{label || `${Math.round(value)}%`}</span>
+        {sublabel && <span className="text-[10px] text-[#5C5C7A] leading-tight">{sublabel}</span>}
       </div>
     </div>
   )

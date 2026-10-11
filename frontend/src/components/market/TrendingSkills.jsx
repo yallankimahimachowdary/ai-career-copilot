@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge"
 export function TrendingSkills({ skills = [], totalPostings = 0, narrative }) {
   if (!skills || skills.length === 0) {
     return (
-      <div className="p-8 text-center text-xs text-slate-400 border border-slate-800 rounded-xl bg-slate-900/30">
+      <div className="p-8 text-center text-xs text-[#5C5C7A] border border-[#DDD6E7] rounded-xl bg-white">
         No skill demand trends found for this query.
       </div>
     )
@@ -43,12 +43,12 @@ export function TrendingSkills({ skills = [], totalPostings = 0, narrative }) {
     if (active && payload && payload.length) {
       const d = payload[0].payload
       return (
-        <div className="p-3 rounded-xl bg-slate-900 border border-slate-700 shadow-xl text-xs space-y-1">
-          <div className="font-bold text-white">{d.name}</div>
-          <div className="text-blue-400 font-mono">
+        <div className="p-3 rounded-xl bg-white border border-[#DDD6E7] shadow-lg text-xs space-y-1">
+          <div className="font-bold text-[#3A3A52]">{d.name}</div>
+          <div className="text-[#7A2D4A] font-mono font-semibold">
             {d.count} job postings ({d.percentage}%)
           </div>
-          <div className="text-slate-400 capitalize">Demand Signal: {d.signal}</div>
+          <div className="text-[#5C5C7A] capitalize">Demand Signal: {d.signal}</div>
         </div>
       )
     }
@@ -57,14 +57,14 @@ export function TrendingSkills({ skills = [], totalPostings = 0, narrative }) {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="border-[#DDD6E7] bg-white">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Flame className="h-4 w-4 text-rose-400" />
+            <CardTitle className="text-base flex items-center gap-2 text-[#3A3A52]">
+              <Flame className="h-4 w-4 text-[#7A2D4A]" />
               Most In-Demand Skills & Technologies (Top 10)
             </CardTitle>
-            <span className="text-xs font-mono text-slate-400">
+            <span className="text-xs font-mono text-[#5C5C7A]">
               Aggregated across {totalPostings || "all"} postings
             </span>
           </div>
@@ -79,30 +79,30 @@ export function TrendingSkills({ skills = [], totalPostings = 0, narrative }) {
               >
                 <XAxis
                   type="number"
-                  tick={{ fill: "#94a3b8", fontSize: 11 }}
+                  tick={{ fill: "#5C5C7A", fontSize: 11 }}
                   tickLine={false}
-                  axisLine={{ stroke: "#334155" }}
+                  axisLine={{ stroke: "#DDD6E7" }}
                   unit="%"
                 />
                 <YAxis
                   type="category"
                   dataKey="name"
-                  tick={{ fill: "#cbd5e1", fontSize: 11 }}
+                  tick={{ fill: "#3A3A52", fontSize: 11 }}
                   tickLine={false}
-                  axisLine={{ stroke: "#334155" }}
+                  axisLine={{ stroke: "#DDD6E7" }}
                   width={80}
                 />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="percentage" fill="#3b82f6" radius={[0, 6, 6, 0]}>
+                <Bar dataKey="percentage" fill="#7A2D4A" radius={[0, 6, 6, 0]}>
                   {chartData.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={
-                        entry.signal === "high"
-                          ? "#3b82f6"
-                          : entry.signal === "moderate"
-                          ? "#8b5cf6"
-                          : "#64748b"
+                        index === 0
+                          ? "#7A2D4A" // Burgundy top skill
+                          : entry.signal === "high"
+                          ? "#5C5C7A" // Slate primary
+                          : "#8B8BA3" // Muted slate
                       }
                     />
                   ))}
@@ -120,11 +120,11 @@ export function TrendingSkills({ skills = [], totalPostings = 0, narrative }) {
           return (
             <div
               key={idx}
-              className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between"
+              className="p-3.5 rounded-xl bg-white border border-[#DDD6E7] flex items-center justify-between shadow-sm"
             >
               <div>
-                <span className="text-sm font-semibold text-white block">{s.skill}</span>
-                <span className="text-xs text-slate-400 font-mono">
+                <span className="text-sm font-semibold text-[#3A3A52] block">{s.skill}</span>
+                <span className="text-xs text-[#5C5C7A] font-mono">
                   {s.posting_count} postings ({s.percentage}%)
                 </span>
               </div>
@@ -137,7 +137,7 @@ export function TrendingSkills({ skills = [], totalPostings = 0, narrative }) {
       </div>
 
       {narrative && (
-        <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-300 leading-relaxed">
+        <div className="p-4 rounded-xl bg-[#EDE7F6] border border-[#DDD6E7] text-xs text-[#3A3A52] leading-relaxed">
           <p>{narrative}</p>
         </div>
       )}

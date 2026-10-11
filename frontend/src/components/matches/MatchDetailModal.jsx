@@ -46,25 +46,25 @@ export function MatchDetailModal({ match, resumeId, open, onOpenChange, onStartC
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pr-6">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-mono font-bold text-blue-400 uppercase tracking-wider">
+              <span className="text-xs font-mono font-bold text-[#7A2D4A] uppercase tracking-wider">
                 Rank #{match.rank || 1} Recommendation
               </span>
               {match.remote_allowed && (
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
                   Remote Allowed
                 </span>
               )}
             </div>
             <DialogTitle>{match.title}</DialogTitle>
-            <DialogDescription className="flex items-center gap-3 mt-1">
-              <span className="text-indigo-400 font-semibold">{match.company_name}</span>
+            <DialogDescription className="flex items-center gap-3 mt-1 text-[#5C5C7A]">
+              <span className="text-[#7A2D4A] font-semibold">{match.company_name}</span>
               {match.location && (
-                <span className="flex items-center gap-1 text-slate-400">
+                <span className="flex items-center gap-1 text-[#5C5C7A]">
                   <MapPin className="h-3 w-3" />
                   {match.location}
                 </span>
               )}
-              {match.work_type && <span className="text-slate-500">• {match.work_type}</span>}
+              {match.work_type && <span className="text-[#5C5C7A]">• {match.work_type}</span>}
             </DialogDescription>
           </div>
 
@@ -75,7 +75,7 @@ export function MatchDetailModal({ match, resumeId, open, onOpenChange, onStartC
               strokeWidth={6}
               label={`${fitPercent}%`}
               sublabel="Fit Score"
-              color={fitPercent >= 80 ? "#10b981" : fitPercent >= 60 ? "#3b82f6" : "#f59e0b"}
+              color={fitPercent >= 80 ? "#7A2D4A" : fitPercent >= 60 ? "#5C5C7A" : "#D97706"}
             />
           </div>
         </div>
@@ -84,27 +84,27 @@ export function MatchDetailModal({ match, resumeId, open, onOpenChange, onStartC
       <div className="mt-6 space-y-6">
         {/* Model Ensemble Confidence Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
-            <span className="text-[11px] text-slate-400 block">Final Fit Score</span>
-            <span className="text-lg font-bold text-emerald-400 font-mono">
+          <div className="p-3 rounded-xl bg-[#EDE7F6] border border-[#DDD6E7] text-center">
+            <span className="text-[11px] text-[#5C5C7A] block">Final Fit Score</span>
+            <span className="text-lg font-bold text-[#7A2D4A] font-mono">
               {formatPercent(match.final_score)}
             </span>
           </div>
-          <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
-            <span className="text-[11px] text-slate-400 block">XGBoost ML Score</span>
-            <span className="text-lg font-bold text-blue-400 font-mono">
+          <div className="p-3 rounded-xl bg-[#EDE7F6] border border-[#DDD6E7] text-center">
+            <span className="text-[11px] text-[#5C5C7A] block">XGBoost ML Score</span>
+            <span className="text-lg font-bold text-[#3A3A52] font-mono">
               {formatPercent(match.xgboost_score)}
             </span>
           </div>
-          <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
-            <span className="text-[11px] text-slate-400 block">Rule-Based Composite</span>
-            <span className="text-lg font-bold text-indigo-400 font-mono">
+          <div className="p-3 rounded-xl bg-[#EDE7F6] border border-[#DDD6E7] text-center">
+            <span className="text-[11px] text-[#5C5C7A] block">Rule-Based Composite</span>
+            <span className="text-lg font-bold text-[#3A3A52] font-mono">
               {formatPercent(match.composite_score)}
             </span>
           </div>
-          <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
-            <span className="text-[11px] text-slate-400 block">Vector Semantic Sim</span>
-            <span className="text-lg font-bold text-purple-400 font-mono">
+          <div className="p-3 rounded-xl bg-[#EDE7F6] border border-[#DDD6E7] text-center">
+            <span className="text-[11px] text-[#5C5C7A] block">Vector Semantic Sim</span>
+            <span className="text-lg font-bold text-[#7A2D4A] font-mono">
               {formatPercent(match.semantic_score)}
             </span>
           </div>
@@ -138,34 +138,34 @@ export function MatchDetailModal({ match, resumeId, open, onOpenChange, onStartC
           <TabsContent value="features" className="pt-2 space-y-4">
             <ScoreBreakdown features={features} />
 
-            <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 text-xs space-y-2">
-              <h4 className="font-semibold text-slate-200">Tabular Feature Vector Passed to XGBoost:</h4>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 text-slate-300 font-mono">
+            <div className="p-4 rounded-xl bg-[#F5F0FB] border border-[#DDD6E7] text-xs space-y-2">
+              <h4 className="font-semibold text-[#3A3A52]">Tabular Feature Vector Passed to XGBoost:</h4>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 text-[#3A3A52] font-mono">
                 <div>
-                  <span className="text-slate-500 block">Candidate Experience:</span>
-                  <span className="text-white">{features.candidate_years_experience || 0} yrs</span>
+                  <span className="text-[#5C5C7A] block">Candidate Experience:</span>
+                  <span className="text-[#3A3A52] font-semibold">{features.candidate_years_experience || 0} yrs</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">Job Required Experience:</span>
-                  <span className="text-white">{features.job_required_years || 0} yrs</span>
+                  <span className="text-[#5C5C7A] block">Job Required Experience:</span>
+                  <span className="text-[#3A3A52] font-semibold">{features.job_required_years || 0} yrs</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">Experience Deficit:</span>
-                  <span className={features.experience_deficit > 0 ? "text-rose-400" : "text-emerald-400"}>
+                  <span className="text-[#5C5C7A] block">Experience Deficit:</span>
+                  <span className={features.experience_deficit > 0 ? "text-red-700 font-semibold" : "text-emerald-700 font-semibold"}>
                     {features.experience_deficit || 0} yrs
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">Penalty Factor:</span>
-                  <span className="text-amber-400">{features.experience_penalty || 0}</span>
+                  <span className="text-[#5C5C7A] block">Penalty Factor:</span>
+                  <span className="text-amber-700 font-semibold">{features.experience_penalty || 0}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">Title Overlap Score:</span>
-                  <span className="text-blue-400">{formatPercent(features.title_similarity)}</span>
+                  <span className="text-[#5C5C7A] block">Title Overlap Score:</span>
+                  <span className="text-[#7A2D4A] font-semibold">{formatPercent(features.title_similarity)}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">Education Ordinal Level:</span>
-                  <span className="text-purple-400">{features.education_level_match || 1.0}</span>
+                  <span className="text-[#5C5C7A] block">Education Ordinal Level:</span>
+                  <span className="text-[#3A3A52] font-semibold">{features.education_level_match || 1.0}</span>
                 </div>
               </div>
             </div>
@@ -173,11 +173,11 @@ export function MatchDetailModal({ match, resumeId, open, onOpenChange, onStartC
         </Tabs>
 
         {/* Modal Action CTA */}
-        <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-slate-400">
+        <div className="pt-4 border-t border-[#DDD6E7] flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs text-[#5C5C7A]">
             Targeting this position? Practice tailored technical and behavioral questions.
           </p>
-          <Button variant="gradient" onClick={handleGoToCoach} className="w-full sm:w-auto">
+          <Button variant="default" onClick={handleGoToCoach} className="w-full sm:w-auto bg-[#7A2D4A] hover:bg-[#63233B] text-white">
             <GraduationCap className="h-4 w-4 mr-2" />
             Launch Interview Coach for this Role
           </Button>

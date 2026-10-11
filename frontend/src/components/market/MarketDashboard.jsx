@@ -55,30 +55,30 @@ export function MarketDashboard({
   return (
     <div className="space-y-6">
       {/* Search Header Bar */}
-      <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-md">
+      <Card className="border-[#DDD6E7] bg-white shadow-sm">
         <CardContent className="p-5">
           <form onSubmit={handleRunSearch} className="flex flex-col sm:flex-row items-center gap-3">
             <div className="relative flex-1 w-full">
-              <Search className="h-4 w-4 absolute left-3 top-3 text-slate-500" />
+              <Search className="h-4 w-4 absolute left-3 top-3 text-[#5C5C7A]" />
               <Input
                 placeholder="Target Job Title (e.g. Senior Backend Engineer, Data Scientist)..."
                 value={roleQuery}
                 onChange={(e) => setRoleQuery(e.target.value)}
-                className="pl-9"
+                className="pl-9 bg-white border-[#DDD6E7] text-[#3A3A52] focus:border-[#7A2D4A]"
               />
             </div>
 
             <div className="relative w-full sm:w-64">
-              <MapPin className="h-4 w-4 absolute left-3 top-3 text-slate-500" />
+              <MapPin className="h-4 w-4 absolute left-3 top-3 text-[#5C5C7A]" />
               <Input
                 placeholder="Location filter (optional)..."
                 value={locationQuery}
                 onChange={(e) => setLocationQuery(e.target.value)}
-                className="pl-9"
+                className="pl-9 bg-white border-[#DDD6E7] text-[#3A3A52] focus:border-[#7A2D4A]"
               />
             </div>
 
-            <Button type="submit" variant="gradient" disabled={isLoading} className="shrink-0 w-full sm:w-auto">
+            <Button type="submit" variant="default" disabled={isLoading} className="shrink-0 w-full sm:w-auto bg-[#7A2D4A] hover:bg-[#63233B] text-white">
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -96,9 +96,9 @@ export function MarketDashboard({
       </Card>
 
       {error && (
-        <div className="flex items-center justify-between p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-sm text-rose-300">
+        <div className="flex items-center justify-between p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
           <div className="flex items-center gap-3">
-            <AlertCircle className="h-5 w-5 shrink-0 text-rose-400" />
+            <AlertCircle className="h-5 w-5 shrink-0 text-red-600" />
             <div>
               <span className="font-semibold">Market Intelligence Agent Error: </span>
               <span>{error}</span>
@@ -107,7 +107,7 @@ export function MarketDashboard({
           <Button
             size="sm"
             variant="outline"
-            className="border-rose-500/30 text-rose-200 hover:bg-rose-500/20 shrink-0"
+            className="border-red-300 text-red-700 hover:bg-red-100 shrink-0"
             onClick={handleRunSearch}
           >
             Retry
@@ -119,58 +119,95 @@ export function MarketDashboard({
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid grid-cols-2 sm:grid-cols-5 w-full">
           <TabsTrigger value="overview" className="text-xs">
-            <PieChart className="h-3.5 w-3.5 mr-1.5 text-blue-400" />
+            <PieChart className="h-3.5 w-3.5 mr-1.5 text-[#7A2D4A]" />
             Role Overview
           </TabsTrigger>
           <TabsTrigger value="salary" className="text-xs">
-            <DollarSign className="h-3.5 w-3.5 mr-1.5 text-emerald-400" />
+            <DollarSign className="h-3.5 w-3.5 mr-1.5 text-[#7A2D4A]" />
             Salary Spectrum
           </TabsTrigger>
           <TabsTrigger value="skills" className="text-xs">
-            <Flame className="h-3.5 w-3.5 mr-1.5 text-rose-400" />
+            <Flame className="h-3.5 w-3.5 mr-1.5 text-[#7A2D4A]" />
             Skill Demand
           </TabsTrigger>
           <TabsTrigger value="heatmap" className="text-xs">
-            <MapPin className="h-3.5 w-3.5 mr-1.5 text-indigo-400" />
+            <MapPin className="h-3.5 w-3.5 mr-1.5 text-[#7A2D4A]" />
             Geography
           </TabsTrigger>
           <TabsTrigger value="positioning" className="text-xs">
-            <Compass className="h-3.5 w-3.5 mr-1.5 text-cyan-400" />
+            <Compass className="h-3.5 w-3.5 mr-1.5 text-[#7A2D4A]" />
             My Positioning
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="pt-2">
-          <RoleOverview overview={overviewData} />
-        </TabsContent>
+        {isLoading && (
+          <div className="pt-4 space-y-4">
+            <div className="p-4 rounded-xl border border-[#DDD6E7] bg-[#EDE7F6]/60 flex items-center gap-3">
+              <Loader2 className="h-5 w-5 text-[#7A2D4A] animate-spin shrink-0" />
+              <div>
+                <p className="text-xs font-semibold text-[#3A3A52]">Querying Labor Market Dataset</p>
+                <p className="text-[11px] text-[#5C5C7A]">
+                  Aggregating compensation percentiles, skill occurrences, and geographic distribution...
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-28 rounded-xl border border-[#DDD6E7] bg-white p-5 animate-pulse space-y-3">
+                  <div className="h-3 bg-[#EDE7F6] rounded w-2/3" />
+                  <div className="h-7 bg-[#FAF7F3] rounded w-1/2" />
+                  <div className="h-2.5 bg-[#EDE7F6] rounded w-3/4" />
+                </div>
+              ))}
+            </div>
+            <div className="h-64 rounded-xl border border-[#DDD6E7] bg-white p-6 animate-pulse space-y-4">
+              <div className="h-4 bg-[#EDE7F6] rounded w-1/4" />
+              <div className="h-44 bg-[#FAF7F3] rounded" />
+            </div>
+          </div>
+        )}
 
-        <TabsContent value="salary" className="pt-2">
-          <SalaryChart
-            salaryBand={salaryData?.salary_band || overviewData?.salary_band}
-            topPayingCompanies={salaryData?.top_paying_companies || []}
-            narrative={salaryData?.narrative || overviewData?.narrative}
-          />
-        </TabsContent>
+        {!isLoading && (
+          <TabsContent value="overview" className="pt-2">
+            <RoleOverview overview={overviewData} />
+          </TabsContent>
+        )}
 
-        <TabsContent value="skills" className="pt-2">
-          <TrendingSkills
-            skills={skillsData?.skills || overviewData?.top_skills}
-            totalPostings={skillsData?.total_postings_analysed || overviewData?.total_postings}
-            narrative={skillsData?.narrative || overviewData?.narrative}
-          />
-        </TabsContent>
+        {!isLoading && (
+          <TabsContent value="salary" className="pt-2">
+            <SalaryChart
+              salaryBand={salaryData?.salary_band || overviewData?.salary_band}
+              topPayingCompanies={salaryData?.top_paying_companies || []}
+              narrative={salaryData?.narrative || overviewData?.narrative}
+            />
+          </TabsContent>
+        )}
 
-        <TabsContent value="heatmap" className="pt-2">
-          <DemandHeatmap
-            locations={heatmapData?.locations || overviewData?.top_locations}
-            hottestMarket={heatmapData?.hottest_market || overviewData?.top_locations?.[0]?.location}
-            narrative={heatmapData?.narrative || overviewData?.narrative}
-          />
-        </TabsContent>
+        {!isLoading && (
+          <TabsContent value="skills" className="pt-2">
+            <TrendingSkills
+              skills={skillsData?.skills || overviewData?.top_skills}
+              totalPostings={skillsData?.total_postings_analysed || overviewData?.total_postings}
+              narrative={skillsData?.narrative || overviewData?.narrative}
+            />
+          </TabsContent>
+        )}
 
-        <TabsContent value="positioning" className="pt-2">
-          <ResumePositioning positioning={positioningData} />
-        </TabsContent>
+        {!isLoading && (
+          <TabsContent value="heatmap" className="pt-2">
+            <DemandHeatmap
+              locations={heatmapData?.locations || overviewData?.top_locations}
+              hottestMarket={heatmapData?.hottest_market || overviewData?.top_locations?.[0]?.location}
+              narrative={heatmapData?.narrative || overviewData?.narrative}
+            />
+          </TabsContent>
+        )}
+
+        {!isLoading && (
+          <TabsContent value="positioning" className="pt-2">
+            <ResumePositioning positioning={positioningData} />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   )

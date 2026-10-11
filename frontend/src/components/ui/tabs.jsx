@@ -17,15 +17,22 @@ export function Tabs({ defaultValue, value, onValueChange, children, className }
     }
   }
 
+  const renderChildren = (elements) => {
+    return React.Children.map(elements, (child) => {
+      if (!React.isValidElement(child)) return child
+      if (child.type === React.Fragment) {
+        return renderChildren(child.props.children)
+      }
+      return React.cloneElement(child, {
+        activeTab,
+        onTabChange: handleTabChange,
+      })
+    })
+  }
+
   return (
     <div className={cn("w-full space-y-4", className)}>
-      {React.Children.map(children, (child) => {
-        if (!React.isValidElement(child)) return null
-        return React.cloneElement(child, {
-          activeTab,
-          onTabChange: handleTabChange,
-        })
-      })}
+      {renderChildren(children)}
     </div>
   )
 }
@@ -34,7 +41,7 @@ export function TabsList({ children, className, activeTab, onTabChange }) {
   return (
     <div
       className={cn(
-        "inline-flex h-11 items-center justify-start rounded-xl bg-slate-900/90 p-1 border border-slate-800 text-slate-400 gap-1",
+        "inline-flex h-11 items-center justify-start rounded-xl bg-[#EDE7F6] p-1 border border-[#DDD6E7] text-[#5C5C7A] gap-1",
         className
       )}
     >
@@ -57,8 +64,8 @@ export function TabsTrigger({ value, children, className, isActive, onClick }) {
       className={cn(
         "inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3.5 py-1.5 text-sm font-medium transition-all duration-150 cursor-pointer",
         isActive
-          ? "bg-slate-800 text-white shadow-sm font-semibold text-blue-400"
-          : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40",
+          ? "bg-white text-[#7A2D4A] shadow-xs font-semibold border border-[#DDD6E7]"
+          : "text-[#5C5C7A] hover:text-[#3A3A52] hover:bg-white/60",
         className
       )}
     >
@@ -67,7 +74,14 @@ export function TabsTrigger({ value, children, className, isActive, onClick }) {
   )
 }
 
-export function TabsContent({ value, children, className, activeTab }) {
-  if (activeTab !== value) return null
-  return <div className={cn("animate-in fade-in-50 duration-200", className)}>{children}</div>
+export function TabsContent({ value, activeTab, children, className }) {
+  if (value !== activeTab) return null
+  return (
+    <div
+      tabIndex={0}
+      className={cn("mt-2 ring-offset-[#FAF7F3] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7A2D4A]", className)}
+    >
+      {children}
+    </div>
+  )
 }

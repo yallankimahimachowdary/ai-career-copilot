@@ -13,19 +13,19 @@ export function ScoreBreakdown({ features = {} }) {
     {
       label: "Skills Alignment",
       value: mustHave,
-      color: "bg-blue-500",
+      color: "bg-[#7A2D4A]",
       text: formatPercent(mustHave),
     },
     {
       label: "Experience Fit",
       value: Math.min(1, Math.max(0, expMatch)),
-      color: expMatch >= 0.75 ? "bg-emerald-500" : expMatch >= 0.4 ? "bg-amber-500" : "bg-rose-500",
+      color: expMatch >= 0.75 ? "bg-emerald-600" : expMatch >= 0.4 ? "bg-amber-600" : "bg-red-600",
       text: formatPercent(expMatch),
     },
     {
       label: "Education Match",
       value: eduMatch,
-      color: "bg-purple-500",
+      color: "bg-[#5C5C7A]",
       text: formatPercent(eduMatch),
     },
   ]
@@ -35,10 +35,10 @@ export function ScoreBreakdown({ features = {} }) {
       {items.map((item, idx) => (
         <div key={idx} className="space-y-1">
           <div className="flex justify-between text-xs font-medium">
-            <span className="text-slate-400">{item.label}</span>
-            <span className="text-slate-200 font-mono">{item.text}</span>
+            <span className="text-[#5C5C7A]">{item.label}</span>
+            <span className="text-[#3A3A52] font-mono font-semibold">{item.text}</span>
           </div>
-          <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+          <div className="h-1.5 w-full bg-[#EDE7F6] rounded-full overflow-hidden">
             <div
               className={`h-full ${item.color} rounded-full transition-all duration-500`}
               style={{ width: `${Math.round(item.value * 100)}%` }}

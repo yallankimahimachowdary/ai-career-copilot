@@ -4,21 +4,21 @@ import { cn } from "@/lib/utils"
 export const Button = React.forwardRef(
   ({ className, variant = "primary", size = "default", disabled, children, ...props }, ref) => {
     const baseStyles =
-      "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+      "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7A2D4A] focus:ring-offset-[#FAF7F3] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
 
     const variants = {
       primary:
-        "bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-500/20 focus:ring-blue-500 active:scale-[0.98]",
+        "bg-[#7A2D4A] hover:bg-[#63233B] active:bg-[#4F1C2F] text-white shadow-sm focus:ring-[#7A2D4A] active:scale-[0.98]",
       secondary:
-        "bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 focus:ring-slate-500 active:scale-[0.98]",
+        "bg-[#EDE7F6] hover:bg-[#DDD6E7] text-[#3A3A52] border border-[#DDD6E7] focus:ring-[#7A2D4A] active:scale-[0.98]",
       outline:
-        "border border-slate-700 hover:bg-slate-800/60 text-slate-200 focus:ring-slate-400",
+        "border border-[#DDD6E7] bg-white hover:bg-[#EDE7F6]/50 text-[#3A3A52] focus:ring-[#7A2D4A]",
       ghost:
-        "hover:bg-slate-800/60 text-slate-300 hover:text-white focus:ring-slate-400",
+        "hover:bg-[#EDE7F6] text-[#5C5C7A] hover:text-[#3A3A52] focus:ring-[#7A2D4A]",
       danger:
-        "bg-red-600 hover:bg-red-500 text-white shadow-md shadow-red-500/20 focus:ring-red-500 active:scale-[0.98]",
+        "bg-red-600 hover:bg-red-700 text-white shadow-sm focus:ring-red-500 active:scale-[0.98]",
       gradient:
-        "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-500/25 active:scale-[0.98]",
+        "bg-[#7A2D4A] hover:bg-[#63233B] text-white shadow-sm hover:shadow active:scale-[0.98]",
     }
 
     const sizes = {

@@ -1,37 +1,77 @@
 @import "tailwindcss";
 
+@theme {
+  --color-ivory: #FAF7F3;
+  --color-lavender: #EDE7F6;
+  --color-lavender-subtle: #F5F0FB;
+  --color-lavender-border: #D8CCE8;
+  --color-burgundy: #7A2D4A;
+  --color-burgundy-hover: #63233B;
+  --color-burgundy-active: #4F1C2F;
+  --color-burgundy-subtle: #F9EBF0;
+  --color-slate-primary: #3A3A52;
+  --color-slate-muted: #5C5C7A;
+  --color-slate-subtle: #797996;
+  --color-slate-border: #DDD6E7;
+  --color-slate-border-light: #E5E3EB;
+  --color-card-bg: #FFFFFF;
+}
+
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 4.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 4.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 18%;
-    --input: 240 3.7% 18%;
-    --ring: 217.2 91.2% 59.8%;
+    --background: #FAF7F3;
+    --foreground: #3A3A52;
+
+    --card: #FFFFFF;
+    --card-foreground: #3A3A52;
+
+    --popover: #FFFFFF;
+    --popover-foreground: #3A3A52;
+
+    --primary: #7A2D4A;
+    --primary-foreground: #FFFFFF;
+    --primary-hover: #63233B;
+
+    --secondary: #EDE7F6;
+    --secondary-foreground: #3A3A52;
+
+    --muted: #EDE7F6;
+    --muted-foreground: #5C5C7A;
+
+    --accent: #EDE7F6;
+    --accent-foreground: #7A2D4A;
+
+    --destructive: #B91C1C;
+    --destructive-foreground: #FFFFFF;
+
+    --border: #D1CFDB;
+    --border-subtle: #E5E3EB;
+    --input: #FFFFFF;
+    --ring: #7A2D4A;
     --radius: 0.75rem;
+
+    /* Theme Tokens */
+    --theme-ivory: #FAF7F3;
+    --theme-lavender: #EDE7F6;
+    --theme-lavender-subtle: #F5F0FB;
+    --theme-lavender-border: #D8CCE8;
+    --theme-burgundy: #7A2D4A;
+    --theme-burgundy-hover: #63233B;
+    --theme-burgundy-subtle: #F9EBF0;
+    --theme-slate: #3A3A52;
+    --theme-slate-muted: #5C5C7A;
+    --theme-slate-border: #DDD6E7;
+    --theme-white: #FFFFFF;
   }
 
   * {
-    border-color: rgba(255, 255, 255, 0.1);
+    border-color: #DDD6E7;
   }
 
   body {
-    background-color: #090a0f;
-    color: #f1f5f9;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #FAF7F3;
+    color: #3A3A52;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     min-height: 100vh;
     margin: 0;
     padding: 0;
@@ -39,23 +79,29 @@
   }
 }
 
-/* Custom Scrollbars */
+/* Custom Scrollbars in Light Ivory/Slate Theme */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #090a0f;
+  background: #FAF7F3;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #D8CCE8;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #BFAECF;
 }
 
-/* Glowing card effects & utilities */
+/* AI Surface styling */
+.ai-surface {
+  background-color: #EDE7F6;
+  border-color: #D8CCE8;
+  color: #3A3A52;
+}
+
 .glow-border {
   position: relative;
 }
@@ -63,7 +109,7 @@
   content: '';
   position: absolute;
   inset: -1px;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.4), rgba(168, 85, 247, 0.2), transparent);
+  background: linear-gradient(135deg, rgba(122, 45, 74, 0.2), rgba(237, 231, 246, 0.6), transparent);
   border-radius: inherit;
   z-index: -1;
   pointer-events: none;

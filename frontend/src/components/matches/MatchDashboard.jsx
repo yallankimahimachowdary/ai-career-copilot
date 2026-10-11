@@ -62,13 +62,13 @@ export function MatchDashboard({
   return (
     <div className="space-y-6">
       {/* Controls & Filter Bar */}
-      <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-md">
+      <Card className="border-[#DDD6E7] bg-white shadow-xs">
         <CardContent className="p-5">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3">
               {/* Location or Keyword Filter */}
               <div className="relative">
-                <Search className="h-4 w-4 absolute left-3 top-3 text-slate-500" />
+                <Search className="h-4 w-4 absolute left-3 top-3 text-[#797996]" />
                 <Input
                   placeholder="Filter location, company, role..."
                   value={locationFilter}
@@ -79,9 +79,9 @@ export function MatchDashboard({
 
               {/* Min Score Slider */}
               <div className="flex flex-col justify-center px-2 space-y-1">
-                <div className="flex justify-between text-xs text-slate-400">
+                <div className="flex justify-between text-xs text-[#5C5C7A]">
                   <span>Min Score:</span>
-                  <span className="font-mono text-blue-400 font-semibold">{minScore}%</span>
+                  <span className="font-mono text-[#7A2D4A] font-semibold">{minScore}%</span>
                 </div>
                 <input
                   type="range"
@@ -90,18 +90,18 @@ export function MatchDashboard({
                   step="5"
                   value={minScore}
                   onChange={(e) => setMinScore(Number(e.target.value))}
-                  className="w-full accent-blue-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+                  className="w-full accent-[#7A2D4A] cursor-pointer h-1.5 bg-[#EDE7F6] rounded-lg"
                 />
               </div>
 
               {/* Remote Only Toggle */}
               <div className="flex items-center gap-2 px-2">
-                <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+                <label className="flex items-center gap-2 text-xs text-[#3A3A52] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={remoteOnly}
                     onChange={(e) => setRemoteOnly(e.target.checked)}
-                    className="rounded border-slate-700 bg-slate-800 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                    className="rounded border-[#DDD6E7] bg-white text-[#7A2D4A] focus:ring-[#7A2D4A] h-4 w-4"
                   />
                   <span>Remote roles only</span>
                 </label>
@@ -110,7 +110,7 @@ export function MatchDashboard({
 
             {/* Run Match Action Button */}
             <Button
-              variant="gradient"
+              variant="primary"
               onClick={handleRunSearch}
               disabled={isLoading || !activeResume}
               className="shrink-0"
@@ -133,8 +133,8 @@ export function MatchDashboard({
 
       {/* Error Banner */}
       {error && (
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-sm text-rose-300">
-          <AlertCircle className="h-5 w-5 shrink-0 text-rose-400" />
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
+          <AlertCircle className="h-5 w-5 shrink-0 text-red-600" />
           <div>
             <span className="font-semibold">Matching Service Error: </span>
             <span>{error}</span>
@@ -144,9 +144,9 @@ export function MatchDashboard({
 
       {/* Active Resume Context Notice */}
       {!activeResume && (
-        <div className="p-8 text-center rounded-2xl border border-dashed border-slate-800 bg-slate-900/20 space-y-2">
-          <p className="text-sm font-medium text-slate-300">No active candidate profile loaded</p>
-          <p className="text-xs text-slate-400">
+        <div className="p-8 text-center rounded-2xl border border-dashed border-[#DDD6E7] bg-white space-y-2">
+          <p className="text-sm font-medium text-[#3A3A52]">No active candidate profile loaded</p>
+          <p className="text-xs text-[#5C5C7A]">
             Please upload a resume in the "Resume & Profile" tab or click "Load Demo Profile" in the top bar.
           </p>
         </div>
@@ -154,25 +154,45 @@ export function MatchDashboard({
 
       {/* Matches List */}
       {isLoading ? (
-        <div className="py-20 flex flex-col items-center justify-center space-y-4">
-          <div className="h-14 w-14 rounded-full bg-blue-500/15 flex items-center justify-center animate-pulse">
-            <Loader2 className="h-7 w-7 text-blue-400 animate-spin" />
+        <div className="space-y-4">
+          <div className="p-4 rounded-xl border border-[#DDD6E7] bg-[#EDE7F6]/60 flex items-center gap-3">
+            <Loader2 className="h-5 w-5 text-[#7A2D4A] animate-spin shrink-0" />
+            <div>
+              <p className="text-xs font-semibold text-[#3A3A52]">Running Hybrid Matcher & TreeSHAP Engine</p>
+              <p className="text-[11px] text-[#5C5C7A]">
+                Querying vector embeddings, re-ranking with XGBoost, and computing Shapley feature attribution...
+              </p>
+            </div>
           </div>
-          <div className="text-center space-y-1">
-            <p className="text-base font-semibold text-white">Running Hybrid Matcher & TreeSHAP Engine</p>
-            <p className="text-xs text-slate-400 max-w-md">
-              Extracting candidate features, querying pgvector embeddings, and calculating marginal Shapley attribution
-              vectors...
-            </p>
+          <div className="grid grid-cols-1 gap-4">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="h-32 rounded-xl border border-[#DDD6E7] bg-white p-5 animate-pulse flex flex-col justify-between"
+              >
+                <div className="flex justify-between items-start">
+                  <div className="space-y-2 w-2/3">
+                    <div className="h-4 bg-[#EDE7F6] rounded w-3/4" />
+                    <div className="h-3 bg-[#FAF7F3] rounded w-1/2" />
+                  </div>
+                  <div className="h-10 w-10 rounded-full bg-[#EDE7F6]" />
+                </div>
+                <div className="flex gap-2">
+                  <div className="h-5 bg-[#EDE7F6] rounded w-16" />
+                  <div className="h-5 bg-[#EDE7F6] rounded w-20" />
+                  <div className="h-5 bg-[#EDE7F6] rounded w-14" />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       ) : filteredMatches.length > 0 ? (
         <div className="space-y-4">
-          <div className="flex items-center justify-between text-xs text-slate-400 px-1">
+          <div className="flex items-center justify-between text-xs text-[#5C5C7A] px-1">
             <span>
-              Displaying <strong className="text-white">{filteredMatches.length}</strong> ranked opportunities
+              Displaying <strong className="text-[#3A3A52]">{filteredMatches.length}</strong> ranked opportunities
             </span>
-            <span>Two-stage retrieval (pgvector + XGBoost Re-rank)</span>
+            <span>Two-stage retrieval (semantic + XGBoost Re-rank)</span>
           </div>
 
           <div className="grid grid-cols-1 gap-4">
@@ -182,10 +202,10 @@ export function MatchDashboard({
           </div>
         </div>
       ) : activeResume ? (
-        <div className="p-12 text-center rounded-2xl border border-slate-800 bg-slate-900/30 space-y-3">
-          <Sparkles className="h-8 w-8 text-slate-600 mx-auto" />
-          <p className="text-sm font-semibold text-slate-300">No matches found matching these filters.</p>
-          <p className="text-xs text-slate-400">
+        <div className="p-12 text-center rounded-2xl border border-[#DDD6E7] bg-white space-y-3">
+          <Sparkles className="h-8 w-8 text-[#7A2D4A] mx-auto" />
+          <p className="text-sm font-semibold text-[#3A3A52]">No matches found matching these filters.</p>
+          <p className="text-xs text-[#5C5C7A]">
             Try lowering your minimum score threshold or clearing location filters.
           </p>
         </div>

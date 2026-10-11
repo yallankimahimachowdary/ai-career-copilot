@@ -16,6 +16,7 @@ export function App() {
   const [targetJobForCoach, setTargetJobForCoach] = useState(null)
   const [isConnected, setIsConnected] = useState(false)
   const [isChatOpen, setIsChatOpen] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const navigate = useNavigate()
 
   // Check backend health on initial mount
@@ -58,9 +59,13 @@ export function App() {
   }
 
   return (
-    <div className="flex h-screen bg-[#090a0f] text-slate-100 overflow-hidden font-sans">
+    <div className="flex h-screen bg-[#FAF7F3] text-[#3A3A52] overflow-hidden font-sans">
       {/* Left Navigation Sidebar */}
-      <Sidebar isConnected={isConnected} />
+      <Sidebar
+        isConnected={isConnected}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
@@ -69,9 +74,10 @@ export function App() {
           onSelectDemoResume={handleSelectDemo}
           isConnected={isConnected}
           onRefresh={() => window.location.reload()}
+          onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
         />
 
-        <main className="flex-1 pb-16">
+        <main className="flex-1 pb-28">
           <Routes>
             <Route
               path="/"

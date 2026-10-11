@@ -50,7 +50,6 @@ export function MatchesPage({ activeResume, onSelectJobForCoach }) {
   return (
     <PageContainer
       title="Job Matching & Explainable AI (XAI)"
-      subtitle="Hybrid pgvector retrieval with XGBoost re-ranking and local TreeSHAP attribution"
       badge="Matcher Agent"
     >
       <MatchDashboard

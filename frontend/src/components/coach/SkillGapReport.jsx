@@ -12,21 +12,23 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ReadinessGauge } from "./ReadinessGauge"
+import { formatTitleCase } from "@/lib/utils"
 
 export function SkillGapReport({ report, activeResume, onProceedToQuestions }) {
   if (!report) {
     return (
-      <div className="p-12 text-center text-xs text-slate-400 border border-slate-800 rounded-xl bg-slate-900/30">
+      <div className="p-12 text-center text-xs text-[#5C5C7A] border border-[#DDD6E7] rounded-xl bg-white">
         No skill-gap diagnostic report loaded. Select a target job to generate.
       </div>
     )
   }
 
-  const candidateName =
+  const rawCandidateName =
     activeResume?.candidate_name ||
     activeResume?.parsed_data?.contact_info?.name ||
     report.candidate_name ||
     "Candidate"
+  const candidateName = formatTitleCase(rawCandidateName)
 
   const executiveSummary = report.executive_summary
     ? (report.candidate_name && report.candidate_name !== candidateName
@@ -42,23 +44,23 @@ export function SkillGapReport({ report, activeResume, onProceedToQuestions }) {
   return (
     <div className="space-y-6">
       {/* Top Header Card with Readiness Gauge & Executive Summary */}
-      <Card className="border-blue-500/20 bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/20">
+      <Card className="border-[#DDD6E7] bg-[#EDE7F6]">
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-3 flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-bold text-blue-400 uppercase tracking-wider">
-                  Step 1: Diagnostic Assessment
+                <span className="text-xs font-mono font-bold text-[#7A2D4A] uppercase tracking-wider">
+                  Diagnostic Assessment
                 </span>
                 <Badge variant="primary">Target: {report.job_title}</Badge>
               </div>
 
-              <h3 className="text-xl font-bold text-white">
+              <h3 className="text-xl font-bold text-[#3A3A52]">
                 Readiness Diagnostic for {candidateName}
               </h3>
 
               {executiveSummary && (
-                <p className="text-sm text-slate-300 leading-relaxed pt-1">
+                <p className="text-sm text-[#5C5C7A] leading-relaxed pt-1">
                   {executiveSummary}
                 </p>
               )}
@@ -72,10 +74,10 @@ export function SkillGapReport({ report, activeResume, onProceedToQuestions }) {
       </Card>
 
       {/* Confirmed Strengths */}
-      <Card>
+      <Card className="border-[#DDD6E7] bg-white">
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2 text-emerald-400">
-            <CheckCircle className="h-4 w-4" />
+          <CardTitle className="text-base flex items-center gap-2 text-emerald-800">
+            <CheckCircle className="h-4 w-4 text-emerald-700" />
             Confirmed Strengths & Matched Core Capabilities ({strengths.length})
           </CardTitle>
         </CardHeader>
@@ -84,9 +86,9 @@ export function SkillGapReport({ report, activeResume, onProceedToQuestions }) {
             {strengths.map((str, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-950/30 border border-emerald-500/20 text-xs text-emerald-300 font-medium"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-medium"
               >
-                <CheckCircle className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                <CheckCircle className="h-3.5 w-3.5 text-emerald-700 shrink-0" />
                 <span>{str}</span>
               </div>
             ))}
@@ -94,12 +96,12 @@ export function SkillGapReport({ report, activeResume, onProceedToQuestions }) {
         </CardContent>
       </Card>
 
-      {/* Critical Gaps */}
+      {/* Critical Gaps (Strictly RED per user instruction) */}
       {criticalGaps.length > 0 && (
-        <Card className="border-rose-500/30">
+        <Card className="border-red-200 bg-white">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2 text-rose-400">
-              <AlertOctagon className="h-4 w-4" />
+            <CardTitle className="text-base flex items-center gap-2 text-red-700">
+              <AlertOctagon className="h-4 w-4 text-red-600" />
               Critical Must-Have Gaps ({criticalGaps.length})
             </CardTitle>
           </CardHeader>
@@ -107,19 +109,19 @@ export function SkillGapReport({ report, activeResume, onProceedToQuestions }) {
             {criticalGaps.map((gap, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-xl bg-rose-950/20 border border-rose-500/20 space-y-2"
+                className="p-4 rounded-xl bg-red-50 border border-red-200 space-y-2"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-white text-sm">{gap.skill}</span>
+                    <span className="font-bold text-[#3A3A52] text-sm">{gap.skill}</span>
                     <Badge variant="danger" className="text-[10px]">
                       {gap.importance} priority
                     </Badge>
                   </div>
-                  <span className="text-xs text-slate-400 font-mono">{gap.category}</span>
+                  <span className="text-xs text-[#5C5C7A] font-mono">{gap.category}</span>
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed flex items-start gap-2">
-                  <BookOpen className="h-3.5 w-3.5 text-rose-400 shrink-0 mt-0.5" />
+                <p className="text-xs text-red-800 leading-relaxed flex items-start gap-2">
+                  <BookOpen className="h-3.5 w-3.5 text-red-600 shrink-0 mt-0.5" />
                   <span>{gap.recommendation}</span>
                 </p>
               </div>
@@ -130,10 +132,10 @@ export function SkillGapReport({ report, activeResume, onProceedToQuestions }) {
 
       {/* Growth Gaps */}
       {growthGaps.length > 0 && (
-        <Card className="border-amber-500/30">
+        <Card className="border-amber-200 bg-white">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2 text-amber-400">
-              <AlertTriangle className="h-4 w-4" />
+            <CardTitle className="text-base flex items-center gap-2 text-amber-800">
+              <AlertTriangle className="h-4 w-4 text-amber-600" />
               Secondary / Nice-to-Have Growth Areas ({growthGaps.length})
             </CardTitle>
           </CardHeader>
@@ -141,13 +143,13 @@ export function SkillGapReport({ report, activeResume, onProceedToQuestions }) {
             {growthGaps.map((gap, idx) => (
               <div
                 key={idx}
-                className="p-3.5 rounded-xl bg-amber-950/20 border border-amber-500/20 space-y-1.5"
+                className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 space-y-1.5"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-white text-sm">{gap.skill}</span>
-                  <span className="text-xs text-slate-400 font-mono">{gap.category}</span>
+                  <span className="font-semibold text-[#3A3A52] text-sm">{gap.skill}</span>
+                  <span className="text-xs text-[#5C5C7A] font-mono">{gap.category}</span>
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed">{gap.recommendation}</p>
+                <p className="text-xs text-amber-900 leading-relaxed">{gap.recommendation}</p>
               </div>
             ))}
           </CardContent>
@@ -156,9 +158,9 @@ export function SkillGapReport({ report, activeResume, onProceedToQuestions }) {
 
       {/* Actionable Learning Roadmap */}
       {roadmap.length > 0 && (
-        <Card className="border-indigo-500/30">
+        <Card className="border-[#DDD6E7] bg-white">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2 text-indigo-400">
+            <CardTitle className="text-base flex items-center gap-2 text-[#7A2D4A]">
               <TrendingUp className="h-4 w-4" />
               Actionable 7-to-10 Day Learning Roadmap
             </CardTitle>
@@ -168,9 +170,9 @@ export function SkillGapReport({ report, activeResume, onProceedToQuestions }) {
               {roadmap.map((item, idx) => (
                 <div
                   key={idx}
-                  className="flex items-start gap-3 p-3 rounded-xl bg-slate-950/50 border border-slate-800 text-xs text-slate-300"
+                  className="flex items-start gap-3 p-3 rounded-xl bg-[#FAF7F3] border border-[#DDD6E7] text-xs text-[#3A3A52]"
                 >
-                  <div className="h-5 w-5 rounded-full bg-indigo-600/30 text-indigo-400 border border-indigo-500/40 font-bold font-mono text-[11px] flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="h-5 w-5 rounded-full bg-[#EDE7F6] text-[#7A2D4A] border border-[#DDD6E7] font-bold font-mono text-[11px] flex items-center justify-center shrink-0 mt-0.5">
                     {idx + 1}
                   </div>
                   <span className="leading-relaxed pt-0.5">{item}</span>

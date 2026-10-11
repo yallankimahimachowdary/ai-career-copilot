@@ -35,6 +35,26 @@ export function formatPercent(value) {
   return `${Math.round(value * 100)}%`
 }
 
+export function formatTitleCase(str) {
+  if (!str) return ""
+  // Handle initials like "S. Deepika" or "S.Deepika"
+  return str
+    .replace(/\b([A-Z])\.\s*([a-z])/g, (_, i, next) => `${i}. ${next.toUpperCase()}`)
+    .split(" ")
+    .map((word) => {
+      if (word.includes(".")) {
+        return word
+          .split(".")
+          .map((part) => (part ? part.charAt(0).toUpperCase() + part.slice(1).toLowerCase() : ""))
+          .join(".")
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    })
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim()
+}
+
 export function formatDate(dateString) {
   if (!dateString) return ""
   try {
