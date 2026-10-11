@@ -22,6 +22,8 @@ class JobPosting(Base):
     max_salary = Column(Float, nullable=True)
     med_salary = Column(Float, nullable=True)
     pay_period = Column(String(50), nullable=True)
+    country = Column(String(50), nullable=False, default="India")
+    currency = Column(String(10), nullable=False, default="INR")
     source = Column(String(100), nullable=False, default="kaggle_linkedin")
 
     # Dense semantic embedding vector for similarity search (pgvector 1536 dim)

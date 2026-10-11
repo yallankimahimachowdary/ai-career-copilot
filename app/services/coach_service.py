@@ -40,7 +40,9 @@ from app.core.taxonomy import (
     CANONICAL_SKILL_PATTERNS as _SKILL_PATTERNS,
     COMMON_STOP_WORDS as _STOP_WORDS,
     LINKEDIN_CATEGORY_CODES as _CATEGORY_CODES,
+    SOFT_SKILLS as _SOFT_SKILLS,
 )
+
 
 
 # ---------------------------------------------------------------------------
@@ -83,7 +85,16 @@ def _extract_job_requirements(job: JobPosting) -> Dict[str, List[str]]:
                 found.append(word)
         found = list(dict.fromkeys(found))[:15]
 
-    return {"must_have": found, "nice_to_have": []}
+    must_have: List[str] = []
+    nice_to_have: List[str] = []
+    for s in found:
+        if s.lower() in _SOFT_SKILLS:
+            nice_to_have.append(s)
+        else:
+            must_have.append(s)
+
+    return {"must_have": must_have, "nice_to_have": nice_to_have}
+
 
 
 def _compute_readiness_score(
@@ -103,19 +114,53 @@ def _compute_readiness_score(
 
 def _skill_category(skill: str) -> str:
     s = skill.lower()
-    if re.search(r"\b(python|java|javascript|typescript|c\+\+|c#|sql|html|css|ruby|php|go|swift|kotlin)\b", s):
+    if s in _SOFT_SKILLS or re.search(r"\b(communication|leadership|problem.solving|collaboration|teamwork|interpersonal|time management|critical thinking|mentoring)\b", s):
+        return "Soft Skill"
+    if re.search(r"\b(pharmacovigilance|regulatory affairs|gmp|glp|gcp|good manufacturing practice|clinical trials?|clinical research|drug formulation|drug discovery|medicinal chemistry|pharmacology)\b", s):
+        return "Domain / Regulatory"
+    if re.search(r"\b(pcr|qpcr|rt-pcr|gel electrophoresis|sds-page|cell culture|tissue culture|elisa|hplc|fplc|chromatography|flow cytometry|facs|autocad|solidworks|matlab|simulink|ansys|fea|cfd|catia|plc|scada|cnc|revit|bim|bioreactor|fermentation)\b", s):
+        return "Lab / Engineering Tool"
+    if re.search(r"\b(python|java|javascript|typescript|c\+\+|c#|sql|html|css|ruby|php|go|swift|kotlin|rust|r programming|r language|r stats)\b", s):
         return "Language"
-    if re.search(r"\b(react|django|flask|fastapi|spring|angular|vue|node|express|laravel)\b", s):
+    if re.search(r"\b(react|django|flask|fastapi|spring|angular|vue|node|express|laravel|graphql)\b", s):
         return "Framework"
-    if re.search(r"\b(docker|kubernetes|aws|azure|gcp|linux|devops|terraform)\b", s):
+    if re.search(r"\b(docker|kubernetes|aws|azure|gcp|linux|devops|terraform|ci/cd|jenkins|kafka|redis)\b", s):
         return "DevOps / Cloud"
-    if re.search(r"\b(machine learning|deep learning|pytorch|tensorflow|keras|nlp|data science|pandas|numpy)\b", s):
+    if re.search(r"\b(machine learning|deep learning|pytorch|tensorflow|keras|nlp|data science|pandas|numpy|bioinformatics|ngs|next-generation sequencing|crispr)\b", s):
         return "AI / Data Science"
     if re.search(r"\b(git|github|gitlab|jira|agile|scrum)\b", s):
         return "Tooling / Workflow"
-    if re.search(r"\b(communication|leadership|problem.solving|collaboration)\b", s):
-        return "Soft Skill"
     return "Technical"
+
+
+def _generate_skill_advice(skill: str, category: Optional[str] = None) -> str:
+    """Generate precise type-aware preparation advice without any LLM calls."""
+    cat = category or _skill_category(skill)
+    if cat == "Soft Skill":
+        return f"Practise articulating STAR-format stories and run mock interviews highlighting {skill} in past collaborative projects."
+    elif cat == "Domain / Regulatory":
+        return f"Study relevant industry guidelines (or complete a short certificate course) for {skill}, and prepare a structured case study to discuss."
+    elif cat == "Lab / Engineering Tool":
+        return f"Engage in hands-on practice with {skill} via lab protocols or software tutorials, and prepare a worked example of your methodology."
+    else:
+        # Technical software / languages / frameworks / cloud
+        return f"Complete a targeted crash course or documentation deep-dive in {skill}, and build a small reference project demonstrating core implementation."
+
+
+def _generate_roadmap_step(gap: SkillGapItem, day_range: str, prefix: str) -> str:
+    """Generate a type-aware 7-to-10 day learning roadmap step."""
+    cat = gap.category
+    skill = gap.skill
+    if cat == "Soft Skill":
+        action = f"Draft 2 STAR-method stories illustrating {skill} from your experience and rehearse behavioral interview delivery."
+    elif cat == "Domain / Regulatory":
+        action = f"Review standard regulatory frameworks/guidelines for {skill} and draft a concise 1-page compliance case study."
+    elif cat == "Lab / Engineering Tool":
+        action = f"Complete a practical tutorial or lab walkthrough for {skill} and document a step-by-step worked example."
+    else:
+        action = f"Work through official documentation/tutorials for {skill} and build a functioning demo project."
+
+    return f"{day_range} ({prefix} - {cat}): {action}"
 
 
 # ---------------------------------------------------------------------------
@@ -142,33 +187,48 @@ def _rule_based_gap_report(
     critical_gaps: List[SkillGapItem] = []
     growth_gaps: List[SkillGapItem] = []
 
+    # Process must-have requirements:
+    # If a must-have is actually a soft skill, treat it as nice-to-have/growth gap
     for skill in job_reqs.get("must_have", []):
         clean = _clean(skill)
         has = any(clean in rc or rc in clean for rc in resume_clean)
+        cat = _skill_category(skill)
         if has:
             confirmed_strengths.append(skill)
         else:
-            critical_gaps.append(
-                SkillGapItem(
-                    skill=skill,
-                    category=_skill_category(skill),
-                    importance="high",
-                    candidate_has=False,
-                    recommendation=f"Study {skill} via official documentation and build a small demo project.",
+            if cat == "Soft Skill" or skill.lower() in _SOFT_SKILLS:
+                growth_gaps.append(
+                    SkillGapItem(
+                        skill=skill,
+                        category=cat,
+                        importance="medium",
+                        candidate_has=False,
+                        recommendation=_generate_skill_advice(skill, cat),
+                    )
                 )
-            )
+            else:
+                critical_gaps.append(
+                    SkillGapItem(
+                        skill=skill,
+                        category=cat,
+                        importance="high",
+                        candidate_has=False,
+                        recommendation=_generate_skill_advice(skill, cat),
+                    )
+                )
 
     for skill in job_reqs.get("nice_to_have", []):
         clean = _clean(skill)
         has = any(clean in rc or rc in clean for rc in resume_clean)
+        cat = _skill_category(skill)
         if not has:
             growth_gaps.append(
                 SkillGapItem(
                     skill=skill,
-                    category=_skill_category(skill),
+                    category=cat,
                     importance="medium",
                     candidate_has=False,
-                    recommendation=f"Gain exposure to {skill} through tutorials or open-source contributions.",
+                    recommendation=_generate_skill_advice(skill, cat),
                 )
             )
         else:
@@ -177,13 +237,44 @@ def _rule_based_gap_report(
     confirmed_strengths = list(dict.fromkeys(confirmed_strengths))
     score = _compute_readiness_score(confirmed_strengths, critical_gaps, growth_gaps)
 
+    # 7-to-10 day roadmap ordered by real priority:
+    # Critical technical gaps FIRST, followed by domain/tool gaps, then growth/soft skill polish
     roadmap: List[str] = []
-    for gap in critical_gaps[:3]:
-        roadmap.append(f"Priority: {gap.recommendation}")
-    for gap in growth_gaps[:2]:
-        roadmap.append(f"Bonus: {gap.recommendation}")
+    
+    # Priority order for critical gaps: Technical / Cloud / Framework / AI first, then domain, then tools
+    def _gap_priority_key(item: SkillGapItem) -> int:
+        c = item.category
+        if c in ("Technical", "Language", "Framework", "DevOps / Cloud", "AI / Data Science"):
+            return 1
+        if c == "Domain / Regulatory":
+            return 2
+        if c == "Lab / Engineering Tool":
+            return 3
+        return 4
+
+    sorted_critical = sorted(critical_gaps, key=_gap_priority_key)
+    sorted_growth = sorted(growth_gaps, key=_gap_priority_key)
+
+    step_count = 0
+    if len(sorted_critical) >= 1:
+        step_count += 1
+        roadmap.append(_generate_roadmap_step(sorted_critical[0], "Days 1–3", "Critical Gap"))
+    if len(sorted_critical) >= 2:
+        step_count += 1
+        roadmap.append(_generate_roadmap_step(sorted_critical[1], "Days 4–6", "Critical Gap"))
+    if len(sorted_critical) >= 3:
+        step_count += 1
+        roadmap.append(_generate_roadmap_step(sorted_critical[2], "Days 7–8", "Secondary Gap"))
+
+    # Fill remaining days with growth gaps or soft skill interview polish
+    if len(sorted_growth) > 0 and len(roadmap) < 4:
+        next_growth = sorted_growth[0]
+        day_label = f"Days {7 if len(roadmap) <= 2 else 9}–10"
+        roadmap.append(_generate_roadmap_step(next_growth, day_label, "Growth Focus"))
+
     if not roadmap:
-        roadmap.append("Practice communicating your existing projects using the STAR method.")
+        roadmap.append("Days 1–5 (Technical Review): Deepen core domain expertise through reference projects.")
+        roadmap.append("Days 6–10 (Behavioral Polish): Practise communicating your projects using the STAR method in mock interviews.")
 
     n_gap = len(critical_gaps)
     n_str = len(confirmed_strengths)
@@ -541,11 +632,44 @@ def _rule_based_evaluate_answer(req: AnswerEvaluationRequest) -> AnswerEvaluatio
 
 
 # ---------------------------------------------------------------------------
+# In-memory session cache keyed by (resume_id, job_id)
+# ---------------------------------------------------------------------------
+
+_GAP_CACHE: Dict[tuple, "SkillGapReport"] = {}
+_QB_CACHE: Dict[tuple, "QuestionBank"] = {}
+_MAX_CACHE_SIZE = 50  # evict oldest when full
+
+
+def _cache_put(cache: dict, key: tuple, value: Any) -> None:
+    if len(cache) >= _MAX_CACHE_SIZE:
+        oldest = next(iter(cache))
+        del cache[oldest]
+    cache[key] = value
+
+
+def invalidate_coach_cache(resume_id: str, job_id: Optional[str] = None) -> None:
+    """Call after re-parsing a resume to clear stale cached reports."""
+    keys_to_del = [
+        k for k in list(_GAP_CACHE.keys()) + list(_QB_CACHE.keys())
+        if k[0] == resume_id and (job_id is None or k[1] == job_id)
+    ]
+    for k in keys_to_del:
+        _GAP_CACHE.pop(k, None)
+        _QB_CACHE.pop(k, None)
+
+
+# ---------------------------------------------------------------------------
 # CoachAgent - main entry point
 # ---------------------------------------------------------------------------
 
 class CoachAgent:
-    """3-step AI interview coaching agent."""
+    """3-step AI interview coaching agent.
+
+    Step 1 (skill-gap) is fully deterministic — no LLM, returns in <100ms.
+    Step 2 (question bank) uses Ollama with num_predict capping for speed.
+    Step 3 (evaluate answer) uses Ollama with tight num_predict limit.
+    Both Steps 1 and 2 are cached by (resume_id, job_id).
+    """
 
     def __init__(self) -> None:
         self.ollama_base_url: Optional[str] = getattr(settings, "OLLAMA_BASE_URL", "http://localhost:11434")
@@ -560,17 +684,18 @@ class CoachAgent:
     async def generate_skill_gap_report(
         self, resume: Resume, job: JobPosting
     ) -> SkillGapReport:
-        """Step 1: Produce a skill-gap diagnostic report."""
+        """Step 1: Deterministic skill-gap diagnostic — no LLM needed, <100ms."""
+        cache_key = (str(resume.id), str(job.id))
+        if cache_key in _GAP_CACHE:
+            logger.debug(f"Coach cache hit (skill-gap): {cache_key}")
+            return _GAP_CACHE[cache_key]
+
         resume_skills = _extract_resume_skills(resume)
         job_reqs = _extract_job_requirements(job)
+        report = _rule_based_gap_report(resume, job, resume_skills, job_reqs)
 
-        if self.ollama_base_url and self.gemini_key is not None:
-            try:
-                return await self._ollama_skill_gap(resume, job, resume_skills, job_reqs)
-            except Exception as exc:
-                logger.warning(f"Ollama skill-gap failed: {exc}. Using rule-based fallback.")
-
-        return _rule_based_gap_report(resume, job, resume_skills, job_reqs)
+        _cache_put(_GAP_CACHE, cache_key, report)
+        return report
 
     async def get_skill_gap_report(
         self, db: AsyncSession, resume_id: str, job_id: str
@@ -591,22 +716,31 @@ class CoachAgent:
         gap_report: SkillGapReport,
         req: CoachQuestionBankRequest,
     ) -> QuestionBank:
-        """Step 2: Generate a curated question bank."""
+        """Step 2: Generate a curated question bank (Ollama with num_predict cap)."""
+        cache_key = (str(resume.id), str(job.id))
+        if cache_key in _QB_CACHE:
+            logger.debug(f"Coach cache hit (question-bank): {cache_key}")
+            return _QB_CACHE[cache_key]
+
         resume_skills = _extract_resume_skills(resume)
 
-        if self.ollama_base_url and self.gemini_key is not None:
+        if self.ollama_base_url:
             try:
-                return await self._ollama_question_bank(resume, job, gap_report, req, resume_skills)
+                qb = await self._ollama_question_bank(resume, job, gap_report, req, resume_skills)
+                _cache_put(_QB_CACHE, cache_key, qb)
+                return qb
             except Exception as exc:
                 logger.warning(f"Ollama question-bank failed: {exc}. Using rule-based fallback.")
 
-        return _rule_based_question_bank(resume, job, gap_report, req)
+        qb = _rule_based_question_bank(resume, job, gap_report, req)
+        _cache_put(_QB_CACHE, cache_key, qb)
+        return qb
 
     async def evaluate_candidate_answer(
         self, req: AnswerEvaluationRequest
     ) -> AnswerEvaluationResponse:
         """Step 3: Evaluate a practice answer with rubric scoring."""
-        if self.ollama_base_url and self.gemini_key is not None:
+        if self.ollama_base_url:
             try:
                 return await self._ollama_evaluate_answer(req)
             except Exception as exc:
@@ -620,7 +754,9 @@ class CoachAgent:
         job: JobPosting,
         qb_req: CoachQuestionBankRequest,
     ) -> FullCoachingSessionResponse:
-        """Run all three steps and return the combined coaching session."""
+        """Run Steps 1+2 and return the combined coaching session.
+        Step 1 is deterministic (<100ms). Step 2 uses cached Ollama output.
+        """
         gap_report = await self.generate_skill_gap_report(resume, job)
         question_bank = await self.generate_question_bank(resume, job, gap_report, qb_req)
 
@@ -644,7 +780,7 @@ class CoachAgent:
     # -----------------------------------------------------------------------
 
     def _clean_and_parse_json(self, text_content: str) -> dict:
-        """Strip markdown fences, locate JSON delimiters, fix common syntax flaws, and parse."""
+        """Strip markdown fences, locate JSON delimiters, fix common syntax flaws/truncation, and parse."""
         cleaned = text_content.strip()
         cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned, flags=re.MULTILINE)
         cleaned = re.sub(r"\s*```$", "", cleaned, flags=re.MULTILINE)
@@ -655,6 +791,29 @@ class CoachAgent:
         except json.JSONDecodeError:
             pass
 
+        # Try to extract the first balanced or partial JSON block
+        start_idx = cleaned.find("{")
+        if start_idx != -1:
+            candidate = cleaned[start_idx:]
+            # Remove trailing commas
+            candidate = re.sub(r",\s*([\]}])", r"\1", candidate)
+            try:
+                return json.loads(candidate)
+            except json.JSONDecodeError:
+                pass
+
+            # Handle truncated JSON by attempting to close open brackets/braces
+            open_braces = candidate.count("{") - candidate.count("}")
+            open_brackets = candidate.count("[") - candidate.count("]")
+            # Strip trailing incomplete key or partial token before closing
+            repaired = re.sub(r',\s*"[^"]*"?\s*$', '', candidate)
+            repaired = re.sub(r',\s*$', '', repaired)
+            repaired += ("]" * max(0, open_brackets)) + ("}" * max(0, open_braces))
+            try:
+                return json.loads(repaired)
+            except json.JSONDecodeError:
+                pass
+
         match = re.search(r"(\{.*\})", cleaned, re.DOTALL)
         if match:
             candidate = match.group(1).strip()
@@ -662,11 +821,15 @@ class CoachAgent:
                 return json.loads(candidate)
             except json.JSONDecodeError:
                 fixed = re.sub(r",\s*([\]}])", r"\1", candidate)
-                return json.loads(fixed)
+                try:
+                    return json.loads(fixed)
+                except json.JSONDecodeError:
+                    pass
 
         raise ValueError(f"Could not extract valid JSON from response: {text_content[:200]}")
 
-    async def _ollama_post(self, prompt: str, max_attempts: int = 2) -> dict:
+
+    async def _ollama_post(self, prompt: str, max_attempts: int = 2, num_predict: int = 700) -> dict:
         """Call local Ollama endpoint with JSON formatting and retry logic."""
         if hasattr(self, "_gemini_post") and self._gemini_post.__code__ != CoachAgent._gemini_post.__code__:
             raw = await self._gemini_post(prompt)
@@ -677,7 +840,7 @@ class CoachAgent:
         url = f"{self.ollama_base_url.rstrip('/')}/api/generate"
         last_error = None
 
-        async with httpx.AsyncClient(timeout=180.0) as client:
+        async with httpx.AsyncClient(timeout=60.0) as client:
             for attempt in range(1, max_attempts + 1):
                 try:
                     payload = {
@@ -687,7 +850,9 @@ class CoachAgent:
                         "format": "json",
                         "options": {
                             "temperature": 0.0,
+                            "num_predict": num_predict,
                         },
+                        "keep_alive": "30m",
                     }
                     resp = await client.post(url, json=payload)
                     resp.raise_for_status()
@@ -701,6 +866,7 @@ class CoachAgent:
                         continue
 
         raise RuntimeError(f"Ollama coach call failed after {max_attempts} attempts: {last_error}")
+
 
     async def _gemini_post(self, prompt: str) -> str:
         """Compatibility wrapper for tests that mock _gemini_post."""
@@ -837,20 +1003,18 @@ class CoachAgent:
             for p in proj_list
         )
         return (
-            "You are an expert technical interviewer. Generate a question bank in JSON.\n\n"
-            f"CANDIDATE STRENGTHS: {', '.join(gap_report.confirmed_strengths[:10])}\n"
-            f"CRITICAL GAPS: {', '.join(g.skill for g in gap_report.critical_gaps[:5])}\n"
-            f"CANDIDATE PROJECTS: {proj_str}\n"
-            f"JOB TITLE: {gap_report.job_title}\n"
-            f"COMPANY: {gap_report.company_name or 'N/A'}\n\n"
-            f"Generate exactly: {req.max_technical} technical questions, {req.max_behavioral} behavioral questions, "
-            f"{req.max_gap} gap-probing questions.\n\n"
-            "Return ONLY valid JSON (no markdown fences):\n"
+            "You are an expert technical interviewer. Return concise JSON with interview questions.\n\n"
+            f"STRENGTHS: {', '.join(gap_report.confirmed_strengths[:6])}\n"
+            f"GAPS: {', '.join(g.skill for g in gap_report.critical_gaps[:3])}\n"
+            f"ROLE: {gap_report.job_title} at {gap_report.company_name or 'Tech'}\n\n"
+            f"Generate {min(req.max_technical, 3)} technical, {min(req.max_behavioral, 2)} behavioral, {min(req.max_gap, 2)} gap questions.\n"
+            "Keep each question and sample_answer to 1-2 sentences.\n"
+            "Return ONLY valid JSON:\n"
             "{\n"
-            '  "technical_questions": [{"id":"TQ-001","category":"technical","difficulty":"junior","target_skill":"...","question":"...","why_asked":"...","sample_answer":"...","evaluation_criteria":["..."]}],\n'
-            '  "behavioral_questions": [{"id":"BQ-001","category":"behavioral","difficulty":"junior","target_skill":"Communication & Teamwork","question":"...","why_asked":"...","sample_answer":"...","evaluation_criteria":["Situation described","Task clear","Action concrete","Result stated"]}],\n'
-            '  "gap_questions": [{"id":"GQ-001","category":"gap_probing","difficulty":"junior","target_skill":"...","question":"...","why_asked":"...","sample_answer":"...","evaluation_criteria":["Honesty","Adjacent skills","Learning plan","Growth mindset"]}],\n'
-            '  "preparation_tips": ["Tip 1", "Tip 2", "Tip 3"]\n'
+            '  "technical_questions": [{"id":"TQ-001","category":"technical","difficulty":"mid","target_skill":"...","question":"...","why_asked":"...","sample_answer":"...","evaluation_criteria":["..."]}],\n'
+            '  "behavioral_questions": [{"id":"BQ-001","category":"behavioral","difficulty":"junior","target_skill":"Communication","question":"...","why_asked":"...","sample_answer":"...","evaluation_criteria":["..."]}],\n'
+            '  "gap_questions": [{"id":"GQ-001","category":"gap_probing","difficulty":"junior","target_skill":"...","question":"...","why_asked":"...","sample_answer":"...","evaluation_criteria":["..."]}],\n'
+            '  "preparation_tips": ["Tip 1", "Tip 2"]\n'
             "}"
         )
 
@@ -863,7 +1027,8 @@ class CoachAgent:
         resume_skills: List[str],
     ) -> QuestionBank:
         prompt = self._build_question_bank_prompt(resume, job, gap_report, req, resume_skills)
-        data = await self._ollama_post(prompt)
+        data = await self._ollama_post(prompt, max_attempts=1, num_predict=500)
+
         pd_data = resume.parsed_data or {}
         candidate_name = pd_data.get("contact_info", {}).get("name") or resume.candidate_name
 
@@ -944,7 +1109,7 @@ class CoachAgent:
 
     async def _ollama_evaluate_answer(self, req: AnswerEvaluationRequest) -> AnswerEvaluationResponse:
         prompt = self._build_evaluation_prompt(req)
-        data = await self._ollama_post(prompt)
+        data = await self._ollama_post(prompt, num_predict=350)
         grade = str(data.get("grade", "needs_improvement")).lower().strip()
         if grade not in ("excellent", "good", "needs_improvement", "poor"):
             grade = "needs_improvement"

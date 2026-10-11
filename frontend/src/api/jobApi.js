@@ -28,4 +28,10 @@ export const jobApi = {
     })
     return response.data
   },
+
+  // Get total postings stats count
+  getStats: async () => {
+    const response = await apiClient.get("/jobs/stats")
+    return response.data
+  },
 }

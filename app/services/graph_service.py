@@ -506,11 +506,37 @@ class GraphService:
         )
 
     async def sync_all_existing_jobs(self, db: AsyncSession) -> int:
-        """Batch-sync all PostgreSQL JobPostings into Neo4j."""
+        """Batch-sync all PostgreSQL JobPostings into Neo4j and prune stale nodes."""
         stmt = select(JobPosting)
         res = await db.execute(stmt)
         postings = res.scalars().all()
 
+        valid_ids = [str(p.id) for p in postings]
+
+        # 1. Prune stale JobPosting nodes from Neo4j that no longer exist in PostgreSQL
+        if valid_ids:
+            try:
+                # Query stale IDs
+                stale_recs = await execute_cypher("MATCH (j:JobPosting) RETURN j.id AS id")
+                neo_ids = {r["id"] for r in stale_recs if r.get("id")}
+                stale_ids = list(neo_ids - set(valid_ids))
+                if stale_ids:
+                    batch_size = 200
+                    for i in range(0, len(stale_ids), batch_size):
+                        batch = stale_ids[i:i + batch_size]
+                        await execute_cypher(
+                            "UNWIND $batch AS sid MATCH (j:JobPosting {id: sid}) DETACH DELETE j",
+                            {"batch": batch},
+                        )
+                    # Clean up orphan companies
+                    await execute_cypher(
+                        "MATCH (comp:Company) WHERE NOT (comp)<-[:POSTED_BY]-(:JobPosting) DETACH DELETE comp"
+                    )
+                    logger.info(f"Graph: Pruned {len(stale_ids)} stale JobPosting nodes from Neo4j.")
+            except Exception as e:
+                logger.warning(f"Graph: Failed to prune stale JobPostings: {e}")
+
+        # 2. Upsert existing postings
         synced = 0
         for p in postings:
             raw_skills = p.skills if isinstance(p.skills, list) else []

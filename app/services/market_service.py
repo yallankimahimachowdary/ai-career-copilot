@@ -96,18 +96,34 @@ def _percentile(sorted_values: List[float], pct: float) -> Optional[float]:
     return round(sorted_values[lo] + frac * (sorted_values[hi] - sorted_values[lo]), 2)
 
 
+def _classify_work_type(work_type: Optional[str]) -> str:
+    """Classify work_type string into one of full_time, part_time, contract, internship, other."""
+    if not work_type:
+        return "other"
+    wt = work_type.lower()
+    if "full" in wt:
+        return "full_time"
+    if "part" in wt:
+        return "part_time"
+    if "contract" in wt or "temp" in wt or "freelance" in wt:
+        return "contract"
+    if "intern" in wt:
+        return "internship"
+    return "other"
+
+
 def aggregate_salary(rows: List[Dict[str, Any]]) -> SalaryBand:
-    """Aggregate salary rows into a SalaryBand. All inputs normalised to annual."""
+    """Aggregate salary rows into a SalaryBand. All inputs normalised to annual INR."""
     annual_values: List[float] = []
     for row in rows:
         pay_period = row.get("pay_period")
         for col in ("med_salary", "min_salary", "max_salary"):
             val = normalise_salary(row.get(col), pay_period)
-            if val is not None and 5_000 <= val <= 2_000_000:  # sanity bounds
+            if val is not None and 50_000 <= val <= 50_000_000:  # sanity bounds for INR annual
                 annual_values.append(val)
 
     if not annual_values:
-        return SalaryBand(sample_size=0)
+        return SalaryBand(currency="INR", sample_size=0)
 
     annual_values.sort()
     return SalaryBand(
@@ -117,7 +133,7 @@ def aggregate_salary(rows: List[Dict[str, Any]]) -> SalaryBand:
         p75_annual=_percentile(annual_values, 75),
         max_annual=round(annual_values[-1], 2),
         mean_annual=round(sum(annual_values) / len(annual_values), 2),
-        currency="USD",
+        currency="INR",
         sample_size=len(annual_values),
     )
 
@@ -158,19 +174,14 @@ def compute_skill_demand(
     return result
 
 
-def _classify_work_type(work_type: Optional[str]) -> str:
-    if not work_type:
-        return "other"
-    wt = work_type.upper()
-    if "FULL" in wt:
-        return "full_time"
-    if "PART" in wt:
-        return "part_time"
-    if "CONTRACT" in wt or "CONTRACTOR" in wt:
-        return "contract"
-    if "INTERN" in wt:
-        return "internship"
-    return "other"
+def _format_inr(val: Optional[float]) -> str:
+    """Format an annual INR value in Lakhs (LPA) or Rupees."""
+    if val is None:
+        return "N/A"
+    if val >= 100_000:
+        lakhs = val / 100_000.0
+        return f"₹{lakhs:.1f} LPA"
+    return f"₹{val:,.0f}"
 
 
 # ---------------------------------------------------------------------------
@@ -185,20 +196,20 @@ def _rule_based_salary_narrative(
     if band.sample_size < _MIN_SALARY_SAMPLE:
         return (
             f"Salary data for {role!r} roles is limited in the current dataset "
-            f"(fewer than {_MIN_SALARY_SAMPLE} records with salary information). "
-            f"For the most accurate benchmarks, consult LinkedIn Salary Insights, "
-            f"Glassdoor, or Levels.fyi."
+            f"(fewer than {_MIN_SALARY_SAMPLE} records with disclosed salary information). "
+            f"For the most accurate benchmarks in India, consult AmbitionBox, "
+            f"Glassdoor India, or LinkedIn Salary Insights."
         )
-    loc_str = f" in {location}" if location else ""
-    median = f"${band.median_annual:,.0f}" if band.median_annual else "N/A"
-    low = f"${band.p25_annual:,.0f}" if band.p25_annual else "N/A"
-    high = f"${band.p75_annual:,.0f}" if band.p75_annual else "N/A"
+    loc_str = f" in {location}" if location else " across India"
+    median = _format_inr(band.median_annual)
+    low = _format_inr(band.p25_annual)
+    high = _format_inr(band.p75_annual)
     return (
-        f"Based on {band.sample_size} salary data points from current job postings, "
+        f"Based on {band.sample_size} disclosed salary data points from current Indian job postings, "
         f"{role!r} roles{loc_str} offer a median annual salary of {median}. "
-        f"The middle 50% of positions pay between {low} and {high} per year. "
-        f"Candidates with in-demand skills such as cloud platforms, modern frameworks, "
-        f"and strong communication are positioned to negotiate toward the upper quartile."
+        f"The middle 50% of positions pay between {low} and {high}. "
+        f"Candidates with specialized technical competencies and industry certifications "
+        f"are positioned to negotiate toward the upper quartile."
     )
 
 
@@ -253,10 +264,10 @@ def _rule_based_overview_narrative(
     top_skills: List[SkillDemandItem],
 ) -> str:
     remote_str = f"{remote_pct:.0f}% of postings allow remote work. " if remote_pct > 0 else ""
-    median = f"${band.median_annual:,.0f}/yr" if band.median_annual else "data unavailable"
+    median = _format_inr(band.median_annual) if band.median_annual else "data unavailable"
     top3 = ", ".join(s.skill for s in top_skills[:3]) if top_skills else "varied skills"
     return (
-        f"The {title!r} market currently shows {total} active postings. "
+        f"The {title!r} market currently shows {total} active Indian postings. "
         f"{remote_str}"
         f"Median annual compensation is {median}. "
         f"The most sought-after skills are {top3}. "
@@ -276,7 +287,7 @@ def _rule_based_positioning_narrative(
     name = candidate_name or "The candidate"
     gap_names = [g.skill for g in gaps[:3] if not g.candidate_has]
     gap_str = ", ".join(gap_names) if gap_names else "none identified"
-    median = f"${band.median_annual:,.0f}/yr" if band.median_annual else "N/A"
+    median = _format_inr(band.median_annual) if band.median_annual else "N/A"
 
     narrative = (
         f"{name} matches {matched} of the top {total_skills} market skills, "
@@ -723,7 +734,7 @@ class MarketAgent:
             raw = res_fb.fetchall()
 
         if not raw and not title_query:
-            stmt_base = select(JobPosting.skills, JobPosting.title, JobPosting.description).limit(250)
+            stmt_base = select(JobPosting.skills, JobPosting.title, JobPosting.description).limit(5000)
             res_base = await db.execute(stmt_base)
             raw = res_base.fetchall()
 
@@ -862,7 +873,7 @@ class MarketAgent:
             raw = res_fb.fetchall()
 
         if not raw and not title_query:
-            stmt_base = select(JobPosting.work_type, JobPosting.remote_allowed).limit(250)
+            stmt_base = select(JobPosting.work_type, JobPosting.remote_allowed).limit(5000)
             res_base = await db.execute(stmt_base)
             raw = res_base.fetchall()
 

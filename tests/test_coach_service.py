@@ -412,3 +412,91 @@ async def test_coach_agent_gemini_failure_falls_back(monkeypatch):
     report = await agent.generate_skill_gap_report(resume, job)
     assert report.resume_id == "test-resume-id"
     assert report.overall_readiness_score >= 5.0
+
+
+# ---------------------------------------------------------------------------
+# Tests for type-aware skill advice and soft-skill gap handling
+# ---------------------------------------------------------------------------
+
+def test_soft_skills_never_critical_gaps():
+    """Soft skills must be treated as nice-to-have or growth gaps, never critical."""
+    resume = _make_resume(skills=["Python"])
+    job = _make_job(
+        description="Requires Python, Communication, Problem Solving, and Leadership."
+    )
+    reqs = _extract_job_requirements(job)
+    report = _rule_based_gap_report(resume, job, _extract_resume_skills(resume), reqs)
+
+    critical_names = [g.skill for g in report.critical_gaps]
+    assert "Communication" not in critical_names
+    assert "Leadership" not in critical_names
+    assert "Problem Solving" not in critical_names
+
+    growth_names = [g.skill for g in report.growth_gaps]
+    # Missing soft skills should land in growth gaps
+    assert any(s in growth_names for s in ["Communication", "Leadership", "Problem Solving"])
+
+
+def test_soft_skill_gap_advice_format():
+    """Soft skills advice must recommend STAR-format stories and mock interviews."""
+    resume = _make_resume(skills=["Python"])
+    job = _make_job(description="Requires Python, Teamwork, and Communication.")
+    reqs = _extract_job_requirements(job)
+    report = _rule_based_gap_report(resume, job, _extract_resume_skills(resume), reqs)
+
+    comm_gap = next((g for g in report.growth_gaps if "Communication" in g.skill or "Teamwork" in g.skill), None)
+    assert comm_gap is not None
+    assert comm_gap.category == "Soft Skill"
+    assert "STAR-format" in comm_gap.recommendation
+    assert "mock interview" in comm_gap.recommendation.lower()
+
+
+def test_domain_regulatory_gap_advice_format():
+    """Domain/regulatory gaps must recommend guidelines/certificate and a case study."""
+    resume = _make_resume(skills=["Python", "Data Analysis"])
+    job = _make_job(
+        title="Clinical Research Associate",
+        description="Must have experience with Pharmacovigilance and Clinical Trials."
+    )
+    reqs = _extract_job_requirements(job)
+    report = _rule_based_gap_report(resume, job, _extract_resume_skills(resume), reqs)
+
+    domain_gaps = [g for g in report.critical_gaps if g.category == "Domain / Regulatory"]
+    assert len(domain_gaps) >= 1
+    target_gap = domain_gaps[0]
+    assert "guidelines" in target_gap.recommendation.lower() or "certificate" in target_gap.recommendation.lower()
+    assert "case study" in target_gap.recommendation.lower()
+
+
+def test_lab_engineering_tool_gap_advice_format():
+    """Lab or engineering tools must recommend hands-on practice, tutorials, and a worked example."""
+    resume = _make_resume(skills=["Python", "Bioinformatics"])
+    job = _make_job(
+        title="Biomedical Engineer",
+        description="Requires hands-on experience with PCR and AutoCAD."
+    )
+    reqs = _extract_job_requirements(job)
+    report = _rule_based_gap_report(resume, job, _extract_resume_skills(resume), reqs)
+
+    tool_gaps = [g for g in report.critical_gaps if g.category == "Lab / Engineering Tool"]
+    assert len(tool_gaps) >= 1
+    target_gap = tool_gaps[0]
+    assert "hands-on" in target_gap.recommendation.lower()
+    assert "worked example" in target_gap.recommendation.lower()
+
+
+def test_roadmap_prioritizes_critical_technical_gaps():
+    """7-to-10 day roadmap should put critical technical gaps first."""
+    resume = _make_resume(skills=["Python"])
+    job = _make_job(
+        description="Looking for Python, Docker, Pharmacovigilance, PCR, and Communication."
+    )
+    reqs = _extract_job_requirements(job)
+    report = _rule_based_gap_report(resume, job, _extract_resume_skills(resume), reqs)
+
+    assert len(report.learning_roadmap) >= 1
+    first_step = report.learning_roadmap[0]
+    assert "Days 1–3" in first_step
+    # First step should address the critical technical gap (Docker) before soft skill
+    assert "Soft Skill" not in first_step
+

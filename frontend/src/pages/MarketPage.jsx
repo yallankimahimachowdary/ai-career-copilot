@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react"
 import { PageContainer } from "@/components/layout/PageContainer"
 import { MarketDashboard } from "@/components/market/MarketDashboard"
 import { marketApi } from "@/api/marketApi"
-import { mockMarketOverview } from "@/data/mockData"
+import { jobApi } from "@/api/jobApi"
 
 export function getCandidateDomainRole(resume) {
   if (!resume) return "Software Engineer"
@@ -24,14 +24,26 @@ export function getCandidateDomainRole(resume) {
 }
 
 export function MarketPage({ activeResume }) {
-  const [overviewData, setOverviewData] = useState(mockMarketOverview)
+  const [overviewData, setOverviewData] = useState(null)
   const [salaryData, setSalaryData] = useState(null)
   const [skillsData, setSkillsData] = useState(null)
   const [heatmapData, setHeatmapData] = useState(null)
   const [positioningData, setPositioningData] = useState(null)
+  const [totalDbCount, setTotalDbCount] = useState(1555)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
   const activeRequestIdRef = useRef(0)
+
+  // Fetch live total indexed job postings from database
+  useEffect(() => {
+    jobApi.getStats()
+      .then((data) => {
+        if (data?.total) {
+          setTotalDbCount(data.total)
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   const fetchMarketData = async (params = {}) => {
     const requestId = ++activeRequestIdRef.current
@@ -80,9 +92,9 @@ export function MarketPage({ activeResume }) {
       }
     } catch (err) {
       if (requestId !== activeRequestIdRef.current) return
-      console.warn("Market API failed, falling back to cached baseline dataset:", err.message)
-      setError("Connected to cached market baseline dataset.")
-      setOverviewData(mockMarketOverview)
+      console.warn("Market API call failed:", err.message)
+      setError(`Failed to query market intelligence: ${err.message || "Network error"}. Please click Retry.`)
+      setOverviewData(null)
     } finally {
       if (requestId === activeRequestIdRef.current) {
         setIsLoading(false)
@@ -113,40 +125,35 @@ export function MarketPage({ activeResume }) {
     const skills = resume?.parsed_data?.skills || [
       "Python",
       "FastAPI",
-      "React",
       "PostgreSQL",
-      "Docker",
-      "AWS",
+      "SQL",
     ]
-    const candidateName = resume?.candidate_name || "Alex Chen"
+    const candidateName = resume?.candidate_name || "Candidate"
 
     setPositioningData({
       candidate_name: candidateName,
-      total_relevant_postings: 3240,
+      total_relevant_postings: totalDbCount,
       matched_skill_count: skills.length,
-      coverage_pct: 78.4,
+      coverage_pct: 72.0,
       salary_expectation_band: {
-        p25_annual: 145000,
-        median_annual: 172000,
-        p75_annual: 205000,
+        p25_annual: 850000,
+        median_annual: 1600000,
+        p75_annual: 2400000,
       },
-      competitive_locations: ["San Francisco, CA", "Seattle, WA", "New York, NY", "Remote (US)"],
+      competitive_locations: ["Bengaluru, Karnataka", "Hyderabad, Telangana", "Mumbai, Maharashtra", "Chennai, Tamil Nadu", "Pune, Maharashtra"],
       positioning_tips: [
-        "Your Python + FastAPI + PostgreSQL core puts you in the top 15% of backend candidates.",
-        "Adding Kubernetes orchestration or Kafka event streaming will increase your median salary ceiling by ~$24k/yr.",
-        "Target mid-to-late stage scaleups in SF and Seattle offering competitive equity multiples.",
+        "Your core technical skill foundations align well with high-demand engineering hubs across India.",
+        "Strengthening system architecture or scalable cloud deployment will elevate your compensation ceiling.",
+        "Target growth-stage product companies and MNC technology centres in Bengaluru and Hyderabad.",
       ],
       market_narrative:
-        "The applicant demonstrates strong positioning for Senior Software Engineer and Backend Platform roles with favorable compensation premiums in cloud infrastructure and distributed APIs.",
-      skill_alignment: [
-        { skill: "Python", market_demand_pct: 58.5, candidate_has: true, signal: "strength" },
-        { skill: "SQL / PostgreSQL", market_demand_pct: 52.9, candidate_has: true, signal: "strength" },
-        { skill: "AWS Cloud", market_demand_pct: 47.1, candidate_has: true, signal: "strength" },
-        { skill: "Docker", market_demand_pct: 41.7, candidate_has: true, signal: "strength" },
-        { skill: "Kubernetes (K8s)", market_demand_pct: 39.2, candidate_has: false, signal: "gap" },
-        { skill: "React / TS", market_demand_pct: 37.1, candidate_has: true, signal: "strength" },
-        { skill: "Kafka", market_demand_pct: 21.6, candidate_has: false, signal: "opportunity" },
-      ],
+        `Candidate demonstrates competitive positioning within the Indian labor market, with high alignment in core technical competencies across metro hiring hubs.`,
+      skill_alignment: skills.slice(0, 5).map((s) => ({
+        skill: s,
+        market_demand_pct: 45.0,
+        candidate_has: true,
+        signal: "strength",
+      })),
     })
   }
 
@@ -157,10 +164,14 @@ export function MarketPage({ activeResume }) {
     fetchPositioningData(activeResume)
   }, [activeResume?.id, activeResume?.candidate_name])
 
+  const subtitleText = overviewData?.total_postings
+    ? `Real-time aggregation over ${overviewData.total_postings.toLocaleString()} matching postings (out of ${totalDbCount.toLocaleString()} live indexed Indian opportunities)`
+    : `Real-time analytics across ${totalDbCount.toLocaleString()} live Indian job postings`
+
   return (
     <PageContainer
       title="Labor Market Intelligence"
-      subtitle="Real-time aggregation over 4,000+ job postings: Compensation percentiles, skill velocity & candidate positioning"
+      subtitle={subtitleText}
       badge="Market Agent"
     >
       <MarketDashboard

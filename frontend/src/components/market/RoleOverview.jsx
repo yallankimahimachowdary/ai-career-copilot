@@ -14,7 +14,19 @@ import { Badge } from "@/components/ui/badge"
 import { formatCurrency } from "@/lib/utils"
 
 export function RoleOverview({ overview }) {
-  if (!overview) return null
+  if (!overview) {
+    return (
+      <Card className="border-slate-800 bg-slate-900/40 text-center p-8">
+        <CardContent className="space-y-3">
+          <Briefcase className="h-8 w-8 text-slate-500 mx-auto" />
+          <h3 className="text-base font-semibold text-slate-300">Market Intelligence Ready</h3>
+          <p className="text-xs text-slate-500 max-w-md mx-auto">
+            Click &quot;Analyze Market Dynamics&quot; above to query compensation percentiles, in-demand skills, and geographic hiring distribution across live Indian job postings.
+          </p>
+        </CardContent>
+      </Card>
+    )
+  }
 
   const {
     title_query = "Software Engineer",

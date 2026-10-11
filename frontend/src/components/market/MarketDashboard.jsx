@@ -96,12 +96,22 @@ export function MarketDashboard({
       </Card>
 
       {error && (
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-sm text-rose-300">
-          <AlertCircle className="h-5 w-5 shrink-0 text-rose-400" />
-          <div>
-            <span className="font-semibold">Market Intelligence Agent Error: </span>
-            <span>{error}</span>
+        <div className="flex items-center justify-between p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-sm text-rose-300">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="h-5 w-5 shrink-0 text-rose-400" />
+            <div>
+              <span className="font-semibold">Market Intelligence Agent Error: </span>
+              <span>{error}</span>
+            </div>
           </div>
+          <Button
+            size="sm"
+            variant="outline"
+            className="border-rose-500/30 text-rose-200 hover:bg-rose-500/20 shrink-0"
+            onClick={handleRunSearch}
+          >
+            Retry
+          </Button>
         </div>
       )}
 

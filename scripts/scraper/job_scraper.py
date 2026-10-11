@@ -53,38 +53,65 @@ except ImportError:
 # ---------------------------------------------------------------------------
 # Default Query Configuration
 # ---------------------------------------------------------------------------
+# Default Query Configuration (Localized to India)
+# ---------------------------------------------------------------------------
 
 DEFAULT_SEARCH_TERMS = [
+    # Tech & Software
     "Software Engineer",
     "Python Developer",
     "Full Stack Engineer",
     "Backend Engineer",
     "Frontend Developer",
     "Data Scientist",
+    "Data Analyst",
     "Machine Learning Engineer",
     "DevOps Engineer",
     "Cloud Engineer",
+    # Life Sciences & Healthcare
     "Biotechnology",
+    "Bioinformatics",
+    "Biomedical Engineer",
+    "Clinical Research",
+    "Pharmaceutical",
+    # Core Engineering
+    "Mechanical Engineer",
+    "Civil Engineer",
+    "Electronics Engineer",
 ]
 
 DEFAULT_LOCATIONS = [
+    "Chennai",
+    "Bengaluru",
+    "Hyderabad",
+    "Pune",
+    "Mumbai",
+    "Delhi NCR",
     "Remote",
-    "San Francisco, CA",
-    "New York, NY",
-    "Seattle, WA",
-    "Austin, TX",
-    "Boston, MA",
 ]
 
 DEFAULT_SITES = ["linkedin", "indeed", "glassdoor"]
 
 
 # ---------------------------------------------------------------------------
-# Salary & Text Extraction Helpers
+# Salary & Text Extraction Helpers (INR & Indian formats)
 # ---------------------------------------------------------------------------
 
-_SALARY_REGEX = re.compile(
-    r"\$([0-9]{1,3}(?:,[0-9]{3})+|\d{2,3}k?)\s*(?:-|to)\s*\$([0-9]{1,3}(?:,[0-9]{3})+|\d{2,3}k?)",
+# Patterns like "₹8-12 LPA", "8 - 12 LPA", "₹8,00,000 - ₹12,00,000 a year", "50,000/month"
+_LPA_REGEX = re.compile(
+    r"(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:-|to)\s*(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakhs?|lac(?:s)?)\b",
+    re.IGNORECASE,
+)
+_SINGLE_LPA_REGEX = re.compile(
+    r"(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakhs?|lac(?:s)?)\b",
+    re.IGNORECASE,
+)
+_INR_MONTHLY_REGEX = re.compile(
+    r"(?:₹|rs\.?|inr)\s*([0-9]{1,2}(?:,[0-9]{2,3})+|\d{4,6})\s*(?:-|to)?\s*(?:(?:₹|rs\.?|inr)\s*([0-9]{1,2}(?:,[0-9]{2,3})+|\d{4,6}))?\s*(?:/|\s*per\s*)month",
+    re.IGNORECASE,
+)
+_INR_ANNUAL_REGEX = re.compile(
+    r"(?:₹|rs\.?|inr)\s*([0-9]{1,2}(?:,[0-9]{2,3})+|\d{5,8})\s*(?:-|to)\s*(?:₹|rs\.?|inr)\s*([0-9]{1,2}(?:,[0-9]{2,3})+|\d{5,8})",
     re.IGNORECASE,
 )
 
@@ -97,9 +124,44 @@ def _clean_str(val: Any) -> Optional[str]:
     return s if s and s.lower() not in ("nan", "none", "null") else None
 
 
+def _normalize_location_str(loc: Optional[str]) -> Optional[str]:
+    """Normalize Indian city variations to standard city representations."""
+    if not loc:
+        return None
+    l_lower = loc.lower().strip()
+    if any(k in l_lower for k in ("bengaluru", "bangalore")):
+        return "Bengaluru, Karnataka"
+    if any(k in l_lower for k in ("chennai", "madras")):
+        return "Chennai, Tamil Nadu"
+    if any(k in l_lower for k in ("hyderabad", "secunderabad")):
+        return "Hyderabad, Telangana"
+    if "pune" in l_lower:
+        return "Pune, Maharashtra"
+    if any(k in l_lower for k in ("mumbai", "bombay", "navi mumbai", "thane")):
+        return "Mumbai, Maharashtra"
+    if any(k in l_lower for k in ("delhi", "new delhi", "noida", "gurgaon", "gurugram", "ghaziabad", "faridabad")):
+        return "Delhi NCR"
+    if "remote" in l_lower:
+        return "Remote (India)"
+    if l_lower in ("mh", "maharashtra"):
+        return "Mumbai, Maharashtra"
+    if l_lower in ("ka", "karnataka"):
+        return "Bengaluru, Karnataka"
+    if l_lower in ("ts", "tg", "telangana"):
+        return "Hyderabad, Telangana"
+    if l_lower in ("tn", "tamil nadu"):
+        return "Chennai, Tamil Nadu"
+    if l_lower in ("dl", "delhi"):
+        return "Delhi NCR"
+    # Strip country suffix if redundant
+    cleaned = re.sub(r",\s*(?:india|in)$", "", loc, flags=re.IGNORECASE).strip()
+    return cleaned or loc
+
+
 def _parse_salary(row: Dict[str, Any], description: str) -> Tuple[Optional[float], Optional[float], Optional[float], Optional[str]]:
     """
     Extract min, max, median salary and pay period from structured fields or description text.
+    All Indian compensation normalized to annual INR.
     """
     min_sal = None
     max_sal = None
@@ -122,34 +184,73 @@ def _parse_salary(row: Dict[str, Any], description: str) -> Tuple[Optional[float
             pass
 
     if interval:
-        pay_period = interval.upper()
-        if pay_period in ("YEAR", "ANNUALLY"):
+        interval_upper = interval.upper()
+        if interval_upper in ("YEAR", "ANNUALLY", "YEARLY"):
             pay_period = "YEARLY"
-        elif pay_period in ("HOUR",):
-            pay_period = "HOURLY"
-        elif pay_period in ("MONTH",):
+        elif interval_upper in ("MONTH", "MONTHLY"):
             pay_period = "MONTHLY"
+            # Annualize monthly INR
+            if min_sal is not None:
+                min_sal = min_sal * 12.0
+            if max_sal is not None:
+                max_sal = max_sal * 12.0
+            pay_period = "YEARLY"
+        elif interval_upper in ("HOUR", "HOURLY"):
+            pay_period = "HOURLY"
+            if min_sal is not None:
+                min_sal = min_sal * 2000.0
+            if max_sal is not None:
+                max_sal = max_sal * 2000.0
+            pay_period = "YEARLY"
 
-    # Fallback: Regex scan in description if structured salary is missing
+    # Fallback 1: LPA Regex in description (e.g. "8-12 LPA", "₹10 LPA")
     if min_sal is None and max_sal is None and description:
-        match = _SALARY_REGEX.search(description)
-        if match:
-            def _parse_token(tok: str) -> float:
-                tok = tok.lower().replace(",", "").replace("$", "").strip()
-                if tok.endswith("k"):
-                    return float(tok[:-1]) * 1000.0
-                return float(tok)
-
+        lpa_match = _LPA_REGEX.search(description)
+        if lpa_match:
             try:
-                min_sal = _parse_token(match.group(1))
-                max_sal = _parse_token(match.group(2))
-                if min_sal > 5000:
-                    pay_period = "YEARLY"
-                elif min_sal > 15:
-                    pay_period = "HOURLY"
+                min_sal = float(lpa_match.group(1)) * 100_000.0
+                max_sal = float(lpa_match.group(2)) * 100_000.0
+                pay_period = "YEARLY"
             except Exception:
-                min_sal = None
-                max_sal = None
+                pass
+        else:
+            single_lpa = _SINGLE_LPA_REGEX.search(description)
+            if single_lpa:
+                try:
+                    val = float(single_lpa.group(1)) * 100_000.0
+                    min_sal = val
+                    max_sal = val
+                    pay_period = "YEARLY"
+                except Exception:
+                    pass
+
+    # Fallback 2: Monthly regex (e.g. "₹40,000 - ₹60,000 / month")
+    if min_sal is None and max_sal is None and description:
+        m_match = _INR_MONTHLY_REGEX.search(description)
+        if m_match:
+            try:
+                def _parse_num(s: str) -> float:
+                    return float(s.replace(",", "").strip())
+                m_min = _parse_num(m_match.group(1)) * 12.0
+                min_sal = m_min
+                if m_match.group(2):
+                    max_sal = _parse_num(m_match.group(2)) * 12.0
+                else:
+                    max_sal = m_min
+                pay_period = "YEARLY"
+            except Exception:
+                pass
+
+    # Fallback 3: Annual INR regex (e.g. "₹6,00,000 - ₹12,00,000")
+    if min_sal is None and max_sal is None and description:
+        a_match = _INR_ANNUAL_REGEX.search(description)
+        if a_match:
+            try:
+                min_sal = float(a_match.group(1).replace(",", "").strip())
+                max_sal = float(a_match.group(2).replace(",", "").strip())
+                pay_period = "YEARLY"
+            except Exception:
+                pass
 
     # Sanity checks on salary values
     if min_sal and max_sal and min_sal > max_sal:
@@ -248,7 +349,7 @@ class JobScraperPipeline:
                 search_term=search_term,
                 location=location,
                 results_wanted=self.results_per_query,
-                country_indeed="USA",
+                country_indeed="india",
                 fetch_description=True,
                 verbose=0,
             )
@@ -267,6 +368,7 @@ class JobScraperPipeline:
         self,
         raw_jobs: List[Dict[str, Any]],
         existing_keys: Set[str],
+        query_loc: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """Normalize raw scraped records and deduplicate against existing keys."""
         normalized_records = []
@@ -279,7 +381,10 @@ class JobScraperPipeline:
 
                 site = _clean_str(row.get("site")) or "scraped"
                 company = _clean_str(row.get("company"))
-                location = _clean_str(row.get("location"))
+                raw_loc = _clean_str(row.get("location"))
+                if not raw_loc or len(raw_loc.strip()) <= 3:
+                    raw_loc = query_loc or raw_loc
+                location = _normalize_location_str(raw_loc)
                 job_url = _clean_str(row.get("job_url"))
                 row_id = row.get("id")
 
@@ -331,7 +436,7 @@ class JobScraperPipeline:
                     "title": title[:500],
                     "company_name": company[:500] if company else None,
                     "description": description,
-                    "location": location[:500] if location else ("Remote" if remote_allowed else None),
+                    "location": location[:500] if location else ("Remote (India)" if remote_allowed else "India"),
                     "work_type": work_type,
                     "remote_allowed": remote_allowed,
                     "skills": canonical_skills,
@@ -339,6 +444,8 @@ class JobScraperPipeline:
                     "max_salary": max_sal,
                     "med_salary": med_sal,
                     "pay_period": pay_period,
+                    "country": "India",
+                    "currency": "INR",
                     "source": site.lower(),
                     "embedding": embed_vector,
                     "created_at": datetime.now(timezone.utc),
@@ -370,6 +477,8 @@ class JobScraperPipeline:
                 "max_salary": stmt.excluded.max_salary,
                 "med_salary": stmt.excluded.med_salary,
                 "pay_period": stmt.excluded.pay_period,
+                "country": stmt.excluded.country,
+                "currency": stmt.excluded.currency,
                 "source": stmt.excluded.source,
                 "updated_at": stmt.excluded.updated_at,
             },
@@ -379,7 +488,7 @@ class JobScraperPipeline:
         await session.commit()
         return len(records)
 
-    async def run_batch(self, purge_kaggle: bool = False) -> Dict[str, int]:
+    async def run_batch(self, purge_kaggle: bool = False, purge_all: bool = False) -> Dict[str, int]:
         """Execute complete scraping run across all configured search terms and platforms."""
         logger.info("Starting Real-time Job Scraper Batch Run...")
         stats = {
@@ -389,8 +498,14 @@ class JobScraperPipeline:
         }
 
         async with AsyncSessionLocal() as session:
-            # 1. Optionally purge frozen legacy Kaggle records
-            if purge_kaggle:
+            # 1. Optionally purge previous postings
+            if purge_all:
+                del_result = await session.execute(delete(JobPosting))
+                await session.commit()
+                purged_count = del_result.rowcount or 0
+                stats["purged_legacy"] = purged_count
+                logger.info("Purged ALL %d job postings (including US records).", purged_count)
+            elif purge_kaggle:
                 del_result = await session.execute(
                     delete(JobPosting).where(JobPosting.source == "kaggle_linkedin")
                 )
@@ -415,28 +530,21 @@ class JobScraperPipeline:
             logger.info("Loaded %d existing database signatures for deduplication.", len(existing_keys))
 
             # 3. Iterate over search terms, locations, and platforms
-            all_scraped_records = []
             for term in self.search_terms:
                 for loc in self.locations:
                     for site in self.sites:
                         raw_jobs = self.scrape_platform(site, term, loc)
                         if raw_jobs:
                             stats["total_scraped"] += len(raw_jobs)
-                            all_scraped_records.extend(raw_jobs)
+                            normalized = await self.normalize_and_filter(raw_jobs, existing_keys, query_loc=loc)
+                            if normalized:
+                                inserted = await self.save_records(session, normalized)
+                                stats["new_inserted"] += inserted
+                                logger.info("-> Saved %d new records (Total in DB so far: %d)", inserted, stats["new_inserted"])
 
                         # Friendly rate-limiting delay between requests
-                        delay = random.uniform(2.0, 3.5)
+                        delay = random.uniform(1.5, 2.5)
                         time.sleep(delay)
-
-            logger.info("Normalizing and deduplicating %d raw listings...", len(all_scraped_records))
-            normalized = await self.normalize_and_filter(all_scraped_records, existing_keys)
-
-            # 4. Batch persist in chunks of 50
-            chunk_size = 50
-            for i in range(0, len(normalized), chunk_size):
-                chunk = normalized[i : i + chunk_size]
-                inserted = await self.save_records(session, chunk)
-                stats["new_inserted"] += inserted
 
             logger.info("Batch run complete! Final Stats: %s", stats)
 
@@ -460,7 +568,7 @@ def run_once(args: argparse.Namespace):
         results_per_query=args.limit,
         skip_embeddings=args.skip_embeddings,
     )
-    asyncio.run(pipeline.run_batch(purge_kaggle=args.purge_kaggle))
+    asyncio.run(pipeline.run_batch(purge_kaggle=args.purge_kaggle, purge_all=args.purge_all))
 
 
 def schedule_daily(args: argparse.Namespace):
@@ -508,6 +616,7 @@ def main():
     parser.add_argument("--locations", type=str, default="", help="Comma-separated location queries")
     parser.add_argument("--sites", type=str, default="linkedin,indeed,glassdoor", help="Comma-separated sites")
     parser.add_argument("--purge-kaggle", action="store_true", help="Purge frozen legacy Kaggle dataset records")
+    parser.add_argument("--purge-all", action="store_true", help="Purge all existing job postings before scraping")
     parser.add_argument("--skip-embeddings", action="store_true", help="Skip vector embedding generation")
 
     args = parser.parse_args()

@@ -16,7 +16,7 @@ class SalaryBand(BaseModel):
     p75_annual: Optional[float] = None
     max_annual: Optional[float] = None
     mean_annual: Optional[float] = None
-    currency: str = "USD"
+    currency: str = "INR"
     sample_size: int = 0
 
 

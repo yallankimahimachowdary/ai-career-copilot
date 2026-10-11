@@ -134,7 +134,7 @@ export function Sidebar({ isConnected = true }) {
             <span className="text-[10px] font-mono text-slate-400">v0.1.0</span>
           </div>
           <div className="text-[11px] text-slate-400 leading-tight">
-            XGBoost + pgvector + TreeSHAP + Gemini/LLM
+            XGBoost + pgvector + TreeSHAP + Ollama (llama3.2:3b)
           </div>
         </div>
       </div>

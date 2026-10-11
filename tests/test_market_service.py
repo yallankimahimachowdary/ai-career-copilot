@@ -101,10 +101,10 @@ def test_aggregate_salary_normalises_hourly():
 
 
 def test_aggregate_salary_sanity_bounds():
-    """Values outside [5000, 2_000_000] should be filtered."""
+    """Values outside INR bounds [50_000, 50_000_000] should be filtered."""
     rows = [
         {"min_salary": 1.0, "max_salary": None, "med_salary": None, "pay_period": "YEARLY"},
-        {"min_salary": 5_000_000, "max_salary": None, "med_salary": None, "pay_period": "YEARLY"},
+        {"min_salary": 100_000_000, "max_salary": None, "med_salary": None, "pay_period": "YEARLY"},
         {"min_salary": 80_000, "max_salary": None, "med_salary": None, "pay_period": "YEARLY"},
     ]
     band = aggregate_salary(rows)

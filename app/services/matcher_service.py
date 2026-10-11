@@ -23,7 +23,7 @@ from app.schemas.matcher import (
 from app.services.embedding_service import embedding_service
 
 
-from app.core.taxonomy import LINKEDIN_CATEGORY_CODES
+from app.core.taxonomy import CANONICAL_SKILL_PATTERNS, LINKEDIN_CATEGORY_CODES
 
 
 # ------------------------------------------------------------------------------
@@ -36,39 +36,7 @@ class FeatureExtractor:
     KNOWN_CATEGORY_CODES = LINKEDIN_CATEGORY_CODES
 
     # Curated regex taxonomy for extracting genuine professional and technical skills
-    REGEX_SKILL_PATTERNS = {
-        "Python": r"\bpython\b",
-        "Java": r"\bjava\b(?!\s*script)",
-        "JavaScript": r"\b(javascript|js|ecmascript)\b",
-        "TypeScript": r"\b(typescript|ts)\b",
-        "C/C++": r"\b(c\s*(?:\+\+|#|\/|\s*and\s*c\+\+)|c\s*programming|c\s*language|embedded\s*c)\b",
-        "C#": r"\b(c#|c\s*sharp|\.net)\b",
-        "SQL": r"\b(sql|mysql|postgresql|postgres|pl\/sql|t-sql|sqlite)\b",
-        "HTML/CSS": r"\b(html5?|css3?)\b",
-        "React": r"\b(react(?:\.js|js|\s*native)?)\b(?!\s*(?:to|with|appropriately|quickly|calmly|in))",
-        "FastAPI": r"\b(fastapi|fast\s*api)\b",
-        "Django": r"\bdjango\b",
-        "Flask": r"\bflask\b",
-        "Spring Boot": r"\b(spring\s*boot|spring\s*framework)\b",
-        "Node.js": r"\b(node(?:\.js|js)?)\b",
-        "Docker": r"\bdocker\b",
-        "Kubernetes": r"\b(kubernetes|k8s)\b",
-        "AWS": r"\b(aws|amazon\s*web\s*services)\b",
-        "Azure": r"\b(azure|microsoft\s*azure)\b",
-        "GCP": r"\b(gcp|google\s*cloud)\b",
-        "Git/GitHub": r"\b(git|github|gitlab)\b",
-        "Linux": r"\b(linux|unix|ubuntu|centos)\b",
-        "REST API": r"\b(rest(?:\s*apis?|\s*framework)?|restful|graphql|microservices)\b",
-        "Machine Learning": r"\b(machine\s*learning|deep\s*learning|pytorch|tensorflow|keras|scikit-learn|nlp|computer\s*vision)\b",
-        "Data Science": r"\b(data\s*science|data\s*analytics?|pandas|numpy|spark)\b",
-        "Blender/3D": r"\b(blender\s*3d|3d\s*(?:modeling|artist|animation)|autocad|solidworks)\b",
-        "Figma/Design": r"\b(figma|canva|ui\/ux|graphic\s*design)\b",
-        "Dental Care": r"\b(dental(?:\s*hygiene|\s*hygienist|\s*assistant)?|dentistry|teeth)\b",
-        "Nursing/Patient Care": r"\b(registered\s*nurse|nursing|patient\s*care|triage|clinical\s*care|phlebotomy)\b",
-        "Medical Certifications": r"\b(cpr|bls|acls|hipaa)\b",
-        "Legal": r"\b(attorney|lawyer|legal\s*research|litigation|paralegal)\b",
-        "Accounting/Finance": r"\b(accounting|gaap|cpa|auditing|tax\s*return|bookkeeping|quickbooks)\b",
-    }
+    REGEX_SKILL_PATTERNS = CANONICAL_SKILL_PATTERNS
 
     DEGREE_HIERARCHY = {
         "phd": 4,
@@ -274,14 +242,21 @@ class FeatureExtractor:
         must_have: List[str] = []
         nice_to_have: List[str] = []
 
+        # Soft skills should never be classified as hard mandatory requirements
+        from app.core.taxonomy import SOFT_SKILLS as soft_skills
+
         must_keywords = ["requirements", "qualifications", "must have", "what you'll need", "required skills", "minimum qualifications", "basic qualifications"]
         nice_keywords = ["preferred", "nice to have", "plus", "bonus", "optional", "good to have", "desired"]
+
 
         has_must_section = any(kw in desc_lower for kw in must_keywords)
         has_nice_section = any(kw in desc_lower for kw in nice_keywords)
 
         if has_must_section and has_nice_section:
             for skill in clean_skills:
+                if skill.lower() in soft_skills:
+                    nice_to_have.append(skill)
+                    continue
                 skill_pat = re.escape(skill.lower())
                 pos = desc_lower.find(skill_pat)
                 if pos != -1:
@@ -294,9 +269,15 @@ class FeatureExtractor:
                 else:
                     must_have.append(skill)
         else:
-            split_idx = max(1, int(len(clean_skills) * 0.60))
-            must_have = clean_skills[:split_idx]
-            nice_to_have = clean_skills[split_idx:]
+            tech_skills = [s for s in clean_skills if s.lower() not in soft_skills]
+            soft_found = [s for s in clean_skills if s.lower() in soft_skills]
+            if tech_skills:
+                split_idx = max(1, int(len(tech_skills) * 0.60))
+                must_have = tech_skills[:split_idx]
+                nice_to_have = tech_skills[split_idx:] + soft_found
+            else:
+                must_have = []
+                nice_to_have = soft_found
 
         return must_have, nice_to_have
 
@@ -355,15 +336,49 @@ class FeatureExtractor:
             t_tokens = set(re.findall(r"\w+", str(title).lower()))
             cand_tokens.update({t for t in t_tokens if t not in stop_words and len(t) > 2})
 
-        # 2. If student / no prior formal titles, infer domain from education and technical skills
-        if not cand_tokens:
-            for edu in (education_entries or []):
-                field = str(edu.get("field_of_study") or "").lower()
-                cand_tokens.update({t for t in re.findall(r"\w+", field) if t not in stop_words and len(t) > 2})
+        # 2. Always augment with domain tokens from education and technical skills
+        edu_fields = [
+            f"{edu.get('degree', '')} {edu.get('field_of_study', '')}".lower()
+            for edu in (education_entries or [])
+        ]
+        for field in edu_fields:
+            cand_tokens.update({t for t in re.findall(r"\w+", field) if t not in stop_words and len(t) > 2})
 
+        # Domain-specific token inference
+        is_bio = any(any(k in f for k in ["bio", "pharma", "clinical", "molecular", "genetic", "microbio"]) for f in edu_fields) or any(
+            s.lower() in ["pcr", "molecular biology", "microbiology", "cell culture", "bioinformatics", "crispr", "elisa", "formulation"]
+            for s in (candidate_skills or [])
+        )
+        is_mech = any("mechanical" in f for f in edu_fields) or any(
+            s.lower() in ["solidworks", "ansys", "autocad", "catia", "thermodynamics"] for s in (candidate_skills or [])
+        )
+        is_civ = any("civil" in f for f in edu_fields) or any(
+            s.lower() in ["revit", "structural analysis", "surveying"] for s in (candidate_skills or [])
+        )
+        is_elec = any(any(k in f for k in ["electronics", "electrical", "vlsi", "embedded"]) for f in edu_fields) or any(
+            s.lower() in ["vlsi", "verilog", "embedded systems", "plc / scada"] for s in (candidate_skills or [])
+        )
+
+        if is_bio:
+            cand_tokens.update({"biotechnology", "biotech", "bioinformatics", "biomedical", "scientist", "researcher", "biology", "microbiology", "laboratory", "clinical", "pharma", "trainee", "intern", "associate"})
+            for s in (candidate_skills or []):
+                cand_tokens.update({t for t in re.findall(r"\w+", s.lower()) if t not in stop_words and len(t) > 2})
+        elif is_mech:
+            cand_tokens.update({"mechanical", "design", "engineer", "cad", "manufacturing", "automotive", "trainee", "intern"})
+            for s in (candidate_skills or []):
+                cand_tokens.update({t for t in re.findall(r"\w+", s.lower()) if t not in stop_words and len(t) > 2})
+        elif is_civ:
+            cand_tokens.update({"civil", "structural", "construction", "site", "infrastructure", "trainee", "intern"})
+            for s in (candidate_skills or []):
+                cand_tokens.update({t for t in re.findall(r"\w+", s.lower()) if t not in stop_words and len(t) > 2})
+        elif is_elec:
+            cand_tokens.update({"electronics", "electrical", "hardware", "embedded", "vlsi", "firmware", "trainee", "intern"})
+            for s in (candidate_skills or []):
+                cand_tokens.update({t for t in re.findall(r"\w+", s.lower()) if t not in stop_words and len(t) > 2})
+        else:
             tech_markers = {"python", "java", "c++", "c", "javascript", "html", "css", "sql", "react", "fastapi"}
             if any(s.lower() in tech_markers for s in (candidate_skills or [])):
-                cand_tokens.update({"software", "engineer", "developer", "technology", "web", "data", "programmer", "analyst"})
+                cand_tokens.update({"software", "engineer", "developer", "technology", "web", "data", "programmer", "analyst", "trainee", "intern"})
 
         if not cand_tokens:
             return 0.0
@@ -507,7 +522,10 @@ class CompositeScorer:
 
         # Role alignment multiplier: penalizes jobs outside candidate's professional trajectory
         if features.title_similarity == 0.0 and features.must_have_skill_match == 0.0:
-            return 0.0
+            if features.nice_to_have_skill_match > 0.0 or features.semantic_similarity > 0.60:
+                raw_score *= 0.35
+            else:
+                return 0.0
         elif features.title_similarity == 0.0:
             raw_score *= 0.40
         else:
@@ -775,6 +793,33 @@ class MatcherAgent:
             resume.embedding = await embedding_service.get_embedding(embed_text)
             await db.commit()
 
+        # Domain-aware retrieval: identify candidate's primary field
+        candidate_skills = resume.parsed_data.get("skills", []) if resume.parsed_data else []
+        edu_texts = [
+            f"{e.get('degree', '')} {e.get('field_of_study', '')}".lower()
+            for e in (resume.parsed_data.get("education", []) if resume.parsed_data else [])
+        ]
+        summary_text = (resume.parsed_data.get("summary", "") if resume.parsed_data else "").lower()
+        skills_lower = {s.lower() for s in candidate_skills}
+
+        is_biotech = (
+            any(any(k in t for k in ["bio", "pharma", "clinical", "molecular", "genetic", "microbio"]) for t in edu_texts)
+            or any(k in summary_text for k in ["biotech", "biology", "pharmaceutical", "clinical", "microbiology"])
+            or any(k in skills_lower for k in ["pcr", "molecular biology", "microbiology", "cell culture", "bioinformatics", "crispr", "elisa", "formulation"])
+        )
+        is_mechanical = (
+            any("mechanical" in t for t in edu_texts)
+            or any(k in skills_lower for k in ["solidworks", "ansys", "autocad", "catia", "thermodynamics"])
+        )
+        is_civil = (
+            any("civil" in t for t in edu_texts)
+            or any(k in skills_lower for k in ["revit", "structural analysis", "surveying", "geotechnical"])
+        )
+        is_electronics = (
+            any(any(k in t for k in ["electronics", "electrical", "vlsi", "embedded"]) for t in edu_texts)
+            or any(k in skills_lower for k in ["vlsi", "verilog", "embedded systems", "plc / scada", "microcontroller"])
+        )
+
         # 2. Hybrid Retrieval:
         # A. Vector similarity search pool
         candidate_pool_limit = max(limit * 4, 60)
@@ -785,6 +830,44 @@ class MatcherAgent:
             )
             .where(JobPosting.embedding.is_not(None))
         )
+        if is_biotech:
+            vector_stmt = vector_stmt.where(or_(
+                JobPosting.title.ilike("%bio%"),
+                JobPosting.title.ilike("%pharma%"),
+                JobPosting.title.ilike("%clinic%"),
+                JobPosting.title.ilike("%medic%"),
+                JobPosting.title.ilike("%scien%"),
+                JobPosting.title.ilike("%chem%"),
+                JobPosting.title.ilike("%lab%"),
+                JobPosting.title.ilike("%research%"),
+            ))
+        elif is_mechanical:
+            vector_stmt = vector_stmt.where(or_(
+                JobPosting.title.ilike("%mechanic%"),
+                JobPosting.title.ilike("%cad%"),
+                JobPosting.title.ilike("%design%"),
+                JobPosting.title.ilike("%solidworks%"),
+                JobPosting.title.ilike("%ansys%"),
+                JobPosting.title.ilike("%manufactur%"),
+                JobPosting.title.ilike("%automot%"),
+            ))
+        elif is_civil:
+            vector_stmt = vector_stmt.where(or_(
+                JobPosting.title.ilike("%civil%"),
+                JobPosting.title.ilike("%structur%"),
+                JobPosting.title.ilike("%construct%"),
+                JobPosting.title.ilike("%site%"),
+            ))
+        elif is_electronics:
+            vector_stmt = vector_stmt.where(or_(
+                JobPosting.title.ilike("%electron%"),
+                JobPosting.title.ilike("%electr%"),
+                JobPosting.title.ilike("%vlsi%"),
+                JobPosting.title.ilike("%embed%"),
+                JobPosting.title.ilike("%hardw%"),
+                JobPosting.title.ilike("%firmw%"),
+            ))
+
         if location:
             vector_stmt = vector_stmt.where(JobPosting.location.ilike(f"%{location}%"))
         if remote_only:
@@ -796,26 +879,25 @@ class MatcherAgent:
 
         # B. Direct domain & skill retrieval to augment candidate pool
         seen_job_ids = {row[0].id for row in candidate_rows}
-        candidate_skills = resume.parsed_data.get("skills", []) if resume.parsed_data else []
-        
-        # Check if candidate is in tech / software domain
-        is_tech = any(
-            s.lower() in ["python", "java", "c", "c++", "javascript", "html", "css", "sql", "react", "fastapi"]
-            for s in candidate_skills
-        ) or any(
-            any(w in str(e.get("field_of_study", "")).lower() for w in ["computer", "intelligence", "data", "software", "engineering"])
-            for e in (resume.parsed_data.get("education", []) if resume.parsed_data else [])
-        )
 
         query_keywords = []
-        if is_tech:
+        if is_biotech:
+            query_keywords.extend(["biotechnol", "bioinform", "biomedic", "clinical", "pharma", "biology", "microbiol", "research"])
+        elif is_mechanical:
+            query_keywords.extend(["mechanical", "solidworks", "ansys", "cad", "design engineer"])
+        elif is_civil:
+            query_keywords.extend(["civil", "structural", "construction", "site engineer"])
+        elif is_electronics:
+            query_keywords.extend(["electronics", "embedded", "vlsi", "hardware"])
+        else:
             query_keywords.extend(["software", "developer", "engineer", "data", "web"])
+
         for s in candidate_skills:
             s_clean = s.lower().strip()
             if len(s_clean) >= 3 and s_clean.upper() not in FeatureExtractor.KNOWN_CATEGORY_CODES:
                 if s_clean not in query_keywords:
                     query_keywords.append(s_clean)
-            if len(query_keywords) >= 8:
+            if len(query_keywords) >= 14:
                 break
 
         if query_keywords:
@@ -844,7 +926,8 @@ class MatcherAgent:
         # 3. Score & re-rank each candidate job
         for row in candidate_rows:
             job: JobPosting = row[0]
-            distance: float = float(row.distance)
+            raw_dist = getattr(row, "distance", None)
+            distance: float = float(raw_dist) if raw_dist is not None else 0.40
 
             skills_list = job.skills if isinstance(job.skills, list) else []
             features, skills_breakdown = self.feature_extractor.extract_features(
@@ -859,8 +942,22 @@ class MatcherAgent:
             xgb_score, explanations = self.ml_explainer.predict_and_explain(
                 features, skills_breakdown
             )
+            # Skill count coverage dampener:
+            # Prevents candidates matching only 1 or 2 skills from reaching an inflated 85-90%+ match
+            # If candidate matches fewer than 4 skills, scale according to coverage
+            num_matched = len(skills_breakdown.matched_skills)
+            if num_matched == 0:
+                coverage_factor = 0.35
+            elif num_matched == 1:
+                coverage_factor = 0.55
+            elif num_matched == 2:
+                coverage_factor = 0.70
+            elif num_matched == 3:
+                coverage_factor = 0.85
+            else:
+                coverage_factor = 1.0
 
-            final_score = round(0.55 * xgb_score + 0.45 * composite_score, 4)
+            final_score = round((0.55 * xgb_score + 0.45 * composite_score) * coverage_factor, 4)
 
             if final_score < min_score:
                 continue
@@ -952,7 +1049,8 @@ class MatcherAgent:
 
         for row in candidates:
             resume: Resume = row[0]
-            distance: float = float(row.distance)
+            raw_dist = getattr(row, "distance", None)
+            distance: float = float(raw_dist) if raw_dist is not None else 0.40
 
             features, skills_breakdown = self.feature_extractor.extract_features(
                 parsed_resume=resume.parsed_data,
@@ -966,7 +1064,19 @@ class MatcherAgent:
             xgb_score, explanations = self.ml_explainer.predict_and_explain(
                 features, skills_breakdown
             )
-            final_score = round(0.55 * xgb_score + 0.45 * composite_score, 4)
+            num_matched = len(skills_breakdown.matched_skills)
+            if num_matched == 0:
+                coverage_factor = 0.35
+            elif num_matched == 1:
+                coverage_factor = 0.55
+            elif num_matched == 2:
+                coverage_factor = 0.70
+            elif num_matched == 3:
+                coverage_factor = 0.85
+            else:
+                coverage_factor = 1.0
+
+            final_score = round((0.55 * xgb_score + 0.45 * composite_score) * coverage_factor, 4)
 
             if final_score < min_score:
                 continue

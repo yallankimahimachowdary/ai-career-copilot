@@ -1,7 +1,7 @@
 import os
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.logging import logger
@@ -16,6 +16,19 @@ from app.schemas.job_posting import (
 from app.services.embedding_service import embedding_service
 
 router = APIRouter()
+
+
+@router.get(
+    "/stats",
+    summary="Get Job Postings Statistics",
+    description="Returns total count of active job postings indexed in PostgreSQL.",
+)
+async def get_job_stats(
+    db: AsyncSession = Depends(get_db),
+):
+    result = await db.execute(select(func.count(JobPosting.id)))
+    total_count = result.scalar() or 0
+    return {"total": total_count}
 
 
 @router.get(

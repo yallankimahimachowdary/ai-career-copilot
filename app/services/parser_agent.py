@@ -11,15 +11,9 @@ from app.schemas.resume import (
     Project,
     WorkExperience,
 )
+from app.core.taxonomy import CANONICAL_SKILL_PATTERNS, extract_canonical_skills
 
-COMMON_SKILLS = [
-    "Python", "JavaScript", "TypeScript", "Go", "Java", "C++", "C#", "Ruby", "PHP",
-    "FastAPI", "Django", "Flask", "React", "Next.js", "Vue", "Angular", "Node.js",
-    "PostgreSQL", "MySQL", "MongoDB", "Redis", "SQLite", "SQLAlchemy", "Alembic",
-    "Docker", "Kubernetes", "AWS", "GCP", "Azure", "CI/CD", "Git", "GitHub", "Linux",
-    "Machine Learning", "Deep Learning", "NLP", "LLMs", "PyTorch", "TensorFlow",
-    "REST API", "GraphQL", "Microservices", "Unit Testing", "Pytest", "Agile", "Scrum"
-]
+COMMON_SKILLS = list(CANONICAL_SKILL_PATTERNS.keys())
 
 
 class ParserAgent:
@@ -82,19 +76,19 @@ class ParserAgent:
             "You are an expert resume parsing agent. Extract the candidate's profile strictly into JSON format "
             "matching this exact schema:\n"
             "{\n"
-            '  "contact_info": {"name": "...", "email": "...", "phone": "...", "location": "...", "linkedin_url": "...", "github_url": "...", "portfolio_url": "..."},\n'
-            '  "summary": "...",\n'
-            '  "skills": ["Python", "FastAPI", "PostgreSQL"],\n'
-            '  "experience": [{"title": "Software Engineer", "company": "Acme Inc", "location": "Remote", "start_date": "Jan 2022", "end_date": "Present", "is_current": true, "description": ["Bullet 1", "Bullet 2"]}],\n'
-            '  "education": [{"institution": "MIT", "degree": "B.S.", "field_of_study": "Computer Science", "graduation_year": "2021", "gpa": "3.9"}],\n'
-            '  "projects": [{"name": "Career Copilot", "description": "AI agent platform", "technologies": ["Python", "Docker"], "url": "https://github.com/..."}],\n'
-            '  "certifications": ["AWS Certified Solutions Architect", "CKA"]\n'
+            '  "contact_info": {"name": "", "email": "", "phone": "", "location": "", "linkedin_url": "", "github_url": "", "portfolio_url": ""},\n'
+            '  "summary": "",\n'
+            '  "skills": [],\n'
+            '  "experience": [{"title": "", "company": "", "location": "", "start_date": "", "end_date": "", "is_current": false, "description": []}],\n'
+            '  "education": [{"institution": "", "degree": "", "field_of_study": "", "graduation_year": "", "gpa": ""}],\n'
+            '  "projects": [{"name": "", "description": "", "technologies": [], "url": ""}],\n'
+            '  "certifications": []\n'
             "}\n\n"
             "STRICT FORMATTING REQUIREMENTS:\n"
-            "1. 'skills' MUST be a flat JSON array of strings (e.g. [\"Python\", \"Docker\"]). DO NOT group skills by categories or use a dictionary/object.\n"
-            "2. 'projects' array items MUST use the key 'name' (DO NOT use 'title' or 'project_name').\n"
-            "3. 'certifications' MUST be a flat JSON array of plain strings (e.g. [\"AWS Certified Solutions Architect\"]). DO NOT return objects or dictionaries.\n"
-            "4. Return valid JSON only, without any markdown formatting or commentary."
+            "1. 'skills' MUST be a flat JSON array of strings found in the resume. DO NOT invent skills. DO NOT group skills by categories.\n"
+            "2. 'projects' array items MUST use the key 'name'. In 'technologies', include ONLY technologies explicitly mentioned for that project in the resume. If none are specified, return []. NEVER copy or hallucinate technologies (such as Docker, Python, etc.) that do not appear in the resume.\n"
+            "3. 'certifications' MUST be a flat JSON array of plain strings. DO NOT return objects or dictionaries.\n"
+            "4. Return valid JSON only, without any markdown formatting, preamble, or commentary."
         )
 
         max_attempts = 2
@@ -182,6 +176,30 @@ class ParserAgent:
             extracted = self._extract_name(raw_text, lines)
             if extracted:
                 parsed.contact_info.name = extracted
+
+        # Enrich skills: augment LLM extracted skills with canonical domain taxonomy matches
+        existing_skills_lower = {s.lower() for s in parsed.skills}
+        tax_skills = extract_canonical_skills(raw_text)
+        for s in tax_skills:
+            if s.lower() not in existing_skills_lower:
+                parsed.skills.append(s)
+                existing_skills_lower.add(s.lower())
+
+        # Post-processing anti-hallucination guardrail:
+        # Sanitize project technologies: discard technologies not mentioned in raw_text or project description
+        raw_text_lower = raw_text.lower()
+        for proj in parsed.projects:
+            if proj.technologies:
+                filtered_tech = []
+                for tech in proj.technologies:
+                    tech_clean = tech.strip().lower()
+                    if not tech_clean:
+                        continue
+                    # Check if tech is actually in raw resume text or project description
+                    proj_desc = (proj.description or "").lower()
+                    if re.search(r"\b" + re.escape(tech_clean) + r"\b", raw_text_lower) or re.search(r"\b" + re.escape(tech_clean) + r"\b", proj_desc):
+                        filtered_tech.append(tech)
+                proj.technologies = filtered_tech
 
         return parsed
 

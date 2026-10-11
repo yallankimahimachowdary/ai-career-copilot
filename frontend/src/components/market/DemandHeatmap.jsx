@@ -23,7 +23,7 @@ export function DemandHeatmap({ locations = [], hottestMarket, narrative }) {
   }
 
   const chartData = locations.slice(0, 8).map((loc) => ({
-    name: loc.location.replace(/, USA?$/, "").replace(/, United States$/, ""),
+    name: loc.location.replace(/, (?:India|IN|USA?|United States)$/i, "").trim(),
     count: loc.posting_count,
     percentage: loc.percentage,
     salary: loc.avg_annual_salary,

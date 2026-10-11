@@ -15,12 +15,16 @@ class JobPostingBase(BaseModel):
     min_salary: Optional[float] = Field(None, description="Minimum salary")
     max_salary: Optional[float] = Field(None, description="Maximum salary")
     pay_period: Optional[str] = Field(None, description="YEARLY, HOURLY, etc.")
+    country: Optional[str] = Field("India", description="Country location")
+    currency: Optional[str] = Field("INR", description="Currency code (e.g. INR)")
 
 
 class JobPostingResponse(JobPostingBase):
     """Response schema for a job posting."""
     id: str = Field(..., description="Unique job posting ID")
     source: str = Field(..., description="Data source (e.g. kaggle_linkedin)")
+    country: str = Field("India", description="Country location")
+    currency: str = Field("INR", description="Currency code")
     created_at: datetime = Field(..., description="Record creation timestamp")
 
 

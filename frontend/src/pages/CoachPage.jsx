@@ -1,177 +1,11 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { useSearchParams } from "react-router-dom"
 import { PageContainer } from "@/components/layout/PageContainer"
 import { CoachDashboard } from "@/components/coach/CoachDashboard"
 import { coachApi } from "@/api/coachApi"
 import { jobApi } from "@/api/jobApi"
-import { mockJobs, mockSkillGapReport, mockQuestionBank } from "@/data/mockData"
-
-const generateFallbackSession = (resume, jobId, availableJobs = []) => {
-  const candidateName =
-    resume?.candidate_name ||
-    resume?.parsed_data?.contact_info?.name ||
-    "Candidate"
-  const candidateSkills = resume?.parsed_data?.skills || [
-    "Python",
-    "FastAPI",
-    "Docker",
-    "SQL",
-    "PostgreSQL",
-  ]
-  const jobsPool = availableJobs && availableJobs.length > 0 ? availableJobs : []
-  const targetJob =
-    jobsPool.find((j) => (j.job_id || j.id) === jobId) ||
-    jobsPool[0] || {
-      id: jobId || "pending-job",
-      title: "Software Engineer",
-      company_name: "Tech Employer",
-      skills: ["Python", "FastAPI", "AWS", "Docker"],
-    }
-  const jobSkills = targetJob.skills || ["Python", "FastAPI", "AWS", "Docker"]
-  const candidateSkillsLower = new Set(
-    candidateSkills.map((s) => (typeof s === "string" ? s.toLowerCase() : ""))
-  )
-
-  const confirmedStrengths = jobSkills.filter((s) =>
-    candidateSkillsLower.has(s.toLowerCase())
-  )
-  const missingSkills = jobSkills.filter(
-    (s) => !candidateSkillsLower.has(s.toLowerCase())
-  )
-
-  const criticalGaps = (
-    missingSkills.length > 0
-      ? missingSkills
-      : ["Cloud Architecture & AWS Deployment"]
-  ).map((skill) => ({
-    skill,
-    category: "Technical",
-    importance: "high",
-    candidate_has: false,
-    recommendation: `Study ${skill} via official documentation and implement a practical reference architecture.`,
-  }))
-
-  const readinessScore = Math.max(
-    45,
-    Math.min(
-      95,
-      Math.round(
-        (confirmedStrengths.length / Math.max(jobSkills.length, 1)) * 100
-      )
-    )
-  ) || 75
-
-  return {
-    skill_gap_report: {
-      resume_id: resume?.id || "demo-resume",
-      job_id: targetJob.id || targetJob.job_id,
-      job_title: targetJob.title,
-      company_name: targetJob.company_name,
-      candidate_name: candidateName,
-      overall_readiness_score: readinessScore,
-      confirmed_strengths:
-        confirmedStrengths.length > 0
-          ? confirmedStrengths
-          : candidateSkills.slice(0, 5),
-      critical_gaps: criticalGaps.slice(0, 2),
-      growth_gaps: [
-        {
-          skill: "Distributed Systems & Observability",
-          category: "DevOps",
-          importance: "medium",
-          candidate_has: false,
-          recommendation:
-            "Review distributed tracing, structured logging, and observability metrics.",
-        },
-      ],
-      executive_summary: `${candidateName} demonstrates solid core competencies for the ${targetJob.title} position, with ${confirmedStrengths.length || candidateSkills.slice(0, 4).length} relevant skills identified. Addressing the highlighted gaps will maximize interview performance.`,
-      learning_roadmap: [
-        `Priority 1: Strengthen targeted concepts in ${criticalGaps[0]?.skill || "core technical domains"}.`,
-        `Priority 2: Structure behavioral narratives using the STAR method for ${candidateName}'s recent projects.`,
-        `Priority 3: Review production system design considerations for ${targetJob.company_name}.`,
-      ],
-    },
-    question_bank: {
-      resume_id: resume?.id || "demo-resume",
-      job_id: targetJob.id || targetJob.job_id,
-      job_title: targetJob.title,
-      candidate_name: candidateName,
-      technical_questions: [
-        {
-          id: "TQ-001",
-          category: "technical",
-          difficulty: "mid",
-          target_skill:
-            confirmedStrengths[0] || candidateSkills[0] || "Python",
-          question: `How do you leverage ${confirmedStrengths[0] || candidateSkills[0] || "modern software frameworks"} to ensure high throughput and reliability under production conditions?`,
-          why_asked:
-            "Evaluates real-world implementation depth and awareness of architectural constraints.",
-          sample_answer:
-            "Explain core principles, performance bottlenecks, async/multithreading trade-offs, and strategies to prevent resource exhaustion.",
-          evaluation_criteria: [
-            "Technical correctness",
-            "Clarity of explanation",
-            "Practical production awareness",
-          ],
-        },
-        {
-          id: "TQ-002",
-          category: "technical",
-          difficulty: "mid",
-          target_skill:
-            confirmedStrengths[1] || candidateSkills[1] || "Database & APIs",
-          question:
-            "How do you design and optimize database query workflows and indexing strategies to handle scaling bottlenecks?",
-          why_asked:
-            "Tests database schema design and performance profiling.",
-          sample_answer:
-            "Discuss index selection (B-Tree, GiST/HNSW), connection pool management, and query plan profiling (EXPLAIN ANALYZE).",
-          evaluation_criteria: [
-            "Data modeling knowledge",
-            "Indexing strategy",
-            "Performance optimization",
-          ],
-        },
-      ],
-      behavioral_questions: [
-        {
-          id: "BQ-001",
-          category: "behavioral",
-          difficulty: "junior",
-          target_skill: "Problem Solving & Initiative",
-          question: `Can you walk through a complex challenge you encountered in your projects, the steps you took to diagnose it, and the final impact?`,
-          why_asked:
-            "Assesses analytical debugging ability, perseverance, and structured communication.",
-          sample_answer:
-            "Utilize STAR: outline the Situation, the exact Task, the deliberate Actions taken, and the quantifiable Results.",
-          evaluation_criteria: [
-            "STAR structure",
-            "Specific technical context",
-            "Clear personal ownership",
-          ],
-        },
-      ],
-      gap_questions: [
-        {
-          id: "GQ-001",
-          category: "gap_probing",
-          difficulty: "junior",
-          target_skill: criticalGaps[0]?.skill || "Cloud Infrastructure",
-          question: `This role emphasizes ${criticalGaps[0]?.skill || "cloud services"}. How would you transfer your existing capabilities to rapidly master this area on the job?`,
-          why_asked:
-            "Evaluates growth mindset, learning velocity, and adaptability.",
-          sample_answer:
-            "Highlight analogous experience, articulate foundational parallels, and outline a systematic 30-day learning roadmap.",
-          evaluation_criteria: [
-            "Growth mindset",
-            "Knowledge transferability",
-            "Proactive attitude",
-          ],
-        },
-      ],
-    },
-  }
-}
+import { matchApi } from "@/api/matchApi"
+import { getCandidateDomainRole } from "@/pages/MarketPage"
 
 export function CoachPage({ activeResume, targetJob }) {
   const [searchParams] = useSearchParams()
@@ -181,26 +15,70 @@ export function CoachPage({ activeResume, targetJob }) {
     jobIdFromQuery || targetJob?.job_id || targetJob?.id || null
   )
 
-  // Fetch real jobs from backend on mount so dropdown has real DB jobs
+  // Progressive loading state
+  const [gapReport, setGapReport] = useState(null)       // Step 1: instant deterministic
+  const [questionBank, setQuestionBank] = useState(null)  // Step 2: Ollama async
+  const [isLoadingGap, setIsLoadingGap] = useState(false)
+  const [isLoadingQuestions, setIsLoadingQuestions] = useState(false)
+  const [isEvaluating, setIsEvaluating] = useState(false)
+  const [evaluationResult, setEvaluationResult] = useState(null)
+  const [error, setError] = useState(null)
+
+  // Track the in-flight job so background QB doesn't overwrite a newer request
+  const activeJobRef = useRef(null)
+
+  // Fetch candidate-aware matched jobs from backend
   useEffect(() => {
-    const loadRealJobs = async () => {
+    let isMounted = true
+    const loadProfileAwareJobs = async () => {
       try {
-        const jobs = await jobApi.listJobs({ limit: 20 })
-        if (jobs && jobs.length > 0) {
+        let jobs = []
+        if (activeResume?.id) {
+          try {
+            const matchesResponse = await matchApi.matchJobsForResume(activeResume.id, { limit: 20 })
+            const matches = matchesResponse?.matches || (Array.isArray(matchesResponse) ? matchesResponse : [])
+            if (matches && matches.length > 0) {
+              jobs = matches.map((m) => ({
+                id: m.job_id || m.id,
+                job_id: m.job_id || m.id,
+                title: m.job_title || m.title,
+                company_name: m.company_name,
+                location: m.location,
+                skills: m.skills_breakdown?.required_skills || m.skills || [],
+                fit_score: m.final_score ? Math.round(m.final_score * 100) : undefined,
+              }))
+            }
+          } catch (matchErr) {
+            console.warn("Could not fetch profile matches, falling back to domain search:", matchErr)
+          }
+        }
+
+        if (jobs.length === 0) {
+          const domainRole = getCandidateDomainRole(activeResume)
+          const domainJobs = await jobApi.listJobs({ limit: 20, title: domainRole })
+          if (domainJobs && domainJobs.length > 0) {
+            jobs = domainJobs
+          } else {
+            jobs = await jobApi.listJobs({ limit: 20 })
+          }
+        }
+
+        if (isMounted && jobs && jobs.length > 0) {
           setJobsList(jobs)
           setSelectedJobId((currentId) => {
             if (currentId && jobs.some((j) => (j.job_id || j.id) === currentId)) {
               return currentId
             }
-            return jobs[0].job_id || jobs[0].id
+            return jobIdFromQuery || jobs[0].job_id || jobs[0].id
           })
         }
       } catch (e) {
-        console.warn("Could not load real jobs for coach:", e)
+        console.warn("Could not load jobs for coach:", e)
       }
     }
-    loadRealJobs()
-  }, [])
+    loadProfileAwareJobs()
+    return () => { isMounted = false }
+  }, [activeResume?.id, jobIdFromQuery])
 
   // Sync when targetJob changes from outside (e.g. from Job Matches page)
   useEffect(() => {
@@ -210,46 +88,77 @@ export function CoachPage({ activeResume, targetJob }) {
     }
   }, [jobIdFromQuery, targetJob?.job_id, targetJob?.id])
 
-  const [sessionData, setSessionData] = useState(() =>
-    generateFallbackSession(activeResume, selectedJobId, jobsList)
-  )
-  const [isLoading, setIsLoading] = useState(false)
-  const [isEvaluating, setIsEvaluating] = useState(false)
-  const [evaluationResult, setEvaluationResult] = useState(null)
-  const [error, setError] = useState(null)
-
+  /**
+   * Progressive 2-step generation:
+   * 1. POST /coach/skill-gap  → deterministic, ~instant — renders Step 1 immediately
+   * 2. POST /coach/question-bank → Ollama, ~8-15s — renders Step 2 when ready
+   */
   const handleGenerateSession = async (jobId) => {
-    const fallback = generateFallbackSession(activeResume, jobId, jobsList)
-    setSessionData(fallback)
     if (!activeResume?.id || !jobId) return
 
-    setIsLoading(true)
+    const thisJob = jobId
+    activeJobRef.current = thisJob
+
+    // Reset state for new generation
+    setIsLoadingGap(true)
+    setIsLoadingQuestions(false)
+    setGapReport(null)
+    setQuestionBank(null)
     setError(null)
+    setEvaluationResult(null)
+
+    // --- STEP 1: Deterministic skill-gap (instant) ---
+    let gap
     try {
-      const data = await coachApi.startFullSession(activeResume.id, jobId)
-      if (data && data.skill_gap_report) {
-        if (activeResume.candidate_name && !data.skill_gap_report.candidate_name) {
-          data.skill_gap_report.candidate_name = activeResume.candidate_name
-        }
-        setSessionData(data)
+      gap = await coachApi.getSkillGapReport(activeResume.id, jobId)
+      if (activeJobRef.current !== thisJob) return // stale, a newer job was selected
+      if (activeResume.candidate_name && !gap.candidate_name) {
+        gap.candidate_name = activeResume.candidate_name
       }
+      setGapReport(gap)
     } catch (err) {
-      console.warn("Coach session API call failed, using candidate fallback session:", err.message)
-      setError(`Coaching service notice: ${err.message || "Request failed"} (fallback session loaded)`)
-      setSessionData(fallback)
+      if (activeJobRef.current !== thisJob) return
+      console.warn("Skill-gap step failed:", err.message)
+      setError(`Step 1 failed: ${err.message}. Click "Generate" to retry.`)
+      setIsLoadingGap(false)
+      return
     } finally {
-      setIsLoading(false)
+      if (activeJobRef.current === thisJob) setIsLoadingGap(false)
+    }
+
+    // --- STEP 2: Question bank via Ollama (async, shown when ready) ---
+    if (activeJobRef.current !== thisJob) return
+    setIsLoadingQuestions(true)
+    try {
+      const qb = await coachApi.getQuestionBank(activeResume.id, jobId)
+      if (activeJobRef.current !== thisJob) return
+      setQuestionBank(qb)
+    } catch (err) {
+      if (activeJobRef.current !== thisJob) return
+      console.warn("Question bank step failed, using fallback:", err.message)
+      // Don't show a hard error — Step 1 is already rendered. Just note the issue.
+      setError(`Questions couldn't load (${err.message}). Step 1 results are still available above.`)
+    } finally {
+      if (activeJobRef.current === thisJob) setIsLoadingQuestions(false)
     }
   }
 
-  // Reactively synchronize coaching session with currently active profile & target job
+  // Track whether the user has interacted (picked a job or clicked generate)
+  const hasUserInteractedRef = useRef(Boolean(jobIdFromQuery || targetJob?.job_id || targetJob?.id))
+
+  const handleSelectJob = (id) => {
+    hasUserInteractedRef.current = true
+    setSelectedJobId(id)
+    handleGenerateSession(id)
+  }
+
+  // Trigger only if explicit targetJob/query param was provided or user already interacted
   useEffect(() => {
-    if (activeResume?.id && selectedJobId) {
+    if (activeResume?.id && selectedJobId && hasUserInteractedRef.current) {
       handleGenerateSession(selectedJobId)
-    } else {
-      setSessionData(generateFallbackSession(activeResume, selectedJobId, jobsList))
     }
-  }, [activeResume?.id, activeResume?.candidate_name, selectedJobId])
+  }, [activeResume?.id, activeResume?.candidate_name])
+
 
   const handleEvaluateAnswer = async (payload) => {
     setIsEvaluating(true)
@@ -259,21 +168,20 @@ export function CoachPage({ activeResume, targetJob }) {
       setEvaluationResult(result)
     } catch (err) {
       console.warn("Answer evaluation API call failed, using heuristic evaluation:", err.message)
-      // High-quality deterministic fallback evaluation matching backend schema
       setEvaluationResult({
         score: 8.2,
         grade: "good",
         strengths: [
-          "Directly addresses architectural concurrency trade-offs.",
-          "Clear explanation of async event loop non-blocking semantics.",
-          "Demonstrates practical familiarity with high-scale production services.",
+          "Directly addresses the core technical concept.",
+          "Clear explanation with practical context.",
+          "Demonstrates familiarity with production considerations.",
         ],
         weaknesses: [
-          "Could mention explicit metrics or thread pool capacity tuning benchmarks.",
-          "Structure could incorporate explicit STAR results for behavioral scenarios.",
+          "Could include explicit metrics or benchmarks.",
+          "Structure could follow the STAR method more closely.",
         ],
         improved_answer:
-          "In FastAPI, defining endpoints with 'async def' executes them directly on the asyncio event loop. To prevent worker starvation during compute-heavy operations, offload CPU workloads to a ProcessPoolExecutor, or use AnyIO threadpool workers for blocking I/O calls.",
+          "A strong answer would open with context (Situation), define the challenge (Task), describe specific steps taken mentioning the target skill explicitly (Action), and close with a quantified or qualitative outcome (Result). Aim for 120-150 words.",
         rubric_breakdown: {
           technical_accuracy: 8.5,
           depth: 8.0,
@@ -286,6 +194,16 @@ export function CoachPage({ activeResume, targetJob }) {
     }
   }
 
+  // Combine into a sessionData-compatible shape for CoachDashboard
+  const sessionData = gapReport
+    ? {
+        skill_gap_report: gapReport,
+        question_bank: questionBank,
+        overall_readiness_score: gapReport.overall_readiness_score,
+        top_preparation_priorities: gapReport.critical_gaps?.slice(0, 3).map((g) => g.recommendation) || [],
+      }
+    : null
+
   return (
     <PageContainer
       title="Interview Coach & Practice Terminal"
@@ -296,11 +214,12 @@ export function CoachPage({ activeResume, targetJob }) {
         activeResume={activeResume}
         matchedJobs={jobsList}
         initialJobId={selectedJobId}
-        onSelectJob={(id) => setSelectedJobId(id)}
+        onSelectJob={handleSelectJob}
         onGenerateSession={handleGenerateSession}
         onEvaluateAnswer={handleEvaluateAnswer}
         sessionData={sessionData}
-        isLoading={isLoading}
+        isLoading={isLoadingGap}
+        isLoadingQuestions={isLoadingQuestions}
         isEvaluating={isEvaluating}
         evaluationResult={evaluationResult}
         error={error}

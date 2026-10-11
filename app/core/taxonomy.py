@@ -45,6 +45,25 @@ COMMON_STOP_WORDS: Set[str] = {
 }
 
 # ---------------------------------------------------------------------------
+# 2b. Canonical Soft Skills Set
+# ---------------------------------------------------------------------------
+# Shared across Matcher, Coach, and Parser to guarantee consistency.
+# Soft skills are treated as nice-to-have/growth gaps and never as hard technical blockers.
+SOFT_SKILLS: Set[str] = {
+    "communication",
+    "leadership",
+    "problem solving",
+    "teamwork",
+    "collaboration",
+    "interpersonal",
+    "time management",
+    "critical thinking",
+    "agile/scrum",
+    "mentoring",
+}
+
+
+# ---------------------------------------------------------------------------
 # 3. Canonical Regex Skill Taxonomy (with Word Boundaries)
 # ---------------------------------------------------------------------------
 # Strict boundary regexes prevent dangerous sub-token collisions:
@@ -84,6 +103,43 @@ CANONICAL_SKILL_PATTERNS: Dict[str, str] = {
     "Communication": r"\b(communication|collaboration|teamwork|interpersonal)\b",
     "Problem Solving": r"\b(problem.solving|analytical|critical\s*thinking)\b",
     "Leadership": r"\b(leadership|mentoring|team\s*lead)\b",
+
+    # --- Biotechnology & Life Sciences ---
+    "PCR": r"\b(pcr|polymerase\s*chain\s*reaction|qpcr|rt-pcr)\b",
+    "Gel Electrophoresis": r"\b(gel\s*electrophoresis|agarose\s*gel|sds-page)\b",
+    "Cell Culture": r"\b(cell\s*culture|tissue\s*culture|cell\s*lines?)\b",
+    "Molecular Biology": r"\bmolecular\s*biology\b",
+    "Microbiology": r"\bmicrobiology\b",
+    "CRISPR / Gene Editing": r"\b(crispr(?:-cas9)?|gene\s*editing|genome\s*editing)\b",
+    "Bioinformatics": r"\b(bioinformatics|computational\s*biology|blast|biopython)\b",
+    "Next-Generation Sequencing (NGS)": r"\b(next[- ]generation\s*sequencing|ngs|rna[- ]seq|genomics?|proteomics?)\b",
+    "ELISA": r"\belisa\b",
+    "Fermentation / Bioprocessing": r"\b(fermentation|bioprocess(?:ing)?|bioreactor)\b",
+    "Chromatography": r"\b(chromatography|hplc|fplc|gas\s*chromatography)\b",
+    "Flow Cytometry": r"\b(flow\s*cytometry|facs)\b",
+    "Agricultural Practices": r"\b(agricultural\s*practices?|biofertilizer|agritech|soil\s*fertility)\b",
+
+    # --- Pharmaceutical & Clinical Research ---
+    "GMP / GLP": r"\b(gmp|good\s*manufacturing\s*practice|glp|gcp)\b",
+    "Clinical Trials": r"\b(clinical\s*trials?|clinical\s*research|clinical\s*data)\b",
+    "Formulation": r"\b(drug\s*formulation|formulation|encapsulation)\b",
+    "Drug Discovery": r"\b(drug\s*discovery|medicinal\s*chemistry|pharmacology)\b",
+    "HPLC": r"\b(hplc|high[- ]performance\s*liquid\s*chromatography)\b",
+    "Pharmacovigilance": r"\b(pharmacovigilance|regulatory\s*affairs)\b",
+
+    # --- Core Engineering & CAD/Simulation ---
+    "MATLAB": r"\bmatlab\b",
+    "Simulink": r"\bsimulink\b",
+    "R Programming": r"\b(r\s*programming|\br\s*language|\br\s*stats)\b",
+    "AutoCAD": r"\b(autocad|cad\s*drafting)\b",
+    "SolidWorks": r"\bsolidworks\b",
+    "ANSYS / FEA": r"\b(ansys|finite\s*element|fea|cfd)\b",
+    "CATIA": r"\bcatia\b",
+    "PLC / SCADA": r"\b(plc|scada|industrial\s*automation)\b",
+    "Embedded Systems": r"\b(embedded\s*systems?|microcontroller|arduino|raspberry\s*pi)\b",
+    "VLSI": r"\b(vlsi|verilog|vhdl|fpga)\b",
+    "Revit / BIM": r"\b(revit|bim|civil\s*3d)\b",
+    "CNC Machining": r"\b(cnc|machining|cam)\b",
 }
 
 

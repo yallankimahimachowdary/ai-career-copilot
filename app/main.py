@@ -49,6 +49,26 @@ def create_application() -> FastAPI:
     # Mount API v1 router
     application.include_router(api_router, prefix=settings.API_V1_STR)
 
+    # Global unhandled exception handler preserving CORS headers
+    @application.exception_handler(Exception)
+    async def global_exception_handler(request, exc: Exception):
+        logger.error(f"Unhandled error on {request.method} {request.url.path}: {exc}", exc_info=True)
+        origin = request.headers.get("origin", "*")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(
+            status_code=500,
+            content={
+                "detail": f"Internal Server Error: {str(exc)}",
+                "path": str(request.url.path),
+            },
+            headers={
+                "Access-Control-Allow-Origin": origin if origin else "*",
+                "Access-Control-Allow-Credentials": "true",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "*",
+            },
+        )
+
     # Root health endpoint alias
     application.add_api_route(
         "/health",

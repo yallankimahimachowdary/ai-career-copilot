@@ -116,7 +116,7 @@ export function SalaryChart({ salaryBand, topPayingCompanies = [], narrative }) 
                 />
                 <YAxis
                   tick={{ fill: "#94a3b8", fontSize: 11 }}
-                  tickFormatter={(val) => `$${val / 1000}k`}
+                  tickFormatter={(val) => val >= 100000 ? `₹${(val / 100000).toFixed(0)}L` : `₹${val}`}
                   tickLine={false}
                   axisLine={{ stroke: "#334155" }}
                 />
