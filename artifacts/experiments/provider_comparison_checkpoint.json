@@ -1,0 +1,40 @@
+{
+  "prompt": "You are an expert career evaluation assistant.\nAnalyze this short candidate profile and return valid JSON with keys:\n- 'candidate_role' (string)\n- 'readiness_rating' (integer 1-100)\n- 'core_strengths' (list of strings)\n\nCandidate: Python Backend Developer with FastAPI, PostgreSQL, and Docker experience.\nReturn ONLY raw JSON:",
+  "ollama_response": {
+    "provider": "ollama",
+    "model": "llama3.2:3b",
+    "temperature": 0.0,
+    "max_tokens": 250,
+    "latency_ms": 3628.05,
+    "timestamp": "2026-10-11T10:05:36.916633+00:00",
+    "data": {
+      "candidate_role": "Python Backend Developer",
+      "readiness_rating": 90,
+      "core_strengths": [
+        "FastAPI",
+        "PostgreSQL",
+        "Docker"
+      ]
+    },
+    "raw_text": "{\"candidate_role\": \"Python Backend Developer\", \"readiness_rating\": 90, \"core_strengths\": [\"FastAPI\", \"PostgreSQL\", \"Docker\"]}"
+  },
+  "gemini_response": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-mock",
+    "temperature": 0.0,
+    "max_tokens": 250,
+    "latency_ms": 50.61,
+    "timestamp": "2026-10-11T10:05:36.916633+00:00",
+    "data": {
+      "candidate_role": "Python Backend Developer",
+      "readiness_rating": 88,
+      "core_strengths": [
+        "FastAPI",
+        "PostgreSQL",
+        "Docker",
+        "Python Backend Architecture"
+      ]
+    },
+    "raw_text": "{\"candidate_role\": \"Python Backend Developer\", \"readiness_rating\": 88, \"core_strengths\": [\"FastAPI\", \"PostgreSQL\", \"Docker\", \"Python Backend Architecture\"]}"
+  }
+}

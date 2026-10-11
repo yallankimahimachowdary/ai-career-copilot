@@ -48,7 +48,8 @@ class Settings(BaseSettings):
     MAX_UPLOAD_SIZE_MB: int = 10
 
     # Vector Embedding
-    EMBEDDING_DIMENSION: int = 1536
+    EMBEDDING_DIMENSION: int = 384
+    EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"
 
     # AI API Keys & Models
     OPENAI_API_KEY: str | None = None
@@ -57,9 +58,13 @@ class Settings(BaseSettings):
     GEMINI_MODEL: str = "gemini-3.5-flash"
     ANTHROPIC_API_KEY: str | None = None
 
+    # LLM Provider Configuration
+    LLM_PROVIDER: str = "ollama"  # "ollama" | "gemini"
+
     # Local Ollama LLM Configuration
     OLLAMA_BASE_URL: str = "http://localhost:11434"
     OLLAMA_MODEL: str = "llama3.2:3b"
+
 
     # Matcher Agent Weights & Penalty Configuration
     WEIGHT_SEMANTIC: float = 0.25

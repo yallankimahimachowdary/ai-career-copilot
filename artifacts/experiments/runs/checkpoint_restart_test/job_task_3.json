@@ -1,0 +1,19 @@
+{
+  "item_id": "job_task_3",
+  "experiment_name": "checkpoint_restart_test",
+  "provider": "ollama",
+  "model": "llama3.2:3b",
+  "prompt_version": "v1.0",
+  "seed": 42,
+  "status": "completed",
+  "timestamp": "2026-10-11T10:07:58.906803+00:00",
+  "inputs": {
+    "id": "job_task_3",
+    "query": "Query 3"
+  },
+  "outputs": {
+    "status": "processed",
+    "item_id": "job_task_3",
+    "score": 0.85
+  }
+}

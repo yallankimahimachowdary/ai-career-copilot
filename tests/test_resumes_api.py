@@ -75,7 +75,7 @@ async def test_upload_resume_success(async_client: AsyncClient, mock_db_session)
     assert data["filename"] == "resume.txt"
     assert data["candidate_name"] == "Mahima Sharma"
     assert data["email"] == "mahima@example.com"
-    assert data["embedding_dimension"] == 1536
+    assert data["embedding_dimension"] == 384
     assert "Python" in data["parsed_data"]["skills"]
     assert data["id"] in storage
 

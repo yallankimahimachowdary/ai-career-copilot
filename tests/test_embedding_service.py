@@ -9,7 +9,9 @@ async def test_embedding_dimension_and_norm():
     vec = await embedding_service.get_embedding(text)
 
     # Validate vector length matches setting
-    assert len(vec) == 1536
+    from app.core.config import settings
+    assert len(vec) == settings.EMBEDDING_DIMENSION
+    assert len(vec) == 384
 
     # Validate L2 normalization (norm should be ~ 1.0)
     norm = math.sqrt(sum(x * x for x in vec))

@@ -830,42 +830,35 @@ class CoachAgent:
 
 
     async def _ollama_post(self, prompt: str, max_attempts: int = 2, num_predict: int = 700) -> dict:
-        """Call local Ollama endpoint with JSON formatting and retry logic."""
+        """Call configured LLM provider (Ollama or Gemini) with JSON formatting and retry logic."""
         if hasattr(self, "_gemini_post") and self._gemini_post.__code__ != CoachAgent._gemini_post.__code__:
             raw = await self._gemini_post(prompt)
             if isinstance(raw, dict):
                 return raw
             return self._clean_and_parse_json(str(raw))
 
-        url = f"{self.ollama_base_url.rstrip('/')}/api/generate"
+        from app.services.llm_provider import get_llm_provider
+        provider = get_llm_provider()
         last_error = None
 
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            for attempt in range(1, max_attempts + 1):
-                try:
-                    payload = {
-                        "model": self.ollama_model,
-                        "prompt": prompt,
-                        "stream": False,
-                        "format": "json",
-                        "options": {
-                            "temperature": 0.0,
-                            "num_predict": num_predict,
-                        },
-                        "keep_alive": "30m",
-                    }
-                    resp = await client.post(url, json=payload)
-                    resp.raise_for_status()
-                    data = resp.json()
-                    text_content = data.get("response", "")
-                    return self._clean_and_parse_json(text_content)
-                except Exception as exc:
-                    last_error = exc
-                    logger.warning(f"Ollama coach call attempt {attempt}/{max_attempts} failed: {exc}")
-                    if attempt < max_attempts:
-                        continue
+        for attempt in range(1, max_attempts + 1):
+            try:
+                resp = await provider.generate_json(
+                    prompt=prompt,
+                    temperature=0.0,
+                    max_tokens=num_predict,
+                    keep_alive="30m",
+                    timeout=60.0,
+                )
+                return resp.data
+            except Exception as exc:
+                last_error = exc
+                logger.warning(f"Coach LLM call attempt {attempt}/{max_attempts} failed: {exc}")
+                if attempt < max_attempts:
+                    continue
 
-        raise RuntimeError(f"Ollama coach call failed after {max_attempts} attempts: {last_error}")
+        raise RuntimeError(f"Coach LLM call failed after {max_attempts} attempts: {last_error}")
+
 
 
     async def _gemini_post(self, prompt: str) -> str:

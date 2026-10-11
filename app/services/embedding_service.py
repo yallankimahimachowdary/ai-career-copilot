@@ -1,14 +1,26 @@
 import hashlib
 import math
-from typing import List
+from typing import List, Optional
 import httpx
 from app.core.config import settings
 from app.core.logging import logger
 from app.schemas.resume import ParsedResume
 
+# Global model instance cached in process memory
+_ST_MODEL = None
+
+
+def get_sentence_transformer():
+    global _ST_MODEL
+    if _ST_MODEL is None:
+        from sentence_transformers import SentenceTransformer
+        logger.info(f"Loading local SentenceTransformer model: {settings.EMBEDDING_MODEL}")
+        _ST_MODEL = SentenceTransformer(settings.EMBEDDING_MODEL)
+    return _ST_MODEL
+
 
 class EmbeddingService:
-    """Service to compute dense semantic embeddings for resumes."""
+    """Service to compute dense semantic embeddings (sentence-transformers/all-MiniLM-L6-v2, 384 dim)."""
 
     def __init__(self):
         self.dimension = settings.EMBEDDING_DIMENSION
@@ -55,23 +67,33 @@ class EmbeddingService:
         return "\n".join(parts)
 
     async def get_embedding(self, text: str) -> List[float]:
-        """Generate a dense vector embedding for input text."""
-        if self.openai_key:
-            try:
-                return await self._get_openai_embedding(text)
-            except Exception as e:
-                logger.warning(f"OpenAI embedding call failed: {e}. Trying alternative provider.")
+        """Generate a dense vector embedding (384 dimensions) using sentence-transformers."""
+        # 1. Primary embedding: sentence-transformers/all-MiniLM-L6-v2
+        try:
+            model = get_sentence_transformer()
+            embedding = model.encode(text, convert_to_numpy=True, normalize_embeddings=True)
+            return [float(x) for x in embedding]
+        except Exception as e:
+            logger.warning(f"sentence-transformers embedding failed: {e}. Trying fallback.")
 
+        # 2. Remote Gemini / OpenAI if explicitly requested and dimension matches
         if settings.GEMINI_API_KEY:
             try:
                 return await self._get_gemini_embedding(text)
             except Exception as e:
-                logger.warning(f"Gemini embedding call failed: {e}. Falling back to local vector generator.")
+                logger.warning(f"Gemini embedding call failed: {e}.")
 
+        if self.openai_key:
+            try:
+                return await self._get_openai_embedding(text)
+            except Exception as e:
+                logger.warning(f"OpenAI embedding call failed: {e}.")
+
+        # 3. Deterministic vector fallback (exact 384 dimensions, L2-normalized)
         return self._generate_deterministic_vector(text)
 
     async def _get_gemini_embedding(self, text: str) -> List[float]:
-        """Fetch 1536-dim embedding from Google Gemini gemini-embedding-001."""
+        """Fetch embedding from Google Gemini with outputDimensionality set to self.dimension."""
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key={settings.GEMINI_API_KEY}"
         payload = {
             "model": "models/gemini-embedding-001",
@@ -88,8 +110,6 @@ class EmbeddingService:
                 return [x / norm for x in vals]
             return vals
 
-
-
     async def _get_openai_embedding(self, text: str) -> List[float]:
         """Fetch embedding from OpenAI text-embedding-3-small."""
         async with httpx.AsyncClient(timeout=20.0) as client:
@@ -99,7 +119,7 @@ class EmbeddingService:
             }
             payload = {
                 "model": "text-embedding-3-small",
-                "input": text[:8000],  # Stay within context limit
+                "input": text[:8000],
                 "dimensions": self.dimension,
             }
             response = await client.post("https://api.openai.com/v1/embeddings", headers=headers, json=payload)
@@ -110,24 +130,17 @@ class EmbeddingService:
     def _generate_deterministic_vector(self, text: str) -> List[float]:
         """Generate a unit-normalized deterministic vector of length `self.dimension`.
         
-        Uses cryptographic hash chunks of the text to seed float values, ensuring that:
-        1. The vector has exact dimension `self.dimension`.
-        2. Identical text produces identical vectors.
-        3. The vector is L2-normalized (magnitude == 1.0) for valid cosine distance.
+        Uses cryptographic hash chunks of the text to seed float values.
         """
         raw_values = []
         text_bytes = text.encode("utf-8")
 
-        # Generate enough pseudorandom float values using sequential sha256 chunks
         for i in range(self.dimension):
             h = hashlib.sha256(text_bytes + str(i).encode("utf-8")).digest()
-            # Unpack first 4 bytes as unsigned int
             int_val = int.from_bytes(h[:4], "big")
-            # Map to range [-1.0, 1.0]
             val = (int_val / (2**32 - 1)) * 2.0 - 1.0
             raw_values.append(val)
 
-        # L2-normalize vector
         norm = math.sqrt(sum(x * x for x in raw_values))
         if norm > 0:
             return [x / norm for x in raw_values]

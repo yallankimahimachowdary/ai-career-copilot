@@ -61,7 +61,7 @@ async def test_process_batch_with_embeddings():
     with patch("scripts.seed_jobs.embedding_service") as mock_embedding_service:
         # We need get_embedding to be an async mock returning a vector
         async def mock_get_embedding(text):
-            return [0.1] * 1536
+            return [0.1] * 384
         
         mock_embedding_service.get_embedding = mock_get_embedding
         mock_embedding_service.construct_job_embed_text.return_value = "Mock text"

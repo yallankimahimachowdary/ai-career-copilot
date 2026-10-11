@@ -486,7 +486,36 @@ class JobScraperPipeline:
 
         await session.execute(stmt)
         await session.commit()
+
+        # Keep ChromaDB in sync with PostgreSQL
+        try:
+            from app.db.chroma import chroma_service
+            chroma_ids = [r["external_id"] for r in records if r.get("embedding")]
+            chroma_embs = [r["embedding"] for r in records if r.get("embedding")]
+            chroma_docs = [(r.get("title") or "") + " " + (r.get("description") or "")[:500] for r in records if r.get("embedding")]
+            chroma_meta = [
+                {
+                    "title": r.get("title") or "",
+                    "company_name": r.get("company_name") or "",
+                    "location": r.get("location") or "",
+                    "country": r.get("country") or "India",
+                    "currency": r.get("currency") or "INR",
+                    "source": r.get("source") or "",
+                }
+                for r in records if r.get("embedding")
+            ]
+            if chroma_ids:
+                chroma_service.upsert_job_postings(
+                    ids=chroma_ids,
+                    embeddings=chroma_embs,
+                    documents=chroma_docs,
+                    metadatas=chroma_meta,
+                )
+        except Exception as chroma_err:
+            logger.warning("Failed to sync records to ChromaDB: %s", chroma_err)
+
         return len(records)
+
 
     async def run_batch(self, purge_kaggle: bool = False, purge_all: bool = False) -> Dict[str, int]:
         """Execute complete scraping run across all configured search terms and platforms."""

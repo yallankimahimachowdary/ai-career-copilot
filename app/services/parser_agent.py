@@ -70,8 +70,7 @@ class ParserAgent:
         raise ValueError(f"Could not extract valid JSON from response: {text_content[:200]}")
 
     async def _parse_with_ollama(self, raw_text: str) -> ParsedResume:
-        """Extract structured resume data using local Ollama model."""
-        url = f"{self.ollama_base_url.rstrip('/')}/api/generate"
+        """Extract structured resume data using configured LLM provider (Ollama or Gemini)."""
         prompt = (
             "You are an expert resume parsing agent. Extract the candidate's profile strictly into JSON format "
             "matching this exact schema:\n"
@@ -91,35 +90,32 @@ class ParserAgent:
             "4. Return valid JSON only, without any markdown formatting, preamble, or commentary."
         )
 
+        from app.services.llm_provider import get_llm_provider
+        provider = get_llm_provider()
+
         max_attempts = 2
         last_error = None
 
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            for attempt in range(1, max_attempts + 1):
-                try:
-                    payload = {
-                        "model": self.ollama_model,
-                        "prompt": f"{prompt}\n\nResume Text:\n{raw_text}",
-                        "stream": False,
-                        "format": "json",
-                        "options": {
-                            "temperature": 0.0,
-                        },
-                    }
-                    response = await client.post(url, json=payload)
-                    response.raise_for_status()
-                    data = response.json()
-                    text_content = data.get("response", "")
-                    parsed_dict = self._clean_and_parse_json(text_content)
-                    parsed = ParsedResume.model_validate(parsed_dict)
-                    return self._enrich_contact_info(parsed, raw_text)
-                except Exception as exc:
-                    last_error = exc
-                    logger.warning(f"Ollama parsing attempt {attempt}/{max_attempts} failed: {exc}")
-                    if attempt < max_attempts:
-                        continue
+        for attempt in range(1, max_attempts + 1):
+            try:
+                full_prompt = f"{prompt}\n\nResume Text:\n{raw_text}"
+                resp = await provider.generate_json(
+                    prompt=full_prompt,
+                    temperature=0.0,
+                    max_tokens=1500,
+                    keep_alive="30m",
+                    timeout=60.0,
+                )
+                parsed_dict = resp.data
+                parsed = ParsedResume.model_validate(parsed_dict)
+                return self._enrich_contact_info(parsed, raw_text)
+            except Exception as exc:
+                last_error = exc
+                logger.warning(f"LLM parsing attempt {attempt}/{max_attempts} failed: {exc}")
+                if attempt < max_attempts:
+                    continue
 
-        raise RuntimeError(f"Ollama failed after {max_attempts} attempts: {last_error}")
+        raise RuntimeError(f"LLM parser failed after {max_attempts} attempts: {last_error}")
 
     async def _parse_with_openai(self, raw_text: str) -> ParsedResume:
         """Extract structured resume data using OpenAI structured output."""

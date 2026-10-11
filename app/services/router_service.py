@@ -119,6 +119,9 @@ Respond with ONLY a raw JSON object with this exact structure:
 }}
 """
 
+        from app.services.llm_provider import get_llm_provider
+        provider = get_llm_provider()
+
         url = f"{self.ollama_base_url.rstrip('/')}/api/generate"
         payload = {
             "model": self.ollama_model,
@@ -130,59 +133,73 @@ Respond with ONLY a raw JSON object with this exact structure:
             },
         }
 
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            for attempt in range(1, max_attempts + 1):
+        for attempt in range(1, max_attempts + 1):
+            try:
+                parsed = None
                 try:
-                    resp = await client.post(url, json=payload)
-                    resp.raise_for_status()
-                    data = resp.json()
-
-                    if "response" in data:
-                        raw_text = data.get("response", "")
-                    elif "candidates" in data:
-                        raw_text = data["candidates"][0]["content"]["parts"][0]["text"]
-                    else:
-                        raw_text = json.dumps(data)
-
-                    parsed = self._clean_and_parse_json(raw_text)
-
-                    raw_intent = str(parsed.get("intent", "")).strip().upper()
-                    intent_mapping = {
-                        "JOB_SEARCH_AND_MATCH": IntentType.JOB_SEARCH_AND_MATCH,
-                        "JOB_SEARCH": IntentType.JOB_SEARCH_AND_MATCH,
-                        "JOB_MATCH": IntentType.JOB_SEARCH_AND_MATCH,
-                        "SKILL_PROGRESSION_AND_PATH": IntentType.SKILL_PROGRESSION_AND_PATH,
-                        "SKILL_PROGRESSION": IntentType.SKILL_PROGRESSION_AND_PATH,
-                        "SKILL_PATH": IntentType.SKILL_PROGRESSION_AND_PATH,
-                        "INTERVIEW_COACHING": IntentType.INTERVIEW_COACHING,
-                        "INTERVIEW": IntentType.INTERVIEW_COACHING,
-                        "COACHING": IntentType.INTERVIEW_COACHING,
-                        "MACRO_MARKET_DYNAMICS": IntentType.MACRO_MARKET_DYNAMICS,
-                        "MARKET_DYNAMICS": IntentType.MACRO_MARKET_DYNAMICS,
-                        "MARKET": IntentType.MACRO_MARKET_DYNAMICS,
-                    }
-
-                    intent_val = intent_mapping.get(raw_intent)
-                    if not intent_val:
-                        for candidate_enum in IntentType:
-                            if candidate_enum.value.upper() in raw_intent or raw_intent in candidate_enum.value.upper():
-                                intent_val = candidate_enum
-                                break
-
-                    if intent_val:
-                        return RouterDecision(
-                            intent=intent_val,
-                            confidence=float(parsed.get("confidence", 0.95)),
-                            strategy_selected=parsed.get("strategy_selected", "Dynamic agent dispatch"),
-                            reasoning=parsed.get("reasoning", "Classified via semantic intent analysis."),
-                        )
-                except Exception as exc:
-                    logger.warning(
-                        "Ollama intent classification attempt %d/%d failed: %s",
-                        attempt, max_attempts, exc
+                    resp = await provider.generate_json(
+                        prompt=prompt,
+                        temperature=0.0,
+                        max_tokens=250,
+                        keep_alive="30m",
+                        timeout=60.0,
                     )
-                    if attempt < max_attempts:
-                        continue
+                    parsed = resp.data
+                except Exception:
+                    async with httpx.AsyncClient(timeout=60.0) as client:
+                        resp = await client.post(url, json=payload)
+                        resp.raise_for_status()
+                        data = resp.json()
+
+                        if "response" in data:
+                            raw_text = data.get("response", "")
+                        elif "candidates" in data:
+                            raw_text = data["candidates"][0]["content"]["parts"][0]["text"]
+                        else:
+                            raw_text = json.dumps(data)
+
+                        parsed = self._clean_and_parse_json(raw_text)
+
+                if not parsed or not isinstance(parsed, dict):
+                    continue
+
+                raw_intent = str(parsed.get("intent", "")).strip().upper()
+                intent_mapping = {
+                    "JOB_SEARCH_AND_MATCH": IntentType.JOB_SEARCH_AND_MATCH,
+                    "JOB_SEARCH": IntentType.JOB_SEARCH_AND_MATCH,
+                    "JOB_MATCH": IntentType.JOB_SEARCH_AND_MATCH,
+                    "SKILL_PROGRESSION_AND_PATH": IntentType.SKILL_PROGRESSION_AND_PATH,
+                    "SKILL_PROGRESSION": IntentType.SKILL_PROGRESSION_AND_PATH,
+                    "SKILL_PATH": IntentType.SKILL_PROGRESSION_AND_PATH,
+                    "INTERVIEW_COACHING": IntentType.INTERVIEW_COACHING,
+                    "INTERVIEW": IntentType.INTERVIEW_COACHING,
+                    "COACHING": IntentType.INTERVIEW_COACHING,
+                    "MACRO_MARKET_DYNAMICS": IntentType.MACRO_MARKET_DYNAMICS,
+                    "MARKET_DYNAMICS": IntentType.MACRO_MARKET_DYNAMICS,
+                    "MARKET": IntentType.MACRO_MARKET_DYNAMICS,
+                }
+
+                intent_val = intent_mapping.get(raw_intent)
+                if not intent_val:
+                    for candidate_enum in IntentType:
+                        if candidate_enum.value.upper() in raw_intent or raw_intent in candidate_enum.value.upper():
+                            intent_val = candidate_enum
+                            break
+
+                if intent_val:
+                    return RouterDecision(
+                        intent=intent_val,
+                        confidence=float(parsed.get("confidence", 0.95)),
+                        strategy_selected=parsed.get("strategy_selected", "Dynamic agent dispatch"),
+                        reasoning=parsed.get("reasoning", "Classified via semantic intent analysis."),
+                    )
+            except Exception as exc:
+                logger.warning(
+                    "LLM intent classification attempt %d/%d failed: %s",
+                    attempt, max_attempts, exc
+                )
+                if attempt < max_attempts:
+                    continue
 
         return None
 
