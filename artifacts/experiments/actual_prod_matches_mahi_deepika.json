@@ -1,0 +1,2153 @@
+{
+  "Mahi": {
+    "resume_id": "91cb0770-b345-420f-b83d-79ba108f4166",
+    "total_matches": 10,
+    "matches": [
+      {
+        "rank": 1,
+        "job_id": "8de614a5-2d89-4a96-8f22-669cd9e99064",
+        "title": "Junior Software Developer",
+        "company": "mhtechin",
+        "location": "Mumbai, Maharashtra",
+        "final_score": 0.8244,
+        "composite_score": 0.8478,
+        "xgboost_score": 0.8053,
+        "duplicate_count": 1,
+        "merged_sources": [
+          "indeed"
+        ]
+      },
+      {
+        "rank": 2,
+        "job_id": "224745f9-00f2-40be-88df-127cdbbca119",
+        "title": "Trainee Software Engineer",
+        "company": "Retail Sols",
+        "location": "Hyderabad, Telangana",
+        "final_score": 0.7664,
+        "composite_score": 0.9088,
+        "xgboost_score": 0.8959,
+        "duplicate_count": 1,
+        "merged_sources": [
+          "indeed"
+        ]
+      },
+      {
+        "rank": 3,
+        "job_id": "4a6d9f56-91c9-4d90-87e6-7728629deaf4",
+        "title": "Data / Research Analyst",
+        "company": "Pratibha Consultancy and Development Services",
+        "location": "Mumbai, Maharashtra",
+        "final_score": 0.7517,
+        "composite_score": 0.6952,
+        "xgboost_score": 0.798,
+        "duplicate_count": 1,
+        "merged_sources": [
+          "indeed"
+        ]
+      },
+      {
+        "rank": 4,
+        "job_id": "3d596dea-47f8-4aed-bd57-6469add821d3",
+        "title": "AI / Generative AI Engineer",
+        "company": "Pratibha Consultancy and Development Services",
+        "location": "Mumbai, Maharashtra",
+        "final_score": 0.7168,
+        "composite_score": 0.6444,
+        "xgboost_score": 0.776,
+        "duplicate_count": 1,
+        "merged_sources": [
+          "indeed"
+        ]
+      },
+      {
+        "rank": 5,
+        "job_id": "d1523148-516b-446d-af15-d83801861822",
+        "title": "Software Developer - Intern (Python)",
+        "company": "Castus Info",
+        "location": "Hyderabad, Telangana",
+        "final_score": 0.7078,
+        "composite_score": 0.6623,
+        "xgboost_score": 0.7451,
+        "duplicate_count": 1,
+        "merged_sources": [
+          "indeed"
+        ]
+      },
+      {
+        "rank": 6,
+        "job_id": "17763a86-0b80-4629-9d48-cf345e22a27b",
+        "title": "Software Engineer I, Machine Learning",
+        "company": "Smart Data Solutions",
+        "location": "Chennai, Tamil Nadu",
+        "final_score": 0.7033,
+        "composite_score": 0.6238,
+        "xgboost_score": 0.7684,
+        "duplicate_count": 1,
+        "merged_sources": [
+          "indeed"
+        ]
+      },
+      {
+        "rank": 7,
+        "job_id": "32477335-7dfe-43df-bab1-90083aa80510",
+        "title": "Associate Software Engineer",
+        "company": "Green Apple Solutions",
+        "location": "Delhi NCR",
+        "final_score": 0.7015,
+        "composite_score": 0.6619,
+        "xgboost_score": 0.7339,
+        "duplicate_count": 1,
+        "merged_sources": [
+          "indeed"
+        ]
+      },
+      {
+        "rank": 8,
+        "job_id": "dd5c8a5a-c0a0-4edb-945c-3f0b99dbaf63",
+        "title": "Python Developer Intern",
+        "company": "Universal Printers",
+        "location": "Mumbai, Maharashtra",
+        "final_score": 0.6963,
+        "composite_score": 0.7877,
+        "xgboost_score": 0.8449,
+        "duplicate_count": 1,
+        "merged_sources": [
+          "indeed"
+        ]
+      },
+      {
+        "rank": 9,
+        "job_id": "f17cca0b-de1b-4c86-88f2-d2f380838b3f",
+        "title": "Junior Software Engineer (Full Stack)",
+        "company": "Hakuna Matata Solutions Pvt Ltd",
+        "location": "Chennai, Tamil Nadu",
+        "final_score": 0.6933,
+        "composite_score": 0.7822,
+        "xgboost_score": 0.8431,
+        "duplicate_count": 1,
+        "merged_sources": [
+          "indeed"
+        ]
+      },
+      {
+        "rank": 10,
+        "job_id": "4a85f01b-4aba-47aa-92c2-1b846d27d3f0",
+        "title": "Software Engineer",
+        "company": "AXN",
+        "location": "Chennai, Tamil Nadu",
+        "final_score": 0.6898,
+        "composite_score": 0.6626,
+        "xgboost_score": 0.7121,
+        "duplicate_count": 1,
+        "merged_sources": [
+          "indeed"
+        ]
+      }
+    ],
+    "raw_response": {
+      "resume_id": "91cb0770-b345-420f-b83d-79ba108f4166",
+      "candidate_name": "YALLANKI MAHIMA CHOWDARY",
+      "total_matches": 10,
+      "matches": [
+        {
+          "job_id": "8de614a5-2d89-4a96-8f22-669cd9e99064",
+          "title": "Junior Software Developer",
+          "company_name": "mhtechin",
+          "location": "Mumbai, Maharashtra",
+          "work_type": "Full-time",
+          "remote_allowed": false,
+          "semantic_score": 0.6914,
+          "composite_score": 0.8478,
+          "xgboost_score": 0.8053,
+          "final_score": 0.8244,
+          "rank": 1,
+          "merged_sources": [
+            "indeed"
+          ],
+          "duplicate_count": 1,
+          "skills_breakdown": {
+            "matched_skills": [
+              "Git/GitHub",
+              "Java",
+              "JavaScript",
+              "Python",
+              "Communication",
+              "Problem Solving"
+            ],
+            "missing_must_have": [],
+            "missing_nice_to_have": []
+          },
+          "features": {
+            "semantic_similarity": 0.6914,
+            "must_have_skill_match": 1.0,
+            "nice_to_have_skill_match": 1.0,
+            "candidate_years_experience": 1.0,
+            "job_required_years": 2.0,
+            "experience_deficit": 1.0,
+            "experience_penalty": 0.0,
+            "education_level_match": 1.0,
+            "title_similarity": 1.0
+          },
+          "explanations": [
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": 0.1804,
+              "impact": "+18.0%",
+              "description": "Strong alignment with mandatory job requirements (matched Git/GitHub, Java, JavaScript)."
+            },
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": 0.09,
+              "impact": "+9.0%",
+              "description": "Directly relevant prior job titles and role trajectories."
+            },
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.0697,
+              "impact": "+7.0%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": -0.0638,
+              "impact": "-6.4%",
+              "description": "Years of experience (1.0 yrs) below stated target (2.0 yrs)."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": 0.0319,
+              "impact": "+3.2%",
+              "description": "Bonus qualifications and preferred technologies satisfied."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": 0.0211,
+              "impact": "+2.1%",
+              "description": "High semantic and domain context alignment (69% similarity)."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": 0.0122,
+              "impact": "+1.2%",
+              "description": "Meets or exceeds degree qualification expectations."
+            }
+          ]
+        },
+        {
+          "job_id": "224745f9-00f2-40be-88df-127cdbbca119",
+          "title": "Trainee Software Engineer",
+          "company_name": "Retail Sols",
+          "location": "Hyderabad, Telangana",
+          "work_type": null,
+          "remote_allowed": false,
+          "semantic_score": 0.6353,
+          "composite_score": 0.9088,
+          "xgboost_score": 0.8959,
+          "final_score": 0.7664,
+          "rank": 2,
+          "merged_sources": [
+            "indeed"
+          ],
+          "duplicate_count": 1,
+          "skills_breakdown": {
+            "matched_skills": [
+              "Java",
+              "SQL",
+              "Communication"
+            ],
+            "missing_must_have": [],
+            "missing_nice_to_have": []
+          },
+          "features": {
+            "semantic_similarity": 0.6353,
+            "must_have_skill_match": 1.0,
+            "nice_to_have_skill_match": 1.0,
+            "candidate_years_experience": 1.0,
+            "job_required_years": 1.0,
+            "experience_deficit": 0.0,
+            "experience_penalty": 0.0,
+            "education_level_match": 1.0,
+            "title_similarity": 1.0
+          },
+          "explanations": [
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": 0.1732,
+              "impact": "+17.3%",
+              "description": "Strong alignment with mandatory job requirements (matched Java, SQL, Communication)."
+            },
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": 0.0874,
+              "impact": "+8.7%",
+              "description": "Directly relevant prior job titles and role trajectories."
+            },
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.0735,
+              "impact": "+7.4%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": 0.0376,
+              "impact": "+3.8%",
+              "description": "Sufficient career tenure (1.0 yrs vs 1.0 yrs required)."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": 0.0348,
+              "impact": "+3.5%",
+              "description": "Bonus qualifications and preferred technologies satisfied."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": 0.0133,
+              "impact": "+1.3%",
+              "description": "High semantic and domain context alignment (64% similarity)."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": 0.0123,
+              "impact": "+1.2%",
+              "description": "Meets or exceeds degree qualification expectations."
+            }
+          ]
+        },
+        {
+          "job_id": "4a6d9f56-91c9-4d90-87e6-7728629deaf4",
+          "title": "Data / Research Analyst",
+          "company_name": "Pratibha Consultancy and Development Services",
+          "location": "Mumbai, Maharashtra",
+          "work_type": "Internship",
+          "remote_allowed": false,
+          "semantic_score": 0.6086,
+          "composite_score": 0.6952,
+          "xgboost_score": 0.798,
+          "final_score": 0.7517,
+          "rank": 3,
+          "merged_sources": [
+            "indeed"
+          ],
+          "duplicate_count": 1,
+          "skills_breakdown": {
+            "matched_skills": [
+              "Data Science",
+              "Java",
+              "JavaScript",
+              "SQL"
+            ],
+            "missing_must_have": [],
+            "missing_nice_to_have": [
+              "Node.js",
+              "React"
+            ]
+          },
+          "features": {
+            "semantic_similarity": 0.6086,
+            "must_have_skill_match": 1.0,
+            "nice_to_have_skill_match": 0.3333,
+            "candidate_years_experience": 1.0,
+            "job_required_years": 1.0,
+            "experience_deficit": 0.0,
+            "experience_penalty": 0.0,
+            "education_level_match": 1.0,
+            "title_similarity": 0.6667
+          },
+          "explanations": [
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": 0.177,
+              "impact": "+17.7%",
+              "description": "Strong alignment with mandatory job requirements (matched Data Science, Java, JavaScript)."
+            },
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.0735,
+              "impact": "+7.4%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": 0.0353,
+              "impact": "+3.5%",
+              "description": "Sufficient career tenure (1.0 yrs vs 1.0 yrs required)."
+            },
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": 0.0298,
+              "impact": "+3.0%",
+              "description": "Directly relevant prior job titles and role trajectories."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": 0.0127,
+              "impact": "+1.3%",
+              "description": "High semantic and domain context alignment (61% similarity)."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": 0.0117,
+              "impact": "+1.2%",
+              "description": "Meets or exceeds degree qualification expectations."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": -0.0058,
+              "impact": "-0.6%",
+              "description": "Preferred bonus skills could improve competitiveness: Node.js, React."
+            }
+          ]
+        },
+        {
+          "job_id": "3d596dea-47f8-4aed-bd57-6469add821d3",
+          "title": "AI / Generative AI Engineer",
+          "company_name": "Pratibha Consultancy and Development Services",
+          "location": "Mumbai, Maharashtra",
+          "work_type": "Internship",
+          "remote_allowed": false,
+          "semantic_score": 0.6219,
+          "composite_score": 0.6444,
+          "xgboost_score": 0.776,
+          "final_score": 0.7168,
+          "rank": 4,
+          "merged_sources": [
+            "indeed"
+          ],
+          "duplicate_count": 1,
+          "skills_breakdown": {
+            "matched_skills": [
+              "Data Science",
+              "Java",
+              "JavaScript",
+              "Python"
+            ],
+            "missing_must_have": [],
+            "missing_nice_to_have": [
+              "Node.js",
+              "React"
+            ]
+          },
+          "features": {
+            "semantic_similarity": 0.6219,
+            "must_have_skill_match": 1.0,
+            "nice_to_have_skill_match": 0.3333,
+            "candidate_years_experience": 1.0,
+            "job_required_years": 1.0,
+            "experience_deficit": 0.0,
+            "experience_penalty": 0.0,
+            "education_level_match": 1.0,
+            "title_similarity": 0.5
+          },
+          "explanations": [
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": 0.1783,
+              "impact": "+17.8%",
+              "description": "Strong alignment with mandatory job requirements (matched Data Science, Java, JavaScript)."
+            },
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.0757,
+              "impact": "+7.6%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": 0.0373,
+              "impact": "+3.7%",
+              "description": "Sufficient career tenure (1.0 yrs vs 1.0 yrs required)."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": 0.0143,
+              "impact": "+1.4%",
+              "description": "High semantic and domain context alignment (62% similarity)."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": 0.0115,
+              "impact": "+1.2%",
+              "description": "Meets or exceeds degree qualification expectations."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": -0.0052,
+              "impact": "-0.5%",
+              "description": "Preferred bonus skills could improve competitiveness: Node.js, React."
+            },
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": 0.0003,
+              "impact": "+0.0%",
+              "description": "Directly relevant prior job titles and role trajectories."
+            }
+          ]
+        },
+        {
+          "job_id": "d1523148-516b-446d-af15-d83801861822",
+          "title": "Software Developer - Intern (Python)",
+          "company_name": "Castus Info",
+          "location": "Hyderabad, Telangana",
+          "work_type": "Full-time",
+          "remote_allowed": false,
+          "semantic_score": 0.6037,
+          "composite_score": 0.6623,
+          "xgboost_score": 0.7451,
+          "final_score": 0.7078,
+          "rank": 5,
+          "merged_sources": [
+            "indeed"
+          ],
+          "duplicate_count": 1,
+          "skills_breakdown": {
+            "matched_skills": [
+              "HTML/CSS",
+              "JavaScript",
+              "Python",
+              "Communication"
+            ],
+            "missing_must_have": [
+              "Django",
+              "Flask"
+            ],
+            "missing_nice_to_have": []
+          },
+          "features": {
+            "semantic_similarity": 0.6037,
+            "must_have_skill_match": 0.6,
+            "nice_to_have_skill_match": 1.0,
+            "candidate_years_experience": 1.0,
+            "job_required_years": 1.0,
+            "experience_deficit": 0.0,
+            "experience_penalty": 0.0,
+            "education_level_match": 0.75,
+            "title_similarity": 0.75
+          },
+          "explanations": [
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": 0.0721,
+              "impact": "+7.2%",
+              "description": "Partially matched core required skills (60%, missing Django, Flask)."
+            },
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.0707,
+              "impact": "+7.1%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": 0.058,
+              "impact": "+5.8%",
+              "description": "Directly relevant prior job titles and role trajectories."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": 0.0413,
+              "impact": "+4.1%",
+              "description": "Sufficient career tenure (1.0 yrs vs 1.0 yrs required)."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": 0.0361,
+              "impact": "+3.6%",
+              "description": "Bonus qualifications and preferred technologies satisfied."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": 0.0108,
+              "impact": "+1.1%",
+              "description": "High semantic and domain context alignment (60% similarity)."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": -0.0078,
+              "impact": "-0.8%",
+              "description": "Degree level below typical requirements for this seniority."
+            }
+          ]
+        },
+        {
+          "job_id": "17763a86-0b80-4629-9d48-cf345e22a27b",
+          "title": "Software Engineer I, Machine Learning",
+          "company_name": "Smart Data Solutions",
+          "location": "Chennai, Tamil Nadu",
+          "work_type": null,
+          "remote_allowed": false,
+          "semantic_score": 0.619,
+          "composite_score": 0.6238,
+          "xgboost_score": 0.7684,
+          "final_score": 0.7033,
+          "rank": 6,
+          "merged_sources": [
+            "indeed"
+          ],
+          "duplicate_count": 1,
+          "skills_breakdown": {
+            "matched_skills": [
+              "Data Science",
+              "Git/GitHub",
+              "Java",
+              "Python",
+              "SQL",
+              "Communication"
+            ],
+            "missing_must_have": [
+              "Linux"
+            ],
+            "missing_nice_to_have": [
+              "Machine Learning"
+            ]
+          },
+          "features": {
+            "semantic_similarity": 0.619,
+            "must_have_skill_match": 0.75,
+            "nice_to_have_skill_match": 0.75,
+            "candidate_years_experience": 1.0,
+            "job_required_years": 1.0,
+            "experience_deficit": 0.0,
+            "experience_penalty": 0.0,
+            "education_level_match": 1.0,
+            "title_similarity": 0.5
+          },
+          "explanations": [
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": 0.1351,
+              "impact": "+13.5%",
+              "description": "Strong alignment with mandatory job requirements (matched Data Science, Git/GitHub, Java)."
+            },
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.0756,
+              "impact": "+7.6%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": 0.041,
+              "impact": "+4.1%",
+              "description": "Sufficient career tenure (1.0 yrs vs 1.0 yrs required)."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": 0.0267,
+              "impact": "+2.7%",
+              "description": "Bonus qualifications and preferred technologies satisfied."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": 0.0125,
+              "impact": "+1.2%",
+              "description": "High semantic and domain context alignment (62% similarity)."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": 0.0106,
+              "impact": "+1.1%",
+              "description": "Meets or exceeds degree qualification expectations."
+            },
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": 0.0031,
+              "impact": "+0.3%",
+              "description": "Directly relevant prior job titles and role trajectories."
+            }
+          ]
+        },
+        {
+          "job_id": "32477335-7dfe-43df-bab1-90083aa80510",
+          "title": "Associate Software Engineer",
+          "company_name": "Green Apple Solutions",
+          "location": "Delhi NCR",
+          "work_type": "Full-time",
+          "remote_allowed": false,
+          "semantic_score": 0.6147,
+          "composite_score": 0.6619,
+          "xgboost_score": 0.7339,
+          "final_score": 0.7015,
+          "rank": 7,
+          "merged_sources": [
+            "indeed"
+          ],
+          "duplicate_count": 1,
+          "skills_breakdown": {
+            "matched_skills": [
+              "Git/GitHub",
+              "HTML/CSS",
+              "Java",
+              "JavaScript",
+              "SQL",
+              "C",
+              "Communication",
+              "Problem Solving"
+            ],
+            "missing_must_have": [
+              "Linux",
+              "Node.js",
+              "REST API",
+              "React"
+            ],
+            "missing_nice_to_have": []
+          },
+          "features": {
+            "semantic_similarity": 0.6147,
+            "must_have_skill_match": 0.6,
+            "nice_to_have_skill_match": 1.0,
+            "candidate_years_experience": 1.0,
+            "job_required_years": 1.0,
+            "experience_deficit": 0.0,
+            "experience_penalty": 0.0,
+            "education_level_match": 1.0,
+            "title_similarity": 0.6667
+          },
+          "explanations": [
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.0726,
+              "impact": "+7.3%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": 0.0691,
+              "impact": "+6.9%",
+              "description": "Partially matched core required skills (60%, missing Linux, Node.js, REST API)."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": 0.0396,
+              "impact": "+4.0%",
+              "description": "Sufficient career tenure (1.0 yrs vs 1.0 yrs required)."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": 0.0349,
+              "impact": "+3.5%",
+              "description": "Bonus qualifications and preferred technologies satisfied."
+            },
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": 0.0305,
+              "impact": "+3.1%",
+              "description": "Directly relevant prior job titles and role trajectories."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": 0.0127,
+              "impact": "+1.3%",
+              "description": "High semantic and domain context alignment (61% similarity)."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": 0.0106,
+              "impact": "+1.1%",
+              "description": "Meets or exceeds degree qualification expectations."
+            }
+          ]
+        },
+        {
+          "job_id": "dd5c8a5a-c0a0-4edb-945c-3f0b99dbaf63",
+          "title": "Python Developer Intern",
+          "company_name": "Universal Printers",
+          "location": "Mumbai, Maharashtra",
+          "work_type": "Internship",
+          "remote_allowed": false,
+          "semantic_score": 0.6355,
+          "composite_score": 0.7877,
+          "xgboost_score": 0.8449,
+          "final_score": 0.6963,
+          "rank": 8,
+          "merged_sources": [
+            "indeed"
+          ],
+          "duplicate_count": 1,
+          "skills_breakdown": {
+            "matched_skills": [
+              "Git/GitHub",
+              "Python",
+              "SQL"
+            ],
+            "missing_must_have": [],
+            "missing_nice_to_have": []
+          },
+          "features": {
+            "semantic_similarity": 0.6355,
+            "must_have_skill_match": 1.0,
+            "nice_to_have_skill_match": 1.0,
+            "candidate_years_experience": 1.0,
+            "job_required_years": 1.0,
+            "experience_deficit": 0.0,
+            "experience_penalty": 0.0,
+            "education_level_match": 1.0,
+            "title_similarity": 0.6667
+          },
+          "explanations": [
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": 0.1761,
+              "impact": "+17.6%",
+              "description": "Strong alignment with mandatory job requirements (matched Git/GitHub, Python, SQL)."
+            },
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.0737,
+              "impact": "+7.4%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": 0.0375,
+              "impact": "+3.7%",
+              "description": "Sufficient career tenure (1.0 yrs vs 1.0 yrs required)."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": 0.0356,
+              "impact": "+3.6%",
+              "description": "Bonus qualifications and preferred technologies satisfied."
+            },
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": 0.0306,
+              "impact": "+3.1%",
+              "description": "Directly relevant prior job titles and role trajectories."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": 0.016,
+              "impact": "+1.6%",
+              "description": "High semantic and domain context alignment (64% similarity)."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": 0.0116,
+              "impact": "+1.2%",
+              "description": "Meets or exceeds degree qualification expectations."
+            }
+          ]
+        },
+        {
+          "job_id": "f17cca0b-de1b-4c86-88f2-d2f380838b3f",
+          "title": "Junior Software Engineer (Full Stack)",
+          "company_name": "Hakuna Matata Solutions Pvt Ltd",
+          "location": "Chennai, Tamil Nadu",
+          "work_type": "Full-time",
+          "remote_allowed": false,
+          "semantic_score": 0.6099,
+          "composite_score": 0.7822,
+          "xgboost_score": 0.8431,
+          "final_score": 0.6933,
+          "rank": 9,
+          "merged_sources": [
+            "indeed"
+          ],
+          "duplicate_count": 1,
+          "skills_breakdown": {
+            "matched_skills": [
+              "Web Technologies",
+              "Team Collaboration",
+              "Communication"
+            ],
+            "missing_must_have": [],
+            "missing_nice_to_have": []
+          },
+          "features": {
+            "semantic_similarity": 0.6099,
+            "must_have_skill_match": 1.0,
+            "nice_to_have_skill_match": 1.0,
+            "candidate_years_experience": 1.0,
+            "job_required_years": 1.0,
+            "experience_deficit": 0.0,
+            "experience_penalty": 0.0,
+            "education_level_match": 1.0,
+            "title_similarity": 0.6667
+          },
+          "explanations": [
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": 0.1766,
+              "impact": "+17.7%",
+              "description": "Strong alignment with mandatory job requirements (matched Web Technologies, Team Collaboration, Communication)."
+            },
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.0738,
+              "impact": "+7.4%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": 0.0374,
+              "impact": "+3.7%",
+              "description": "Sufficient career tenure (1.0 yrs vs 1.0 yrs required)."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": 0.0356,
+              "impact": "+3.6%",
+              "description": "Bonus qualifications and preferred technologies satisfied."
+            },
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": 0.032,
+              "impact": "+3.2%",
+              "description": "Directly relevant prior job titles and role trajectories."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": 0.0122,
+              "impact": "+1.2%",
+              "description": "High semantic and domain context alignment (61% similarity)."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": 0.0116,
+              "impact": "+1.2%",
+              "description": "Meets or exceeds degree qualification expectations."
+            }
+          ]
+        },
+        {
+          "job_id": "4a85f01b-4aba-47aa-92c2-1b846d27d3f0",
+          "title": "Software Engineer",
+          "company_name": "AXN",
+          "location": "Chennai, Tamil Nadu",
+          "work_type": "Full-time",
+          "remote_allowed": true,
+          "semantic_score": 0.7213,
+          "composite_score": 0.6626,
+          "xgboost_score": 0.7121,
+          "final_score": 0.6898,
+          "rank": 10,
+          "merged_sources": [
+            "indeed"
+          ],
+          "duplicate_count": 1,
+          "skills_breakdown": {
+            "matched_skills": [
+              "Git/GitHub",
+              "HTML/CSS",
+              "Java",
+              "JavaScript",
+              "Python",
+              "SQL",
+              "Team Collaboration",
+              "Communication",
+              "Problem Solving"
+            ],
+            "missing_must_have": [
+              "REST API",
+              "Spring Boot"
+            ],
+            "missing_nice_to_have": [
+              "AWS",
+              "Agile/Scrum",
+              "Azure"
+            ]
+          },
+          "features": {
+            "semantic_similarity": 0.7213,
+            "must_have_skill_match": 0.7778,
+            "nice_to_have_skill_match": 0.4,
+            "candidate_years_experience": 1.0,
+            "job_required_years": 2.0,
+            "experience_deficit": 1.0,
+            "experience_penalty": 0.0,
+            "education_level_match": 0.75,
+            "title_similarity": 1.0
+          },
+          "explanations": [
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": 0.1399,
+              "impact": "+14.0%",
+              "description": "Strong alignment with mandatory job requirements (matched Git/GitHub, HTML/CSS, Java)."
+            },
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": 0.0916,
+              "impact": "+9.2%",
+              "description": "Directly relevant prior job titles and role trajectories."
+            },
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.0706,
+              "impact": "+7.1%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": -0.0702,
+              "impact": "-7.0%",
+              "description": "Years of experience (1.0 yrs) below stated target (2.0 yrs)."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": 0.0247,
+              "impact": "+2.5%",
+              "description": "High semantic and domain context alignment (72% similarity)."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": -0.0102,
+              "impact": "-1.0%",
+              "description": "Degree level below typical requirements for this seniority."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": 0.0019,
+              "impact": "+0.2%",
+              "description": "Preferred bonus skills could improve competitiveness: AWS, Agile/Scrum."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "Deepika": {
+    "resume_id": "3386e2b7-fced-4fdd-8276-19baddeeef2c",
+    "total_matches": 10,
+    "matches": [
+      {
+        "rank": 1,
+        "job_id": "303f796a-a45c-45fc-a60c-3b7f5c2c5690",
+        "title": "Junior Research Associate - Consumer And Sensory Sciences",
+        "company": "ITC Limited",
+        "location": "Bengaluru, Karnataka",
+        "final_score": 0.5302,
+        "composite_score": 0.4327,
+        "xgboost_score": 0.6099,
+        "duplicate_count": 1,
+        "merged_sources": [
+          "glassdoor"
+        ]
+      },
+      {
+        "rank": 2,
+        "job_id": "de41c4e4-0f39-4f85-95d6-b59b9adcd6b2",
+        "title": "Research Assistant (RA)",
+        "company": "Indraprastha Institute of Information Technology, Delhi",
+        "location": "Delhi NCR",
+        "final_score": 0.3864,
+        "composite_score": 0.2734,
+        "xgboost_score": 0.4789,
+        "duplicate_count": 1,
+        "merged_sources": [
+          "indeed"
+        ]
+      },
+      {
+        "rank": 3,
+        "job_id": "5007d89a-5ea9-4d6f-a8af-f1ba95300a31",
+        "title": "Biomedical Engineer",
+        "company": "MAI MAGESHKAR HOSPITAL,WARJE",
+        "location": "Mumbai, Maharashtra",
+        "final_score": 0.3154,
+        "composite_score": 0.5025,
+        "xgboost_score": 0.6316,
+        "duplicate_count": 2,
+        "merged_sources": [
+          "indeed",
+          "glassdoor"
+        ]
+      },
+      {
+        "rank": 4,
+        "job_id": "0d96d0f7-aa5a-42cd-8700-cb68887aae56",
+        "title": "Junior Research Fellow",
+        "company": "Privi Life Sciences",
+        "location": "Mumbai, Maharashtra",
+        "final_score": 0.2505,
+        "composite_score": 0.2077,
+        "xgboost_score": 0.4807,
+        "duplicate_count": 1,
+        "merged_sources": [
+          "indeed"
+        ]
+      },
+      {
+        "rank": 5,
+        "job_id": "e81122ab-c44a-4365-8b05-81e351f0067a",
+        "title": "Medical Coding Jobs for Bioinformatics Graduates",
+        "company": "Achievers Spot",
+        "location": "Hyderabad, Telangana",
+        "final_score": 0.2463,
+        "composite_score": 0.2971,
+        "xgboost_score": 0.3966,
+        "duplicate_count": 1,
+        "merged_sources": [
+          "linkedin"
+        ]
+      },
+      {
+        "rank": 6,
+        "job_id": "8fabf1fa-599c-4cb9-beb7-ee9a3489ed08",
+        "title": "Bio Lab Assistant",
+        "company": "The Madras Seva Sadan",
+        "location": "Chennai, Tamil Nadu",
+        "final_score": 0.2334,
+        "composite_score": 0.2661,
+        "xgboost_score": 0.554,
+        "duplicate_count": 1,
+        "merged_sources": [
+          "indeed"
+        ]
+      },
+      {
+        "rank": 7,
+        "job_id": "af533615-a835-4d37-8e05-08ac04abe071",
+        "title": "Trainee Clinical Research",
+        "company": "WorkSure",
+        "location": "Delhi NCR",
+        "final_score": 0.2271,
+        "composite_score": 0.3552,
+        "xgboost_score": 0.46,
+        "duplicate_count": 2,
+        "merged_sources": [
+          "indeed",
+          "glassdoor"
+        ]
+      },
+      {
+        "rank": 8,
+        "job_id": "faf5ba6f-b870-4591-80f3-3ae5e161b04b",
+        "title": "Computational Biology & Bioinformatics Scientist",
+        "company": "Zifo",
+        "location": "Chennai, Tamil Nadu",
+        "final_score": 0.2237,
+        "composite_score": 0.3416,
+        "xgboost_score": 0.46,
+        "duplicate_count": 2,
+        "merged_sources": [
+          "glassdoor",
+          "indeed"
+        ]
+      },
+      {
+        "rank": 9,
+        "job_id": "aff1fa71-982e-4db0-9996-b9df7dfafb34",
+        "title": "Microbiologist",
+        "company": "Inducare Pharma Private Limited",
+        "location": "Mumbai, Maharashtra",
+        "final_score": 0.2226,
+        "composite_score": 0.2478,
+        "xgboost_score": 0.533,
+        "duplicate_count": 1,
+        "merged_sources": [
+          "indeed"
+        ]
+      },
+      {
+        "rank": 10,
+        "job_id": "7444f871-5ad4-404d-858c-ae95a13ed6ef",
+        "title": "Medical Coding Jobs for Bioinfomatics Graduates",
+        "company": "Achievers Spot",
+        "location": "Hyderabad, Telangana",
+        "final_score": 0.2224,
+        "composite_score": 0.1935,
+        "xgboost_score": 0.4194,
+        "duplicate_count": 1,
+        "merged_sources": [
+          "linkedin"
+        ]
+      }
+    ],
+    "raw_response": {
+      "resume_id": "3386e2b7-fced-4fdd-8276-19baddeeef2c",
+      "candidate_name": "S.Deepika",
+      "total_matches": 10,
+      "matches": [
+        {
+          "job_id": "303f796a-a45c-45fc-a60c-3b7f5c2c5690",
+          "title": "Junior Research Associate - Consumer And Sensory Sciences",
+          "company_name": "ITC Limited",
+          "location": "Bengaluru, Karnataka",
+          "work_type": null,
+          "remote_allowed": false,
+          "semantic_score": 0.5755,
+          "composite_score": 0.4327,
+          "xgboost_score": 0.6099,
+          "final_score": 0.5302,
+          "rank": 1,
+          "merged_sources": [
+            "glassdoor"
+          ],
+          "duplicate_count": 1,
+          "skills_breakdown": {
+            "matched_skills": [
+              "Cell Culture",
+              "Formulation",
+              "Microbiology",
+              "PCR"
+            ],
+            "missing_must_have": [
+              "Clinical Trials"
+            ],
+            "missing_nice_to_have": [
+              "Communication",
+              "Problem Solving"
+            ]
+          },
+          "features": {
+            "semantic_similarity": 0.5755,
+            "must_have_skill_match": 0.75,
+            "nice_to_have_skill_match": 0.3333,
+            "candidate_years_experience": 0.7,
+            "job_required_years": 1.0,
+            "experience_deficit": 0.3,
+            "experience_penalty": 0.0,
+            "education_level_match": 0.75,
+            "title_similarity": 0.2
+          },
+          "explanations": [
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": 0.1308,
+              "impact": "+13.1%",
+              "description": "Strong alignment with mandatory job requirements (matched Cell Culture, Formulation, Microbiology)."
+            },
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.0697,
+              "impact": "+7.0%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": -0.063,
+              "impact": "-6.3%",
+              "description": "Prior titles reflect related or non-traditional background."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": 0.0171,
+              "impact": "+1.7%",
+              "description": "Years of experience (0.7 yrs) below stated target (1.0 yrs)."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": -0.0095,
+              "impact": "-0.9%",
+              "description": "Degree level below typical requirements for this seniority."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": 0.0033,
+              "impact": "+0.3%",
+              "description": "Low semantic text similarity with role expectations (58%)."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": -0.0024,
+              "impact": "-0.2%",
+              "description": "Preferred bonus skills could improve competitiveness: Communication, Problem Solving."
+            }
+          ]
+        },
+        {
+          "job_id": "de41c4e4-0f39-4f85-95d6-b59b9adcd6b2",
+          "title": "Research Assistant (RA)",
+          "company_name": "Indraprastha Institute of Information Technology, Delhi",
+          "location": "Delhi NCR",
+          "work_type": null,
+          "remote_allowed": false,
+          "semantic_score": 0.6909,
+          "composite_score": 0.2734,
+          "xgboost_score": 0.4789,
+          "final_score": 0.3864,
+          "rank": 2,
+          "merged_sources": [
+            "indeed"
+          ],
+          "duplicate_count": 1,
+          "skills_breakdown": {
+            "matched_skills": [
+              "Cell Culture",
+              "Gel Electrophoresis",
+              "Molecular Biology",
+              "PCR"
+            ],
+            "missing_must_have": [
+              "Bioinformatics"
+            ],
+            "missing_nice_to_have": []
+          },
+          "features": {
+            "semantic_similarity": 0.6909,
+            "must_have_skill_match": 0.6667,
+            "nice_to_have_skill_match": 1.0,
+            "candidate_years_experience": 0.7,
+            "job_required_years": 2.0,
+            "experience_deficit": 1.3,
+            "experience_penalty": 0.0,
+            "education_level_match": 0.75,
+            "title_similarity": 0.0
+          },
+          "explanations": [
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": -0.0908,
+              "impact": "-9.1%",
+              "description": "Target job title does not match candidate's field or technical trajectory."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": -0.0845,
+              "impact": "-8.4%",
+              "description": "Years of experience (0.7 yrs) below stated target (2.0 yrs)."
+            },
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": 0.0824,
+              "impact": "+8.2%",
+              "description": "Partially matched core required skills (67%, missing Bioinformatics)."
+            },
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.0648,
+              "impact": "+6.5%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": 0.0319,
+              "impact": "+3.2%",
+              "description": "Bonus qualifications and preferred technologies satisfied."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": 0.0189,
+              "impact": "+1.9%",
+              "description": "High semantic and domain context alignment (69% similarity)."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": -0.0077,
+              "impact": "-0.8%",
+              "description": "Degree level below typical requirements for this seniority."
+            }
+          ]
+        },
+        {
+          "job_id": "5007d89a-5ea9-4d6f-a8af-f1ba95300a31",
+          "title": "Biomedical Engineer",
+          "company_name": "MAI MAGESHKAR HOSPITAL,WARJE",
+          "location": "Mumbai, Maharashtra",
+          "work_type": "Full-time",
+          "remote_allowed": false,
+          "semantic_score": 0.5024,
+          "composite_score": 0.5025,
+          "xgboost_score": 0.6316,
+          "final_score": 0.3154,
+          "rank": 3,
+          "merged_sources": [
+            "indeed",
+            "glassdoor"
+          ],
+          "duplicate_count": 2,
+          "skills_breakdown": {
+            "matched_skills": [
+              "MATLAB"
+            ],
+            "missing_must_have": [],
+            "missing_nice_to_have": [
+              "Communication",
+              "Problem Solving"
+            ]
+          },
+          "features": {
+            "semantic_similarity": 0.5024,
+            "must_have_skill_match": 1.0,
+            "nice_to_have_skill_match": 0.0,
+            "candidate_years_experience": 0.7,
+            "job_required_years": 2.0,
+            "experience_deficit": 1.3,
+            "experience_penalty": 0.0,
+            "education_level_match": 1.0,
+            "title_similarity": 0.5
+          },
+          "explanations": [
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": 0.183,
+              "impact": "+18.3%",
+              "description": "Single mandatory skill requirement matched (MATLAB)."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": -0.0768,
+              "impact": "-7.7%",
+              "description": "Years of experience (0.7 yrs) below stated target (2.0 yrs)."
+            },
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.0699,
+              "impact": "+7.0%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": -0.019,
+              "impact": "-1.9%",
+              "description": "Preferred bonus skills could improve competitiveness: Communication, Problem Solving."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": 0.0115,
+              "impact": "+1.2%",
+              "description": "Meets or exceeds degree qualification expectations."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": -0.0026,
+              "impact": "-0.3%",
+              "description": "Low semantic text similarity with role expectations (50%)."
+            },
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": 0.0018,
+              "impact": "+0.2%",
+              "description": "Directly relevant prior job titles and role trajectories."
+            }
+          ]
+        },
+        {
+          "job_id": "0d96d0f7-aa5a-42cd-8700-cb68887aae56",
+          "title": "Junior Research Fellow",
+          "company_name": "Privi Life Sciences",
+          "location": "Mumbai, Maharashtra",
+          "work_type": null,
+          "remote_allowed": false,
+          "semantic_score": 0.5074,
+          "composite_score": 0.2077,
+          "xgboost_score": 0.4807,
+          "final_score": 0.2505,
+          "rank": 4,
+          "merged_sources": [
+            "indeed"
+          ],
+          "duplicate_count": 1,
+          "skills_breakdown": {
+            "matched_skills": [
+              "Formulation",
+              "Microbiology"
+            ],
+            "missing_must_have": [
+              "Fermentation / Bioprocessing"
+            ],
+            "missing_nice_to_have": [
+              "Team Collaboration",
+              "Communication",
+              "Leadership"
+            ]
+          },
+          "features": {
+            "semantic_similarity": 0.5074,
+            "must_have_skill_match": 0.5,
+            "nice_to_have_skill_match": 0.25,
+            "candidate_years_experience": 0.7,
+            "job_required_years": 1.0,
+            "experience_deficit": 0.3,
+            "experience_penalty": 0.0,
+            "education_level_match": 0.75,
+            "title_similarity": 0.0
+          },
+          "explanations": [
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": -0.0818,
+              "impact": "-8.2%",
+              "description": "Target job title does not match candidate's field or technical trajectory."
+            },
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.0706,
+              "impact": "+7.1%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": 0.0322,
+              "impact": "+3.2%",
+              "description": "Partially matched core required skills (50%, missing Fermentation / Bioprocessing)."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": 0.0169,
+              "impact": "+1.7%",
+              "description": "Years of experience (0.7 yrs) below stated target (1.0 yrs)."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": -0.008,
+              "impact": "-0.8%",
+              "description": "Degree level below typical requirements for this seniority."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": -0.0068,
+              "impact": "-0.7%",
+              "description": "Low semantic text similarity with role expectations (51%)."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": -0.0063,
+              "impact": "-0.6%",
+              "description": "Preferred bonus skills could improve competitiveness: Team Collaboration, Communication."
+            }
+          ]
+        },
+        {
+          "job_id": "e81122ab-c44a-4365-8b05-81e351f0067a",
+          "title": "Medical Coding Jobs for Bioinformatics Graduates",
+          "company_name": "Achievers Spot",
+          "location": "Hyderabad, Telangana",
+          "work_type": "Full-time",
+          "remote_allowed": false,
+          "semantic_score": 0.6274,
+          "composite_score": 0.2971,
+          "xgboost_score": 0.3966,
+          "final_score": 0.2463,
+          "rank": 5,
+          "merged_sources": [
+            "linkedin"
+          ],
+          "duplicate_count": 1,
+          "skills_breakdown": {
+            "matched_skills": [
+              "Molecular Biology",
+              "PCR"
+            ],
+            "missing_must_have": [
+              "Bioinformatics"
+            ],
+            "missing_nice_to_have": [
+              "Communication",
+              "Problem Solving"
+            ]
+          },
+          "features": {
+            "semantic_similarity": 0.6274,
+            "must_have_skill_match": 0.0,
+            "nice_to_have_skill_match": 0.5,
+            "candidate_years_experience": 0.7,
+            "job_required_years": 1.0,
+            "experience_deficit": 0.3,
+            "experience_penalty": 0.0,
+            "education_level_match": 1.0,
+            "title_similarity": 0.2
+          },
+          "explanations": [
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": -0.1342,
+              "impact": "-13.4%",
+              "description": "Zero mandatory technical requirements matched (missing Bioinformatics)."
+            },
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.0729,
+              "impact": "+7.3%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": -0.0603,
+              "impact": "-6.0%",
+              "description": "Prior titles reflect related or non-traditional background."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": 0.0174,
+              "impact": "+1.7%",
+              "description": "High semantic and domain context alignment (63% similarity)."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": 0.0142,
+              "impact": "+1.4%",
+              "description": "Years of experience (0.7 yrs) below stated target (1.0 yrs)."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": 0.0117,
+              "impact": "+1.2%",
+              "description": "Meets or exceeds degree qualification expectations."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": 0.0111,
+              "impact": "+1.1%",
+              "description": "Preferred bonus skills could improve competitiveness: Communication, Problem Solving."
+            }
+          ]
+        },
+        {
+          "job_id": "8fabf1fa-599c-4cb9-beb7-ee9a3489ed08",
+          "title": "Bio Lab Assistant",
+          "company_name": "The Madras Seva Sadan",
+          "location": "Chennai, Tamil Nadu",
+          "work_type": "Full-time",
+          "remote_allowed": false,
+          "semantic_score": 0.651,
+          "composite_score": 0.2661,
+          "xgboost_score": 0.554,
+          "final_score": 0.2334,
+          "rank": 6,
+          "merged_sources": [
+            "indeed"
+          ],
+          "duplicate_count": 1,
+          "skills_breakdown": {
+            "matched_skills": [
+              "Microbiology"
+            ],
+            "missing_must_have": [],
+            "missing_nice_to_have": []
+          },
+          "features": {
+            "semantic_similarity": 0.651,
+            "must_have_skill_match": 1.0,
+            "nice_to_have_skill_match": 0.0,
+            "candidate_years_experience": 0.7,
+            "job_required_years": 2.0,
+            "experience_deficit": 1.3,
+            "experience_penalty": 0.0,
+            "education_level_match": 1.0,
+            "title_similarity": 0.0
+          },
+          "explanations": [
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": 0.1848,
+              "impact": "+18.5%",
+              "description": "Single mandatory skill requirement matched (Microbiology)."
+            },
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": -0.0903,
+              "impact": "-9.0%",
+              "description": "Target job title does not match candidate's field or technical trajectory."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": -0.0792,
+              "impact": "-7.9%",
+              "description": "Years of experience (0.7 yrs) below stated target (2.0 yrs)."
+            },
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.0668,
+              "impact": "+6.7%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": -0.0207,
+              "impact": "-2.1%",
+              "description": "Preferred skill criteria evaluated."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": 0.0195,
+              "impact": "+1.9%",
+              "description": "High semantic and domain context alignment (65% similarity)."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": 0.0093,
+              "impact": "+0.9%",
+              "description": "Meets or exceeds degree qualification expectations."
+            }
+          ]
+        },
+        {
+          "job_id": "af533615-a835-4d37-8e05-08ac04abe071",
+          "title": "Trainee Clinical Research",
+          "company_name": "WorkSure",
+          "location": "Delhi NCR",
+          "work_type": "Full-time",
+          "remote_allowed": false,
+          "semantic_score": 0.6194,
+          "composite_score": 0.3552,
+          "xgboost_score": 0.46,
+          "final_score": 0.2271,
+          "rank": 7,
+          "merged_sources": [
+            "indeed",
+            "glassdoor"
+          ],
+          "duplicate_count": 2,
+          "skills_breakdown": {
+            "matched_skills": [
+              "Microbiology"
+            ],
+            "missing_must_have": [
+              "Clinical Trials",
+              "GCP"
+            ],
+            "missing_nice_to_have": [
+              "GMP / GLP",
+              "Communication"
+            ]
+          },
+          "features": {
+            "semantic_similarity": 0.6194,
+            "must_have_skill_match": 0.0,
+            "nice_to_have_skill_match": 0.3333,
+            "candidate_years_experience": 0.7,
+            "job_required_years": 1.0,
+            "experience_deficit": 0.3,
+            "experience_penalty": 0.0,
+            "education_level_match": 1.0,
+            "title_similarity": 0.6667
+          },
+          "explanations": [
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": -0.141,
+              "impact": "-14.1%",
+              "description": "Zero mandatory technical requirements matched (missing Clinical Trials, GCP)."
+            },
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.0726,
+              "impact": "+7.3%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": 0.0268,
+              "impact": "+2.7%",
+              "description": "Directly relevant prior job titles and role trajectories."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": 0.0179,
+              "impact": "+1.8%",
+              "description": "High semantic and domain context alignment (62% similarity)."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": 0.0137,
+              "impact": "+1.4%",
+              "description": "Years of experience (0.7 yrs) below stated target (1.0 yrs)."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": 0.0116,
+              "impact": "+1.2%",
+              "description": "Meets or exceeds degree qualification expectations."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": -0.0053,
+              "impact": "-0.5%",
+              "description": "Preferred bonus skills could improve competitiveness: GMP / GLP, Communication."
+            }
+          ]
+        },
+        {
+          "job_id": "faf5ba6f-b870-4591-80f3-3ae5e161b04b",
+          "title": "Computational Biology & Bioinformatics Scientist",
+          "company_name": "Zifo",
+          "location": "Chennai, Tamil Nadu",
+          "work_type": null,
+          "remote_allowed": false,
+          "semantic_score": 0.5434,
+          "composite_score": 0.3416,
+          "xgboost_score": 0.46,
+          "final_score": 0.2237,
+          "rank": 8,
+          "merged_sources": [
+            "glassdoor",
+            "indeed"
+          ],
+          "duplicate_count": 2,
+          "skills_breakdown": {
+            "matched_skills": [
+              "Python"
+            ],
+            "missing_must_have": [
+              "AWS",
+              "Bioinformatics",
+              "Data Science",
+              "Docker",
+              "Drug Discovery",
+              "Machine Learning",
+              "Next-Generation Sequencing (NGS)"
+            ],
+            "missing_nice_to_have": [
+              "Communication",
+              "Leadership"
+            ]
+          },
+          "features": {
+            "semantic_similarity": 0.5434,
+            "must_have_skill_match": 0.125,
+            "nice_to_have_skill_match": 0.0,
+            "candidate_years_experience": 0.7,
+            "job_required_years": 0.0,
+            "experience_deficit": 0.0,
+            "experience_penalty": 0.0,
+            "education_level_match": 0.5,
+            "title_similarity": 0.75
+          },
+          "explanations": [
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": -0.1238,
+              "impact": "-12.4%",
+              "description": "Limited mandatory requirement match: satisfied 1 of 8 skills (Python), missing AWS, Bioinformatics, Data Science."
+            },
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.069,
+              "impact": "+6.9%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": 0.0542,
+              "impact": "+5.4%",
+              "description": "Directly relevant prior job titles and role trajectories."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": 0.0384,
+              "impact": "+3.8%",
+              "description": "Sufficient career tenure (0.7 yrs vs 0.0 yrs required)."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": -0.0242,
+              "impact": "-2.4%",
+              "description": "Degree level below typical requirements for this seniority."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": -0.0235,
+              "impact": "-2.4%",
+              "description": "Preferred bonus skills could improve competitiveness: Communication, Leadership."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": 0.006,
+              "impact": "+0.6%",
+              "description": "Low semantic text similarity with role expectations (54%)."
+            }
+          ]
+        },
+        {
+          "job_id": "aff1fa71-982e-4db0-9996-b9df7dfafb34",
+          "title": "Microbiologist",
+          "company_name": "Inducare Pharma Private Limited",
+          "location": "Mumbai, Maharashtra",
+          "work_type": null,
+          "remote_allowed": false,
+          "semantic_score": 0.5678,
+          "composite_score": 0.2478,
+          "xgboost_score": 0.533,
+          "final_score": 0.2226,
+          "rank": 9,
+          "merged_sources": [
+            "indeed"
+          ],
+          "duplicate_count": 1,
+          "skills_breakdown": {
+            "matched_skills": [
+              "Microbiology"
+            ],
+            "missing_must_have": [],
+            "missing_nice_to_have": []
+          },
+          "features": {
+            "semantic_similarity": 0.5678,
+            "must_have_skill_match": 1.0,
+            "nice_to_have_skill_match": 0.0,
+            "candidate_years_experience": 0.7,
+            "job_required_years": 2.0,
+            "experience_deficit": 1.3,
+            "experience_penalty": 0.0,
+            "education_level_match": 0.75,
+            "title_similarity": 0.0
+          },
+          "explanations": [
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": 0.1889,
+              "impact": "+18.9%",
+              "description": "Single mandatory skill requirement matched (Microbiology)."
+            },
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": -0.0894,
+              "impact": "-8.9%",
+              "description": "Target job title does not match candidate's field or technical trajectory."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": -0.0734,
+              "impact": "-7.3%",
+              "description": "Years of experience (0.7 yrs) below stated target (2.0 yrs)."
+            },
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.0652,
+              "impact": "+6.5%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": -0.02,
+              "impact": "-2.0%",
+              "description": "Preferred skill criteria evaluated."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": -0.008,
+              "impact": "-0.8%",
+              "description": "Degree level below typical requirements for this seniority."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": 0.006,
+              "impact": "+0.6%",
+              "description": "Low semantic text similarity with role expectations (57%)."
+            }
+          ]
+        },
+        {
+          "job_id": "7444f871-5ad4-404d-858c-ae95a13ed6ef",
+          "title": "Medical Coding Jobs for Bioinfomatics Graduates",
+          "company_name": "Achievers Spot",
+          "location": "Hyderabad, Telangana",
+          "work_type": "Full-time",
+          "remote_allowed": false,
+          "semantic_score": 0.5987,
+          "composite_score": 0.1935,
+          "xgboost_score": 0.4194,
+          "final_score": 0.2224,
+          "rank": 10,
+          "merged_sources": [
+            "linkedin"
+          ],
+          "duplicate_count": 1,
+          "skills_breakdown": {
+            "matched_skills": [
+              "Molecular Biology",
+              "Python"
+            ],
+            "missing_must_have": [
+              "Bioinformatics",
+              "Linux"
+            ],
+            "missing_nice_to_have": [
+              "Next-Generation Sequencing (NGS)",
+              "Communication",
+              "Problem Solving"
+            ]
+          },
+          "features": {
+            "semantic_similarity": 0.5987,
+            "must_have_skill_match": 0.3333,
+            "nice_to_have_skill_match": 0.25,
+            "candidate_years_experience": 0.7,
+            "job_required_years": 1.0,
+            "experience_deficit": 0.3,
+            "experience_penalty": 0.0,
+            "education_level_match": 0.75,
+            "title_similarity": 0.0
+          },
+          "explanations": [
+            {
+              "feature_name": "title_similarity",
+              "display_name": "Role Title Alignment",
+              "shap_value": -0.0839,
+              "impact": "-8.4%",
+              "description": "Target job title does not match candidate's field or technical trajectory."
+            },
+            {
+              "feature_name": "experience_penalty",
+              "display_name": "Experience Gap Penalty",
+              "shap_value": 0.0681,
+              "impact": "+6.8%",
+              "description": "Candidate meets or exceeds minimum required experience."
+            },
+            {
+              "feature_name": "must_have_skill_match",
+              "display_name": "Must-Have Skills",
+              "shap_value": -0.039,
+              "impact": "-3.9%",
+              "description": "Low core requirements alignment (33%, missing Bioinformatics, Linux)."
+            },
+            {
+              "feature_name": "experience_ratio",
+              "display_name": "Years of Experience",
+              "shap_value": 0.0167,
+              "impact": "+1.7%",
+              "description": "Years of experience (0.7 yrs) below stated target (1.0 yrs)."
+            },
+            {
+              "feature_name": "semantic_similarity",
+              "display_name": "Semantic Profile Fit",
+              "shap_value": 0.0082,
+              "impact": "+0.8%",
+              "description": "Low semantic text similarity with role expectations (60%)."
+            },
+            {
+              "feature_name": "education_level_match",
+              "display_name": "Education Level",
+              "shap_value": -0.0082,
+              "impact": "-0.8%",
+              "description": "Degree level below typical requirements for this seniority."
+            },
+            {
+              "feature_name": "nice_to_have_skill_match",
+              "display_name": "Preferred Skills",
+              "shap_value": -0.0065,
+              "impact": "-0.6%",
+              "description": "Preferred bonus skills could improve competitiveness: Next-Generation Sequencing (NGS), Communication."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

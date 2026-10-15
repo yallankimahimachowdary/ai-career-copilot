@@ -1,6 +1,6 @@
 import hashlib
 import math
-from typing import List, Optional
+from typing import List, Optional, Union
 import httpx
 from app.core.config import settings
 from app.core.logging import logger
@@ -26,19 +26,24 @@ class EmbeddingService:
         self.dimension = settings.EMBEDDING_DIMENSION
         self.openai_key = settings.OPENAI_API_KEY
 
-    def construct_embed_text(self, parsed: ParsedResume) -> str:
+    def construct_embed_text(self, parsed: Union[ParsedResume, dict]) -> str:
         """Combine relevant parsed fields into rich text for semantic embedding."""
+        if isinstance(parsed, dict):
+            parsed_obj = ParsedResume.model_validate(parsed)
+        else:
+            parsed_obj = parsed
+
         parts = []
-        if parsed.contact_info.name:
-            parts.append(f"Candidate: {parsed.contact_info.name}")
-        if parsed.summary:
-            parts.append(f"Summary: {parsed.summary}")
-        if parsed.skills:
-            parts.append(f"Skills: {', '.join(parsed.skills)}")
-        for exp in parsed.experience:
+        if parsed_obj.contact_info and parsed_obj.contact_info.name:
+            parts.append(f"Candidate: {parsed_obj.contact_info.name}")
+        if parsed_obj.summary:
+            parts.append(f"Summary: {parsed_obj.summary}")
+        if parsed_obj.skills:
+            parts.append(f"Skills: {', '.join(parsed_obj.skills)}")
+        for exp in (parsed_obj.experience or []):
             desc = " ".join(exp.description)
             parts.append(f"Role: {exp.title} at {exp.company}. {desc}")
-        for edu in parsed.education:
+        for edu in (parsed_obj.education or []):
             parts.append(f"Education: {edu.institution} {edu.degree or ''}")
 
         return "\n".join(parts)

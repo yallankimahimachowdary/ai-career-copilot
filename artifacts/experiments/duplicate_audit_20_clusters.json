@@ -1,0 +1,607 @@
+[
+  {
+    "cluster_num": 1,
+    "title": "Biomedical Engineer",
+    "company": "LMMF'S Mai Mangeshkar Hospital, Warje",
+    "merged_count": 2,
+    "canonical_id": "b33b2103-1c8d-45d8-8294-bddbb8ef91e8",
+    "duplicate_ids": [
+      "5007d89a-5ea9-4d6f-a8af-f1ba95300a31"
+    ],
+    "record_1": {
+      "id": "b33b2103-1c8d-45d8-8294-bddbb8ef91e8",
+      "title": "Biomedical Engineer",
+      "company": "LMMF'S Mai Mangeshkar Hospital, Warje",
+      "location": "India",
+      "source": "glassdoor"
+    },
+    "record_2": {
+      "id": "5007d89a-5ea9-4d6f-a8af-f1ba95300a31",
+      "title": "Biomedical Engineer",
+      "company": "MAI MAGESHKAR HOSPITAL,WARJE",
+      "location": "Mumbai, Maharashtra",
+      "source": "indeed"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 1.0
+    },
+    "merge_decision": "Merged into canonical b33b2103-1c8d-45d8-8294-bddbb8ef91e8 with sources ['glassdoor', 'indeed']"
+  },
+  {
+    "cluster_num": 2,
+    "title": "Biomedical engineer",
+    "company": "Medall Healthcare Private Limited",
+    "merged_count": 2,
+    "canonical_id": "869fa154-9270-43aa-9d4b-69b89606a617",
+    "duplicate_ids": [
+      "2bd72bdb-fba6-4bcb-be7d-2b20e668d7b8"
+    ],
+    "record_1": {
+      "id": "869fa154-9270-43aa-9d4b-69b89606a617",
+      "title": "Biomedical engineer",
+      "company": "Medall Healthcare Private Limited",
+      "location": "Chennai, Tamil Nadu",
+      "source": "indeed"
+    },
+    "record_2": {
+      "id": "2bd72bdb-fba6-4bcb-be7d-2b20e668d7b8",
+      "title": "Biomedical engineer",
+      "company": "MEDALL HEALTHCARE PRIVATE LIMITED",
+      "location": "Chennai, Tamil Nadu",
+      "source": "glassdoor"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 1.0
+    },
+    "merge_decision": "Merged into canonical 869fa154-9270-43aa-9d4b-69b89606a617 with sources ['indeed', 'glassdoor']"
+  },
+  {
+    "cluster_num": 3,
+    "title": "Python Developer",
+    "company": "Lynx Solutions",
+    "merged_count": 2,
+    "canonical_id": "989acb83-09c2-4244-9b68-72f3b9f18021",
+    "duplicate_ids": [
+      "a54615c2-3336-4c73-8832-15c439fe0c51"
+    ],
+    "record_1": {
+      "id": "989acb83-09c2-4244-9b68-72f3b9f18021",
+      "title": "Python Developer",
+      "company": "Lynx Solutions",
+      "location": "Remote (India)",
+      "source": "glassdoor"
+    },
+    "record_2": {
+      "id": "a54615c2-3336-4c73-8832-15c439fe0c51",
+      "title": "Python Developer",
+      "company": "LYNX SOLUTIONS",
+      "location": "Remote (India)",
+      "source": "indeed"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 1.0
+    },
+    "merge_decision": "Merged into canonical 989acb83-09c2-4244-9b68-72f3b9f18021 with sources ['glassdoor', 'indeed']"
+  },
+  {
+    "cluster_num": 4,
+    "title": "Senior Software Engineer - AI Trainer",
+    "company": "DataAnnotation",
+    "merged_count": 4,
+    "canonical_id": "a7be231f-4b35-4267-83c9-a21ff2834799",
+    "duplicate_ids": [
+      "d23da3b5-17d5-46be-b101-52eb9ca1a041",
+      "fe6eeb6e-9695-426c-9e30-a6a02d52fe2e",
+      "cea9c654-8da4-4c54-88ad-d8f840216525"
+    ],
+    "record_1": {
+      "id": "a7be231f-4b35-4267-83c9-a21ff2834799",
+      "title": "Senior Software Engineer - AI Trainer",
+      "company": "DataAnnotation",
+      "location": "Pune, Maharashtra",
+      "source": "glassdoor"
+    },
+    "record_2": {
+      "id": "d23da3b5-17d5-46be-b101-52eb9ca1a041",
+      "title": "Senior Software Engineer - AI Trainer",
+      "company": "DataAnnotation",
+      "location": "Chennai, Tamil Nadu",
+      "source": "glassdoor"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 1.0
+    },
+    "merge_decision": "Merged into canonical a7be231f-4b35-4267-83c9-a21ff2834799 with sources ['glassdoor']"
+  },
+  {
+    "cluster_num": 5,
+    "title": "Data Scientist I",
+    "company": "Mastercard",
+    "merged_count": 2,
+    "canonical_id": "b271c13b-0567-4710-a5cf-2a81eee483e2",
+    "duplicate_ids": [
+      "251c2670-cc1c-4146-a2b4-fb1679849767"
+    ],
+    "record_1": {
+      "id": "b271c13b-0567-4710-a5cf-2a81eee483e2",
+      "title": "Data Scientist I",
+      "company": "Mastercard",
+      "location": "Pune, Maharashtra",
+      "source": "glassdoor"
+    },
+    "record_2": {
+      "id": "251c2670-cc1c-4146-a2b4-fb1679849767",
+      "title": "Data Scientist I",
+      "company": "Mastercard",
+      "location": "Mumbai, Maharashtra",
+      "source": "indeed"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 1.0
+    },
+    "merge_decision": "Merged into canonical b271c13b-0567-4710-a5cf-2a81eee483e2 with sources ['glassdoor', 'indeed']"
+  },
+  {
+    "cluster_num": 6,
+    "title": "Semi Senior React Developer - Remote Work",
+    "company": "BairesDev",
+    "merged_count": 2,
+    "canonical_id": "7319b4be-9cfe-4335-86f7-2236cbc4d415",
+    "duplicate_ids": [
+      "878f8964-524d-4943-a582-9eda727e887b"
+    ],
+    "record_1": {
+      "id": "7319b4be-9cfe-4335-86f7-2236cbc4d415",
+      "title": "Semi Senior React Developer - Remote Work",
+      "company": "BairesDev",
+      "location": "Mumbai, Maharashtra",
+      "source": "glassdoor"
+    },
+    "record_2": {
+      "id": "878f8964-524d-4943-a582-9eda727e887b",
+      "title": "Semi Senior React Developer - Remote Work",
+      "company": "BairesDev",
+      "location": "Remote (India)",
+      "source": "glassdoor"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 1.0
+    },
+    "merge_decision": "Merged into canonical 7319b4be-9cfe-4335-86f7-2236cbc4d415 with sources ['glassdoor']"
+  },
+  {
+    "cluster_num": 7,
+    "title": "Freelance Clinical Research Trainer",
+    "company": "Technobridge System Pvt Ltd.",
+    "merged_count": 2,
+    "canonical_id": "09f12125-9ca9-4d4c-ab41-5d1d9e2c04dd",
+    "duplicate_ids": [
+      "7f4a1fac-4b16-4fd5-9c38-770d84826994"
+    ],
+    "record_1": {
+      "id": "09f12125-9ca9-4d4c-ab41-5d1d9e2c04dd",
+      "title": "Freelance Clinical Research Trainer",
+      "company": "Technobridge System Pvt Ltd.",
+      "location": "Pune, Maharashtra",
+      "source": "glassdoor"
+    },
+    "record_2": {
+      "id": "7f4a1fac-4b16-4fd5-9c38-770d84826994",
+      "title": "Freelance Clinical Research Trainer",
+      "company": "TechnoBridge Systems Pvt Ltd",
+      "location": "Mumbai, Maharashtra",
+      "source": "indeed"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 1.0
+    },
+    "merge_decision": "Merged into canonical 09f12125-9ca9-4d4c-ab41-5d1d9e2c04dd with sources ['glassdoor', 'indeed']"
+  },
+  {
+    "cluster_num": 8,
+    "title": "Biomedical Engineer",
+    "company": "Parametric Technosoft",
+    "merged_count": 2,
+    "canonical_id": "185ad87f-4afa-4e32-8e71-3395dd4ea220",
+    "duplicate_ids": [
+      "a3ee7597-5cf5-4db0-b95a-0ef4ddd1b1b2"
+    ],
+    "record_1": {
+      "id": "185ad87f-4afa-4e32-8e71-3395dd4ea220",
+      "title": "Biomedical Engineer",
+      "company": "Parametric Technosoft",
+      "location": "Mumbai, Maharashtra",
+      "source": "indeed"
+    },
+    "record_2": {
+      "id": "a3ee7597-5cf5-4db0-b95a-0ef4ddd1b1b2",
+      "title": "Biomedical Engineer",
+      "company": "parametric technosoft",
+      "location": "India",
+      "source": "glassdoor"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 1.0
+    },
+    "merge_decision": "Merged into canonical 185ad87f-4afa-4e32-8e71-3395dd4ea220 with sources ['indeed', 'glassdoor']"
+  },
+  {
+    "cluster_num": 9,
+    "title": "Pipeline Pilot Protocol (PLP) Developer (Laboratory Infrastructure Support)",
+    "company": "ITSoli India Pvt Ltd.",
+    "merged_count": 2,
+    "canonical_id": "2496eb7a-9faf-4f36-bbea-b19da77109b8",
+    "duplicate_ids": [
+      "c893867e-61d5-45fe-a6f1-46689e125075"
+    ],
+    "record_1": {
+      "id": "2496eb7a-9faf-4f36-bbea-b19da77109b8",
+      "title": "Pipeline Pilot Protocol (PLP) Developer (Laboratory Infrastructure Support)",
+      "company": "ITSoli India Pvt Ltd.",
+      "location": "Remote (India)",
+      "source": "glassdoor"
+    },
+    "record_2": {
+      "id": "c893867e-61d5-45fe-a6f1-46689e125075",
+      "title": "Pipeline Pilot Protocol (PLP) Developer (Laboratory Infrastructure Support)",
+      "company": "ITSoli India Pvt Ltd.",
+      "location": "Remote (India)",
+      "source": "indeed"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 1.0
+    },
+    "merge_decision": "Merged into canonical 2496eb7a-9faf-4f36-bbea-b19da77109b8 with sources ['glassdoor', 'indeed']"
+  },
+  {
+    "cluster_num": 10,
+    "title": "Clinical Research Associate",
+    "company": "Cliniweb Services",
+    "merged_count": 2,
+    "canonical_id": "4331f2d9-9147-4986-ad8c-14f174e91a71",
+    "duplicate_ids": [
+      "77631399-6951-47e5-9439-aab745f71ba8"
+    ],
+    "record_1": {
+      "id": "4331f2d9-9147-4986-ad8c-14f174e91a71",
+      "title": "Clinical Research Associate",
+      "company": "Cliniweb Services",
+      "location": "Mumbai, Maharashtra",
+      "source": "indeed"
+    },
+    "record_2": {
+      "id": "77631399-6951-47e5-9439-aab745f71ba8",
+      "title": "Clinical Research Associate",
+      "company": "Cliniweb Services",
+      "location": "Mumbai, Maharashtra",
+      "source": "glassdoor"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 1.0
+    },
+    "merge_decision": "Merged into canonical 4331f2d9-9147-4986-ad8c-14f174e91a71 with sources ['indeed', 'glassdoor']"
+  },
+  {
+    "cluster_num": 11,
+    "title": "DevOps Engineer - EMEA/US Shift",
+    "company": "BlueMatrix",
+    "merged_count": 3,
+    "canonical_id": "ca4bc2da-8553-4f87-a321-ff89ef83243f",
+    "duplicate_ids": [
+      "5c52ef6b-45b5-475e-8b43-ffba90043c26",
+      "ba8569f0-d96a-48b5-8ce4-97dce96698b9"
+    ],
+    "record_1": {
+      "id": "ca4bc2da-8553-4f87-a321-ff89ef83243f",
+      "title": "DevOps Engineer - EMEA/US Shift",
+      "company": "BlueMatrix",
+      "location": "Hyderabad, Telangana",
+      "source": "linkedin"
+    },
+    "record_2": {
+      "id": "5c52ef6b-45b5-475e-8b43-ffba90043c26",
+      "title": "DevOps Engineer - EMEA/US Shift",
+      "company": "bluematrix",
+      "location": "Remote (India)",
+      "source": "indeed"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 0.9682
+    },
+    "merge_decision": "Merged into canonical ca4bc2da-8553-4f87-a321-ff89ef83243f with sources ['indeed', 'glassdoor', 'linkedin']"
+  },
+  {
+    "cluster_num": 12,
+    "title": "Frontend Developer Intern",
+    "company": "Testriq QA Lab LLP",
+    "merged_count": 2,
+    "canonical_id": "f7e45d72-6bb5-4bf6-86b7-0837ad8af371",
+    "duplicate_ids": [
+      "acc3ebca-f3ae-4450-8241-63ed6d41a84d"
+    ],
+    "record_1": {
+      "id": "f7e45d72-6bb5-4bf6-86b7-0837ad8af371",
+      "title": "Frontend Developer Intern",
+      "company": "Testriq QA Lab LLP",
+      "location": "Mumbai, Maharashtra",
+      "source": "glassdoor"
+    },
+    "record_2": {
+      "id": "acc3ebca-f3ae-4450-8241-63ed6d41a84d",
+      "title": "Frontend Developer Intern",
+      "company": "Testriq QA Lab",
+      "location": "Mumbai, Maharashtra",
+      "source": "indeed"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 1.0
+    },
+    "merge_decision": "Merged into canonical f7e45d72-6bb5-4bf6-86b7-0837ad8af371 with sources ['glassdoor', 'indeed']"
+  },
+  {
+    "cluster_num": 13,
+    "title": "Mechanical Engineer",
+    "company": "PMT",
+    "merged_count": 2,
+    "canonical_id": "94f170df-002a-4e9d-b81d-8aa58d7e0864",
+    "duplicate_ids": [
+      "71186873-7f80-4317-b288-f5d6d3d12551"
+    ],
+    "record_1": {
+      "id": "94f170df-002a-4e9d-b81d-8aa58d7e0864",
+      "title": "Mechanical Engineer",
+      "company": "PMT",
+      "location": "Hyderabad, Telangana",
+      "source": "glassdoor"
+    },
+    "record_2": {
+      "id": "71186873-7f80-4317-b288-f5d6d3d12551",
+      "title": "Mechanical Engineer",
+      "company": "pmt",
+      "location": "Hyderabad, Telangana",
+      "source": "indeed"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 1.0
+    },
+    "merge_decision": "Merged into canonical 94f170df-002a-4e9d-b81d-8aa58d7e0864 with sources ['glassdoor', 'indeed']"
+  },
+  {
+    "cluster_num": 14,
+    "title": "Biomedical Engineer",
+    "company": "Sahyadri Hospitals",
+    "merged_count": 2,
+    "canonical_id": "eacad8e2-1cf6-42d1-b6b2-0b2c02f1a877",
+    "duplicate_ids": [
+      "bb81b378-38ae-4dfe-a630-2d80f49aba8f"
+    ],
+    "record_1": {
+      "id": "eacad8e2-1cf6-42d1-b6b2-0b2c02f1a877",
+      "title": "Biomedical Engineer",
+      "company": "Sahyadri Hospitals",
+      "location": "Mumbai, Maharashtra",
+      "source": "indeed"
+    },
+    "record_2": {
+      "id": "bb81b378-38ae-4dfe-a630-2d80f49aba8f",
+      "title": "Biomedical Engineer",
+      "company": "Sahyadri Hospitals",
+      "location": "Pune, Maharashtra",
+      "source": "glassdoor"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 1.0
+    },
+    "merge_decision": "Merged into canonical eacad8e2-1cf6-42d1-b6b2-0b2c02f1a877 with sources ['indeed', 'glassdoor']"
+  },
+  {
+    "cluster_num": 15,
+    "title": "Software Engineer - AI Trainer",
+    "company": "DataAnnotation",
+    "merged_count": 4,
+    "canonical_id": "69cfc91c-1ba7-4021-a5b3-e6d07f83efec",
+    "duplicate_ids": [
+      "a86a672f-e07a-41e4-bf52-af2e6c5c88c5",
+      "ac350a9d-555d-466a-9cf3-64e6d5c66ee3",
+      "b300e60d-fc98-4d56-ba20-8a2b47023bab"
+    ],
+    "record_1": {
+      "id": "69cfc91c-1ba7-4021-a5b3-e6d07f83efec",
+      "title": "Software Engineer - AI Trainer",
+      "company": "DataAnnotation",
+      "location": "Mumbai, Maharashtra",
+      "source": "glassdoor"
+    },
+    "record_2": {
+      "id": "a86a672f-e07a-41e4-bf52-af2e6c5c88c5",
+      "title": "Software Engineer - AI Trainer",
+      "company": "DataAnnotation",
+      "location": "Chennai, Tamil Nadu",
+      "source": "glassdoor"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 1.0
+    },
+    "merge_decision": "Merged into canonical 69cfc91c-1ba7-4021-a5b3-e6d07f83efec with sources ['glassdoor']"
+  },
+  {
+    "cluster_num": 16,
+    "title": "Data Scientist-Senior I",
+    "company": "FedEx",
+    "merged_count": 2,
+    "canonical_id": "7369238b-16f2-4f9b-8fe6-62f34a9355c3",
+    "duplicate_ids": [
+      "c3700361-dfff-4cb7-bb44-f777644f7caa"
+    ],
+    "record_1": {
+      "id": "7369238b-16f2-4f9b-8fe6-62f34a9355c3",
+      "title": "Data Scientist-Senior I",
+      "company": "FedEx",
+      "location": "Chennai, Tamil Nadu",
+      "source": "linkedin"
+    },
+    "record_2": {
+      "id": "c3700361-dfff-4cb7-bb44-f777644f7caa",
+      "title": "Data Scientist-Senior I",
+      "company": "FedEx GCS",
+      "location": "Chennai, Tamil Nadu",
+      "source": "linkedin"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 1.0
+    },
+    "merge_decision": "Merged into canonical 7369238b-16f2-4f9b-8fe6-62f34a9355c3 with sources ['linkedin']"
+  },
+  {
+    "cluster_num": 17,
+    "title": "Freelance Research Assistant \u2013 EDEN-Based Schistosomiasis Modelling",
+    "company": "Guires Solutions Private Limited",
+    "merged_count": 2,
+    "canonical_id": "2465fcac-3afd-4d97-8ff7-69db3e2fb2cc",
+    "duplicate_ids": [
+      "ccc0bbe6-0e0b-4741-88dd-a95177341fbb"
+    ],
+    "record_1": {
+      "id": "2465fcac-3afd-4d97-8ff7-69db3e2fb2cc",
+      "title": "Freelance Research Assistant \u2013 EDEN-Based Schistosomiasis Modelling",
+      "company": "Guires Solutions Private Limited",
+      "location": "Remote (India)",
+      "source": "glassdoor"
+    },
+    "record_2": {
+      "id": "ccc0bbe6-0e0b-4741-88dd-a95177341fbb",
+      "title": "Freelance Research Assistant \u2013 EDEN-Based Schistosomiasis Modelling",
+      "company": "Guires Solutions Private Limited",
+      "location": "Remote (India)",
+      "source": "indeed"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 1.0
+    },
+    "merge_decision": "Merged into canonical 2465fcac-3afd-4d97-8ff7-69db3e2fb2cc with sources ['glassdoor', 'indeed']"
+  },
+  {
+    "cluster_num": 18,
+    "title": "Retail Pharmacist",
+    "company": "HealthSy Pharmacy",
+    "merged_count": 2,
+    "canonical_id": "e08d9e9c-a449-4c89-8ad7-e14e33c13480",
+    "duplicate_ids": [
+      "58daf030-10fb-4c80-b29a-532e1508da3e"
+    ],
+    "record_1": {
+      "id": "e08d9e9c-a449-4c89-8ad7-e14e33c13480",
+      "title": "Retail Pharmacist",
+      "company": "HealthSy Pharmacy",
+      "location": "Bengaluru, Karnataka",
+      "source": "indeed"
+    },
+    "record_2": {
+      "id": "58daf030-10fb-4c80-b29a-532e1508da3e",
+      "title": "Retail Pharmacist",
+      "company": "HealthSy Pharmacy",
+      "location": "Bengaluru, Karnataka",
+      "source": "glassdoor"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 1.0
+    },
+    "merge_decision": "Merged into canonical e08d9e9c-a449-4c89-8ad7-e14e33c13480 with sources ['indeed', 'glassdoor']"
+  },
+  {
+    "cluster_num": 19,
+    "title": "Junior SCADA Engineer",
+    "company": "SalVentureTech",
+    "merged_count": 2,
+    "canonical_id": "29ee07d7-abed-4973-b3b3-2e6ec43fbe6c",
+    "duplicate_ids": [
+      "e68aa738-d970-45be-907b-10f166fe9466"
+    ],
+    "record_1": {
+      "id": "29ee07d7-abed-4973-b3b3-2e6ec43fbe6c",
+      "title": "Junior SCADA Engineer",
+      "company": "SalVentureTech",
+      "location": "Remote (India)",
+      "source": "indeed"
+    },
+    "record_2": {
+      "id": "e68aa738-d970-45be-907b-10f166fe9466",
+      "title": "Junior SCADA Engineer",
+      "company": "SalVentureTech",
+      "location": "Remote (India)",
+      "source": "glassdoor"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 1.0
+    },
+    "merge_decision": "Merged into canonical 29ee07d7-abed-4973-b3b3-2e6ec43fbe6c with sources ['indeed', 'glassdoor']"
+  },
+  {
+    "cluster_num": 20,
+    "title": "Computational Biology & Bioinformatics Scientist",
+    "company": "Zifo",
+    "merged_count": 2,
+    "canonical_id": "3254ccba-9bbe-497a-9ec5-651ba0be1d23",
+    "duplicate_ids": [
+      "faf5ba6f-b870-4591-80f3-3ae5e161b04b"
+    ],
+    "record_1": {
+      "id": "3254ccba-9bbe-497a-9ec5-651ba0be1d23",
+      "title": "Computational Biology & Bioinformatics Scientist",
+      "company": "Zifo",
+      "location": "Chennai, Tamil Nadu",
+      "source": "indeed"
+    },
+    "record_2": {
+      "id": "faf5ba6f-b870-4591-80f3-3ae5e161b04b",
+      "title": "Computational Biology & Bioinformatics Scientist",
+      "company": "Zifo",
+      "location": "Chennai, Tamil Nadu",
+      "source": "glassdoor"
+    },
+    "similarity_evidence": {
+      "title_normalized_equal": true,
+      "company_match": true,
+      "description_jaccard": 1.0
+    },
+    "merge_decision": "Merged into canonical 3254ccba-9bbe-497a-9ec5-651ba0be1d23 with sources ['indeed', 'glassdoor']"
+  }
+]

@@ -21,6 +21,7 @@ from app.schemas.matcher import (
     SkillsBreakdown,
 )
 from app.services.embedding_service import embedding_service
+from app.services.deduplication_service import deduplication_service
 
 
 from app.core.taxonomy import CANONICAL_SKILL_PATTERNS, LINKEDIN_CATEGORY_CODES
@@ -705,15 +706,36 @@ class XGBoostExplainer:
     ) -> str:
         """Create human-readable qualitative rationale based on feature value and SHAP direction."""
         if feature_name == "must_have_skill_match":
-            if f.must_have_skill_match >= 0.7:
-                matched_preview = ", ".join(skills.matched_skills[:3]) or "required skills"
-                return f"Strong alignment with mandatory job requirements (matched {matched_preview})."
-            elif skills.missing_must_have:
-                missing_preview = ", ".join(skills.missing_must_have[:3])
-                return f"Missing key mandatory requirements: {missing_preview}."
-            elif f.must_have_skill_match == 0.0:
+            n_matched = len(skills.matched_skills)
+            n_missing = len(skills.missing_must_have)
+            n_total = n_matched + n_missing
+            matched_preview = ", ".join(skills.matched_skills[:3])
+            missing_preview = ", ".join(skills.missing_must_have[:3])
+
+            if n_total == 0:
+                return "No explicit mandatory technical skills specified in job posting."
+            if f.must_have_skill_match == 0.0 or n_matched == 0:
+                if missing_preview:
+                    return f"Zero mandatory technical requirements matched (missing {missing_preview})."
                 return "Zero mandatory technical requirements matched for this position."
-            return f"Partially matched core required skills ({f.must_have_skill_match*100:.0f}%)."
+
+            # Single-skill match case (even if 100% of the 1 skill)
+            if n_matched == 1 and n_total == 1:
+                return f"Single mandatory skill requirement matched ({matched_preview})."
+            if n_matched == 1 and n_total > 1:
+                return f"Limited mandatory requirement match: satisfied 1 of {n_total} skills ({matched_preview}), missing {missing_preview}."
+
+            # Multi-skill coverage
+            if f.must_have_skill_match >= 0.7 and n_matched >= 2:
+                return f"Strong alignment with mandatory job requirements (matched {matched_preview})."
+            elif f.must_have_skill_match >= 0.4:
+                if missing_preview:
+                    return f"Partially matched core required skills ({f.must_have_skill_match*100:.0f}%, missing {missing_preview})."
+                return f"Partially matched core required skills ({f.must_have_skill_match*100:.0f}%)."
+            else:
+                if missing_preview:
+                    return f"Low core requirements alignment ({f.must_have_skill_match*100:.0f}%, missing {missing_preview})."
+                return f"Low core requirements alignment ({f.must_have_skill_match*100:.0f}%)."
 
         if feature_name == "nice_to_have_skill_match":
             if f.nice_to_have_skill_match >= 0.6:
@@ -764,6 +786,47 @@ class MatcherAgent:
         self.feature_extractor = FeatureExtractor()
         self.composite_scorer = CompositeScorer()
         self.ml_explainer = XGBoostExplainer()
+
+    def score_job(
+        self,
+        parsed_resume: dict,
+        job_title: str,
+        job_description: str,
+        job_skills: list,
+        semantic_distance: float,
+    ) -> Tuple[float, float, float, FeatureBreakdown, SkillsBreakdown, List[ShapExplanation]]:
+        """Core production scoring logic combining features, composite score, XGBoost, and coverage factor."""
+        skills_list = job_skills if isinstance(job_skills, list) else []
+        features, skills_breakdown = self.feature_extractor.extract_features(
+            parsed_resume=parsed_resume,
+            job_title=job_title,
+            job_description=job_description,
+            job_skills=skills_list,
+            semantic_distance=semantic_distance,
+        )
+
+        composite_score = self.composite_scorer.calculate_score(features)
+        xgb_score, explanations = self.ml_explainer.predict_and_explain(
+            features, skills_breakdown
+        )
+
+        # Skill count coverage dampener:
+        # Prevents candidates matching only 1 or 2 skills from reaching an inflated 85-90%+ match
+        num_matched = len(skills_breakdown.matched_skills)
+        if num_matched == 0:
+            coverage_factor = 0.35
+        elif num_matched == 1:
+            coverage_factor = 0.55
+        elif num_matched == 2:
+            coverage_factor = 0.70
+        elif num_matched == 3:
+            coverage_factor = 0.85
+        else:
+            coverage_factor = 1.0
+
+        final_score = round((0.55 * xgb_score + 0.45 * composite_score) * coverage_factor, 4)
+        return final_score, composite_score, xgb_score, features, skills_breakdown, explanations
+
 
     async def match_jobs_for_resume(
         self,
@@ -930,34 +993,13 @@ class MatcherAgent:
             distance: float = float(raw_dist) if raw_dist is not None else 0.40
 
             skills_list = job.skills if isinstance(job.skills, list) else []
-            features, skills_breakdown = self.feature_extractor.extract_features(
-                parsed_resume=resume.parsed_data,
-                job_title=job.title,
-                job_description=job.description,
+            final_score, composite_score, xgb_score, features, skills_breakdown, explanations = self.score_job(
+                parsed_resume=resume.parsed_data or {},
+                job_title=job.title or "",
+                job_description=job.description or "",
                 job_skills=skills_list,
                 semantic_distance=distance,
             )
-
-            composite_score = self.composite_scorer.calculate_score(features)
-            xgb_score, explanations = self.ml_explainer.predict_and_explain(
-                features, skills_breakdown
-            )
-            # Skill count coverage dampener:
-            # Prevents candidates matching only 1 or 2 skills from reaching an inflated 85-90%+ match
-            # If candidate matches fewer than 4 skills, scale according to coverage
-            num_matched = len(skills_breakdown.matched_skills)
-            if num_matched == 0:
-                coverage_factor = 0.35
-            elif num_matched == 1:
-                coverage_factor = 0.55
-            elif num_matched == 2:
-                coverage_factor = 0.70
-            elif num_matched == 3:
-                coverage_factor = 0.85
-            else:
-                coverage_factor = 1.0
-
-            final_score = round((0.55 * xgb_score + 0.45 * composite_score) * coverage_factor, 4)
 
             if final_score < min_score:
                 continue
@@ -975,15 +1017,17 @@ class MatcherAgent:
                     xgboost_score=xgb_score,
                     final_score=final_score,
                     rank=0,
+                    merged_sources=[job.source] if getattr(job, "source", None) else [],
+                    duplicate_count=1,
                     skills_breakdown=skills_breakdown,
                     features=features,
                     explanations=explanations,
                 )
             )
 
-        # 4. Sort by final score descending and assign rank
-        match_items.sort(key=lambda m: m.final_score, reverse=True)
-        top_matches = match_items[:limit]
+        # 4. Sort by final score descending with deterministic tie-breaking and deduplicate
+        match_items.sort(key=lambda m: (m.final_score, m.composite_score, str(m.job_id)), reverse=True)
+        top_matches = deduplication_service.deduplicate_job_match_items(match_items, limit=limit)
         for rank_idx, item in enumerate(top_matches, start=1):
             item.rank = rank_idx
 

@@ -1,0 +1,12 @@
+{
+  "status": "frozen",
+  "weights": {
+    "bm25": 0.1,
+    "sbert": 0.1,
+    "overlap": 0.8
+  },
+  "score_normalization": "min_max",
+  "comment": "Frozen weights tuned on dev split via scripts/tune_hybrid_weights.py. Do not alter during evaluation.",
+  "tuned_at": "2026-10-13T09:17:13.227848+00:00",
+  "dev_split_size": 150
+}

@@ -97,7 +97,10 @@ class Project(BaseModel):
 class ParsedResume(BaseModel):
     contact_info: ContactInfo = Field(default_factory=ContactInfo)
     summary: Optional[str] = Field(None, description="Professional summary / objective")
-    skills: List[str] = Field(default_factory=list, description="List of technical & soft skills")
+    skills: List[str] = Field(default_factory=list, description="List of technical & soft skills mapped to canonical taxonomy")
+    other_terms: List[str] = Field(default_factory=list, description="Recognizable skill-like terms not yet covered by taxonomy needing review")
+    ignored_tokens: List[str] = Field(default_factory=list, description="Non-skill tokens like years, institution names, and headers")
+    languages: List[str] = Field(default_factory=list, description="Natural/spoken languages (e.g. English, Tamil, Telugu)")
     experience: List[WorkExperience] = Field(default_factory=list, description="Work history")
     education: List[Education] = Field(default_factory=list, description="Educational background")
     projects: List[Project] = Field(default_factory=list, description="Key projects")

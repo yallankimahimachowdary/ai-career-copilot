@@ -1,0 +1,533 @@
+{
+  "Mahi": {
+    "candidate_name": "Mahi",
+    "production_top10": [
+      {
+        "job_id": "68e42ec0-def0-4318-8c6b-163ebc8274e3",
+        "title": "Data Analyst",
+        "score": 0.7601,
+        "retrieval_source": "general_pool",
+        "matched_skills": [
+          "Python",
+          "SQL",
+          "Communication",
+          "Problem Solving"
+        ],
+        "rank": 1
+      },
+      {
+        "job_id": "d5af78d5-ab30-42b9-87f2-c0bcb19ac0ff",
+        "title": "Data Analyst Intern",
+        "score": 0.7376,
+        "retrieval_source": "general_pool",
+        "matched_skills": [
+          "Python",
+          "SQL",
+          "Communication",
+          "Problem Solving"
+        ],
+        "rank": 2
+      },
+      {
+        "job_id": "fd028d6c-f822-4aa6-aeb9-b9b6ddd5f462",
+        "title": "Data Analyst",
+        "score": 0.7259,
+        "retrieval_source": "general_pool",
+        "matched_skills": [
+          "SQL",
+          "Communication",
+          "Problem Solving",
+          "Python"
+        ],
+        "rank": 3
+      },
+      {
+        "job_id": "6c8f2723-6472-4381-aee1-6f605ccdec0a",
+        "title": "Data Analyst",
+        "score": 0.7196,
+        "retrieval_source": "general_pool",
+        "matched_skills": [
+          "Data Science",
+          "Python",
+          "SQL",
+          "Communication",
+          "Problem Solving"
+        ],
+        "rank": 4
+      },
+      {
+        "job_id": "1e6e79b8-2475-416a-9169-2ad1974bba21",
+        "title": "Data Analyst",
+        "score": 0.7196,
+        "retrieval_source": "general_pool",
+        "matched_skills": [
+          "Data Science",
+          "Python",
+          "SQL",
+          "Communication",
+          "Problem Solving"
+        ],
+        "rank": 5
+      },
+      {
+        "job_id": "72a583a3-0731-4c51-9499-3c794e04fbaf",
+        "title": "Data Analyst Intern",
+        "score": 0.7079,
+        "retrieval_source": "general_pool",
+        "matched_skills": [
+          "Data Science",
+          "SQL",
+          "Communication",
+          "Problem Solving",
+          "Python"
+        ],
+        "rank": 6
+      },
+      {
+        "job_id": "58050a63-4ab2-4105-bf72-067d9965618f",
+        "title": "UI Developer",
+        "score": 0.7079,
+        "retrieval_source": "general_pool",
+        "matched_skills": [
+          "HTML/CSS",
+          "JavaScript",
+          "Communication",
+          "Problem Solving"
+        ],
+        "rank": 7
+      },
+      {
+        "job_id": "3d7c5079-268f-4411-9670-8789534cb283",
+        "title": "Data Analyst",
+        "score": 0.7079,
+        "retrieval_source": "general_pool",
+        "matched_skills": [
+          "Data Science",
+          "Python",
+          "Communication",
+          "Problem Solving",
+          "SQL"
+        ],
+        "rank": 8
+      },
+      {
+        "job_id": "231250b8-74ce-4e57-858a-d25eb81ff7a5",
+        "title": "Data Analyst",
+        "score": 0.7079,
+        "retrieval_source": "general_pool",
+        "matched_skills": [
+          "Python",
+          "SQL",
+          "Communication",
+          "Problem Solving"
+        ],
+        "rank": 9
+      },
+      {
+        "job_id": "21db89d1-e4ec-4774-9daa-bcaf2ac37ef3",
+        "title": "Data Analyst Intern",
+        "score": 0.7079,
+        "retrieval_source": "general_pool",
+        "matched_skills": [
+          "Data Science",
+          "SQL",
+          "Communication",
+          "Problem Solving",
+          "Python"
+        ],
+        "rank": 10
+      }
+    ],
+    "snapshot_composite_xgb_top10": [
+      {
+        "rank": 1,
+        "job_id": "68e42ec0-def0-4318-8c6b-163ebc8274e3",
+        "title": "Data Analyst",
+        "score": 0.7516,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "Python",
+          "SQL",
+          "Communication",
+          "Problem Solving"
+        ]
+      },
+      {
+        "rank": 2,
+        "job_id": "d5af78d5-ab30-42b9-87f2-c0bcb19ac0ff",
+        "title": "Data Analyst Intern",
+        "score": 0.733,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "Python",
+          "SQL",
+          "Communication",
+          "Problem Solving"
+        ]
+      },
+      {
+        "rank": 3,
+        "job_id": "fd028d6c-f822-4aa6-aeb9-b9b6ddd5f462",
+        "title": "Data Analyst",
+        "score": 0.7212,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "SQL",
+          "Communication",
+          "Problem Solving",
+          "Python"
+        ]
+      },
+      {
+        "rank": 4,
+        "job_id": "6c8f2723-6472-4381-aee1-6f605ccdec0a",
+        "title": "Data Analyst",
+        "score": 0.715,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "Data Science",
+          "Python",
+          "SQL",
+          "Communication",
+          "Problem Solving"
+        ]
+      },
+      {
+        "rank": 5,
+        "job_id": "1e6e79b8-2475-416a-9169-2ad1974bba21",
+        "title": "Data Analyst",
+        "score": 0.715,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "Data Science",
+          "Python",
+          "SQL",
+          "Communication",
+          "Problem Solving"
+        ]
+      },
+      {
+        "rank": 6,
+        "job_id": "3d7c5079-268f-4411-9670-8789534cb283",
+        "title": "Data Analyst",
+        "score": 0.7079,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "Data Science",
+          "Python",
+          "Communication",
+          "Problem Solving",
+          "SQL"
+        ]
+      },
+      {
+        "rank": 7,
+        "job_id": "72a583a3-0731-4c51-9499-3c794e04fbaf",
+        "title": "Data Analyst Intern",
+        "score": 0.7032,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "Data Science",
+          "SQL",
+          "Communication",
+          "Problem Solving",
+          "Python"
+        ]
+      },
+      {
+        "rank": 8,
+        "job_id": "231250b8-74ce-4e57-858a-d25eb81ff7a5",
+        "title": "Data Analyst",
+        "score": 0.7032,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "Python",
+          "SQL",
+          "Communication",
+          "Problem Solving"
+        ]
+      },
+      {
+        "rank": 9,
+        "job_id": "21db89d1-e4ec-4774-9daa-bcaf2ac37ef3",
+        "title": "Data Analyst Intern",
+        "score": 0.7032,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "Data Science",
+          "SQL",
+          "Communication",
+          "Problem Solving",
+          "Python"
+        ]
+      },
+      {
+        "rank": 10,
+        "job_id": "642c00f9-d7f7-4593-98d7-b745ef2cbacc",
+        "title": "Data Analyst (Remote)",
+        "score": 0.6987,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "Data Science",
+          "Python",
+          "SQL",
+          "Communication"
+        ]
+      }
+    ],
+    "overlap_count": 9,
+    "overlapping_job_ids": [
+      "d5af78d5-ab30-42b9-87f2-c0bcb19ac0ff",
+      "6c8f2723-6472-4381-aee1-6f605ccdec0a",
+      "68e42ec0-def0-4318-8c6b-163ebc8274e3",
+      "3d7c5079-268f-4411-9670-8789534cb283",
+      "21db89d1-e4ec-4774-9daa-bcaf2ac37ef3",
+      "1e6e79b8-2475-416a-9169-2ad1974bba21",
+      "72a583a3-0731-4c51-9499-3c794e04fbaf",
+      "231250b8-74ce-4e57-858a-d25eb81ff7a5",
+      "fd028d6c-f822-4aa6-aeb9-b9b6ddd5f462"
+    ]
+  },
+  "Deepika": {
+    "candidate_name": "Deepika",
+    "production_top10": [
+      {
+        "job_id": "f09a20b5-6822-4dae-a898-a15298b84aa0",
+        "title": "Scientist I (DD)",
+        "score": 0.4156,
+        "retrieval_source": "domain_tokens_biotech",
+        "matched_skills": [
+          "Microbiology",
+          "Molecular Biology",
+          "Python"
+        ],
+        "rank": 1
+      },
+      {
+        "job_id": "534782c0-de38-4b04-8d09-031a38ae58bf",
+        "title": "Scientist I (DD)",
+        "score": 0.4156,
+        "retrieval_source": "domain_tokens_biotech",
+        "matched_skills": [
+          "Microbiology",
+          "Molecular Biology",
+          "Python"
+        ],
+        "rank": 2
+      },
+      {
+        "job_id": "b4bff83d-1765-42f1-bdaa-7ab07b5f341b",
+        "title": "Biomedical Engineer",
+        "score": 0.3758,
+        "retrieval_source": "domain_tokens_biotech",
+        "matched_skills": [
+          "MATLAB",
+          "Python"
+        ],
+        "rank": 3
+      },
+      {
+        "job_id": "b39e249e-19be-4a58-824a-7a6f94ad5fdf",
+        "title": "Biomedical Engineer",
+        "score": 0.3758,
+        "retrieval_source": "domain_tokens_biotech",
+        "matched_skills": [
+          "MATLAB",
+          "Python"
+        ],
+        "rank": 4
+      },
+      {
+        "job_id": "de41c4e4-0f39-4f85-95d6-b59b9adcd6b2",
+        "title": "Research Assistant (RA)",
+        "score": 0.329,
+        "retrieval_source": "domain_tokens_biotech",
+        "matched_skills": [
+          "Cell Culture",
+          "Gel Electrophoresis",
+          "Molecular Biology",
+          "PCR"
+        ],
+        "rank": 5
+      },
+      {
+        "job_id": "ba6b640c-2d41-41b4-9119-5e1e4ef5fa66",
+        "title": "Life Science Associate",
+        "score": 0.3134,
+        "retrieval_source": "domain_tokens_biotech",
+        "matched_skills": [
+          "Cell Culture",
+          "Microbiology",
+          "PCR"
+        ],
+        "rank": 6
+      },
+      {
+        "job_id": "7f3d9ce0-d007-4676-bb2d-0281a52c782b",
+        "title": "Life Science Associate",
+        "score": 0.3134,
+        "retrieval_source": "domain_tokens_biotech",
+        "matched_skills": [
+          "Cell Culture",
+          "Microbiology",
+          "PCR"
+        ],
+        "rank": 7
+      },
+      {
+        "job_id": "303f796a-a45c-45fc-a60c-3b7f5c2c5690",
+        "title": "Junior Research Associate - Consumer And Sensory Sciences",
+        "score": 0.2972,
+        "retrieval_source": "domain_tokens_biotech",
+        "matched_skills": [
+          "Cell Culture",
+          "Microbiology",
+          "PCR"
+        ],
+        "rank": 8
+      },
+      {
+        "job_id": "b33b2103-1c8d-45d8-8294-bddbb8ef91e8",
+        "title": "Biomedical Engineer",
+        "score": 0.2927,
+        "retrieval_source": "domain_tokens_biotech",
+        "matched_skills": [
+          "MATLAB"
+        ],
+        "rank": 9
+      },
+      {
+        "job_id": "5007d89a-5ea9-4d6f-a8af-f1ba95300a31",
+        "title": "Biomedical Engineer",
+        "score": 0.2927,
+        "retrieval_source": "domain_tokens_biotech",
+        "matched_skills": [
+          "MATLAB"
+        ],
+        "rank": 10
+      }
+    ],
+    "snapshot_composite_xgb_top10": [
+      {
+        "rank": 1,
+        "job_id": "f09a20b5-6822-4dae-a898-a15298b84aa0",
+        "title": "Scientist I (DD)",
+        "score": 0.4109,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "Microbiology",
+          "Molecular Biology",
+          "Python"
+        ]
+      },
+      {
+        "rank": 2,
+        "job_id": "534782c0-de38-4b04-8d09-031a38ae58bf",
+        "title": "Scientist I (DD)",
+        "score": 0.4109,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "Microbiology",
+          "Molecular Biology",
+          "Python"
+        ]
+      },
+      {
+        "rank": 3,
+        "job_id": "53834725-25a0-438b-ba12-145f17b31ace",
+        "title": "QC-QA Intern",
+        "score": 0.4055,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "Microbiology"
+        ]
+      },
+      {
+        "rank": 4,
+        "job_id": "b4bff83d-1765-42f1-bdaa-7ab07b5f341b",
+        "title": "Biomedical Engineer",
+        "score": 0.3722,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "MATLAB",
+          "Python"
+        ]
+      },
+      {
+        "rank": 5,
+        "job_id": "b39e249e-19be-4a58-824a-7a6f94ad5fdf",
+        "title": "Biomedical Engineer",
+        "score": 0.3722,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "MATLAB",
+          "Python"
+        ]
+      },
+      {
+        "rank": 6,
+        "job_id": "d2029338-9929-4ece-8b74-867745322927",
+        "title": "Trainee - R&D",
+        "score": 0.34,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "Microbiology"
+        ]
+      },
+      {
+        "rank": 7,
+        "job_id": "b5a529c3-2c63-4309-92f3-d240258df5f1",
+        "title": "AI/ML Intern",
+        "score": 0.34,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "Python"
+        ]
+      },
+      {
+        "rank": 8,
+        "job_id": "4b7cb06f-2f90-4297-a25e-3ab507327897",
+        "title": "Trainee - R&D",
+        "score": 0.34,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "Microbiology"
+        ]
+      },
+      {
+        "rank": 9,
+        "job_id": "de41c4e4-0f39-4f85-95d6-b59b9adcd6b2",
+        "title": "Research Assistant (RA)",
+        "score": 0.3382,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "Cell Culture",
+          "Gel Electrophoresis",
+          "Molecular Biology",
+          "PCR"
+        ]
+      },
+      {
+        "rank": 10,
+        "job_id": "ba6b640c-2d41-41b4-9119-5e1e4ef5fa66",
+        "title": "Life Science Associate",
+        "score": 0.3082,
+        "retrieval_source": "snapshot_full_pool",
+        "matched_skills": [
+          "Cell Culture",
+          "Microbiology",
+          "PCR"
+        ]
+      }
+    ],
+    "overlap_count": 6,
+    "overlapping_job_ids": [
+      "ba6b640c-2d41-41b4-9119-5e1e4ef5fa66",
+      "b4bff83d-1765-42f1-bdaa-7ab07b5f341b",
+      "f09a20b5-6822-4dae-a898-a15298b84aa0",
+      "534782c0-de38-4b04-8d09-031a38ae58bf",
+      "b39e249e-19be-4a58-824a-7a6f94ad5fdf",
+      "de41c4e4-0f39-4f85-95d6-b59b9adcd6b2"
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 import json
 import re
-from typing import List, Optional
+from typing import List, Optional, Tuple
 import httpx
 from app.core.config import settings
 from app.core.logging import logger
@@ -11,7 +11,13 @@ from app.schemas.resume import (
     Project,
     WorkExperience,
 )
-from app.core.taxonomy import CANONICAL_SKILL_PATTERNS, extract_canonical_skills
+from app.core.taxonomy import (
+    CANONICAL_SKILL_PATTERNS,
+    SPOKEN_LANGUAGES,
+    extract_canonical_skills,
+    extract_spoken_languages,
+    is_ignored_token,
+)
 
 COMMON_SKILLS = list(CANONICAL_SKILL_PATTERNS.keys())
 
@@ -173,13 +179,44 @@ class ParserAgent:
             if extracted:
                 parsed.contact_info.name = extracted
 
-        # Enrich skills: augment LLM extracted skills with canonical domain taxonomy matches
-        existing_skills_lower = {s.lower() for s in parsed.skills}
-        tax_skills = extract_canonical_skills(raw_text)
-        for s in tax_skills:
-            if s.lower() not in existing_skills_lower:
-                parsed.skills.append(s)
-                existing_skills_lower.add(s.lower())
+        # Partition skills and tokens into canonical skills, languages, ignored tokens, and other terms
+        canonical_set = set()
+        other_set = set()
+        ignored_set = set(parsed.ignored_tokens or [])
+        lang_set = set(parsed.languages or [])
+
+        # Extract languages from raw text
+        for lang in extract_spoken_languages(raw_text):
+            lang_set.add(lang)
+
+        candidates = list(parsed.skills or []) + list(parsed.other_terms or [])
+        for token in candidates:
+            token_clean = token.strip()
+            if not token_clean:
+                continue
+            if token_clean.lower() in SPOKEN_LANGUAGES:
+                lang_set.add(token_clean.capitalize())
+                continue
+            matched = extract_canonical_skills(token_clean)
+            if matched:
+                canonical_set.update(matched)
+                continue
+            other_set.add(token_clean)
+            if is_ignored_token(token_clean):
+                ignored_set.add(token_clean)
+
+        # Also extract canonical skills from the full document text
+        text_skills = extract_canonical_skills(raw_text)
+        canonical_set.update(text_skills)
+
+        parsed.skills = sorted(list(canonical_set))
+        parsed.other_terms = sorted(list(other_set))
+        parsed.ignored_tokens = sorted(list(ignored_set))
+        parsed.languages = sorted(list(lang_set))
+
+        # Safeguard: backfill education if empty
+        if not parsed.education:
+            parsed.education = self._extract_education(raw_text, [])
 
         # Post-processing anti-hallucination guardrail:
         # Sanitize project technologies: discard technologies not mentioned in raw_text or project description
@@ -191,7 +228,6 @@ class ParserAgent:
                     tech_clean = tech.strip().lower()
                     if not tech_clean:
                         continue
-                    # Check if tech is actually in raw resume text or project description
                     proj_desc = (proj.description or "").lower()
                     if re.search(r"\b" + re.escape(tech_clean) + r"\b", raw_text_lower) or re.search(r"\b" + re.escape(tech_clean) + r"\b", proj_desc):
                         filtered_tech.append(tech)
@@ -302,13 +338,13 @@ class ParserAgent:
         sections = self._split_into_sections(lines)
 
         # 3. Skills Extraction
-        skills = self._extract_skills(raw_text, sections.get("skills", []))
+        skills, other_terms, ignored_tokens, languages = self._extract_skills(raw_text, sections.get("skills", []))
 
         # 4. Experience Extraction
         experience = self._extract_experience(sections.get("experience", []))
 
         # 5. Education Extraction
-        education = self._extract_education(sections.get("education", []))
+        education = self._extract_education(raw_text, sections.get("education", []))
 
         # 6. Projects Extraction
         projects = self._extract_projects(sections.get("projects", []))
@@ -320,6 +356,9 @@ class ParserAgent:
             contact_info=contact_info,
             summary=summary,
             skills=skills,
+            other_terms=other_terms,
+            ignored_tokens=ignored_tokens,
+            languages=languages,
             experience=experience,
             education=education,
             projects=projects,
@@ -344,7 +383,7 @@ class ParserAgent:
         return val
 
     def _split_into_sections(self, lines: List[str]) -> dict:
-        """Split document lines into logical resume sections."""
+        """Split document lines into logical resume sections with robust layout handling."""
         section_headers = {
             "summary": ["summary", "professional summary", "about me", "objective"],
             "skills": ["skills", "technical skills", "core competencies", "skills & tools"],
@@ -356,43 +395,96 @@ class ParserAgent:
 
         current_section = "summary"
         sections = {k: [] for k in section_headers}
+        skill_indicator_headers = [
+            "professional languages", "tools/frameworks", "databases",
+            "professional skills", "computer skills", "core competencies"
+        ]
 
-        for line in lines:
-            line_lower = line.lower().strip(":# -")
+        for i, line in enumerate(lines):
+            line_clean = line.strip(":# -")
+            line_lower = line_clean.lower()
+
             matched_section = None
             for sec, keywords in section_headers.items():
-                if any(line_lower == kw for kw in keywords) or any(line_lower.startswith(f"{kw}:") for kw in keywords):
-                    matched_section = sec
+                for kw in keywords:
+                    if line_lower == kw or line_lower.startswith(f"{kw}:"):
+                        if line_clean.isupper() or line_clean.istitle() or line.endswith(":") or line.startswith("#"):
+                            # Avoid false match on lowercase wrapped tokens
+                            if i > 0 and not lines[i - 1].strip().endswith((".", ":", ";")) and line_lower in ("skills", "experience") and not line_clean.isupper():
+                                continue
+                            matched_section = sec
+                            break
+                if matched_section:
                     break
 
             if matched_section:
                 current_section = matched_section
+                continue
+
+            # Semantic redirection for lines misplaced by column/multi-column layout
+            if (any(kw in line_lower for kw in skill_indicator_headers) or (len(extract_canonical_skills(line_clean)) >= 3 and len(line_clean.split()) <= 15)) and current_section != "projects":
+                sections["skills"].append(line)
+            elif any(kw in line_lower for kw in ["university", "college", "bachelor of", "b.tech", "relevant courses:"]) and current_section not in ("education", "experience", "skills"):
+                sections["education"].append(line)
             else:
                 sections[current_section].append(line)
 
         return sections
 
-    def _extract_skills(self, full_text: str, skill_lines: List[str]) -> List[str]:
-        """Extract skills from identified section and matching common keywords."""
-        found_skills = set()
+    def _extract_skills(
+        self, full_text: str, skill_lines: List[str]
+    ) -> Tuple[List[str], List[str], List[str], List[str]]:
+        """
+        Extract skills mapped strictly to the canonical taxonomy (with synonyms).
+        Partitions tokens into:
+          1. canonical_skills: matched to CANONICAL_SKILL_PATTERNS
+          2. other_terms: unmapped terms kept for tracking but unused in matching
+          3. ignored_tokens: years, degrees, institutions, headings, bullet sentences
+          4. languages: natural / spoken languages
+        """
+        raw_candidates = set()
 
-        # Check in skills section lines
         for line in skill_lines:
-            # Split by commas or pipes
             parts = re.split(r"[,|•·\n]", line)
             for part in parts:
                 cleaned = part.strip()
-                if cleaned and len(cleaned) < 35 and not any(ch in cleaned for ch in ["@", "http"]):
-                    found_skills.add(cleaned)
+                if cleaned and len(cleaned) < 50 and not any(ch in cleaned for ch in ["@", "http"]):
+                    raw_candidates.add(cleaned)
 
-        # Cross check with common technical skills in entire document
-        text_lower = full_text.lower()
-        for skill in COMMON_SKILLS:
-            # Word boundary check
-            if re.search(r"\b" + re.escape(skill.lower()) + r"\b", text_lower):
-                found_skills.add(skill)
+        canonical_skills = set()
+        other_terms = set()
+        ignored_tokens = set()
+        languages = set()
 
-        return sorted(list(found_skills))
+        # Extract spoken languages from full text
+        for lang in extract_spoken_languages(full_text):
+            languages.add(lang)
+
+        # 1. Map extracted section tokens
+        for token in raw_candidates:
+            if token.lower() in SPOKEN_LANGUAGES:
+                languages.add(token.capitalize())
+                continue
+
+            matched_canonical = extract_canonical_skills(token)
+            if matched_canonical:
+                canonical_skills.update(matched_canonical)
+                continue
+
+            other_terms.add(token)
+            if is_ignored_token(token):
+                ignored_tokens.add(token)
+
+        # 2. Extract canonical skills from the full document text
+        text_canonical = extract_canonical_skills(full_text)
+        canonical_skills.update(text_canonical)
+
+        return (
+            sorted(list(canonical_skills)),
+            sorted(list(other_terms)),
+            sorted(list(ignored_tokens)),
+            sorted(list(languages)),
+        )
 
     def _extract_experience(self, exp_lines: List[str]) -> List[WorkExperience]:
         """Extract work experience entries from experience section."""
@@ -456,64 +548,175 @@ class ParserAgent:
 
         return entries
 
-    def _extract_education(self, edu_lines: List[str]) -> List[Education]:
-        """Extract education entries."""
+    def _extract_education(self, raw_text: str, edu_lines: List[str] = None) -> List[Education]:
+        """Extract education entries scanning both edu_lines and raw_text for degree and institution patterns."""
         entries: List[Education] = []
-        for line in edu_lines:
-            if any(term in line.lower() for term in ["university", "college", "institute", "school", "bachelor", "master", "degree", "b.s", "m.s", "ph.d"]):
-                entries.append(Education(
-                    institution=line,
-                    degree=next((d for d in ["B.S.", "M.S.", "Ph.D.", "Bachelor", "Master"] if d.lower() in line.lower()), None),
-                ))
+        seen = set()
+        lines = [l.strip() for l in raw_text.split("\n") if l.strip()]
+
+        deg_regex = re.compile(
+            r"\b(Bachelor(?:\s+of\s+[A-Za-z\s&]+)?|Master(?:\s+of\s+[A-Za-z\s&]+)?|B\.?Tech(?:-[A-Za-z\s&]+)?|B\.?E\.?|B\.?S\.?|M\.?Tech|M\.?S\.?|Ph\.?D\.?|HSC|SSLC)\b",
+            re.IGNORECASE,
+        )
+
+        for i, line in enumerate(lines):
+            m = deg_regex.search(line)
+            if m:
+                matched_str = m.group(0).strip()
+                if line.strip().upper() in ["EDUCATION", "ACADEMIC BACKGROUND", "QUALIFICATIONS"]:
+                    continue
+
+                deg = matched_str
+                field = None
+                if " in " in line.lower():
+                    parts = re.split(r"\bin\b", line, flags=re.IGNORECASE)
+                    deg = parts[0].strip()
+                    field_part = parts[1].strip()
+                    field = re.sub(r"\b20\d{2}.*$", "", field_part).strip(" -–")
+                elif line.lower().startswith("b.tech-"):
+                    parts = line.split("-", 1)
+                    deg = parts[0].strip()
+                    field = parts[1].strip()
+
+                y_m = re.search(r"\b(20\d{2}\s*[-–]\s*20\d{2}|20\d{2})\b", line)
+                grad_year = y_m.group(0).strip() if y_m else None
+
+                inst = None
+                for offset in [1, 2, -1]:
+                    if 0 <= i + offset < len(lines):
+                        cand = lines[i + offset]
+                        if any(t in cand.lower() for t in ["university", "college", "institute", "school"]):
+                            inst = cand.strip(" ,.")
+                            break
+                if not inst and any(t in line.lower() for t in ["university", "college", "institute", "school"]):
+                    inst = line.strip(" ,.")
+
+                key = (deg.lower(), (inst or "").lower())
+                if key not in seen:
+                    seen.add(key)
+                    entries.append(Education(
+                        institution=inst or "Unknown Institution",
+                        degree=deg,
+                        field_of_study=field,
+                        graduation_year=grad_year,
+                    ))
+
+        # Fallback to checking edu_lines if none found
+        if not entries and edu_lines:
+            for line in edu_lines:
+                if any(term in line.lower() for term in ["university", "college", "institute", "school", "bachelor", "master", "degree", "b.s", "m.s", "ph.d"]):
+                    entries.append(Education(
+                        institution=line,
+                        degree=next((d for d in ["B.S.", "M.S.", "Ph.D.", "Bachelor", "Master", "B.Tech"] if d.lower() in line.lower()), None),
+                    ))
+
         return entries
 
     def _extract_projects(self, proj_lines: List[str]) -> List[Project]:
-        """Extract projects entries, cleanly merging multi-line wrapped bullet points into single units."""
+        """Extract projects entries, cleanly capturing tech stacks and merging multi-line bullets."""
         projects: List[Project] = []
         if not proj_lines:
             return projects
 
         bullet_chars = ("-", "•", "*", "–", "·", "▪", "▫", "\u2022", "\u2023", "\u2043", "\u2219", "\ufffd")
+        action_verbs = {
+            "developed", "implemented", "applied", "designed", "improved",
+            "optimised", "optimized", "created", "explored", "focused", "built", "led", "analyzed"
+        }
         current_project: Optional[Project] = None
-        current_bullets: List[str] = []
 
         for raw_line in proj_lines:
             line = raw_line.strip()
             if not line:
                 continue
 
+            line_clean = re.sub(r"^[\s\-•*–·▪▫\u2022\u2023\u2043\u2219\ufffd]+", "", line).strip()
+            skills_in_line = extract_canonical_skills(line_clean)
+            is_tech_line = bool(skills_in_line) and len(line_clean.split()) <= 6 and not any(line_clean.lower().startswith(v) for v in action_verbs)
             starts_bullet = any(line.startswith(c) for c in bullet_chars)
-            if starts_bullet:
-                cleaned = re.sub(r"^[\s\-•*–·▪▫\u2022\u2023\u2043\u2219\ufffd]+", "", line).strip()
-                if cleaned:
-                    current_bullets.append(cleaned)
-            else:
-                # Line does not start with bullet character
-                is_continuation = False
-                if current_bullets:
-                    prev = current_bullets[-1]
-                    if not prev.endswith((".", "!", "?", ";", ":")):
-                        is_continuation = True
-                    elif line[0].islower() or (len(line.split()) <= 4 and line.endswith(".")):
-                        is_continuation = True
+            is_action_sentence = any(line_clean.lower().startswith(v) for v in action_verbs)
+            is_description = (
+                starts_bullet
+                or is_action_sentence
+                or line_clean.endswith(".")
+                or line_clean[0].islower()
+                or len(line_clean.split()) > 7
+            )
 
-                if is_continuation and current_bullets:
-                    current_bullets[-1] = f"{current_bullets[-1]} {line}"
+            if current_project and is_tech_line and not current_project.technologies:
+                current_project.technologies = skills_in_line
+            elif current_project and is_description:
+                if current_project.description:
+                    current_project.description += " " + line_clean
                 else:
-                    # New project title line
-                    if current_project and current_bullets:
-                        current_project.description = " ".join(current_bullets)
-
-                    current_bullets = []
-                    cleaned_title = line.strip(":# -")
-                    if cleaned_title.lower() not in ["projects", "personal projects", "academic projects"]:
-                        current_project = Project(name=cleaned_title, description="")
-                        projects.append(current_project)
-
-        if current_project and current_bullets:
-            current_project.description = " ".join(current_bullets)
+                    current_project.description = line_clean
+            else:
+                if len(line_clean) < 80 and not line_clean.lower().startswith(("relevant courses", "bachelor", "vel tech", "projects", "education")):
+                    current_project = Project(name=line_clean, description="", technologies=[])
+                    projects.append(current_project)
 
         return projects
+
+
+def safe_merge_parsed_data(existing_pd: Optional[dict], new_pd: dict) -> dict:
+    """
+    Safely merges new parsed resume data into existing parsed data.
+    Guarantees that non-empty critical fields (education, contact_info, skills, projects)
+    are never wiped out or replaced by empty lists/dicts due to incomplete extraction.
+    """
+    if not existing_pd:
+        return new_pd
+
+    merged = dict(existing_pd)
+    # Merge contact info
+    existing_ci = existing_pd.get("contact_info") or {}
+    new_ci = new_pd.get("contact_info") or {}
+    merged_ci = dict(existing_ci)
+    for k, v in new_ci.items():
+        if v and not merged_ci.get(k):
+            merged_ci[k] = v
+    merged["contact_info"] = merged_ci
+
+    # Skills: union of skills
+    existing_skills = set(existing_pd.get("skills") or [])
+    new_skills = set(new_pd.get("skills") or [])
+    merged["skills"] = sorted(list(existing_skills | new_skills))
+
+    # Education: preserve existing if new is empty
+    new_edu = new_pd.get("education") or []
+    if new_edu:
+        merged["education"] = new_edu
+    elif not merged.get("education"):
+        merged["education"] = []
+
+    # Projects: preserve existing if new is empty
+    new_proj = new_pd.get("projects") or []
+    if new_proj:
+        merged["projects"] = new_proj
+    elif not merged.get("projects"):
+        merged["projects"] = []
+
+    # Experience: preserve existing if new is empty
+    new_exp = new_pd.get("experience") or []
+    if new_exp:
+        merged["experience"] = new_exp
+
+    # Certifications: preserve existing if new is empty
+    new_certs = new_pd.get("certifications") or []
+    if new_certs:
+        merged["certifications"] = new_certs
+
+    # Other terms, ignored tokens, languages
+    for field in ("other_terms", "ignored_tokens", "languages"):
+        existing_items = set(existing_pd.get(field) or [])
+        new_items = set(new_pd.get(field) or [])
+        merged[field] = sorted(list(existing_items | new_items))
+
+    # Summary
+    if new_pd.get("summary"):
+        merged["summary"] = new_pd["summary"]
+
+    return merged
 
 
 parser_agent = ParserAgent()

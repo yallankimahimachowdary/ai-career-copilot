@@ -7,6 +7,7 @@ import os
 import re
 import time
 from typing import Any, Dict, List, Optional
+import asyncio
 import httpx
 
 from app.core.config import settings
@@ -26,11 +27,15 @@ class LLMResponse:
         max_tokens: int,
         latency_ms: float,
         timestamp: str,
+        requested_model: Optional[str] = None,
+        answered_model: Optional[str] = None,
     ):
         self.raw_text = raw_text
         self.data = parsed_json
         self.provider = provider
         self.model = model
+        self.requested_model = requested_model or model
+        self.answered_model = answered_model or model
         self.temperature = temperature
         self.max_tokens = max_tokens
         self.latency_ms = latency_ms
@@ -40,6 +45,8 @@ class LLMResponse:
         return {
             "provider": self.provider,
             "model": self.model,
+            "requested_model": self.requested_model,
+            "answered_model": self.answered_model,
             "temperature": self.temperature,
             "max_tokens": self.max_tokens,
             "latency_ms": self.latency_ms,
@@ -61,6 +68,13 @@ def clean_and_parse_json(text_content: str) -> Dict[str, Any]:
     except json.JSONDecodeError:
         pass
 
+    # Try json-repair if json.loads failed
+    try:
+        import json_repair
+        return json_repair.loads(cleaned)
+    except Exception:
+        pass
+
     start_idx = cleaned.find("{")
     if start_idx != -1:
         candidate = cleaned[start_idx:]
@@ -70,6 +84,7 @@ def clean_and_parse_json(text_content: str) -> Dict[str, Any]:
         except json.JSONDecodeError:
             pass
 
+        # Try recovering individually closed objects if it's a list or dictionary
         open_braces = candidate.count("{") - candidate.count("}")
         open_brackets = candidate.count("[") - candidate.count("]")
         repaired = re.sub(r',\s*"[^"]*"?\s*$', '', candidate)
@@ -80,14 +95,27 @@ def clean_and_parse_json(text_content: str) -> Dict[str, Any]:
         except json.JSONDecodeError:
             pass
 
-    match = re.search(r"(\{.*\})", cleaned, re.DOTALL)
-    if match:
-        candidate = match.group(1).strip()
-        try:
-            return json.loads(candidate)
-        except json.JSONDecodeError:
-            fixed = re.sub(r",\s*([\]}])", r"\1", candidate)
-            return json.loads(fixed)
+    # Regex find all object items if ranked_jobs structure is present
+    item_matches = re.findall(r'\{\s*"job_id"\s*:\s*"([^"]+)"[^}]*\}', cleaned)
+    if item_matches:
+        recovered_items = []
+        for obj_str in re.finditer(r'\{[^{}]*"job_id"[^{}]*\}', cleaned):
+            try:
+                rec_obj = json.loads(obj_str.group(0))
+                recovered_items.append(rec_obj)
+            except Exception:
+                # Regex extract individual keys
+                m_id = re.search(r'"job_id"\s*:\s*"([^"]+)"', obj_str.group(0))
+                if m_id:
+                    recovered_items.append({
+                        "job_id": m_id.group(1),
+                        "rank": len(recovered_items) + 1,
+                        "matched_skills": [],
+                        "missing_skills": [],
+                        "reason": "Recovered from partial JSON.",
+                    })
+        if recovered_items:
+            return {"ranked_jobs": recovered_items}
 
     raise ValueError(f"Could not extract valid JSON from response: {text_content[:200]}")
 
@@ -169,7 +197,7 @@ class GeminiProvider(BaseLLMProvider):
     def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
         # Read API key strictly from environment variable or settings
         self.api_key = api_key or os.environ.get("GEMINI_API_KEY") or getattr(settings, "GEMINI_API_KEY", None)
-        self.model = model or os.environ.get("GEMINI_MODEL") or getattr(settings, "GEMINI_MODEL", "gemini-2.5-flash")
+        self.model = model or os.environ.get("GEMINI_MODEL") or getattr(settings, "GEMINI_MODEL", "gemini-2.0-flash")
 
     async def generate_json(
         self,
@@ -178,19 +206,24 @@ class GeminiProvider(BaseLLMProvider):
         max_tokens: int = 500,
         timeout: float = 30.0,
         mock_response: Optional[Dict[str, Any]] = None,
+        experiment_mode: bool = False,
         **kwargs: Any,
     ) -> LLMResponse:
         t0 = time.perf_counter()
         ts = datetime.now(timezone.utc).isoformat()
+        requested_model = self.model
 
-        require_api_key: bool = kwargs.get("require_api_key", False)
+        require_api_key: bool = kwargs.get("require_api_key", False) or experiment_mode
 
-        # If key is missing and strict key presence is required, raise error
+        # If in experiment mode, strictly prohibit mock fallback and require API key
+        if experiment_mode and not self.api_key:
+            raise RuntimeError(f"Experiment mode requires a valid GEMINI_API_KEY for model '{requested_model}'.")
+
         if not self.api_key and require_api_key:
             raise RuntimeError("GEMINI_API_KEY environment variable is not configured.")
 
-        # Mock fallback if key is not available or mock_response is provided
-        if not self.api_key or mock_response is not None:
+        # Mock fallback only when NOT in experiment mode and (no key or mock_response is provided)
+        if not experiment_mode and (not self.api_key or mock_response is not None):
             time.sleep(0.05)  # Simulate small network roundtrip
             data = mock_response or {
                 "status": "success",
@@ -201,8 +234,8 @@ class GeminiProvider(BaseLLMProvider):
             raw_text = json.dumps(data)
             latency_ms = round((time.perf_counter() - t0) * 1000, 2)
             logger.info(
-                f"[LLM Call] provider=gemini-mock model={self.model} temp={temperature} "
-                f"max_tokens={max_tokens} latency_ms={latency_ms} timestamp={ts}"
+                f"[LLM Call] provider=gemini-mock requested_model={requested_model} answered_model={requested_model}-mock "
+                f"temp={temperature} max_tokens={max_tokens} latency_ms={latency_ms} timestamp={ts}"
             )
             return LLMResponse(
                 raw_text=raw_text,
@@ -213,11 +246,16 @@ class GeminiProvider(BaseLLMProvider):
                 max_tokens=max_tokens,
                 latency_ms=latency_ms,
                 timestamp=ts,
+                requested_model=requested_model,
+                answered_model=f"{requested_model}-mock",
             )
 
-
         model_clean = self.model.removeprefix("models/")
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_clean}:generateContent?key={self.api_key}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_clean}:generateContent"
+        headers = {
+            "x-goog-api-key": self.api_key,
+            "Content-Type": "application/json",
+        }
         payload = {
             "contents": [{"parts": [{"text": prompt}]}],
             "generationConfig": {
@@ -227,29 +265,101 @@ class GeminiProvider(BaseLLMProvider):
             },
         }
 
-        async with httpx.AsyncClient(timeout=timeout) as client:
-            resp = await client.post(url, json=payload)
-            resp.raise_for_status()
-            res_json = resp.json()
-            raw_text = res_json["candidates"][0]["content"]["parts"][0]["text"]
+        # Client-side rate-limiting delay between calls to mitigate 429 quota exhaustion
+        await asyncio.sleep(1.0)
+
+        # Retries with exponential backoff for 429 and 503 (at least 5 attempts)
+        max_http_attempts = 5
+        base_backoff = 2.0
+        resp = None
+        last_http_err = None
+
+        for attempt in range(1, max_http_attempts + 1):
+            try:
+                async with httpx.AsyncClient(timeout=timeout) as client:
+                    resp = await client.post(url, json=payload, headers=headers)
+                    if resp.status_code in (429, 503) and attempt < max_http_attempts:
+                        retry_after = resp.headers.get("retry-after")
+                        if retry_after:
+                            try:
+                                backoff = float(retry_after)
+                            except ValueError:
+                                backoff = base_backoff * (2 ** (attempt - 1))
+                        else:
+                            backoff = base_backoff * (2 ** (attempt - 1))
+                        logger.warning(
+                            f"[Gemini Retry] Status {resp.status_code} on attempt {attempt}/{max_http_attempts} for model '{requested_model}'. Backing off {backoff:.1f}s..."
+                        )
+                        await asyncio.sleep(backoff)
+                        continue
+                    resp.raise_for_status()
+                    break
+            except (httpx.HTTPStatusError, httpx.RequestError) as exc:
+                last_http_err = exc
+                if attempt < max_http_attempts:
+                    backoff = base_backoff * (2 ** (attempt - 1))
+                    logger.warning(
+                        f"[Gemini Retry] Exception {type(exc).__name__} on attempt {attempt}/{max_http_attempts} for model '{requested_model}'. Backing off {backoff:.1f}s..."
+                    )
+                    await asyncio.sleep(backoff)
+                    continue
+                else:
+                    # Sanitize message to ensure key never appears
+                    safe_msg = f"{type(exc).__name__}: HTTP error on model '{requested_model}' after {max_http_attempts} attempts."
+                    if isinstance(exc, httpx.HTTPStatusError) and exc.response is not None:
+                        safe_msg += f" Status code: {exc.response.status_code}"
+                    logger.error(safe_msg)
+                    raise RuntimeError(safe_msg) from None
+
+        if resp is None:
+            raise RuntimeError(f"Gemini call failed after {max_http_attempts} attempts: {last_http_err}")
+
+        res_json = resp.json()
+        raw_text = res_json["candidates"][0]["content"]["parts"][0]["text"]
+        answered_model = res_json.get("modelVersion") or self.model
+
+        # Pinned model enforcement in experiment mode (supports Google API canonical aliases)
+        if experiment_mode and requested_model:
+            req_clean = requested_model.removeprefix("models/").lower()
+            ans_clean = answered_model.removeprefix("models/").lower()
+            known_aliases = {
+                "gemini-3.5-flash-lite": "gemini-3.5-flash-lite",
+                "gemini-3.5-flash": "gemini-3.6-flash",
+                "gemini-2.0-flash": "gemini-2.0-flash",
+                "gemini-1.5-flash": "gemini-1.5-flash",
+            }
+            is_match = (
+                req_clean == ans_clean
+                or ans_clean.startswith(req_clean)
+                or req_clean.startswith(ans_clean)
+                or known_aliases.get(req_clean) == ans_clean
+                or known_aliases.get(req_clean, "").startswith(ans_clean)
+                or ans_clean.startswith(known_aliases.get(req_clean, "___"))
+            )
+            if not is_match:
+                raise RuntimeError(
+                    f"Gemini model mismatch in experiment mode: requested '{requested_model}' but answered '{answered_model}'."
+                )
 
         latency_ms = round((time.perf_counter() - t0) * 1000, 2)
         parsed = clean_and_parse_json(raw_text)
 
         logger.info(
-            f"[LLM Call] provider=gemini model={self.model} temp={temperature} "
-            f"max_tokens={max_tokens} latency_ms={latency_ms} timestamp={ts}"
+            f"[LLM Call] provider=gemini requested_model={requested_model} answered_model={answered_model} "
+            f"temp={temperature} max_tokens={max_tokens} latency_ms={latency_ms} timestamp={ts}"
         )
 
         return LLMResponse(
             raw_text=raw_text,
             parsed_json=parsed,
             provider="gemini",
-            model=self.model,
+            model=answered_model,
             temperature=temperature,
             max_tokens=max_tokens,
             latency_ms=latency_ms,
             timestamp=ts,
+            requested_model=requested_model,
+            answered_model=answered_model,
         )
 
 

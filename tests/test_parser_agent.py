@@ -50,7 +50,7 @@ async def test_parser_agent_skills():
     assert "Python" in parsed.skills
     assert "FastAPI" in parsed.skills
     assert "Docker" in parsed.skills
-    assert "PostgreSQL" in parsed.skills
+    assert "SQL" in parsed.skills
     assert "Redis" in parsed.skills
 
 

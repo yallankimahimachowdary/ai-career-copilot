@@ -44,6 +44,8 @@ class JobMatchItem(BaseModel):
     xgboost_score: float = Field(..., description="ML re-ranked prediction score")
     final_score: float = Field(..., description="Final calibrated matching score (0.0 - 1.0)")
     rank: int = Field(..., description="Position in recommendation ranking")
+    merged_sources: List[str] = Field(default_factory=list, description="Aggregated job sources if duplicate postings were merged")
+    duplicate_count: int = Field(default=1, description="Number of duplicate postings merged into this canonical match")
     skills_breakdown: SkillsBreakdown
     features: FeatureBreakdown
     explanations: List[ShapExplanation]

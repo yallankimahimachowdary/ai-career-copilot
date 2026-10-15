@@ -73,11 +73,14 @@ CANONICAL_SKILL_PATTERNS: Dict[str, str] = {
     "Java": r"\bjava\b(?!\s*script)",
     "JavaScript": r"\b(javascript|js|ecmascript)\b",
     "TypeScript": r"\b(typescript|ts)\b",
+    "C": r"(?:\b(?:c\s*programming|ansi\s*c)\b|(?<![a-zA-Z0-9_#+])c(?![a-zA-Z0-9_#+]))",
     "C/C++": r"\b(c\+\+|c\s*programming|embedded\s*c)\b",
     "C#": r"\b(c#|c\s*sharp|\.net)\b",
     "Go": r"\b(golang|go\s*programming)\b",
     "Rust": r"\brust\b",
     "SQL": r"\b(sql|mysql|postgresql|postgres|sqlite|pl\/sql)\b",
+    "MySQL": r"\bmysql\b",
+    "DBMS": r"\b(dbms|database\s*management(?:\s*systems?)?)\b",
     "HTML/CSS": r"\b(html5?|css3?)\b",
     "React": r"\breact(?:\.js|js|\s*native)?\b",
     "FastAPI": r"\b(fastapi|fast\s*api)\b",
@@ -98,11 +101,20 @@ CANONICAL_SKILL_PATTERNS: Dict[str, str] = {
     "REST API": r"\b(rest(?:\s*api|\s*framework)?|restful|microservices)\b",
     "Machine Learning": r"\b(machine\s*learning|deep\s*learning|pytorch|tensorflow|keras|scikit.learn|nlp|computer\s*vision)\b",
     "Data Science": r"\b(data\s*science|data\s*analytics?|pandas|numpy|spark)\b",
+    "Software Engineering": r"\bsoftware\s*engineering\b",
+    "Web Technologies": r"\bweb\s*technologies\b",
+    "Figma": r"\bfigma\b",
+    "Canva": r"\bcanva\b",
+    "Blender": r"\bblender(?:\s*\(basics?\))?\b",
+    "VS Code": r"\b(vs\s*code|visual\s*studio\s*code)\b",
+    "Eclipse IDE": r"\beclipse(?:\s*ide)?\b",
     "Agile/Scrum": r"\b(agile|scrum|kanban|jira)\b",
     "CI/CD": r"\b(ci\/cd|continuous\s*integration|jenkins|github\s*actions)\b",
-    "Communication": r"\b(communication|collaboration|teamwork|interpersonal)\b",
+    "Communication": r"\b(communication|interpersonal)\b",
+    "Team Collaboration": r"\b(team\s*collaboration|teamwork|collaborative\s*work)\b",
     "Problem Solving": r"\b(problem.solving|analytical|critical\s*thinking)\b",
     "Leadership": r"\b(leadership|mentoring|team\s*lead)\b",
+    "Time Management": r"\btime\s*management\b",
 
     # --- Biotechnology & Life Sciences ---
     "PCR": r"\b(pcr|polymerase\s*chain\s*reaction|qpcr|rt-pcr)\b",
@@ -182,3 +194,74 @@ def extract_canonical_skills(text: str) -> List[str]:
             found_skills.append(canonical_name)
 
     return sorted(list(set(found_skills)))
+
+
+# ---------------------------------------------------------------------------
+# 5. Natural / Spoken Languages & Non-Skill Token Classification
+# ---------------------------------------------------------------------------
+
+SPOKEN_LANGUAGES: Set[str] = {
+    "english", "tamil", "telugu", "hindi", "spanish", "french", "german",
+    "mandarin", "japanese", "korean", "arabic", "bengali", "marathi",
+    "kannada", "malayalam", "gujarati", "punjabi", "urdu", "russian",
+}
+
+IGNORED_HEADING_PATTERNS: List[str] = [
+    r"^(?:summary|projects?|education|academic|skills?|technical skills?|certificates?|certifications?|languages?)$",
+    r"^(?:professional languages?|tools[\s/]+frameworks?|databases?|professional skills?|computer skills?)$",
+]
+
+def extract_spoken_languages(text: str) -> List[str]:
+    """Extract natural / spoken languages from text."""
+    if not text:
+        return []
+    found = []
+    text_lower = text.lower()
+    for lang in SPOKEN_LANGUAGES:
+        if re.search(r"\b" + re.escape(lang) + r"\b", text_lower):
+            found.append(lang.capitalize())
+    return sorted(list(set(found)))
+
+
+def is_ignored_token(token: str) -> bool:
+    """
+    Identify non-skill tokens such as years, institutions, degrees, course listings,
+    section headings, and descriptive bullet fragments.
+    """
+    if not token or not isinstance(token, str):
+        return True
+    t = token.strip()
+    if not t or len(t) < 2:
+        return True
+    t_lower = t.lower()
+
+    # Years or year ranges: '2025', '2024 - 2028', '2022'
+    if re.match(r"^\d{4}(?:\s*[-–]\s*\d{4})?$", t):
+        return True
+
+    # Section headings
+    for p in IGNORED_HEADING_PATTERNS:
+        if re.match(p, t_lower):
+            return True
+
+    # Institutions
+    if any(inst in t_lower for inst in ["university", "college", "school", "institute", "vel tech"]):
+        return True
+
+    # Degrees & course headers
+    if any(t_lower.startswith(prefix) for prefix in [
+        "bachelor", "master", "b.tech", "m.tech", "b.s", "m.s", "ph.d",
+        "hsc", "sslc", "cgpa", "percentage", "relevant courses"
+    ]):
+        return True
+
+    # Common resume bullet fragments or descriptive sentences (length > 30 with verbs/prepositions)
+    if len(t.split()) >= 4 and any(w in t_lower for w in ["developed", "created", "designed", "explored", "techniques", "project", "composition"]):
+        return True
+
+    # Generic labels
+    if t_lower in {"professional", "basics", "computer skills", "relevant courses"}:
+        return True
+
+    return False
+

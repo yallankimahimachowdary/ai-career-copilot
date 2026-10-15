@@ -353,6 +353,7 @@ async def test_coach_agent_gap_report_uses_fallback_when_no_gemini():
 async def test_coach_agent_question_bank_uses_fallback_when_no_gemini():
     agent = CoachAgent()
     agent.gemini_key = None
+    agent.ollama_base_url = None
     resume = _make_resume()
     job = _make_job()
     gap_report = await agent.generate_skill_gap_report(resume, job)
@@ -367,6 +368,7 @@ async def test_coach_agent_question_bank_uses_fallback_when_no_gemini():
 async def test_coach_agent_evaluate_answer_uses_fallback_when_no_gemini():
     agent = CoachAgent()
     agent.gemini_key = None
+    agent.ollama_base_url = None
     req = AnswerEvaluationRequest(
         question_text="Explain Python generators.",
         target_skill="Python",
@@ -386,6 +388,7 @@ async def test_coach_agent_evaluate_answer_uses_fallback_when_no_gemini():
 async def test_coach_agent_full_session():
     agent = CoachAgent()
     agent.gemini_key = None
+    agent.ollama_base_url = None
     resume = _make_resume()
     job = _make_job()
     qb_req = CoachQuestionBankRequest(resume_id="test-resume-id", job_id="test-job-id")

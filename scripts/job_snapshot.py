@@ -138,16 +138,15 @@ def run_matching_on_snapshot(
             cos_sim = min(0.95, 0.40 + 0.05 * shared)
             cos_dist = 1.0 - cos_sim
 
-        features, skills_breakdown = FeatureExtractor.extract_features(
-            parsed_resume=resume_parsed_data,
-            job_title=title,
-            job_description=desc,
-            job_skills=skills,
-            semantic_distance=cos_dist,
+        final_score, composite_score, xgb_score, features, skills_breakdown, explanations = (
+            matcher_agent.score_job(
+                parsed_resume=resume_parsed_data,
+                job_title=title,
+                job_description=desc,
+                job_skills=skills,
+                semantic_distance=cos_dist,
+            )
         )
-
-        composite_score = CompositeScorer.calculate_score(features)
-        final_score, _ = matcher_agent.ml_explainer.predict_and_explain(features, skills_breakdown)
 
         scored_candidates.append({
             "job_id": str(job_id),
@@ -156,9 +155,10 @@ def run_matching_on_snapshot(
             "company": rec.get("company"),
             "final_score": round(final_score, 4),
             "composite_score": round(composite_score, 4),
+            "xgboost_score": round(xgb_score, 4),
             "matched_skills": skills_breakdown.matched_skills,
         })
 
-    # Sort descending by final_score, breaking ties deterministically by job_id
-    scored_candidates.sort(key=lambda x: (x["final_score"], x["composite_score"], x["job_id"]), reverse=True)
+    # Sort descending by final_score, breaking ties deterministically by composite_score and job_id
+    scored_candidates.sort(key=lambda x: (x["final_score"], x["composite_score"], str(x["job_id"])), reverse=True)
     return scored_candidates[:top_k]
