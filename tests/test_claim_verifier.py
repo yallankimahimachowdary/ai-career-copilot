@@ -189,3 +189,91 @@ def test_claim_verifier_verify_all_aggregation(verifier):
     assert verifications[0].faithfulness_score == 1.0
     assert verifications[1].faithfulness_score < 1.0
     assert 0.0 < mean_score < 1.0
+
+
+def test_claim_verifier_seniority_entry_level_check(verifier):
+    """Verify entry-level seniority check in verify_explanation."""
+    resume = {
+        "skills": ["Python", "SQL"],
+        "summary": "Recent graduate with Python skills.",
+    }
+
+    # 1. Valid entry-level claim: Reason claims entry-level and job title is Engineer I
+    valid_job = {
+        "title": "Engineer I",
+        "description": "Python junior engineering role.",
+        "skills": ["Python", "SQL"],
+    }
+    exp_valid = {
+        "job_id": "j_entry_valid",
+        "rank": 1,
+        "matched_skills": ["Python"],
+        "missing_skills": [],
+        "reason": "Strong match for an entry-level junior role with Python background.",
+    }
+    res_valid = verifier.verify_explanation(exp_valid, resume, valid_job)
+    assert res_valid.non_skill_claims["seniority_checked"] is True
+    assert res_valid.non_skill_claims["seniority_valid"] is True
+    assert res_valid.faithfulness_score == 1.0
+
+    # 2. Invalid entry-level claim: Reason claims entry-level, but job title is Internal Auditor (not entry)
+    invalid_job = {
+        "title": "Internal Auditor",
+        "description": "Financial and systems audit with Python.",
+        "skills": ["Python", "SQL"],
+    }
+    exp_invalid = {
+        "job_id": "j_entry_invalid",
+        "rank": 1,
+        "matched_skills": ["Python"],
+        "missing_skills": [],
+        "reason": "Well suited for this entry-level junior position with Python.",
+    }
+    res_invalid = verifier.verify_explanation(exp_invalid, resume, invalid_job)
+    assert res_invalid.non_skill_claims["seniority_checked"] is True
+    assert res_invalid.non_skill_claims["seniority_valid"] is False
+    assert res_invalid.faithfulness_score < 1.0
+
+
+def test_claim_verifier_seniority_senior_check(verifier):
+    """Verify senior-level seniority check in verify_explanation."""
+    resume = {
+        "skills": ["Python", "AWS"],
+        "summary": "Experienced engineer with Python and AWS.",
+    }
+
+    # 1. Valid senior claim: Reason claims senior and job title is Principal Engineer
+    valid_job = {
+        "title": "Principal Engineer",
+        "description": "Principal systems engineer with Python and AWS.",
+        "skills": ["Python", "AWS"],
+    }
+    exp_valid = {
+        "job_id": "j_sr_valid",
+        "rank": 1,
+        "matched_skills": ["Python", "AWS"],
+        "missing_skills": [],
+        "reason": "Strong fit for this senior engineering position with deep Python and AWS expertise.",
+    }
+    res_valid = verifier.verify_explanation(exp_valid, resume, valid_job)
+    assert res_valid.non_skill_claims["seniority_checked"] is True
+    assert res_valid.non_skill_claims["seniority_valid"] is True
+    assert res_valid.faithfulness_score == 1.0
+
+    # 2. Invalid senior claim: Reason claims senior, but job title is Misleading Analyst (not senior)
+    invalid_job = {
+        "title": "Misleading Analyst",
+        "description": "Data analyst with Python.",
+        "skills": ["Python"],
+    }
+    exp_invalid = {
+        "job_id": "j_sr_invalid",
+        "rank": 1,
+        "matched_skills": ["Python"],
+        "missing_skills": [],
+        "reason": "Excellent match for this senior leadership role.",
+    }
+    res_invalid = verifier.verify_explanation(exp_invalid, resume, invalid_job)
+    assert res_invalid.non_skill_claims["seniority_checked"] is True
+    assert res_invalid.non_skill_claims["seniority_valid"] is False
+    assert res_invalid.faithfulness_score < 1.0
