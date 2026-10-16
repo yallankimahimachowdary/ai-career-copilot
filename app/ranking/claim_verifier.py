@@ -12,6 +12,7 @@ from dataclasses import dataclass, field
 import re
 from typing import Any, Dict, List, Set, Tuple
 
+from app.core.seniority import classify_seniority, is_entry_level, is_senior
 from app.core.taxonomy import (
     COMMON_STOP_WORDS,
     LINKEDIN_CATEGORY_CODES,
@@ -113,15 +114,15 @@ class ClaimVerifier:
                     res["location_valid"] = (city in job_loc or city in cand_loc)
                     break
 
-        # Seniority check
-        job_title = (job.get("title") or "").lower()
-        if any(w in reason_lower for w in ["intern", "internship", "trainee", "fresher", "junior", "entry-level"]):
+        # Seniority check using app.core.seniority
+        job_title = job.get("title") or ""
+        reason_seniority = classify_seniority(reason)
+        if reason_seniority == "senior":
             res["seniority_checked"] = True
-            is_entry = any(w in job_title for w in ["intern", "trainee", "fresher", "junior", "entry", "associate", "i", "1"])
-            res["seniority_valid"] = is_entry
-        elif "senior" in reason_lower:
+            res["seniority_valid"] = is_senior(job_title)
+        elif reason_seniority == "entry" or "internship" in reason_lower:
             res["seniority_checked"] = True
-            res["seniority_valid"] = "senior" in job_title or "sr" in job_title or "lead" in job_title
+            res["seniority_valid"] = is_entry_level(job_title)
 
         return res
 
