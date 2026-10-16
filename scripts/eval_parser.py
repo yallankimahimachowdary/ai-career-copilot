@@ -12,6 +12,11 @@ from pathlib import Path
 from typing import Any, Dict, List, Set, Tuple
 
 import pypdf
+import sys
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from app.core.taxonomy import extract_canonical_skills
 from app.services.anonymizer import anonymize_resume
@@ -32,12 +37,16 @@ def compute_prf1(predicted: Set[str], gold: Set[str]) -> Tuple[float, float, flo
     return round(precision, 4), round(recall, 4), round(f1, 4)
 
 
-def evaluate_parser(gold_file_path: Path | str) -> Dict[str, Any]:
+def evaluate_parser(
+    gold_file_path: Path | str = "data/gold/gold_resumes_skills.json",
+    resumes_dir: Path | str = "uploads/resumes",
+) -> Dict[str, Any]:
     """Run parser evaluation on all entries defined in the gold JSON file."""
     gold_path = Path(gold_file_path)
     if not gold_path.exists():
         raise FileNotFoundError(f"Gold annotation file not found: {gold_path}")
 
+    resumes_path = Path(resumes_dir)
     with open(gold_path, "r", encoding="utf-8") as f:
         gold_data = json.load(f)
 
@@ -54,13 +63,12 @@ def evaluate_parser(gold_file_path: Path | str) -> Dict[str, Any]:
         target_path = Path(r_file)
 
         if not target_path.exists():
-            # Try looking inside uploads/resumes/
-            target_path = Path("uploads/resumes") / Path(r_file).name
+            target_path = resumes_path / Path(r_file).name
 
         if not target_path.exists():
             # Try globbing by stem prefix
             prefix = Path(r_file).name.split("_")[0]
-            matches = list(Path("uploads/resumes").glob(f"{prefix}*"))
+            matches = list(resumes_path.glob(f"{prefix}*"))
             if matches:
                 target_path = matches[0]
 
@@ -68,14 +76,14 @@ def evaluate_parser(gold_file_path: Path | str) -> Dict[str, Any]:
             print(f"[WARN] Resume file not found: {r_file}. Skipping.")
             continue
 
-        name_hint = "Mahima" if "Mahima" in target_path.name else ("Deepika" if "Deepika" in target_path.name else None)
+        name_hint = entry.get("candidate_name")
         try:
             reader = pypdf.PdfReader(target_path)
             raw = "\n".join([p.extract_text() or "" for p in reader.pages])
         except Exception:
             raw = ""
 
-        anon_text = anonymize_resume(raw, candidate_name=name_hint)
+        anon_text = anonymize_resume(raw, candidate_name=name_hint, strip_institutions=True)
         parsed = parser_agent._parse_with_rules(anon_text)
 
         # Normalize extracted skills canonically
@@ -122,9 +130,10 @@ def evaluate_parser(gold_file_path: Path | str) -> Dict[str, Any]:
 def main():
     parser = argparse.ArgumentParser(description="Evaluate Resume Parser against Gold File")
     parser.add_argument("--gold", type=str, default="data/gold/gold_resumes_skills.json", help="Path to gold JSON annotations")
+    parser.add_argument("--resumes", type=str, default="uploads/resumes", help="Path to resumes folder")
     args = parser.parse_args()
 
-    report = evaluate_parser(args.gold)
+    report = evaluate_parser(gold_file_path=args.gold, resumes_dir=args.resumes)
     print("\n================ Parser Evaluation Summary (Phase B8) ================")
     print(f"Overall Precision : {report['overall_precision']:.4f}")
     print(f"Overall Recall    : {report['overall_recall']:.4f}")

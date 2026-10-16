@@ -11,8 +11,13 @@ from datetime import datetime, timezone
 import glob
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 import pypdf
+import sys
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from app.ranking.baselines import BM25Ranker, SbertRanker, SkillOverlapRanker
 from app.ranking.hybrid import _min_max_normalize
@@ -21,8 +26,68 @@ from app.services.parser_agent import parser_agent
 from scripts.job_snapshot import load_snapshot
 
 
-def prepare_dev_resumes() -> List[Dict[str, Any]]:
-    """Load independent development resume profiles (held out from test evaluation to prevent leakage)."""
+def prepare_dev_resumes(
+    resumes_dir: Optional[str | Path] = None,
+    manifest_path: Optional[str | Path] = None,
+) -> List[Dict[str, Any]]:
+    """Load development resume profiles from manifest/folder if provided, or return held-out dev benchmarks."""
+    dev_resumes: List[Dict[str, Any]] = []
+
+    if manifest_path and Path(manifest_path).exists():
+        try:
+            with open(manifest_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                entries = data.get("resumes", [])
+                base_dir = Path(resumes_dir) if resumes_dir else Path("uploads/resumes")
+                for entry in entries:
+                    r_file = entry.get("resume_file", "")
+                    target_path = Path(r_file)
+                    if not target_path.exists():
+                        target_path = base_dir / target_path.name
+                    if not target_path.exists():
+                        prefix = Path(r_file).name.split("_")[0]
+                        matches = list(base_dir.glob(f"{prefix}*"))
+                        if matches:
+                            target_path = matches[0]
+
+                    if target_path.exists() and target_path.suffix.lower() == ".pdf":
+                        try:
+                            reader = pypdf.PdfReader(target_path)
+                            raw = "\n".join([p.extract_text() or "" for p in reader.pages])
+                            cand_name = entry.get("candidate_name")
+                            anon_text = anonymize_resume(raw, candidate_name=cand_name, strip_institutions=True)
+                            parsed = parser_agent._parse_with_rules(anon_text)
+                            dev_resumes.append({
+                                "candidate_name": cand_name or target_path.stem.split("_")[0],
+                                "skills": parsed.skills or entry.get("skills", []),
+                                "summary": parsed.summary or "",
+                                "experience": [e.model_dump() for e in parsed.experience],
+                            })
+                        except Exception:
+                            continue
+        except Exception as e:
+            print(f"[WARN] Error loading dev manifest: {e}")
+
+    elif resumes_dir and Path(resumes_dir).exists():
+        for fpath in sorted(list(Path(resumes_dir).glob("*.pdf"))):
+            try:
+                reader = pypdf.PdfReader(fpath)
+                raw = "\n".join([p.extract_text() or "" for p in reader.pages])
+                anon_text = anonymize_resume(raw, candidate_name=None, strip_institutions=True)
+                parsed = parser_agent._parse_with_rules(anon_text)
+                dev_resumes.append({
+                    "candidate_name": fpath.stem.split("_")[0],
+                    "skills": parsed.skills or [],
+                    "summary": parsed.summary or "",
+                    "experience": [e.model_dump() for e in parsed.experience],
+                })
+            except Exception:
+                continue
+
+    if dev_resumes:
+        return dev_resumes
+
+    # Default held-out independent development profiles
     return [
         {
             "candidate_name": "Dev_Backend_Engineer",
@@ -90,11 +155,16 @@ def evaluate_weights(
     return total_score / max(1, len(resumes))
 
 
-def tune_and_freeze(snapshot_path: str, freeze: bool = True) -> Dict[str, Any]:
+def tune_and_freeze(
+    snapshot_path: str,
+    resumes_dir: Optional[str] = None,
+    manifest_path: Optional[str] = None,
+    freeze: bool = True,
+) -> Dict[str, Any]:
     records, meta = load_snapshot(snapshot_path)
     # Dev split: first 150 jobs
     dev_pool = records[:150]
-    resumes = prepare_dev_resumes()
+    resumes = prepare_dev_resumes(resumes_dir=resumes_dir, manifest_path=manifest_path)
 
     bm25 = BM25Ranker()
     sbert = SbertRanker()
@@ -158,10 +228,17 @@ def tune_and_freeze(snapshot_path: str, freeze: bool = True) -> Dict[str, Any]:
 def main():
     parser = argparse.ArgumentParser(description="Tune Hybrid Weights on Dev Split and Freeze")
     parser.add_argument("--snapshot", type=str, default="data/snapshots/test_snap_1.json", help="Path to frozen snapshot")
+    parser.add_argument("--resumes", type=str, default=None, help="Path to dev resumes folder")
+    parser.add_argument("--manifest", type=str, default=None, help="Path to dev resumes manifest JSON")
     parser.add_argument("--no-freeze", action="store_true", help="Tune without overwriting config.json")
     args = parser.parse_args()
 
-    tune_and_freeze(args.snapshot, freeze=not args.no_freeze)
+    tune_and_freeze(
+        snapshot_path=args.snapshot,
+        resumes_dir=args.resumes,
+        manifest_path=args.manifest,
+        freeze=not args.no_freeze,
+    )
 
 
 if __name__ == "__main__":

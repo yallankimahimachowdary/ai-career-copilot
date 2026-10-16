@@ -84,8 +84,12 @@ class AdzunaIngestService:
         mock_response: Optional[List[Dict[str, Any]]] = None,
         save_to_live: bool = False,
     ) -> List[Dict[str, Any]]:
-        """Fetch, normalize, embed, and store Adzuna jobs. Mock ingests are labeled source='adzuna_mock' and write to live data only if save_to_live=True."""
+        """Fetch, normalize, embed, and store Adzuna jobs. Mock ingests are labeled source='adzuna_mock'; save_to_live is strictly disabled for mock data."""
         is_mock = not self.app_id or not self.app_key or mock_response is not None
+        if is_mock and save_to_live:
+            raise ValueError(
+                "save_to_live is strictly disabled for mock Adzuna data to prevent polluting live storage with mock records."
+            )
         source_label = "adzuna_mock" if is_mock else "adzuna_api"
         raw_items = await self.fetch_jobs(query=query, mock_response=mock_response)
         fetch_time = datetime.now(timezone.utc)
@@ -138,8 +142,8 @@ class AdzunaIngestService:
         if not normalized_records:
             return []
 
-        # Do not pollute live stores in mock mode unless explicitly instructed
-        if is_mock and not save_to_live:
+        # Do not pollute live stores in mock mode
+        if is_mock:
             logger.info("Adzuna mock ingest executed in isolated mode. Records labeled source='adzuna_mock' and not written to live stores.")
             return normalized_records
 

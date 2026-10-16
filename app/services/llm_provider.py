@@ -29,6 +29,12 @@ class LLMResponse:
         timestamp: str,
         requested_model: Optional[str] = None,
         answered_model: Optional[str] = None,
+        seed_requested: Optional[int] = None,
+        seed_sent: Optional[int] = None,
+        seed_applied: Optional[int] = None,
+        prompt_tokens: int = 0,
+        response_tokens: int = 0,
+        quantization: str = "n/a",
     ):
         self.raw_text = raw_text
         self.data = parsed_json
@@ -40,6 +46,12 @@ class LLMResponse:
         self.max_tokens = max_tokens
         self.latency_ms = latency_ms
         self.timestamp = timestamp
+        self.seed_requested = seed_requested
+        self.seed_sent = seed_sent if seed_sent is not None else seed_requested
+        self.seed_applied = seed_applied
+        self.prompt_tokens = prompt_tokens
+        self.response_tokens = response_tokens
+        self.quantization = quantization
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -47,8 +59,14 @@ class LLMResponse:
             "model": self.model,
             "requested_model": self.requested_model,
             "answered_model": self.answered_model,
+            "quantization": self.quantization,
             "temperature": self.temperature,
             "max_tokens": self.max_tokens,
+            "seed_requested": self.seed_requested,
+            "seed_sent": self.seed_sent,
+            "seed_applied": self.seed_applied,
+            "prompt_tokens": self.prompt_tokens,
+            "response_tokens": self.response_tokens,
             "latency_ms": self.latency_ms,
             "timestamp": self.timestamp,
             "data": self.data,
@@ -146,21 +164,26 @@ class OllamaProvider(BaseLLMProvider):
         prompt: str,
         temperature: float = 0.0,
         max_tokens: int = 500,
+        seed: Optional[int] = 42,
         keep_alive: str = "30m",
         timeout: float = 60.0,
         **kwargs: Any,
     ) -> LLMResponse:
         t0 = time.perf_counter()
         url = f"{self.base_url}/api/generate"
+        options: Dict[str, Any] = {
+            "temperature": temperature,
+            "num_predict": max_tokens,
+        }
+        if seed is not None:
+            options["seed"] = int(seed)
+
         payload = {
             "model": self.model,
             "prompt": prompt,
             "stream": False,
             "format": "json",
-            "options": {
-                "temperature": temperature,
-                "num_predict": max_tokens,
-            },
+            "options": options,
             "keep_alive": keep_alive,
         }
 
@@ -174,9 +197,17 @@ class OllamaProvider(BaseLLMProvider):
         ts = datetime.now(timezone.utc).isoformat()
         parsed = clean_and_parse_json(raw_text)
 
+        seed_requested = seed
+        seed_sent = seed if seed is not None else None
+        seed_applied = data.get("seed") or None
+        prompt_tokens = data.get("prompt_eval_count", 0)
+        response_tokens = data.get("eval_count", 0)
+        quantization = "Q4_K_M" if "llama" in self.model.lower() else "n/a"
+
         logger.info(
-            f"[LLM Call] provider=ollama model={self.model} temp={temperature} "
-            f"max_tokens={max_tokens} latency_ms={latency_ms} timestamp={ts}"
+            f"[LLM Call] provider=ollama model={self.model} seed_requested={seed_requested} seed_sent={seed_sent} seed_applied={seed_applied} "
+            f"prompt_tokens={prompt_tokens} response_tokens={response_tokens} quantization={quantization} "
+            f"temp={temperature} max_tokens={max_tokens} latency_ms={latency_ms} timestamp={ts}"
         )
 
         return LLMResponse(
@@ -188,6 +219,12 @@ class OllamaProvider(BaseLLMProvider):
             max_tokens=max_tokens,
             latency_ms=latency_ms,
             timestamp=ts,
+            seed_requested=seed_requested,
+            seed_sent=seed_sent,
+            seed_applied=seed_applied,
+            prompt_tokens=prompt_tokens,
+            response_tokens=response_tokens,
+            quantization=quantization,
         )
 
 
@@ -204,6 +241,7 @@ class GeminiProvider(BaseLLMProvider):
         prompt: str,
         temperature: float = 0.0,
         max_tokens: int = 500,
+        seed: Optional[int] = 42,
         timeout: float = 30.0,
         mock_response: Optional[Dict[str, Any]] = None,
         experiment_mode: bool = False,
@@ -216,6 +254,8 @@ class GeminiProvider(BaseLLMProvider):
         require_api_key: bool = kwargs.get("require_api_key", False) or experiment_mode
 
         # If in experiment mode, strictly prohibit mock fallback and require API key
+        if experiment_mode and mock_response is not None:
+            raise RuntimeError("Mock provider responses are strictly prohibited in experiment mode.")
         if experiment_mode and not self.api_key:
             raise RuntimeError(f"Experiment mode requires a valid GEMINI_API_KEY for model '{requested_model}'.")
 
@@ -233,8 +273,16 @@ class GeminiProvider(BaseLLMProvider):
             }
             raw_text = json.dumps(data)
             latency_ms = round((time.perf_counter() - t0) * 1000, 2)
+            seed_requested = seed
+            seed_sent = None
+            seed_applied = None
+            prompt_tokens = len(prompt.split())
+            response_tokens = len(raw_text.split())
+            quantization = "mock"
             logger.info(
                 f"[LLM Call] provider=gemini-mock requested_model={requested_model} answered_model={requested_model}-mock "
+                f"seed_requested={seed_requested} seed_sent={seed_sent} seed_applied={seed_applied} "
+                f"prompt_tokens={prompt_tokens} response_tokens={response_tokens} quantization={quantization} "
                 f"temp={temperature} max_tokens={max_tokens} latency_ms={latency_ms} timestamp={ts}"
             )
             return LLMResponse(
@@ -248,6 +296,12 @@ class GeminiProvider(BaseLLMProvider):
                 timestamp=ts,
                 requested_model=requested_model,
                 answered_model=f"{requested_model}-mock",
+                seed_requested=seed_requested,
+                seed_sent=seed_sent,
+                seed_applied=seed_applied,
+                prompt_tokens=prompt_tokens,
+                response_tokens=response_tokens,
+                quantization=quantization,
             )
 
         model_clean = self.model.removeprefix("models/")
@@ -256,13 +310,20 @@ class GeminiProvider(BaseLLMProvider):
             "x-goog-api-key": self.api_key,
             "Content-Type": "application/json",
         }
+        seed_requested = seed
+        seed_sent = int(seed) if seed is not None else None
+
+        gen_config: Dict[str, Any] = {
+            "response_mime_type": "application/json",
+            "temperature": temperature,
+            "maxOutputTokens": max_tokens,
+        }
+        if seed_sent is not None:
+            gen_config["seed"] = seed_sent
+
         payload = {
             "contents": [{"parts": [{"text": prompt}]}],
-            "generationConfig": {
-                "response_mime_type": "application/json",
-                "temperature": temperature,
-                "maxOutputTokens": max_tokens,
-            },
+            "generationConfig": gen_config,
         }
 
         # Client-side rate-limiting delay between calls to mitigate 429 quota exhaustion
@@ -317,6 +378,12 @@ class GeminiProvider(BaseLLMProvider):
         res_json = resp.json()
         raw_text = res_json["candidates"][0]["content"]["parts"][0]["text"]
         answered_model = res_json.get("modelVersion") or self.model
+        usage = res_json.get("usageMetadata", {})
+        prompt_tokens = usage.get("promptTokenCount", 0)
+        response_tokens = usage.get("candidatesTokenCount", 0)
+        # Honest provider metadata: check if remote API explicitly returned/verified seed
+        seed_applied = res_json.get("seed") or res_json.get("usageMetadata", {}).get("seed") or None
+        quantization = "cloud_fp16"
 
         # Pinned model enforcement in experiment mode (supports Google API canonical aliases)
         if experiment_mode and requested_model:
@@ -346,6 +413,8 @@ class GeminiProvider(BaseLLMProvider):
 
         logger.info(
             f"[LLM Call] provider=gemini requested_model={requested_model} answered_model={answered_model} "
+            f"seed_requested={seed_requested} seed_sent={seed_sent} seed_applied={seed_applied} "
+            f"prompt_tokens={prompt_tokens} response_tokens={response_tokens} quantization={quantization} "
             f"temp={temperature} max_tokens={max_tokens} latency_ms={latency_ms} timestamp={ts}"
         )
 
@@ -360,6 +429,12 @@ class GeminiProvider(BaseLLMProvider):
             timestamp=ts,
             requested_model=requested_model,
             answered_model=answered_model,
+            seed_requested=seed_requested,
+            seed_sent=seed_sent,
+            seed_applied=seed_applied,
+            prompt_tokens=prompt_tokens,
+            response_tokens=response_tokens,
+            quantization=quantization,
         )
 
 
