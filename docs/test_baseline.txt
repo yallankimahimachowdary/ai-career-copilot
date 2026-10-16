@@ -1,0 +1,35 @@
+================================================================================
+AI Career Copilot — Automated Test Suite Baseline
+================================================================================
+Recorded At (ISO 8601): 2026-10-16T13:32:10+05:30 (2026-10-16T08:02:10Z)
+Repository Branch: main
+Git HEAD Commit: 62097362075448c24edb2d090d75fa198c838ad2
+Python Version: 3.12.10 (AMD64)
+Pytest Version: 9.1.1
+Platform: Windows 10 (10.0.26300-SP0)
+Execution Command: venv\Scripts\pytest.exe tests -q
+
+Execution Summary:
+------------------
+Total Collected: 173
+Passed: 173
+Failed: 0
+Errors: 0
+Duration: 343.00s (05m 43s)
+Exit Code: 0
+
+Historical Breakdown & Provenance:
+----------------------------------
+- Historical Phase B Round 4 Verified Baseline: 166 passed
+  * Encompasses 21 test suites across endpoints, services, ranking baselines,
+    XGBoost/SHAP matching, claim verification, and parser evaluation.
+- Prompt P0 (Secret Hygiene) Suite: 7 passed
+  * Dedicated tests in tests/test_check_secrets.py covering repo scanner,
+    AIza... / AQ.Ab... / gsk_... patterns, .env token matching, and safe
+    experiment log metadata sanitization.
+- Current Total Baseline: 173 passed (166 + 7)
+
+Exact Pytest Final Summary Line:
+--------------------------------
+173 passed in 343.00s (0:05:43)
+================================================================================

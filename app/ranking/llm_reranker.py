@@ -255,6 +255,8 @@ class LLMReranker(BaseRanker):
         logger.error(f"LLM Reranker failed after {max_attempts} attempts: {last_error}.")
         metadata = {
             "provider": self.provider_name,
+            "requested_model": self.model_name,
+            "answered_model": self.model_name,
             "model": self.model_name,
             "prompt_version": self.prompt_version,
             "seed": self.seed,
@@ -262,7 +264,7 @@ class LLMReranker(BaseRanker):
             "attempts": max_attempts,
             "status": "failed",
             "error_type": type(last_error).__name__,
-            "error": str(last_error),
+            "error type": type(last_error).__name__,
             "hallucinated_ids_rejected": total_hallucinations,
             "repair_count": total_repairs,
             "fallback_used": False,

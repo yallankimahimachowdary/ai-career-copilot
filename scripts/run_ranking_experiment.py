@@ -21,6 +21,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import re
 import sys
 import time
 from typing import Any, Dict, List, Optional
@@ -46,6 +47,49 @@ def get_system_hardware_info() -> Dict[str, Any]:
         "cpu_count": os.cpu_count(),
         "python_version": platform.python_version(),
     }
+
+
+def sanitize_experiment_metadata(meta: Dict[str, Any]) -> Dict[str, Any]:
+    """Sanitize metadata to ensure no API keys or raw error URLs enter run logs.
+
+    Per Prompt P0 specifications:
+    Experiment run files must store only these provider-execution fields:
+      - requested_model
+      - answered_model
+      - status
+      - attempts
+      - error type
+    """
+    sanitized: Dict[str, Any] = {}
+
+    req_model = meta.get("requested_model") or meta.get("model") or "n/a"
+    ans_model = meta.get("answered_model") or meta.get("model") or "n/a"
+    status_val = meta.get("status", "completed")
+    attempts_val = meta.get("attempts", 1)
+    error_type_val = meta.get("error_type") or meta.get("error type")
+    if not error_type_val and meta.get("error"):
+        error_type_val = "APIError"
+
+    blocked_keys = {"error", "api_key", "key", "authorization", "auth", "token", "password", "secret", "headers"}
+    for k, v in meta.items():
+        if k in blocked_keys:
+            continue
+        if isinstance(v, str):
+            v = re.sub(r"key=([A-Za-z0-9-_.]+)", "key=[REDACTED_KEY]", v)
+            v = re.sub(r"\bAIza[0-9A-Za-z-_]{35}\b", "[REDACTED_KEY]", v)
+            v = re.sub(r"\bAQ\.Ab[0-9A-Za-z-_]+\b", "[REDACTED_KEY]", v)
+            v = re.sub(r"\bgsk_[0-9A-Za-z]{32,}\b", "[REDACTED_KEY]", v)
+        sanitized[k] = v
+
+    # Explicitly enforce provider execution fields
+    sanitized["requested_model"] = req_model
+    sanitized["answered_model"] = ans_model
+    sanitized["status"] = status_val
+    sanitized["attempts"] = attempts_val
+    sanitized["error_type"] = error_type_val
+    sanitized["error type"] = error_type_val
+
+    return sanitized
 
 
 def load_and_anonymize_resumes(resumes_dir: Path | str) -> List[Dict[str, Any]]:
@@ -158,8 +202,9 @@ def run_experiment(
 
             elapsed_ms = round((time.time() - t0) * 1000, 2)
 
+            sanitized_meta = sanitize_experiment_metadata(result.metadata)
             run_meta = {
-                **result.metadata,
+                **sanitized_meta,
                 "latency_total_ms": elapsed_ms,
                 "hardware": hardware_info,
                 "snapshot_sha256": snapshot_meta.get("sha256_hash"),

@@ -6,6 +6,8 @@ __pycache__/
 .Python
 env/
 venv/
+.venv/
+.venv*/
 ENV/
 env.bak/
 venv.bak/
@@ -28,7 +30,8 @@ htmlcov/
 postgres_data/
 redis_data/
 uploads/
-data/
+/data/
+backups/
 
 # IDE & OS
 .vscode/
@@ -43,4 +46,5 @@ Thumbs.db
 logs/
 *.log
 
+artifacts/experiments/
 artifacts/experiments/runs/

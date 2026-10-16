@@ -5,7 +5,6 @@ import { ResumeList } from "@/components/resume/ResumeList"
 import { ResumeProfileCard } from "@/components/resume/ResumeProfileCard"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { resumeApi } from "@/api/resumeApi"
-import { mockResumes } from "@/data/mockData"
 import { UploadCloud, FileText, CheckCircle2 } from "lucide-react"
 
 export function ResumePage({ activeResume, setActiveResume, isConnected }) {
@@ -27,14 +26,12 @@ export function ResumePage({ activeResume, setActiveResume, isConnected }) {
           setActiveResume(full)
         }
       } else {
-        // Fallback to mock if empty
-        setResumes(mockResumes)
-        if (!activeResume) setActiveResume(mockResumes[0])
+        // Real database returned 0 resumes
+        setResumes([])
       }
     } catch (err) {
-      console.warn("Backend resumes list failed, falling back to mock:", err.message)
-      setResumes(mockResumes)
-      if (!activeResume) setActiveResume(mockResumes[0])
+      console.warn("Backend resumes list failed:", err.message)
+      setResumes([])
     } finally {
       setIsLoadingList(false)
     }

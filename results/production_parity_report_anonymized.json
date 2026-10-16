@@ -1,6 +1,6 @@
 {
-  "Mahi": {
-    "candidate_name": "Mahi",
+  "Candidate_A": {
+    "candidate_name": "Candidate_A",
     "production_top10": [
       {
         "job_id": "68e42ec0-def0-4318-8c6b-163ebc8274e3",
@@ -288,8 +288,8 @@
       "fd028d6c-f822-4aa6-aeb9-b9b6ddd5f462"
     ]
   },
-  "Deepika": {
-    "candidate_name": "Deepika",
+  "Candidate_B": {
+    "candidate_name": "Candidate_B",
     "production_top10": [
       {
         "job_id": "f09a20b5-6822-4dae-a898-a15298b84aa0",

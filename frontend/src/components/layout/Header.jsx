@@ -33,6 +33,11 @@ export function Header({ activeResume, onSelectDemoResume, isConnected, onRefres
             <User className="h-3.5 w-3.5 text-[#7A2D4A] shrink-0" />
             <span className="text-[#5C5C7A] hidden md:inline">Active Profile:</span>
             <span className="text-[#3A3A52] font-semibold truncate max-w-[150px] sm:max-w-none">{displayName}</span>
+            {activeResume.isDemo && (
+              <span className="text-[10px] bg-amber-100 text-amber-800 border border-amber-300 px-1.5 py-0.5 rounded font-semibold uppercase tracking-wider">
+                Demo Profile
+              </span>
+            )}
             <span className="text-[10px] text-[#7A2D4A] bg-white border border-[#DDD6E7] px-1.5 py-0.5 rounded font-mono font-medium">
               {activeResume.skills_count || activeResume.parsed_data?.skills?.length || 0} skills
             </span>

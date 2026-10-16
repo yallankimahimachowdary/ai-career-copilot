@@ -68,6 +68,11 @@ export function ResumeProfileCard({ resume }) {
                 <Badge variant="primary" className="font-mono text-[11px] whitespace-nowrap shrink-0">
                   Parsed by Agent
                 </Badge>
+                {resume.isDemo && (
+                  <span className="text-[10px] bg-amber-100 text-amber-800 border border-amber-300 px-2 py-0.5 rounded font-bold uppercase tracking-wider shrink-0">
+                    Demo Data
+                  </span>
+                )}
               </div>
 
               {/* Contact Chips */}

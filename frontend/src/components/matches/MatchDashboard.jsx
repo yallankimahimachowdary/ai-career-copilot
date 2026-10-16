@@ -19,6 +19,7 @@ export function MatchDashboard({
   matches = [],
   isLoading,
   error,
+  isDemoMatches = false,
   activeResume,
   onRunMatch,
   onStartCoaching,
@@ -130,6 +131,17 @@ export function MatchDashboard({
           </div>
         </CardContent>
       </Card>
+
+      {/* Demo Data Notice */}
+      {isDemoMatches && !error && (
+        <div className="flex items-center gap-3 p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 shadow-xs">
+          <Sparkles className="h-4 w-4 shrink-0 text-amber-600" />
+          <div>
+            <span className="font-bold uppercase tracking-wider text-[10px] bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded mr-2">Demo Data</span>
+            <span>Displaying illustrative sample job opportunities and TreeSHAP feature attributions for demonstration.</span>
+          </div>
+        </div>
+      )}
 
       {/* Error Banner */}
       {error && (

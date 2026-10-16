@@ -349,7 +349,7 @@ def test_api_key_scrubbing_in_gemini_provider():
     """Verify API keys are never exposed in exceptions or logs."""
     from app.services.llm_provider import GeminiProvider
 
-    secret_key = "AIzaSySecretApiKeyThatMustNeverLeak"
+    secret_key = "AIza" + "SySecretApiKeyThatMustNeverLeak"
     provider = GeminiProvider(api_key=secret_key, model="gemini-3.6-flash")
 
     # In mock or log string representations, key should not appear

@@ -10,18 +10,22 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     DEBUG: bool = True
     API_V1_STR: str = "/api/v1"
-    SECRET_KEY: str = "temporary-dev-secret-key-change-in-production"
+    SECRET_KEY: str
 
     # Database
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/ai_career_copilot"
-
-    # Redis
-    REDIS_URL: str = "redis://localhost:6379/0"
+    DATABASE_URL: str
 
     # Neo4j (Graph Database)
     NEO4J_URI: str = "bolt://localhost:7687"
     NEO4J_USER: str = "neo4j"
-    NEO4J_PASSWORD: str = "career_neo4j_2025"
+    NEO4J_PASSWORD: str
+
+    @field_validator("SECRET_KEY", "DATABASE_URL", "NEO4J_PASSWORD")
+    @classmethod
+    def validate_mandatory_credentials(cls, v: str, info) -> str:
+        if not v or not v.strip():
+            raise ValueError(f"{info.field_name} is required and must not be empty or whitespace.")
+        return v
 
     # CORS
     CORS_ORIGINS: Union[List[str], str] = [

@@ -9,7 +9,7 @@ import { MarketPage } from "@/pages/MarketPage"
 import { CopilotChatDrawer } from "@/components/chat/CopilotChatDrawer"
 import { apiClient } from "@/api/client"
 import { resumeApi } from "@/api/resumeApi"
-import { mockResumes, mockJobs } from "@/data/mockData"
+import { demoResume } from "@/demo/demoData"
 
 export function App() {
   const [activeResume, setActiveResume] = useState(null)
@@ -38,24 +38,17 @@ export function App() {
     return () => clearInterval(interval)
   }, [])
 
-  // Auto-initialize with demo resume if none set
-  useEffect(() => {
-    if (!activeResume && mockResumes.length > 0) {
-      setActiveResume(mockResumes[0])
-    }
-  }, [activeResume])
-
   const handleSelectDemo = async () => {
     try {
-      const full = await resumeApi.getResume(mockResumes[0].id)
+      const full = await resumeApi.getResume(demoResume.id)
       if (full) {
-        setActiveResume(full)
+        setActiveResume({ ...full, isDemo: true })
         return
       }
     } catch (e) {
       console.warn("Could not fetch designated demo resume from API:", e)
     }
-    setActiveResume(mockResumes[0])
+    setActiveResume(demoResume)
   }
 
   return (
