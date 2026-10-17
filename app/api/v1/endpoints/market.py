@@ -3,8 +3,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import enforce_resume_ownership, get_current_user
 from app.db.session import get_db
 from app.models.resume import Resume
+from app.models.user import User
 from app.schemas.market import (
     DemandHeatmapRequest,
     DemandHeatmapResponse,
@@ -35,6 +37,7 @@ router = APIRouter()
 async def salary_insights(
     body: SalaryInsightsRequest,
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> SalaryInsightsResponse:
     return await market_agent.get_salary_insights(db, body)
 
@@ -52,6 +55,7 @@ async def salary_insights(
 async def trending_skills(
     body: SkillDemandRequest,
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> SkillDemandResponse:
     return await market_agent.get_trending_skills(db, body)
 
@@ -68,6 +72,7 @@ async def trending_skills(
 async def demand_heatmap(
     body: DemandHeatmapRequest,
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> DemandHeatmapResponse:
     return await market_agent.get_demand_heatmap(db, body)
 
@@ -84,6 +89,7 @@ async def demand_heatmap(
 async def role_overview(
     body: RoleOverviewRequest,
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> RoleOverviewResponse:
     return await market_agent.get_role_overview(db, body)
 
@@ -101,6 +107,7 @@ async def role_overview(
 async def resume_positioning(
     body: ResumePositioningRequest,
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> ResumePositioningResponse:
     resume = await db.get(Resume, body.resume_id)
     if not resume:
@@ -108,4 +115,6 @@ async def resume_positioning(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Resume {body.resume_id} not found.",
         )
+    enforce_resume_ownership(resume, current_user)
     return await market_agent.get_resume_positioning(db, resume)
+

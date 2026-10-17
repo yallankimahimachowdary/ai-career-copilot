@@ -4,7 +4,9 @@ import pytest
 from httpx import AsyncClient, ASGITransport
 from unittest.mock import AsyncMock, MagicMock, patch
 
+from app.api.deps import get_current_user
 from app.main import app
+from app.models.user import User
 from app.schemas.market import (
     DemandHeatmapResponse,
     LocationDemandItem,
@@ -17,6 +19,20 @@ from app.schemas.market import (
     SkillDemandResponse,
     WorkTypeBreakdown,
 )
+
+
+@pytest.fixture(autouse=True)
+def override_market_auth():
+    mock_user = User(
+        id="user-market",
+        email="market@example.com",
+        full_name="Market User",
+        is_active=True,
+        is_superuser=False,
+    )
+    app.dependency_overrides[get_current_user] = lambda: mock_user
+    yield mock_user
+    app.dependency_overrides.pop(get_current_user, None)
 
 
 # ---------------------------------------------------------------------------
@@ -111,6 +127,7 @@ def _mock_positioning_response():
 def _mock_resume():
     r = MagicMock()
     r.id = "res-test"
+    r.user_id = "user-market"
     r.candidate_name = "Jane Doe"
     r.parsed_data = {
         "contact_info": {"name": "Jane Doe"},

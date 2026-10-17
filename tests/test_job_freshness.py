@@ -498,12 +498,25 @@ def mock_job_api_db():
 
     session.execute = AsyncMock(side_effect=mock_execute)
 
+    from app.api.deps import get_current_user
+    from app.models.user import User
+
+    mock_user = User(
+        id="job-user-1",
+        email="jobuser@example.com",
+        full_name="Job User",
+        is_active=True,
+        is_superuser=False,
+    )
+
     async def _override_get_db():
         yield session
 
     app.dependency_overrides[get_db] = _override_get_db
+    app.dependency_overrides[get_current_user] = lambda: mock_user
     yield session, storage
     app.dependency_overrides.pop(get_db, None)
+    app.dependency_overrides.pop(get_current_user, None)
 
 
 @pytest.mark.asyncio
@@ -536,7 +549,7 @@ async def test_job_list_endpoint_freshness_filtering(async_client: AsyncClient, 
 
 
 @pytest.mark.asyncio
-async def test_refresh_status_endpoint(async_client: AsyncClient):
+async def test_refresh_status_endpoint(async_client: AsyncClient, mock_job_api_db):
     """Verify GET /api/v1/jobs/refresh/status returns running state."""
     res = await async_client.get("/api/v1/jobs/refresh/status")
     assert res.status_code == 200

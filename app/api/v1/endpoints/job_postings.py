@@ -4,9 +4,11 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import get_current_user
 from app.core.logging import logger
 from app.db.session import get_db
 from app.models.job_posting import JobPosting
+from app.models.user import User
 from app.schemas.job_posting import (
     JobPostingDetailResponse,
     JobPostingListResponse,
@@ -29,6 +31,7 @@ router = APIRouter()
 )
 async def get_job_stats(
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     result = await db.execute(select(func.count(JobPosting.id)))
     total_count = result.scalar() or 0
@@ -49,6 +52,7 @@ async def list_jobs(
     is_active: Optional[bool] = Query(None, description="Filter by active status (True/False)"),
     freshness: Optional[str] = Query(None, description="Filter by freshness status (fresh, stale, expired, inactive)"),
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> List[JobPostingListResponse]:
     stmt = select(JobPosting).order_by(JobPosting.created_at.desc())
 
@@ -95,6 +99,7 @@ async def list_jobs(
 async def get_job(
     job_id: str,
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> JobPostingDetailResponse:
     result = await db.execute(select(JobPosting).where(JobPosting.id == job_id))
     job = result.scalar_one_or_none()
@@ -141,6 +146,7 @@ async def get_job(
 async def delete_job(
     job_id: str,
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     result = await db.execute(select(JobPosting).where(JobPosting.id == job_id))
     job = result.scalar_one_or_none()
@@ -165,6 +171,7 @@ async def delete_job(
 async def search_similar_jobs(
     search_req: SemanticJobSearchRequest,
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> List[SimilarJobResponse]:
     # Compute query vector
     query_vector = await embedding_service.get_embedding(search_req.query)
@@ -225,6 +232,7 @@ async def search_similar_jobs(
 async def trigger_refresh(
     body: Optional[JobRefreshRequest] = None,
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> JobRefreshRunResponse:
     queries = body.queries if body else None
     sources = body.sources if body else None
@@ -264,7 +272,9 @@ async def trigger_refresh(
     summary="Get Job Refresh Status",
     description="Check whether a job refresh is actively executing and retrieve the last completed run.",
 )
-async def get_refresh_status() -> JobRefreshStatusResponse:
+async def get_refresh_status(
+    current_user: User = Depends(get_current_user),
+) -> JobRefreshStatusResponse:
     last_run = job_refresh_coordinator.get_last_run()
     last_run_resp = None
     if last_run:
@@ -283,3 +293,4 @@ async def get_refresh_status() -> JobRefreshStatusResponse:
         is_running=job_refresh_coordinator.is_running(),
         last_run=last_run_resp,
     )
+

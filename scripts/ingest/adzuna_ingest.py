@@ -34,35 +34,16 @@ class AdzunaIngestService:
         results_per_page: int = 10,
         mock_response: Optional[List[Dict[str, Any]]] = None,
     ) -> List[Dict[str, Any]]:
-        """Fetch jobs from Adzuna API, with automatic mock fallback when credentials are not present."""
-        if not self.app_id or not self.app_key or mock_response is not None:
-            logger.info("ADZUNA credentials not configured or mock requested. Using standardized mocked API response.")
-            return mock_response or [
-                {
-                    "id": "adzuna_mock_001",
-                    "title": f"Senior {query} - Distributed Cloud",
-                    "company": {"display_name": "Adzuna Cloud Partners India"},
-                    "location": {"display_name": "Bengaluru, Karnataka"},
-                    "description": f"Looking for a {query} skilled in Python, FastAPI, Docker, and Kubernetes. Hands-on experience required.",
-                    "created": datetime.now(timezone.utc).isoformat(),
-                    "redirect_url": "https://www.adzuna.in/jobs/details/adzuna_mock_001",
-                    "salary_min": 1200000.0,
-                    "salary_max": 2400000.0,
-                    "contract_time": "full_time",
-                },
-                {
-                    "id": "adzuna_mock_002",
-                    "title": f"Lead {query} - Biotechnology Informatics",
-                    "company": {"display_name": "GeneTech India Ltd"},
-                    "location": {"display_name": "Hyderabad, Telangana"},
-                    "description": f"Seeking a {query} with Bioinformatics, Python, PCR, NGS, and Clinical Data analysis expertise.",
-                    "created": datetime.now(timezone.utc).isoformat(),
-                    "redirect_url": "https://www.adzuna.in/jobs/details/adzuna_mock_002",
-                    "salary_min": 1000000.0,
-                    "salary_max": 1800000.0,
-                    "contract_time": "full_time",
-                },
-            ]
+        """Fetch jobs from Adzuna API, requiring explicit mock_response if credentials are not configured."""
+        if mock_response is not None:
+            logger.info("Explicit mock requested for Adzuna fetch. Using provided mocked API response.")
+            return mock_response
+
+        if not self.app_id or not self.app_key:
+            raise ValueError(
+                "ADZUNA credentials not configured (ADZUNA_APP_ID and ADZUNA_APP_KEY required). "
+                "Failing loud: live ingestion cannot proceed without valid credentials unless mock_response is explicitly passed."
+            )
 
         url = f"{self.base_url}/{page}"
         params = {
@@ -86,7 +67,12 @@ class AdzunaIngestService:
         save_to_live: bool = False,
     ) -> List[Dict[str, Any]]:
         """Fetch, normalize, embed, and store Adzuna jobs. Mock ingests are labeled source='adzuna_mock'; save_to_live is strictly disabled for mock data."""
-        is_mock = not self.app_id or not self.app_key or mock_response is not None
+        is_mock = mock_response is not None
+        if not is_mock and (not self.app_id or not self.app_key):
+            raise ValueError(
+                "ADZUNA credentials not configured (ADZUNA_APP_ID and ADZUNA_APP_KEY required). "
+                "Failing loud: live ingestion cannot proceed without valid credentials unless mock_response is explicitly passed."
+            )
         if is_mock and save_to_live:
             raise ValueError(
                 "save_to_live is strictly disabled for mock Adzuna data to prevent polluting live storage with mock records."

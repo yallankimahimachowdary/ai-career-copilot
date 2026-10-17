@@ -69,8 +69,8 @@ async def get_optional_current_user(
     token: Optional[str] = Depends(optional_oauth2),
 ) -> Optional[User]:
     """
-    Optional authentication dependency for endpoints that support both
-    guest operations and authenticated user scoping.
+    Deprecated: Private endpoints must use get_current_user.
+    Retained temporarily for backwards compatibility.
     """
     if not token:
         return None
@@ -111,19 +111,54 @@ def enforce_resume_ownership(
 ) -> None:
     """
     Verifies that the accessing user owns the target resume.
-    If the resume is tagged with a user_id, access is denied (HTTP 403 Forbidden)
-    to any different non-superuser user.
+    - If user is not authenticated: HTTP 401 Unauthorized
+    - If the resume has no owner (user_id is None / NULL legacy record):
+      access requires superuser status; non-superusers receive HTTP 403 Forbidden
+    - If the user is not the owner and not a superuser:
+      HTTP 403 Forbidden
     """
-    # If the resume has an assigned owner:
-    if resume.user_id:
-        if not current_user:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Authentication required to access this resume.",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-        if current_user.id != resume.user_id and not current_user.is_superuser:
+    if not current_user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required to access this resume.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    if resume.user_id is None:
+        if not current_user.is_superuser:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Forbidden: You do not have permission to access or modify this resume.",
+                detail="Forbidden: Access to unassigned legacy resume requires administrative privileges.",
             )
+        return
+
+    if current_user.id != resume.user_id and not current_user.is_superuser:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Forbidden: You do not have permission to access or modify this resume.",
+        )
+
+
+async def get_owned_resume(
+    resume_id: str,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> Resume:
+    """
+    Retrieves a resume by ID and verifies caller ownership or superuser status.
+    - Missing resume -> HTTP 404 Not Found
+    - Missing or invalid auth -> HTTP 401 Unauthorized (via get_current_user)
+    - Resume without owner (user_id is NULL) -> HTTP 403 Forbidden for non-superusers
+    - Non-owner -> HTTP 403 Forbidden
+    - Valid owner or superuser -> returns Resume instance
+    """
+    result = await db.execute(select(Resume).where(Resume.id == resume_id))
+    resume = result.scalar_one_or_none()
+    if not resume:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Resume with ID '{resume_id}' not found.",
+        )
+
+    enforce_resume_ownership(resume, current_user)
+    return resume

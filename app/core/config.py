@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "AI Career Copilot"
     VERSION: str = "0.1.0"
     ENVIRONMENT: str = "development"
-    DEBUG: bool = True
+    DEBUG: bool = False
     API_V1_STR: str = "/api/v1"
     SECRET_KEY: str
     ALGORITHM: str = "HS256"

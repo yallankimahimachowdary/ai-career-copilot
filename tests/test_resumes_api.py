@@ -2,9 +2,10 @@ import io
 from unittest.mock import AsyncMock, MagicMock
 import pytest
 from httpx import AsyncClient
-from app.db.session import get_db
+from app.api.deps import get_current_user, get_db
 from app.main import app
 from app.models.resume import Resume
+from app.models.user import User
 
 
 class MockResult:
@@ -26,8 +27,17 @@ def mock_db_session():
     """Fixture providing an in-memory mock database session."""
     session = AsyncMock()
     storage = {}
+    mock_user = User(
+        id="user-resume-test",
+        email="resumetest@example.com",
+        full_name="Resume Test User",
+        is_active=True,
+        is_superuser=False,
+    )
 
     def mock_add(instance):
+        if not getattr(instance, "user_id", None):
+            instance.user_id = mock_user.id
         storage[instance.id] = instance
 
     async def mock_commit():
@@ -40,22 +50,34 @@ def mock_db_session():
         storage.pop(instance.id, None)
 
     async def mock_execute(statement):
-        # Return all or filtered items based on storage
         items = list(storage.values())
+        stmt_str = str(statement).lower()
+        if "where" in stmt_str and ("resumes.id =" in stmt_str or "resume.id =" in stmt_str):
+            params = getattr(statement, "_params", {}) or {}
+            target_id = params.get("id_1") or params.get("resume_id")
+            if target_id is not None:
+                items = [r for r in items if r.id == target_id]
         return MockResult(items)
+
+    async def mock_get(model, ident):
+        return storage.get(ident)
 
     session.add = MagicMock(side_effect=mock_add)
     session.commit = AsyncMock(side_effect=mock_commit)
     session.refresh = AsyncMock(side_effect=mock_refresh)
     session.delete = AsyncMock(side_effect=mock_delete)
     session.execute = AsyncMock(side_effect=mock_execute)
+    session.get = AsyncMock(side_effect=mock_get)
 
     async def _override_get_db():
         yield session
 
     app.dependency_overrides[get_db] = _override_get_db
+    app.dependency_overrides[get_current_user] = lambda: mock_user
     yield session, storage
     app.dependency_overrides.pop(get_db, None)
+    app.dependency_overrides.pop(get_current_user, None)
+
 
 
 @pytest.mark.asyncio

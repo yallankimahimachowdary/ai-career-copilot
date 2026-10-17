@@ -7,7 +7,10 @@ API Routes for the Adaptive Query Intent Router and RAG Chat Assistant.
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import enforce_resume_ownership, get_current_user
 from app.db.session import get_db
+from app.models.resume import Resume
+from app.models.user import User
 from app.schemas.chat import (
     ChatQueryRequest,
     ChatQueryResponse,
@@ -31,7 +34,17 @@ router = APIRouter()
 async def process_chat_query(
     request: ChatQueryRequest,
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> ChatQueryResponse:
+    if request.resume_id:
+        res_obj = await db.get(Resume, request.resume_id)
+        if not res_obj:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Resume {request.resume_id} not found.",
+            )
+        enforce_resume_ownership(res_obj, current_user)
+
     try:
         return await router_service.route_and_execute(db=db, request=request)
     except Exception as exc:
@@ -49,6 +62,7 @@ async def process_chat_query(
 )
 async def classify_query_intent(
     request: ChatQueryRequest,
+    current_user: User = Depends(get_current_user),
 ) -> RouterDecision:
     try:
         return await router_service.classify_intent(query=request.query)
@@ -57,3 +71,4 @@ async def classify_query_intent(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Intent classification failed: {str(exc)}",
         )
+

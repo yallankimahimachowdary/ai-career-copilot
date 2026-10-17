@@ -8,6 +8,9 @@ from app.core.config import settings
 from app.db.session import get_db
 from app.main import app
 
+from app.api.deps import get_current_user
+from app.models.user import User
+
 class MockResult:
     def __init__(self, items):
         self._items = items
@@ -52,9 +55,15 @@ def mock_db_session():
     async def _override_get_db():
         yield session
 
+    test_user = User(id="test-user-id", email="test@example.com", is_active=True, is_superuser=True)
+    async def _override_get_current_user():
+        return test_user
+
     app.dependency_overrides[get_db] = _override_get_db
+    app.dependency_overrides[get_current_user] = _override_get_current_user
     yield session
     app.dependency_overrides.pop(get_db, None)
+    app.dependency_overrides.pop(get_current_user, None)
 
 @pytest.mark.asyncio
 async def test_list_jobs(async_client: AsyncClient, mock_db_session: AsyncSession):

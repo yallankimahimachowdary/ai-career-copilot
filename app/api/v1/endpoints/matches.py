@@ -2,8 +2,11 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import get_current_user, get_owned_resume
 from app.core.logging import logger
 from app.db.session import get_db
+from app.models.resume import Resume
+from app.models.user import User
 from app.schemas.matcher import (
     JobCandidatesMatchResponse,
     MatchCompareResponse,
@@ -27,10 +30,11 @@ async def match_jobs_for_resume(
     location: Optional[str] = Query(None, description="Optional location filter substring"),
     remote_only: bool = Query(False, description="Filter only remote-allowed positions"),
     db: AsyncSession = Depends(get_db),
+    resume: Resume = Depends(get_owned_resume),
 ) -> ResumeMatchResponse:
     try:
         return await matcher_agent.match_jobs_for_resume(
-            resume_id=resume_id,
+            resume_id=resume.id,
             db=db,
             limit=limit,
             min_score=min_score,
@@ -58,6 +62,7 @@ async def match_candidates_for_job(
     limit: int = Query(10, ge=1, le=50, description="Max matching candidates to return"),
     min_score: float = Query(0.0, ge=0.0, le=1.0, description="Minimum match threshold"),
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> JobCandidatesMatchResponse:
     try:
         return await matcher_agent.match_candidates_for_job(
@@ -86,10 +91,11 @@ async def compare_resume_and_job(
     resume_id: str,
     job_id: str,
     db: AsyncSession = Depends(get_db),
+    resume: Resume = Depends(get_owned_resume),
 ) -> MatchCompareResponse:
     try:
         return await matcher_agent.compare_resume_and_job(
-            resume_id=resume_id,
+            resume_id=resume.id,
             job_id=job_id,
             db=db,
         )
@@ -101,3 +107,4 @@ async def compare_resume_and_job(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Comparison failed: {str(e)}",
         )
+

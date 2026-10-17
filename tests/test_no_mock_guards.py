@@ -52,7 +52,7 @@ async def test_adzuna_save_to_live_disabled_when_credentials_missing(monkeypatch
     service = AdzunaIngestService()
     service.app_id = None
     service.app_key = None
-    with pytest.raises(ValueError, match="save_to_live is strictly disabled for mock Adzuna data"):
+    with pytest.raises(ValueError, match="ADZUNA credentials not configured"):
         await service.ingest_jobs(query="Software Engineer", save_to_live=True)
 
 

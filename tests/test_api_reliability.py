@@ -62,29 +62,47 @@ async def test_input_validation_empty_login_payload(async_client: AsyncClient):
     assert res.status_code == 422
 
 
+from app.api.deps import get_current_user
+from app.models.user import User
+
+
+@pytest.fixture
+def auth_override():
+    mock_user = User(
+        id="rel-user-1",
+        email="reliability@example.com",
+        full_name="Reliability User",
+        is_active=True,
+        is_superuser=False,
+    )
+    app.dependency_overrides[get_current_user] = lambda: mock_user
+    yield mock_user
+    app.dependency_overrides.pop(get_current_user, None)
+
+
 @pytest.mark.asyncio
-async def test_pagination_bounds_negative_skip(async_client: AsyncClient):
+async def test_pagination_bounds_negative_skip(async_client: AsyncClient, auth_override):
     """Verify that negative skip parameter is rejected with 422."""
     res = await async_client.get("/api/v1/resumes?skip=-5&limit=20")
     assert res.status_code == 422
 
 
 @pytest.mark.asyncio
-async def test_pagination_bounds_excessive_limit(async_client: AsyncClient):
+async def test_pagination_bounds_excessive_limit(async_client: AsyncClient, auth_override):
     """Verify that limit > 100 is rejected with 422."""
     res = await async_client.get("/api/v1/resumes?skip=0&limit=500")
     assert res.status_code == 422
 
 
 @pytest.mark.asyncio
-async def test_pagination_bounds_zero_limit(async_client: AsyncClient):
+async def test_pagination_bounds_zero_limit(async_client: AsyncClient, auth_override):
     """Verify that limit < 1 is rejected with 422."""
     res = await async_client.get("/api/v1/resumes?skip=0&limit=0")
     assert res.status_code == 422
 
 
 @pytest.mark.asyncio
-async def test_error_response_sanitization_masks_internals_in_production():
+async def test_error_response_sanitization_masks_internals_in_production(auth_override):
     """
     Verify that unhandled server errors do not leak stack traces, database internals,
     or secret tokens when running in production mode.
@@ -113,3 +131,4 @@ async def test_error_response_sanitization_masks_internals_in_production():
                 assert data.get("detail") == "An unexpected internal server error occurred."
     finally:
         app.dependency_overrides.pop(get_db, None)
+

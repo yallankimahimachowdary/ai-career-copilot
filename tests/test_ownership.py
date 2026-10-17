@@ -192,7 +192,7 @@ async def test_unauthenticated_access_to_private_resume_rejected(async_client: A
     """Unauthenticated guest accessing a user-owned resume is rejected with 401."""
     res = await async_client.get("/api/v1/resumes/resume-a-123")
     assert res.status_code == 401
-    assert "authentication required" in res.json()["detail"].lower()
+    assert "authenticat" in res.json()["detail"].lower()
 
 
 @pytest.mark.asyncio

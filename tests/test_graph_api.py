@@ -4,7 +4,10 @@ import pytest
 from httpx import AsyncClient, ASGITransport
 from unittest.mock import AsyncMock, patch
 
+from app.api.deps import get_current_user, get_db
 from app.main import app
+from app.models.resume import Resume
+from app.models.user import User
 from app.schemas.graph import (
     CareerPathwayResponse,
     CareerPathwaySkillItem,
@@ -14,6 +17,33 @@ from app.schemas.graph import (
     ReachableRoleItem,
     SkillBridgeResponse,
 )
+
+
+@pytest.fixture(autouse=True)
+def override_graph_deps():
+    mock_user = User(
+        id="user-graph",
+        email="graph@example.com",
+        full_name="Graph User",
+        is_active=True,
+        is_superuser=False,
+    )
+    mock_resume = Resume(
+        id="c-999",
+        user_id="user-graph",
+        candidate_name="Jane Doe",
+    )
+    mock_db = AsyncMock()
+    mock_db.get = AsyncMock(return_value=mock_resume)
+
+    async def _get_db():
+        yield mock_db
+
+    app.dependency_overrides[get_current_user] = lambda: mock_user
+    app.dependency_overrides[get_db] = _get_db
+    yield
+    app.dependency_overrides.pop(get_current_user, None)
+    app.dependency_overrides.pop(get_db, None)
 
 
 @pytest.mark.asyncio

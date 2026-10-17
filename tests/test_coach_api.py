@@ -4,7 +4,9 @@ import pytest
 from httpx import AsyncClient, ASGITransport
 from unittest.mock import AsyncMock, MagicMock, patch
 
+from app.api.deps import get_current_user
 from app.main import app
+from app.models.user import User
 from app.schemas.coach import (
     AnswerEvaluationResponse,
     FullCoachingSessionResponse,
@@ -15,6 +17,20 @@ from app.schemas.coach import (
 )
 
 
+@pytest.fixture(autouse=True)
+def override_coach_auth():
+    mock_user = User(
+        id="user-coach",
+        email="coach@example.com",
+        full_name="Coach User",
+        is_active=True,
+        is_superuser=False,
+    )
+    app.dependency_overrides[get_current_user] = lambda: mock_user
+    yield mock_user
+    app.dependency_overrides.pop(get_current_user, None)
+
+
 # ---------------------------------------------------------------------------
 # Shared mock fixtures
 # ---------------------------------------------------------------------------
@@ -22,6 +38,7 @@ from app.schemas.coach import (
 def _mock_resume():
     r = MagicMock()
     r.id = "res-abc"
+    r.user_id = "user-coach"
     r.candidate_name = "Jane Doe"
     r.parsed_data = {
         "contact_info": {"name": "Jane Doe"},

@@ -1,12 +1,13 @@
 """Coach Agent API endpoints - Sprint 5."""
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import enforce_resume_ownership, get_current_user
 from app.db.session import get_db
 from app.models.job_posting import JobPosting
 from app.models.resume import Resume
+from app.models.user import User
 from app.schemas.coach import (
     AnswerEvaluationRequest,
     AnswerEvaluationResponse,
@@ -22,31 +23,22 @@ router = APIRouter()
 
 
 async def _get_resume_and_job(
-    resume_id: str, job_id: str, db: AsyncSession
-):
-    """Fetch both Resume and JobPosting from the database, gracefully falling back for demo IDs."""
+    resume_id: str,
+    job_id: str,
+    db: AsyncSession,
+    current_user: User,
+) -> tuple[Resume, JobPosting]:
+    """Fetch both Resume and JobPosting from the database, verifying caller ownership."""
     resume = await db.get(Resume, resume_id)
-    if not resume and resume_id in ("46ca6338-3b1a-4bfc-96e1-5b2a661348e4", "demo-resume", "demo"):
-        fallback_res = (await db.execute(select(Resume).order_by(Resume.created_at.desc()).limit(1))).scalars().first()
-        if fallback_res:
-            resume = fallback_res
-
     if not resume:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Resume {resume_id} not found.",
         )
 
-    job = await db.get(JobPosting, job_id)
-    if not job and ("job-" in str(job_id) or "demo" in str(job_id)):
-        fallback_job = (await db.execute(
-            select(JobPosting).filter(JobPosting.title.ilike("%software%")).limit(1)
-        )).scalars().first()
-        if not fallback_job:
-            fallback_job = (await db.execute(select(JobPosting).limit(1))).scalars().first()
-        if fallback_job:
-            job = fallback_job
+    enforce_resume_ownership(resume, current_user)
 
+    job = await db.get(JobPosting, job_id)
     if not job:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -68,8 +60,9 @@ async def _get_resume_and_job(
 async def skill_gap(
     body: CoachSkillGapRequest,
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> SkillGapReport:
-    resume, job = await _get_resume_and_job(body.resume_id, body.job_id, db)
+    resume, job = await _get_resume_and_job(body.resume_id, body.job_id, db, current_user)
     return await coach_agent.generate_skill_gap_report(resume, job)
 
 
@@ -86,8 +79,9 @@ async def skill_gap(
 async def question_bank(
     body: CoachQuestionBankRequest,
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> QuestionBank:
-    resume, job = await _get_resume_and_job(body.resume_id, body.job_id, db)
+    resume, job = await _get_resume_and_job(body.resume_id, body.job_id, db, current_user)
     gap_report = await coach_agent.generate_skill_gap_report(resume, job)
     return await coach_agent.generate_question_bank(resume, job, gap_report, body)
 
@@ -103,6 +97,7 @@ async def question_bank(
 )
 async def evaluate_answer(
     body: AnswerEvaluationRequest,
+    current_user: User = Depends(get_current_user),
 ) -> AnswerEvaluationResponse:
     return await coach_agent.evaluate_candidate_answer(body)
 
@@ -120,10 +115,12 @@ async def evaluate_answer(
 async def full_session(
     body: CoachSkillGapRequest,
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> FullCoachingSessionResponse:
-    resume, job = await _get_resume_and_job(body.resume_id, body.job_id, db)
+    resume, job = await _get_resume_and_job(body.resume_id, body.job_id, db, current_user)
     qb_req = CoachQuestionBankRequest(
         resume_id=body.resume_id,
         job_id=body.job_id,
     )
     return await coach_agent.run_full_session(resume, job, qb_req)
+

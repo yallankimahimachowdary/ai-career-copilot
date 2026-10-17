@@ -644,7 +644,7 @@ async def test_student_e2e_journey_across_all_endpoints(e2e_mock_db, async_clien
     assert isinstance(res_list.json(), list)
 
     # 5. Check market freshness status
-    fresh_res = await async_client.get("/api/v1/jobs/refresh/status")
+    fresh_res = await async_client.get("/api/v1/jobs/refresh/status", headers=headers)
     assert fresh_res.status_code == 200
     fresh_data = fresh_res.json()
     assert "is_running" in fresh_data

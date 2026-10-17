@@ -4,8 +4,11 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import enforce_resume_ownership, get_current_user
 from app.core.logging import logger
 from app.db.session import get_db
+from app.models.resume import Resume
+from app.models.user import User
 from app.schemas.graph import (
     CareerPathwayResponse,
     GraphStatsResponse,
@@ -23,7 +26,9 @@ router = APIRouter()
     summary="Get Graph Database Metrics",
     description="Returns aggregate counts of nodes (Candidate, Skill, JobPosting, Company) and relationships (HAS_SKILL, REQUIRES, MATCHED_TO, POSTED_BY) currently in Neo4j.",
 )
-async def get_graph_stats() -> GraphStatsResponse:
+async def get_graph_stats(
+    current_user: User = Depends(get_current_user),
+) -> GraphStatsResponse:
     try:
         return await graph_service.get_graph_stats()
     except Exception as exc:
@@ -46,6 +51,7 @@ async def get_graph_stats() -> GraphStatsResponse:
 async def get_bridge_skills(
     from_role: str = Query(..., min_length=2, description="Source or current role title (e.g. 'Frontend Engineer')"),
     to_role: str = Query(..., min_length=2, description="Target or aspirational role title (e.g. 'Machine Learning Engineer')"),
+    current_user: User = Depends(get_current_user),
 ) -> SkillBridgeResponse:
     try:
         return await graph_service.find_bridge_skills(from_role=from_role, to_role=to_role)
@@ -68,7 +74,16 @@ async def get_bridge_skills(
 )
 async def get_career_pathway(
     candidate_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> CareerPathwayResponse:
+    resume = await db.get(Resume, candidate_id)
+    if not resume:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Resume with ID '{candidate_id}' not found.",
+        )
+    enforce_resume_ownership(resume, current_user)
     try:
         return await graph_service.find_candidate_career_pathway(candidate_id=candidate_id)
     except Exception as exc:
@@ -87,6 +102,7 @@ async def get_career_pathway(
 )
 async def sync_all_jobs(
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> GraphSyncResponse:
     try:
         synced_count = await graph_service.sync_all_existing_jobs(db=db)
@@ -103,3 +119,4 @@ async def sync_all_jobs(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Job synchronization failed: {str(exc)}",
         )
+

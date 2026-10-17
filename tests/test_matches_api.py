@@ -46,6 +46,7 @@ def mock_matcher_db():
 
     sample_resume = Resume(
         id="resume-uuid-1",
+        user_id="test-user-id",
         filename="alice_resume.pdf",
         file_path="uploads/resumes/alice_resume.pdf",
         file_type="pdf",
@@ -121,9 +122,18 @@ def mock_matcher_db():
     async def _override_get_db():
         yield session
 
+    from app.api.deps import get_current_user
+    from app.models.user import User
+
+    test_user = User(id="test-user-id", email="test@example.com", is_active=True, is_superuser=False)
+    async def _override_get_current_user():
+        return test_user
+
     app.dependency_overrides[get_db] = _override_get_db
+    app.dependency_overrides[get_current_user] = _override_get_current_user
     yield session
     app.dependency_overrides.pop(get_db, None)
+    app.dependency_overrides.pop(get_current_user, None)
 
 
 @pytest.mark.asyncio
