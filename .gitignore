@@ -49,3 +49,7 @@ logs/
 
 artifacts/experiments/
 artifacts/experiments/runs/
+artifacts/evaluation/
+artifacts/*.json
+frontend/dist/
+dist/

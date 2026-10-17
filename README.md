@@ -104,79 +104,138 @@ To maintain scientific integrity and transparent engineering standards, system c
 ## 🚀 Getting Started (Windows / PowerShell)
 
 ### Prerequisites
-- Python 3.11 or 3.12
-- Node.js 18+ and npm
-- Docker Desktop (for PostgreSQL + pgvector and Neo4j)
+- **Python**: 3.11 or 3.12 (64-bit)
+- **Node.js**: 18+ and npm
+- **Docker Desktop** *(Optional for tests/offline demo, Required for live PostgreSQL & Neo4j)*: For PostgreSQL 16 (with pgvector) and Neo4j 5 Community.
 
-### 1. Start Database Services (Docker Compose)
-Launch PostgreSQL (with pgvector) and Neo4j:
+> [!NOTE]
+> If Docker is unavailable, the application test suite executes fully via FastAPI `AsyncClient` and dependency injection overrides. For live multi-agent database persistence, launch Docker Desktop before running Step 1.
+
+---
+
+### Step-by-Step Setup Sequence
+
+#### 1. Create and Activate Virtual Environment
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+#### 2. Install Python Dependencies
+```powershell
+pip install -r requirements.txt
+```
+
+#### 3. Configure Environment Variables
+```powershell
+Copy-Item .env.example .env
+```
+Open `.env` and verify credentials:
+- `SECRET_KEY`: Cryptographically secure random secret (min 32 characters).
+- `DATABASE_URL`: `postgresql+asyncpg://postgres:postgres@localhost:5432/ai_career_copilot`
+- `NEO4J_PASSWORD`: Neo4j password (e.g. `career_neo4j_2025`).
+- `CORS_ORIGINS`: Includes `"http://localhost:3000"` and `"http://localhost:5173"`.
+
+#### 4. Start Infrastructure Services (Requires Docker)
 ```powershell
 docker compose up -d postgres neo4j
 ```
 
-### 2. Configure Environment Variables
-Copy the template configuration file:
+#### 5. Apply Database Migrations (Requires Database)
 ```powershell
-Copy-Item .env.example .env
-```
-Open `.env` and set the required mandatory credentials:
-- `SECRET_KEY`: A cryptographically secure random string (minimum 32 characters, e.g. generated via `openssl rand -hex 32`).
-- `DATABASE_URL`: Asynchronous PostgreSQL connection string (e.g. `postgresql+asyncpg://copilot_dev_user:your_password@localhost:5432/ai_career_copilot`).
-- `NEO4J_PASSWORD`: Strong password for Neo4j access (e.g. `your_neo4j_password`).
-
-> **Note:** The backend strictly enforces credential presence at startup and rejects missing or whitespace-only keys.
-
-### 3. Launch FastAPI Backend
-```powershell
-# Create and activate Python virtual environment
-python -m venv venv
-.\venv\Scripts\Activate.ps1
-
-# Install reproducible dependencies
-pip install -r requirements.txt
-
-# Run database schema migrations
 alembic upgrade head
-
-# Start FastAPI server with live reload
-uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
-- Interactive Swagger UI: [http://localhost:8000/docs](http://localhost:8000/docs)
-- Health Check: [http://localhost:8000/api/v1/health](http://localhost:8000/api/v1/health)
+*(Head revision is `5e9f2b3c4d5a`)*
 
-### 4. Launch React Frontend
+#### 6. Start FastAPI Backend
 ```powershell
-# Navigate to frontend directory
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+- Interactive API Docs: [http://localhost:8000/docs](http://localhost:8000/docs)
+- Public Health Check: [http://localhost:8000/health](http://localhost:8000/health)
+
+#### 7. Install Frontend Dependencies
+```powershell
 cd frontend
-
-# Install npm dependencies
 npm install
+```
 
-# Start development server
+#### 8. Start Frontend Web Dashboard
+```powershell
 npm run dev
 ```
-- Open browser at: [http://localhost:3000](http://localhost:3000)
-- The frontend connects to `http://localhost:8000` and automatically falls back to scrubbed offline demo data if the backend is not running.
+- Open browser at: [http://localhost:3000](http://localhost:3000) (or [http://localhost:5173](http://localhost:5173))
+- Includes automatic fallback to anonymized demo data if backend is offline.
 
 ---
 
-## 🧪 Testing & Verification
+### 🧪 Step 9 — Automated Testing Suites
 
-### Backend Automated Test Suite
-Run the full test suite using pytest:
+#### Backend Regression Suite
 ```powershell
-pytest tests/ -v
+# Run full regression suite (335+ tests)
+pytest -q
+
+# Run Phase 9 E2E integration verification
+pytest tests/test_phase9_e2e_integration.py -v
 ```
 
-### Frontend Production Build & Linting
-Verify frontend production build and code quality:
+#### Frontend Test Suite, Linting & Build
 ```powershell
 cd frontend
+# Run frontend unit tests (19 tests)
+npm test
+
+# Run Oxlint static analysis
 npm run lint
+
+# Build production bundle
 npm run build
 ```
 
 ---
 
+### 🔬 Step 10 — Evaluation & Benchmarking Scripts
+
+All ranking and evaluation experiments preserve frozen ranking weights (`BM25: 0.10, SBERT: 0.10, Overlap: 0.80`).
+
+#### 1. Query Intent Router Evaluation
+```powershell
+python scripts/eval_intent_router.py
+```
+*Evaluates 50 benchmark queries across 5 intent classes (job search, skill gap, resume feedback, career advice, interview prep).*
+
+#### 2. RAG Grounding & Coach Evaluation
+```powershell
+python scripts/eval_rag_grounding.py
+```
+*Evaluates context recall, context precision, factual consistency, and grounding pass rate.*
+
+#### 3. Fairness & Counterfactual Evaluation
+```powershell
+python scripts/evaluate_fairness_and_counterfactuals.py --seed 42 --repetitions 3
+```
+*Evaluates name-swap demographic invariance, counterfactual skill interventions, and ranking latency.*
+
+#### 4. Ranking Evaluation & Ablations
+```powershell
+python scripts/evaluate_ranking.py --snapshot data/snapshots/test_snap_1.json --max-jobs 20
+```
+*Evaluates candidate retrieval against gold judgments with explicit missing-data handling.*
+
+#### 5. Job Market Freshness CLI Refresh
+```powershell
+python -m app.services.job_refresh_coordinator
+```
+*Evaluates stale listing policies and coordinates resilient background market ingestion.*
+
+#### 6. Repository Secret Scan
+```powershell
+python scripts/check_secrets.py
+```
+*Scans repository files for uncommitted credentials, private keys, or API tokens.*
+
+---
+
 ## 📜 License
-Academic Research & Engineering Project — Vel Tech University (2024–2025).
+Academic Research & Engineering Project — Vel Tech University (2024–2026).
