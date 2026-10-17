@@ -10,6 +10,14 @@ from pydantic import BaseModel, Field
 
 
 class IntentType(str, Enum):
+    # Canonical Phase 4 intents
+    JOB_SEARCH = "JOB_SEARCH"
+    SKILL_GAP_ANALYSIS = "SKILL_GAP_ANALYSIS"
+    RESUME_FEEDBACK = "RESUME_FEEDBACK"
+    CAREER_ADVICE = "CAREER_ADVICE"
+    INTERVIEW_PREPARATION = "INTERVIEW_PREPARATION"
+
+    # Legacy strategy aliases (for backwards compatibility)
     JOB_SEARCH_AND_MATCH = "JOB_SEARCH_AND_MATCH"
     SKILL_PROGRESSION_AND_PATH = "SKILL_PROGRESSION_AND_PATH"
     INTERVIEW_COACHING = "INTERVIEW_COACHING"

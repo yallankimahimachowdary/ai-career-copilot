@@ -30,7 +30,8 @@ htmlcov/
 postgres_data/
 redis_data/
 uploads/
-/data/
+/data/*
+!/data/evaluation/
 backups/
 
 # IDE & OS

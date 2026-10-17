@@ -1,0 +1,192 @@
+{
+  "version": "1.0",
+  "name": "rag_coach_grounding_benchmark_v1",
+  "created_at": "2026-10-17T06:00:00Z",
+  "description": "Reproducible benchmark dataset for evaluating RAG context retrieval, source grounding, and reference answer fidelity in Career Copilot Coach.",
+  "metadata": {
+    "num_samples": 5,
+    "provenance": "curated_domain_expert_benchmark",
+    "verification_mode": "strict_grounding",
+    "automated_eval": true,
+    "human_review_required": false
+  },
+  "samples": [
+    {
+      "sample_id": "RAG-COACH-001",
+      "category": "skill_gap_analysis",
+      "query": "What skills do I need to transition from Junior Backend Developer to Senior Backend Engineer?",
+      "retrieved_context": [
+        {
+          "source_id": "job_reqs_senior_backend",
+          "source_type": "job_posting",
+          "content": "Senior Backend Engineer requirements: 5+ years experience, expert proficiency in Distributed Systems, System Design, Kubernetes, Redis, and high-concurrency architecture. Strong foundation in Python or Go."
+        },
+        {
+          "source_id": "resume_parsed_skills",
+          "source_type": "candidate_resume",
+          "content": "Candidate Skills: Python, FastAPI, Django, PostgreSQL, Git, Docker, REST APIs. 2 years professional experience."
+        }
+      ],
+      "reference_answer": "To transition to Senior Backend Engineer, your key skill gaps to bridge are Distributed Systems, large-scale System Design, Kubernetes orchestration, and Redis caching. You already have solid fundamentals in Python, FastAPI, and PostgreSQL, which provide a strong base.",
+      "required_key_facts": [
+        "Distributed Systems",
+        "System Design",
+        "Kubernetes",
+        "Redis",
+        "Python"
+      ],
+      "prohibited_hallucinations": [
+        "requires a PhD in Artificial Intelligence",
+        "must learn Swift and iOS development",
+        "minimum 15 years experience required"
+      ],
+      "human_evaluation": {
+        "status": "pending_review",
+        "rating": null,
+        "reviewer_id": null,
+        "reviewed_at": null,
+        "notes": null
+      }
+    },
+    {
+      "sample_id": "RAG-COACH-002",
+      "category": "market_compensation",
+      "query": "What is the expected compensation range for a Senior Data Scientist in Austin, TX?",
+      "retrieved_context": [
+        {
+          "source_id": "market_salaries_austin_ds",
+          "source_type": "market_data",
+          "content": "Market Compensation Report for Senior Data Scientist in Austin, TX: 25th Percentile: $130,000, Median (50th): $160,000, 75th Percentile: $190,000, 90th Percentile: $215,000 USD base salary. Active hiring demand index: 8.5/10."
+        }
+      ],
+      "reference_answer": "For a Senior Data Scientist in Austin, TX, the median base compensation is $160,000, with the middle 50% range spanning from $130,000 (25th percentile) to $190,000 (75th percentile), reaching up to $215,000 for top-tier percentiles.",
+      "required_key_facts": [
+        "$160,000",
+        "$130,000",
+        "$190,000",
+        "Austin, TX"
+      ],
+      "prohibited_hallucinations": [
+        "median salary is $280,000",
+        "location is San Francisco Bay Area",
+        "commission-only compensation"
+      ],
+      "human_evaluation": {
+        "status": "pending_review",
+        "rating": null,
+        "reviewer_id": null,
+        "reviewed_at": null,
+        "notes": null
+      }
+    },
+    {
+      "sample_id": "RAG-COACH-003",
+      "category": "behavioral_interview_prep",
+      "query": "How should I structure my answer when asked about optimizing database query performance?",
+      "retrieved_context": [
+        {
+          "source_id": "candidate_project_history",
+          "source_type": "candidate_resume",
+          "content": "Project: Analytics Pipeline Overhaul. Identified slow PostgreSQL reporting queries causing 4-second API latencies. Implemented compound B-tree indexing and a Redis caching layer, decreasing response time by 65% to 1.4 seconds."
+        },
+        {
+          "source_id": "coach_rubric_star",
+          "source_type": "coaching_rubric",
+          "content": "STAR Framework: Situation (context/problem), Task (your goal/responsibility), Action (specific technical actions taken), Result (quantified business impact)."
+        }
+      ],
+      "reference_answer": "Structure your answer using the STAR method: Situation (explain slow 4-second PostgreSQL queries on the analytics pipeline), Task (reduce latency for downstream API users), Action (implemented compound B-tree indexes and Redis caching), and Result (quantify the 65% reduction in latency to 1.4 seconds).",
+      "required_key_facts": [
+        "STAR",
+        "PostgreSQL",
+        "indexing",
+        "Redis caching",
+        "65%"
+      ],
+      "prohibited_hallucinations": [
+        "migrated all data to Cassandra NoSQL",
+        "rewrote the backend in Rust",
+        "fired the database administrator"
+      ],
+      "human_evaluation": {
+        "status": "pending_review",
+        "rating": null,
+        "reviewer_id": null,
+        "reviewed_at": null,
+        "notes": null
+      }
+    },
+    {
+      "sample_id": "RAG-COACH-004",
+      "category": "resume_feedback",
+      "query": "How can I improve my machine learning bullet points to stand out to hiring managers?",
+      "retrieved_context": [
+        {
+          "source_id": "candidate_ml_project",
+          "source_type": "candidate_resume",
+          "content": "Current bullet: 'Fine-tuned BERT model for text classification and improved inference latency with ONNX Runtime, achieving 92% F1 score and 40% latency reduction.'"
+        },
+        {
+          "source_id": "coach_bullet_best_practices",
+          "source_type": "coaching_rubric",
+          "content": "Effective engineering resume bullets follow the formula: Accomplished [X] as measured by [Y] by doing [Z]. Always lead with strong action verbs and quantify outcomes."
+        }
+      ],
+      "reference_answer": "Your bullet point already demonstrates strong impact by pairing technical action with quantified outcomes: achieved a 92% F1 score and a 40% latency reduction using BERT and ONNX Runtime. Keep emphasizing both the performance metric (92% F1) and operational efficiency (40% latency reduction).",
+      "required_key_facts": [
+        "92% F1",
+        "40%",
+        "BERT",
+        "ONNX Runtime"
+      ],
+      "prohibited_hallucinations": [
+        "must publish at least 3 NeurIPS papers",
+        "remove all mentions of Python and machine learning",
+        "guarantees an immediate VP of AI position"
+      ],
+      "human_evaluation": {
+        "status": "pending_review",
+        "rating": null,
+        "reviewer_id": null,
+        "reviewed_at": null,
+        "notes": null
+      }
+    },
+    {
+      "sample_id": "RAG-COACH-005",
+      "category": "job_fit_explanation",
+      "query": "Why is Stripe Cloud Infrastructure Engineer considered a top match for my profile?",
+      "retrieved_context": [
+        {
+          "source_id": "candidate_infrastructure_credentials",
+          "source_type": "candidate_resume",
+          "content": "AWS Certified Solutions Architect. 4 years managing production Kubernetes clusters, Terraform infrastructure-as-code, and Prometheus monitoring."
+        },
+        {
+          "source_id": "job_posting_stripe_infra",
+          "source_type": "job_posting",
+          "content": "Company: Stripe. Role: Cloud Infrastructure Engineer. Requirements: Kubernetes orchestration, Terraform IaC, AWS or GCP cloud administration, high availability systems."
+        }
+      ],
+      "reference_answer": "The Stripe Cloud Infrastructure Engineer role is a top match because your AWS Solutions Architect certification, 4 years of hands-on Kubernetes orchestration, and Terraform infrastructure-as-code experience directly align with Stripe's core infrastructure requirements.",
+      "required_key_facts": [
+        "Stripe",
+        "AWS",
+        "Kubernetes",
+        "Terraform"
+      ],
+      "prohibited_hallucinations": [
+        "matched because you have 10 years experience as Chief Architect at Stripe",
+        "requires extensive iOS Objective-C programming",
+        "unconditional hiring guarantee with no interview"
+      ],
+      "human_evaluation": {
+        "status": "pending_review",
+        "rating": null,
+        "reviewer_id": null,
+        "reviewed_at": null,
+        "notes": null
+      }
+    }
+  ]
+}

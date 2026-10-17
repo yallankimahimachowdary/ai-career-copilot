@@ -1,0 +1,268 @@
+{
+  "metadata": {
+    "dataset_name": "query_intent_benchmark",
+    "version": "1.0.0",
+    "description": "Gold benchmark dataset for query intent classification across 5 career copilot intents.",
+    "intents": [
+      "job_search",
+      "skill_gap_analysis",
+      "resume_feedback",
+      "career_advice",
+      "interview_preparation"
+    ],
+    "sample_count": 50,
+    "created_at": "2026-10-17T06:00:00Z"
+  },
+  "samples": [
+    {
+      "id": "js_001",
+      "query": "Find me remote Python backend developer jobs matching my profile.",
+      "ground_truth_intent": "job_search"
+    },
+    {
+      "id": "js_002",
+      "query": "Show open software engineer vacancies at Stripe or Databricks.",
+      "ground_truth_intent": "job_search"
+    },
+    {
+      "id": "js_003",
+      "query": "What machine learning jobs in San Francisco am I qualified for?",
+      "ground_truth_intent": "job_search"
+    },
+    {
+      "id": "js_004",
+      "query": "Search for junior DevOps engineer postings hiring in Austin, Texas.",
+      "ground_truth_intent": "job_search"
+    },
+    {
+      "id": "js_005",
+      "query": "Are there any entry-level frontend developer openings using React?",
+      "ground_truth_intent": "job_search"
+    },
+    {
+      "id": "js_006",
+      "query": "Recommend job openings that match my recent FastAPI and Docker projects.",
+      "ground_truth_intent": "job_search"
+    },
+    {
+      "id": "js_007",
+      "query": "List high-paying data science job listings in New York.",
+      "ground_truth_intent": "job_search"
+    },
+    {
+      "id": "js_008",
+      "query": "What backend engineer jobs can I apply for with my current resume?",
+      "ground_truth_intent": "job_search"
+    },
+    {
+      "id": "js_009",
+      "query": "Find hybrid full-stack developer opportunities near Seattle.",
+      "ground_truth_intent": "job_search"
+    },
+    {
+      "id": "js_010",
+      "query": "Which companies are actively hiring cloud infrastructure engineers?",
+      "ground_truth_intent": "job_search"
+    },
+    {
+      "id": "sg_001",
+      "query": "What are my critical skill gaps for the Senior Backend Engineer role?",
+      "ground_truth_intent": "skill_gap_analysis"
+    },
+    {
+      "id": "sg_002",
+      "query": "What skills do I need to learn to transition to a Machine Learning Engineer?",
+      "ground_truth_intent": "skill_gap_analysis"
+    },
+    {
+      "id": "sg_003",
+      "query": "Can you build a 4-week learning roadmap for mastering Kafka and Kubernetes?",
+      "ground_truth_intent": "skill_gap_analysis"
+    },
+    {
+      "id": "sg_004",
+      "query": "Which technologies am I missing from the Stripe job posting requirements?",
+      "ground_truth_intent": "skill_gap_analysis"
+    },
+    {
+      "id": "sg_005",
+      "query": "What prerequisites should I study before applying for cloud architect roles?",
+      "ground_truth_intent": "skill_gap_analysis"
+    },
+    {
+      "id": "sg_006",
+      "query": "Analyze the difference between my skills and the requirements for this posting.",
+      "ground_truth_intent": "skill_gap_analysis"
+    },
+    {
+      "id": "sg_007",
+      "query": "What curriculum or courses do you recommend to bridge my database knowledge gap?",
+      "ground_truth_intent": "skill_gap_analysis"
+    },
+    {
+      "id": "sg_008",
+      "query": "Which technical competencies should I prioritize to improve my match score?",
+      "ground_truth_intent": "skill_gap_analysis"
+    },
+    {
+      "id": "sg_009",
+      "query": "How can I acquire the missing microservices experience required for this position?",
+      "ground_truth_intent": "skill_gap_analysis"
+    },
+    {
+      "id": "sg_010",
+      "query": "Show me a step-by-step progression plan to reach senior distributed systems level.",
+      "ground_truth_intent": "skill_gap_analysis"
+    },
+    {
+      "id": "rf_001",
+      "query": "Can you review my resume and give me feedback on its layout and clarity?",
+      "ground_truth_intent": "resume_feedback"
+    },
+    {
+      "id": "rf_002",
+      "query": "How can I improve my resume bullet points to show quantifiable business impact?",
+      "ground_truth_intent": "resume_feedback"
+    },
+    {
+      "id": "rf_003",
+      "query": "Please critique my professional summary section and suggest improvements.",
+      "ground_truth_intent": "resume_feedback"
+    },
+    {
+      "id": "rf_004",
+      "query": "Is my resume well-optimized for ATS scanners?",
+      "ground_truth_intent": "resume_feedback"
+    },
+    {
+      "id": "rf_005",
+      "query": "Rewrite my work experience bullet points using strong action verbs.",
+      "ground_truth_intent": "resume_feedback"
+    },
+    {
+      "id": "rf_006",
+      "query": "What formatting errors or weaknesses do you see in my uploaded CV?",
+      "ground_truth_intent": "resume_feedback"
+    },
+    {
+      "id": "rf_007",
+      "query": "How can I highlight my leadership achievements better on my resume?",
+      "ground_truth_intent": "resume_feedback"
+    },
+    {
+      "id": "rf_008",
+      "query": "Check my resume contact information and project descriptions for completeness.",
+      "ground_truth_intent": "resume_feedback"
+    },
+    {
+      "id": "rf_009",
+      "query": "Are my technical skills organized effectively on my resume?",
+      "ground_truth_intent": "resume_feedback"
+    },
+    {
+      "id": "rf_010",
+      "query": "Provide a comprehensive audit of my resume strengths and areas of improvement.",
+      "ground_truth_intent": "resume_feedback"
+    },
+    {
+      "id": "ca_001",
+      "query": "What is the average salary for a Senior Software Engineer in San Francisco?",
+      "ground_truth_intent": "career_advice"
+    },
+    {
+      "id": "ca_002",
+      "query": "Should I pursue an Engineering Management path or a Principal Staff Engineer track?",
+      "ground_truth_intent": "career_advice"
+    },
+    {
+      "id": "ca_003",
+      "query": "What are the compensation percentiles for backend engineers with 5 years experience?",
+      "ground_truth_intent": "career_advice"
+    },
+    {
+      "id": "ca_004",
+      "query": "How can I transition from a QA Automation Engineer to a DevOps Engineer?",
+      "ground_truth_intent": "career_advice"
+    },
+    {
+      "id": "ca_005",
+      "query": "What are the fastest-growing tech hubs with high hiring demand right now?",
+      "ground_truth_intent": "career_advice"
+    },
+    {
+      "id": "ca_006",
+      "query": "Is learning Rust worth the investment for backend system development career growth?",
+      "ground_truth_intent": "career_advice"
+    },
+    {
+      "id": "ca_007",
+      "query": "How do market salaries compare between remote roles and on-site roles in New York?",
+      "ground_truth_intent": "career_advice"
+    },
+    {
+      "id": "ca_008",
+      "query": "What career strategy should I take to negotiate a higher base salary?",
+      "ground_truth_intent": "career_advice"
+    },
+    {
+      "id": "ca_009",
+      "query": "What are the long-term job market prospects for AI and LLM application engineers?",
+      "ground_truth_intent": "career_advice"
+    },
+    {
+      "id": "ca_010",
+      "query": "Should I join an early-stage startup or a large tech corporation at this stage of my career?",
+      "ground_truth_intent": "career_advice"
+    },
+    {
+      "id": "ip_001",
+      "query": "Can you ask me a senior backend technical interview question to practice?",
+      "ground_truth_intent": "interview_preparation"
+    },
+    {
+      "id": "ip_002",
+      "query": "How should I structure my STAR behavioral answer for resolving a team conflict?",
+      "ground_truth_intent": "interview_preparation"
+    },
+    {
+      "id": "ip_003",
+      "query": "Give me technical interview questions on Python asyncio and connection pools.",
+      "ground_truth_intent": "interview_preparation"
+    },
+    {
+      "id": "ip_004",
+      "query": "Conduct a mock interview for a distributed systems software engineer role.",
+      "ground_truth_intent": "interview_preparation"
+    },
+    {
+      "id": "ip_005",
+      "query": "How do I answer 'Tell me about a time you had a production outage'?",
+      "ground_truth_intent": "interview_preparation"
+    },
+    {
+      "id": "ip_006",
+      "query": "What are common system design interview questions asked at top tech companies?",
+      "ground_truth_intent": "interview_preparation"
+    },
+    {
+      "id": "ip_007",
+      "query": "Evaluate my sample answer using an interview grading rubric.",
+      "ground_truth_intent": "interview_preparation"
+    },
+    {
+      "id": "ip_008",
+      "query": "What behavioral questions test leadership and ownership according to Amazon principles?",
+      "ground_truth_intent": "interview_preparation"
+    },
+    {
+      "id": "ip_009",
+      "query": "Help me prepare for the live coding and algorithms interview round.",
+      "ground_truth_intent": "interview_preparation"
+    },
+    {
+      "id": "ip_010",
+      "query": "What questions should I ask the interviewer at the end of the hiring interview?",
+      "ground_truth_intent": "interview_preparation"
+    }
+  ]
+}

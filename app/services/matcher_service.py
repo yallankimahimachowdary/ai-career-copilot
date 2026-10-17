@@ -1221,3 +1221,4 @@ class MatcherAgent:
 
 
 matcher_agent = MatcherAgent()
+matcher_service = matcher_agent

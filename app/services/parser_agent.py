@@ -21,6 +21,26 @@ from app.core.taxonomy import (
 
 COMMON_SKILLS = list(CANONICAL_SKILL_PATTERNS.keys())
 
+_spacy_nlp = None
+_spacy_checked = False
+
+
+def get_spacy_ner():
+    """Lazily load spaCy NER model if available, returning None without error if missing."""
+    global _spacy_nlp, _spacy_checked
+    if _spacy_checked:
+        return _spacy_nlp
+    _spacy_checked = True
+    try:
+        import spacy
+        try:
+            _spacy_nlp = spacy.load("en_core_web_sm")
+        except Exception:
+            _spacy_nlp = None
+    except ImportError:
+        _spacy_nlp = None
+    return _spacy_nlp
+
 
 class ParserAgent:
     """Intelligent resume parser agent supporting LLM extraction with rule-based fallback."""
@@ -293,10 +313,37 @@ class ParserAgent:
         if intro_match:
             return intro_match.group(1).strip()
 
+        # Fallback: spaCy NER if available
+        spacy_ents = self._extract_spacy_entities(raw_text)
+        for ent_name in spacy_ents.get("PERSON", []):
+            ent_clean = re.sub(r"[^a-zA-Z\s\.]", " ", ent_name).strip()
+            words = ent_clean.split()
+            if 1 <= len(words) <= 4:
+                if not any(w.lower() in location_keywords or w.lower() in role_keywords for w in words):
+                    return " ".join(words)
+
         return None
 
+    def _extract_spacy_entities(self, text: str) -> dict:
+        """Extract named entities using spaCy if available; return empty dict if unavailable or missing."""
+        nlp = get_spacy_ner()
+        if not nlp:
+            return {"PERSON": [], "GPE": [], "ORG": []}
+        try:
+            doc = nlp(text[:10000])
+            entities = {"PERSON": [], "GPE": [], "ORG": []}
+            for ent in doc.ents:
+                if ent.label_ in entities:
+                    val = ent.text.strip()
+                    if val and val not in entities[ent.label_]:
+                        entities[ent.label_].append(val)
+            return entities
+        except Exception as e:
+            logger.debug(f"spaCy NER extraction failed: {e}")
+            return {"PERSON": [], "GPE": [], "ORG": []}
+
     def _extract_location(self, lines: List[str]) -> Optional[str]:
-        """Extract location if present in top contact lines."""
+        """Extract location if present in top contact lines, with spaCy fallback."""
         location_keywords = {
             "nadu", "tamil", "chennai", "bangalore", "bengaluru", "mumbai", "delhi", "hyderabad",
             "pune", "kolkata", "california", "texas", "york", "india", "usa", "remote", "san francisco",
@@ -311,6 +358,13 @@ class ParserAgent:
                 words = cleaned.split()
                 if 2 <= len(words) <= 6:
                     return cleaned
+
+        # Fallback: spaCy GPE entities
+        spacy_ents = self._extract_spacy_entities("\n".join(lines[:15]))
+        for loc in spacy_ents.get("GPE", []):
+            if loc and len(loc.split()) <= 4:
+                return loc
+
         return None
 
     def _parse_with_rules(self, raw_text: str) -> ParsedResume:
@@ -401,14 +455,14 @@ class ParserAgent:
         ]
 
         for i, line in enumerate(lines):
-            line_clean = line.strip(":# -")
+            line_clean = line.strip(" \t:#-=*~_#[]()|")
             line_lower = line_clean.lower()
 
             matched_section = None
             for sec, keywords in section_headers.items():
                 for kw in keywords:
                     if line_lower == kw or line_lower.startswith(f"{kw}:"):
-                        if line_clean.isupper() or line_clean.istitle() or line.endswith(":") or line.startswith("#"):
+                        if line_clean.isupper() or line_clean.istitle() or line.endswith(":") or line.startswith(("#", "=", "-", "*", "~")):
                             # Avoid false match on lowercase wrapped tokens
                             if i > 0 and not lines[i - 1].strip().endswith((".", ":", ";")) and line_lower in ("skills", "experience") and not line_clean.isupper():
                                 continue

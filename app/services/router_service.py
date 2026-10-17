@@ -80,11 +80,11 @@ class AdaptiveRouterService:
 
         raise ValueError(f"Could not extract valid JSON from response: {text_content[:200]}")
 
-    async def classify_intent(self, query: str) -> RouterDecision:
+    async def classify_intent(self, query: str, use_llm: bool = True) -> RouterDecision:
         """
         Classifies user query intent using LLM with deterministic heuristic fallback.
         """
-        if self.ollama_base_url and self.gemini_key is not None:
+        if use_llm and self.ollama_base_url and self.gemini_key is not None:
             try:
                 decision = await self._classify_with_ollama(query)
                 if decision:
@@ -101,18 +101,19 @@ class AdaptiveRouterService:
 
         prompt = f"""
 You are the Query Intent Router for an AI Career Copilot multi-agent system.
-Analyze the user's career query and classify it into EXACTLY ONE of the following 4 categories:
+Analyze the user's career query and classify it into EXACTLY ONE of the following 5 categories:
 
 1. JOB_SEARCH_AND_MATCH: The user is looking for job openings, matches, job recommendations, or asking if they qualify for specific roles.
 2. SKILL_PROGRESSION_AND_PATH: The user is asking about missing skills, learning roadmaps, prerequisites, courses, or how to bridge skill gaps.
 3. INTERVIEW_COACHING: The user is asking about interview preparation, technical questions, behavioral STAR questions, or mock answer practice.
-4. MACRO_MARKET_DYNAMICS: The user is asking about salaries, compensation percentiles, industry demand trends, hottest cities, or market overview.
+4. MACRO_MARKET_DYNAMICS: The user is asking about salaries, compensation percentiles, industry demand trends, career path advice, or market overview.
+5. RESUME_FEEDBACK: The user is asking to review, critique, audit, or improve their resume, bullet points, summary, or ATS compatibility.
 
 User Query: "{query}"
 
 Respond with ONLY a raw JSON object with this exact structure:
 {{
-  "intent": "JOB_SEARCH_AND_MATCH" | "SKILL_PROGRESSION_AND_PATH" | "INTERVIEW_COACHING" | "MACRO_MARKET_DYNAMICS",
+  "intent": "JOB_SEARCH_AND_MATCH" | "SKILL_PROGRESSION_AND_PATH" | "INTERVIEW_COACHING" | "MACRO_MARKET_DYNAMICS" | "RESUME_FEEDBACK",
   "confidence": 0.95,
   "strategy_selected": "Strategy description",
   "reasoning": "Clear 1-sentence justification"
@@ -171,12 +172,21 @@ Respond with ONLY a raw JSON object with this exact structure:
                     "SKILL_PROGRESSION_AND_PATH": IntentType.SKILL_PROGRESSION_AND_PATH,
                     "SKILL_PROGRESSION": IntentType.SKILL_PROGRESSION_AND_PATH,
                     "SKILL_PATH": IntentType.SKILL_PROGRESSION_AND_PATH,
+                    "SKILL_GAP_ANALYSIS": IntentType.SKILL_PROGRESSION_AND_PATH,
+                    "SKILL_GAP": IntentType.SKILL_PROGRESSION_AND_PATH,
                     "INTERVIEW_COACHING": IntentType.INTERVIEW_COACHING,
                     "INTERVIEW": IntentType.INTERVIEW_COACHING,
+                    "INTERVIEW_PREPARATION": IntentType.INTERVIEW_COACHING,
+                    "INTERVIEW_PREP": IntentType.INTERVIEW_COACHING,
                     "COACHING": IntentType.INTERVIEW_COACHING,
                     "MACRO_MARKET_DYNAMICS": IntentType.MACRO_MARKET_DYNAMICS,
                     "MARKET_DYNAMICS": IntentType.MACRO_MARKET_DYNAMICS,
                     "MARKET": IntentType.MACRO_MARKET_DYNAMICS,
+                    "CAREER_ADVICE": IntentType.MACRO_MARKET_DYNAMICS,
+                    "CAREER": IntentType.MACRO_MARKET_DYNAMICS,
+                    "RESUME_FEEDBACK": IntentType.RESUME_FEEDBACK,
+                    "RESUME": IntentType.RESUME_FEEDBACK,
+                    "FEEDBACK": IntentType.RESUME_FEEDBACK,
                 }
 
                 intent_val = intent_mapping.get(raw_intent)
@@ -210,30 +220,38 @@ Respond with ONLY a raw JSON object with this exact structure:
     def _classify_heuristic(self, query: str) -> RouterDecision:
         """
         High-precision rule-based classifier based on domain keywords and intent patterns.
+        Supports 5 canonical intents:
+          - Resume Feedback (RESUME_FEEDBACK)
+          - Interview Preparation (INTERVIEW_COACHING / INTERVIEW_PREPARATION)
+          - Skill-Gap Analysis (SKILL_PROGRESSION_AND_PATH / SKILL_GAP_ANALYSIS)
+          - Career Advice / Macro Market (MACRO_MARKET_DYNAMICS / CAREER_ADVICE)
+          - Job Search & Match (JOB_SEARCH_AND_MATCH / JOB_SEARCH)
         """
         q = query.lower()
 
-        # Strategy 4: Macro Market Dynamics
-        market_keywords = [
-            "salary", "salaries", "compensation", "pay", "earn", "rate", "percentile",
-            "market", "trending", "hiring", "demand", "average wage", "cost of living",
-            "cities", "locations", "hottest", "median"
+        # 1. Resume Feedback
+        resume_patterns = [
+            r"\b(review|critique|check|audit|format|formatting|rewrite|optimize|strengthen|highlight|organize|organized)\b.*\b(resume|cv|summary|bullets?)\b",
+            r"\b(resume|cv)\b.*\b(feedback|layout|clarity|weaknesses|errors|ats|scanners?|bullet|bullets?|tips|skills|strengths)\b",
+            r"\b(bullet\s*points?|ats\s*scanners?|ats\s*score|ats\s*optimized|resume\s*summary|resume\s*review|resume\s*feedback)\b",
+            r"\b(on\s*my\s*resume|in\s*my\s*resume|my\s*resume|my\s*cv)\b",
+            r"\b(quantifiable\s*business\s*impact|action\s*verbs)\b",
         ]
-        if any(re.search(r"\b" + re.escape(w) + r"\b", q) for w in market_keywords):
+        if any(re.search(p, q) for p in resume_patterns) and not re.search(r"\b(jobs?|vacanc|postings?|openings?)\b.*\b(matching|apply|for\s*me|near|in\s*[A-Z])\b", q):
             return RouterDecision(
-                intent=IntentType.MACRO_MARKET_DYNAMICS,
-                confidence=0.92,
-                strategy_selected="Strategy 4: Labor Market Dynamics & Compensation Aggregation",
-                reasoning="Detected compensation, salary band, or labor market trend keywords.",
+                intent=IntentType.RESUME_FEEDBACK,
+                confidence=0.94,
+                strategy_selected="Strategy 5: Resume Feedback & ATS Alignment Synthesis",
+                reasoning="Detected resume critique, bullet point refinement, or ATS optimization query.",
             )
 
-        # Strategy 3: Interview Coaching
-        interview_keywords = [
-            "interview", "mock", "question", "questions", "answer", "star", "behavioral",
-            "technical round", "coding round", "system design round", "practice", "prep",
-            "rubric", "eval", "evaluate", "sample answer"
+        # 2. Interview Preparation
+        interview_patterns = [
+            r"\b(interview|mock|star|rubric|behavioral|coding\s*round|technical\s*round|system\s*design\s*round|system\s*design\s*interview|live\s*coding|sample\s*answer)\b",
+            r"\b(ask\s*me\s*a|practice\s*answering|how\s*do\s*i\s*answer|questions?\s*to\s*ask\s*the\s*interviewer|interview\s*questions?)\b",
+            r"\b(behavioral\s*questions?|technical\s*interview\s*questions?|eval.*rubric)\b",
         ]
-        if any(re.search(r"\b" + re.escape(w) + r"\b", q) for w in interview_keywords):
+        if any(re.search(p, q) for p in interview_patterns):
             return RouterDecision(
                 intent=IntentType.INTERVIEW_COACHING,
                 confidence=0.94,
@@ -241,18 +259,47 @@ Respond with ONLY a raw JSON object with this exact structure:
                 reasoning="Detected interview preparation, technical/behavioral question keywords.",
             )
 
-        # Strategy 2: Skill Progression & Career Path
-        skill_keywords = [
-            "skill", "skills", "gap", "roadmap", "learn", "study", "prerequisite",
-            "progression", "transition", "course", "curriculum", "improve", "need to know",
-            "how to become", "guide", "missing"
+        # 3. Skill-Gap Analysis
+        skill_gap_patterns = [
+            r"\b(skill\s*gap|skill\s*gaps|gaps?|missing|roadmap|prerequisite|prerequisites|curriculum|bridge)\b",
+            r"\b(technologies\s*am\s*i\s*missing|what\s*skills\s*do\s*i\s*need|progression\s*plan|learning\s*roadmap)\b",
+            r"\b(difference\s*between\s*my\s*skills|prioritize\s*to\s*improve|acquire\s*the\s*missing)\b",
         ]
-        if any(re.search(r"\b" + re.escape(w) + r"\b", q) for w in skill_keywords):
+        if any(re.search(p, q) for p in skill_gap_patterns) and not re.search(r"\b(find|search|show\s*open|vacanc|listings?)\b", q):
             return RouterDecision(
                 intent=IntentType.SKILL_PROGRESSION_AND_PATH,
-                confidence=0.88,
+                confidence=0.90,
                 strategy_selected="Strategy 2: Skill-Gap Diagnostic & Learning Roadmap Synthesis",
                 reasoning="Detected skill gap diagnostic and learning roadmap inquiry.",
+            )
+
+        # 4. Job Search & Match
+        job_search_patterns = [
+            r"\b(jobs?|openings?|vacanc(?:y|ies)|postings?|listings?|opportunities|apply\s*for)\b",
+            r"\b(find.*jobs?|search.*postings?|recommend.*openings?|hiring.*engineers?|roles.*apply)\b",
+        ]
+        if any(re.search(p, q) for p in job_search_patterns) and not re.search(r"\b(salary|salaries|compensation|pay|rate|percentile|market|prospects|trends?|career)\b", q):
+            return RouterDecision(
+                intent=IntentType.JOB_SEARCH_AND_MATCH,
+                confidence=0.92,
+                strategy_selected="Strategy 1: Hybrid Vector Search & XGBoost Re-ranking",
+                reasoning="Classified as job opportunity discovery or qualification matching.",
+            )
+
+        # 5. Career Advice & Macro Market Dynamics
+        market_keywords = [
+            "salary", "salaries", "compensation", "pay", "earn", "rate", "percentile",
+            "market", "trending", "hiring", "demand", "average wage", "cost of living",
+            "cities", "locations", "hottest", "median", "career", "management path",
+            "staff engineer", "transition from", "switch from", "negotiate", "prospects",
+            "worth the investment", "startup or", "advice", "career strategy", "tech hubs"
+        ]
+        if any(re.search(r"\b" + re.escape(w) + r"\b", q) for w in market_keywords):
+            return RouterDecision(
+                intent=IntentType.MACRO_MARKET_DYNAMICS,
+                confidence=0.91,
+                strategy_selected="Strategy 4: Labor Market Dynamics & Career Advisory",
+                reasoning="Detected compensation, career path trajectory, or labor market trend keywords.",
             )
 
         # Default Strategy 1: Job Search & Match
@@ -271,13 +318,14 @@ Respond with ONLY a raw JSON object with this exact structure:
         self,
         db: AsyncSession,
         request: ChatQueryRequest,
+        use_llm: bool = True,
     ) -> ChatQueryResponse:
         """
         Classifies the query intent, routes to the corresponding autonomous agent,
         and synthesizes a grounded, explainable response.
         """
         # Step 1: Classify Intent
-        decision = await self.classify_intent(request.query)
+        decision = await self.classify_intent(request.query, use_llm=use_llm)
         logger.info(
             "Adaptive Intent Router classified query '%s' -> %s (conf: %.2f)",
             request.query[:50], decision.intent.value, decision.confidence
@@ -290,14 +338,89 @@ Respond with ONLY a raw JSON object with this exact structure:
             resume = res_query.scalar_one_or_none()
 
         # Step 3: Dispatch to Strategy
-        if decision.intent == IntentType.JOB_SEARCH_AND_MATCH:
+        if decision.intent in (IntentType.RESUME_FEEDBACK,):
+            return await self._execute_resume_feedback(db, request, decision, resume)
+        elif decision.intent in (IntentType.JOB_SEARCH_AND_MATCH, IntentType.JOB_SEARCH):
             return await self._execute_job_search(db, request, decision, resume)
-        elif decision.intent == IntentType.SKILL_PROGRESSION_AND_PATH:
+        elif decision.intent in (IntentType.SKILL_PROGRESSION_AND_PATH, IntentType.SKILL_GAP_ANALYSIS):
             return await self._execute_skill_progression(db, request, decision, resume)
-        elif decision.intent == IntentType.INTERVIEW_COACHING:
+        elif decision.intent in (IntentType.INTERVIEW_COACHING, IntentType.INTERVIEW_PREPARATION):
             return await self._execute_interview_coaching(db, request, decision, resume)
         else:
             return await self._execute_market_dynamics(db, request, decision, resume)
+
+    async def _execute_resume_feedback(
+        self,
+        db: AsyncSession,
+        request: ChatQueryRequest,
+        decision: RouterDecision,
+        resume: Optional[Resume] = None,
+    ) -> ChatQueryResponse:
+        """Synthesizes high-impact resume critique, ATS alignment, and bullet point enhancements."""
+        sources: List[Dict[str, Any]] = []
+        recommendations: List[str] = []
+
+        if resume and resume.parsed_data:
+            pd = resume.parsed_data
+            candidate_name = resume.candidate_name or pd.get("contact_info", {}).get("name") or "Candidate"
+            skills_count = len(pd.get("skills", []))
+            exp_count = len(pd.get("experience", []))
+            edu_count = len(pd.get("education", []))
+
+            sources.append({
+                "type": "resume_metadata",
+                "resume_id": str(resume.id),
+                "candidate_name": candidate_name,
+                "sections_analyzed": ["contact_info", "summary", "experience", "skills", "education"],
+                "total_skills_extracted": skills_count,
+                "total_experience_entries": exp_count,
+            })
+
+            recommendations.extend([
+                "Quantify bullet points with metrics (e.g., 'reduced latency by 35%', 'handled 50k RPS').",
+                "Ensure technical skills align directly with target job posting keywords for ATS ranking.",
+                "Structure experience using Action Verb + Context + Result (Google XYZ formula).",
+                "Keep resume formatting clean with standard fonts, avoiding complex tables or icons for ATS compatibility.",
+            ])
+
+            response_text = (
+                f"### Resume Review & Feedback for {candidate_name}\n\n"
+                f"**Overall Assessment:** Your resume contains **{skills_count} extracted canonical skills**, "
+                f"**{exp_count} experience roles**, and **{edu_count} education records**.\n\n"
+                f"**Key Feedback & ATS Optimizations:**\n"
+                f"1. **Impact & Metrics:** Strengthen descriptive bullets by framing accomplishments with quantifiable outcomes.\n"
+                f"2. **Skill Placement:** Organize technical competencies clearly into Languages, Frameworks, and Cloud/DevOps.\n"
+                f"3. **Summary Statement:** Ensure your summary clearly states your core engineering specialty and years of experience.\n"
+            )
+        else:
+            recommendations.extend([
+                "Use the XYZ formula: Accomplished [X], as measured by [Y], by doing [Z].",
+                "Incorporate industry-standard keywords from target job descriptions.",
+                "Keep formatting simple and single/double-column text for ATS parsing.",
+                "Upload your resume to receive personalized section-by-section analysis.",
+            ])
+            response_text = (
+                "### Resume Optimization Best Practices\n\n"
+                "To maximize interview callbacks and pass ATS filtering:\n"
+                "1. **Action Verbs & Impact:** Begin every bullet with a strong past-tense action verb (Architected, Engineered, Optimized).\n"
+                "2. **Quantifiable Results:** Include measurable outcomes (latencies, cost savings, user scale).\n"
+                "3. **Keyword Alignment:** Mirror the core technologies requested in your target job descriptions.\n"
+            )
+
+        followups = [
+            "How can I rewrite my most recent work experience bullet point?",
+            "What ATS score would my resume get for backend engineering roles?",
+            "Can you evaluate my technical skills section against job market demands?",
+        ]
+
+        return ChatQueryResponse(
+            query=request.query,
+            router_decision=decision,
+            response=response_text,
+            sources=sources,
+            actionable_recommendations=recommendations,
+            suggested_followups=followups,
+        )
 
     # ---------------------------------------------------------------------------
     # Strategy Implementations
