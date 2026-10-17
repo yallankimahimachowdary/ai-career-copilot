@@ -43,6 +43,22 @@ class RouterDecision(BaseModel):
         ...,
         description="Transparent justification of why this retrieval strategy was selected."
     )
+    backend: str = Field(
+        default="trained",
+        description="Classification backend used: trained, heuristic, or llm."
+    )
+    low_confidence: bool = Field(
+        default=False,
+        description="Whether model confidence fell below threshold tau."
+    )
+    fallback_used: bool = Field(
+        default=False,
+        description="Whether a heuristic fallback was used."
+    )
+    strategy: Optional[str] = Field(
+        default=None,
+        description="Canonical strategy description string."
+    )
 
 
 class ChatQueryRequest(BaseModel):

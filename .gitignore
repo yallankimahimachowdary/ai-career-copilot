@@ -33,6 +33,7 @@ redis_data/
 uploads/
 /data/*
 !/data/evaluation/
+!/data/router/
 backups/
 
 # IDE & OS

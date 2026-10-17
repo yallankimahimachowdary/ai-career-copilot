@@ -57,7 +57,7 @@ async def test_router_classification_market():
         "Which market locations have the highest median pay?",
     ]
     for q in queries:
-        decision = await router_service.classify_intent(q)
+        decision = await router_service.classify_intent(q, backend="heuristic")
         assert decision.intent == IntentType.MACRO_MARKET_DYNAMICS
         assert decision.confidence >= 0.80
 
@@ -71,7 +71,7 @@ async def test_router_classification_interview():
         "Give me technical interview questions on Python asyncio and connection pools.",
     ]
     for q in queries:
-        decision = await router_service.classify_intent(q)
+        decision = await router_service.classify_intent(q, backend="heuristic")
         assert decision.intent == IntentType.INTERVIEW_COACHING
         assert decision.confidence >= 0.80
 
@@ -85,7 +85,7 @@ async def test_router_classification_skill_progression():
         "What are my critical skill gaps for the Stripe Backend Engineer role?",
     ]
     for q in queries:
-        decision = await router_service.classify_intent(q)
+        decision = await router_service.classify_intent(q, backend="heuristic")
         assert decision.intent == IntentType.SKILL_PROGRESSION_AND_PATH
         assert decision.confidence >= 0.80
 
@@ -99,6 +99,6 @@ async def test_router_classification_job_search():
         "What roles do I qualify for right now?",
     ]
     for q in queries:
-        decision = await router_service.classify_intent(q)
+        decision = await router_service.classify_intent(q, backend="heuristic")
         assert decision.intent == IntentType.JOB_SEARCH_AND_MATCH
         assert decision.confidence >= 0.80

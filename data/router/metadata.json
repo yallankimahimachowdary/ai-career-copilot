@@ -1,0 +1,44 @@
+{
+  "dataset_name": "ai_career_copilot_intent_router",
+  "version": "1.0.0",
+  "description": "Multi-class user query intent dataset with locked held-out test split for AI Career Copilot router evaluation.",
+  "generation_method": "Authored by an AI assistant with synthetic diversification, student/fresher persona in India, hard case annotations, and historical v1 benchmark appended to train only.",
+  "seed": 42,
+  "total_samples": 600,
+  "hard_cases_count": 89,
+  "splits": {
+    "train": {
+      "count": 380,
+      "sha256": "33D15D9722857A1CCBAFE5475461398998C4359C08B87B491A554A5C918D036A",
+      "class_counts": {
+        "job_search": 76,
+        "skill_gap_analysis": 76,
+        "resume_feedback": 76,
+        "career_advice": 76,
+        "interview_preparation": 76
+      }
+    },
+    "dev": {
+      "count": 110,
+      "sha256": "D1034C967C57F252D9FED4DD794468592426AEEC55E818957770AE0F50A4F467",
+      "class_counts": {
+        "job_search": 22,
+        "skill_gap_analysis": 22,
+        "resume_feedback": 22,
+        "career_advice": 22,
+        "interview_preparation": 22
+      }
+    },
+    "test": {
+      "count": 110,
+      "sha256": "6340BB8A778BDC19A65A7E72EEF8F771AD7AE4AC7A0889912DC50BC679335AD4",
+      "class_counts": {
+        "job_search": 22,
+        "skill_gap_analysis": 22,
+        "resume_feedback": 22,
+        "career_advice": 22,
+        "interview_preparation": 22
+      }
+    }
+  }
+}

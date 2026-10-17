@@ -1,0 +1,92 @@
+{
+  "model_name": "intent_router_v1",
+  "model_type": "Tfidf_LogisticRegression",
+  "timestamp": "2026-10-17T15:50:27.234675+00:00",
+  "python_version": "3.12.10",
+  "sklearn_version": "1.9.1",
+  "model_file": "intent_router_v1.joblib",
+  "model_sha256": "9FB2A9031E1910DC321FA69E14F3A67A711080019CF03235C15E4BCDC55785FD",
+  "train_sha256": "33D15D9722857A1CCBAFE5475461398998C4359C08B87B491A554A5C918D036A",
+  "dev_sha256": "D1034C967C57F252D9FED4DD794468592426AEEC55E818957770AE0F50A4F467",
+  "train_dev_combined_sha256": "5434E07EA1FC976C9C7DD71DD1C6CDA80BC358F157E31EFCEC155350EDFAA0D7",
+  "classes": [
+    "career_advice",
+    "interview_preparation",
+    "job_search",
+    "resume_feedback",
+    "skill_gap_analysis"
+  ],
+  "hyperparameters": {
+    "C": 1.0,
+    "penalty": "l2",
+    "class_weight": "balanced",
+    "solver": "lbfgs",
+    "max_iter": 1000,
+    "feature_union": {
+      "word_ngram_range": [
+        1,
+        2
+      ],
+      "word_max_features": 5000,
+      "char_ngram_range": [
+        2,
+        5
+      ],
+      "char_max_features": 15000,
+      "sublinear_tf": true
+    }
+  },
+  "validation_metrics": {
+    "cv_n_splits": 5,
+    "best_cv_macro_f1": 0.8990150061647804,
+    "dev_accuracy": 0.9181818181818182,
+    "dev_macro_f1": 0.9172837431078079,
+    "tau": 0.33,
+    "coverage_at_tau": 0.9454545454545454,
+    "accuracy_at_tau": 0.9519230769230769
+  },
+  "grid_search_history": [
+    {
+      "C": 0.1,
+      "cv_macro_f1": 0.892003945325348,
+      "cv_std": 0.034613012955493384,
+      "dev_acc": 0.8909090909090909,
+      "dev_macro_f1": 0.8891272366139811
+    },
+    {
+      "C": 0.5,
+      "cv_macro_f1": 0.8930807041959957,
+      "cv_std": 0.03173191823861805,
+      "dev_acc": 0.9090909090909091,
+      "dev_macro_f1": 0.9079814175264126
+    },
+    {
+      "C": 1.0,
+      "cv_macro_f1": 0.8990150061647804,
+      "cv_std": 0.033337537602979944,
+      "dev_acc": 0.9181818181818182,
+      "dev_macro_f1": 0.9172837431078079
+    },
+    {
+      "C": 2.0,
+      "cv_macro_f1": 0.8966620649883097,
+      "cv_std": 0.03227416711598305,
+      "dev_acc": 0.9090909090909091,
+      "dev_macro_f1": 0.9077599335839983
+    },
+    {
+      "C": 5.0,
+      "cv_macro_f1": 0.8942407888228734,
+      "cv_std": 0.028681709768078212,
+      "dev_acc": 0.9090909090909091,
+      "dev_macro_f1": 0.9077599335839983
+    },
+    {
+      "C": 10.0,
+      "cv_macro_f1": 0.8942407888228734,
+      "cv_std": 0.028681709768078212,
+      "dev_acc": 0.9181818181818182,
+      "dev_macro_f1": 0.9172837431078079
+    }
+  ]
+}

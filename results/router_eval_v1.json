@@ -1,0 +1,3984 @@
+{
+  "evaluation_name": "Query Intent Router Evaluation",
+  "timestamp": "2026-10-17T16:23:13.102260+00:00",
+  "git_commit": "5ab2941691c34dcf286914d658a8ac9351b478ce",
+  "split": {
+    "name": "test",
+    "sha256": "6340BB8A778BDC19A65A7E72EEF8F771AD7AE4AC7A0889912DC50BC679335AD4",
+    "total_samples": 110,
+    "classes": [
+      "job_search",
+      "skill_gap_analysis",
+      "resume_feedback",
+      "career_advice",
+      "interview_preparation"
+    ],
+    "majority_baseline_accuracy": 0.2
+  },
+  "models": {
+    "trained": {
+      "backend": "trained",
+      "accuracy": 0.8909,
+      "macro_f1": 0.892,
+      "ci_95": [
+        0.8273,
+        0.9455
+      ],
+      "latency_ms_mean": 2.34,
+      "latency_ms_p95": 2.96,
+      "per_class": {
+        "job_search": {
+          "precision": 1.0,
+          "recall": 0.9091,
+          "f1_score": 0.9524,
+          "support": 22
+        },
+        "skill_gap_analysis": {
+          "precision": 0.9474,
+          "recall": 0.8182,
+          "f1_score": 0.878,
+          "support": 22
+        },
+        "resume_feedback": {
+          "precision": 0.8333,
+          "recall": 0.9091,
+          "f1_score": 0.8696,
+          "support": 22
+        },
+        "career_advice": {
+          "precision": 0.9091,
+          "recall": 0.9091,
+          "f1_score": 0.9091,
+          "support": 22
+        },
+        "interview_preparation": {
+          "precision": 0.8,
+          "recall": 0.9091,
+          "f1_score": 0.8511,
+          "support": 22
+        }
+      },
+      "confusion_matrix": {
+        "classes": [
+          "job_search",
+          "skill_gap_analysis",
+          "resume_feedback",
+          "career_advice",
+          "interview_preparation"
+        ],
+        "matrix": [
+          [
+            20,
+            1,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            18,
+            1,
+            1,
+            2
+          ],
+          [
+            0,
+            0,
+            20,
+            1,
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            20,
+            1
+          ],
+          [
+            0,
+            0,
+            2,
+            0,
+            20
+          ]
+        ]
+      },
+      "hard_cases": {
+        "count": 18,
+        "accuracy": 0.5,
+        "macro_f1": 0.489
+      },
+      "predictions": [
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "interview_preparation",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "skill_gap_analysis",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "interview_preparation",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "resume_feedback",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "career_advice",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "interview_preparation",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "resume_feedback",
+        "interview_preparation",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "career_advice",
+        "resume_feedback",
+        "career_advice",
+        "career_advice",
+        "career_advice",
+        "career_advice",
+        "resume_feedback",
+        "career_advice",
+        "career_advice",
+        "career_advice",
+        "career_advice",
+        "career_advice",
+        "career_advice",
+        "career_advice",
+        "career_advice",
+        "career_advice",
+        "career_advice",
+        "career_advice",
+        "interview_preparation",
+        "career_advice",
+        "career_advice",
+        "career_advice",
+        "career_advice",
+        "career_advice",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "resume_feedback",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "resume_feedback",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation"
+      ],
+      "per_item_results": [
+        {
+          "id": "jo_065",
+          "query": "Find embedded systems firmware engineer vacancies for electronics graduates.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.4643,
+          "secondary_intent": null,
+          "latency_ms": 32.59790000447538
+        },
+        {
+          "id": "jo_030",
+          "query": "Find digital marketing executive jobs for freshers in Jaipur.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.6525,
+          "secondary_intent": null,
+          "latency_ms": 1.9808000070042908
+        },
+        {
+          "id": "jo_028",
+          "query": "Search for supply chain analyst fresher vacancies in Kolkata.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.7506,
+          "secondary_intent": null,
+          "latency_ms": 2.202100004069507
+        },
+        {
+          "id": "jo_097",
+          "query": "Show open backend developer jobs where my Python and SQL skills make me a top candidate.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.5394,
+          "secondary_intent": "skill_gap_analysis",
+          "latency_ms": 2.194700005929917
+        },
+        {
+          "id": "jo_108",
+          "query": "Find remote React jobs where the interview process has only 2 rounds.",
+          "ground_truth": "job_search",
+          "predicted": "interview_preparation",
+          "is_correct": false,
+          "confidence": 0.3948,
+          "secondary_intent": "interview_preparation",
+          "latency_ms": 2.0296000002417713
+        },
+        {
+          "id": "jo_005",
+          "query": "I am looking for Java Spring Boot fresher jobs in Chennai.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.7925,
+          "secondary_intent": null,
+          "latency_ms": 1.6764000029070303
+        },
+        {
+          "id": "jo_055",
+          "query": "frontend developer jobs without experience",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.6513,
+          "secondary_intent": null,
+          "latency_ms": 1.851000008173287
+        },
+        {
+          "id": "jo_076",
+          "query": "Entry level game developer vacancies using Unity and C#.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.6993,
+          "secondary_intent": null,
+          "latency_ms": 1.6535000031581149
+        },
+        {
+          "id": "jo_012",
+          "query": "Are there remote data scientist jobs for college graduates?",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.4129,
+          "secondary_intent": null,
+          "latency_ms": 1.6526999970665202
+        },
+        {
+          "id": "jo_070",
+          "query": "Find junior UI UX designer jobs in creative agencies.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.8265,
+          "secondary_intent": null,
+          "latency_ms": 1.6204999992623925
+        },
+        {
+          "id": "jo_102",
+          "query": "Search for product analyst vacancies and compare the required skills against my background.",
+          "ground_truth": "job_search",
+          "predicted": "skill_gap_analysis",
+          "is_correct": false,
+          "confidence": 0.6283,
+          "secondary_intent": "skill_gap_analysis",
+          "latency_ms": 1.7722999909892678
+        },
+        {
+          "id": "jo_087",
+          "query": "Search for business intelligence developer jobs with Tableau.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.7287,
+          "secondary_intent": null,
+          "latency_ms": 1.8449999915901572
+        },
+        {
+          "id": "jo_014",
+          "query": "Search for Android developer openings using Kotlin in India.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.8276,
+          "secondary_intent": null,
+          "latency_ms": 1.9886999943992123
+        },
+        {
+          "id": "jo_107",
+          "query": "Find software trainee jobs in MNCs where my B.Tech percentage meets the cutoff.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.6227,
+          "secondary_intent": "career_advice",
+          "latency_ms": 2.063299994915724
+        },
+        {
+          "id": "jo_018",
+          "query": "Find AI research engineer openings for fresh B.Tech graduates.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.6611,
+          "secondary_intent": null,
+          "latency_ms": 1.7094000068027526
+        },
+        {
+          "id": "jo_029",
+          "query": "Financial analyst entry level openings at investment banks in Mumbai.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.7155,
+          "secondary_intent": null,
+          "latency_ms": 2.0566999883158132
+        },
+        {
+          "id": "jo_032",
+          "query": "Show junior accountant jobs in Bangalore requiring Tally and Excel.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.8447,
+          "secondary_intent": null,
+          "latency_ms": 2.136600000085309
+        },
+        {
+          "id": "jo_036",
+          "query": "Search for corporate sales trainee positions with incentives.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.5835,
+          "secondary_intent": null,
+          "latency_ms": 2.1179000032134354
+        },
+        {
+          "id": "jo_095",
+          "query": "Find software engineer openings matching my profile and tell me which ones pay the highest stipend.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.4808,
+          "secondary_intent": "career_advice",
+          "latency_ms": 1.8603000062284991
+        },
+        {
+          "id": "jo_004",
+          "query": "List open full stack developer positions for 2024 graduates.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.463,
+          "secondary_intent": null,
+          "latency_ms": 1.8982000037794933
+        },
+        {
+          "id": "jo_015",
+          "query": "Find Flutter developer internships with stipend.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.6641,
+          "secondary_intent": null,
+          "latency_ms": 1.9105000101262704
+        },
+        {
+          "id": "jo_082",
+          "query": "Show network engineer trainee jobs at telecom providers.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.6832,
+          "secondary_intent": null,
+          "latency_ms": 1.9934000010835007
+        },
+        {
+          "id": "sk_052",
+          "query": "I know basic HTML, CSS, and JavaScript, but every frontend job asks for TypeScript, Redux, and Tailwind. How big is my skill gap and what should I prioritize first?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.3857,
+          "secondary_intent": null,
+          "latency_ms": 2.20320001244545
+        },
+        {
+          "id": "sk_108",
+          "query": "What machine learning libraries am I missing to apply for NLP research assistant positions?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.5654,
+          "secondary_intent": null,
+          "latency_ms": 1.9924999942304567
+        },
+        {
+          "id": "sk_055",
+          "query": "What database indexing and performance tuning skills am I missing for senior backend roles?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.794,
+          "secondary_intent": null,
+          "latency_ms": 1.8939000001410022
+        },
+        {
+          "id": "sk_075",
+          "query": "Compare my knowledge of Git workflows with what is required for team collaboration in startups.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.4743,
+          "secondary_intent": null,
+          "latency_ms": 1.8248000124003738
+        },
+        {
+          "id": "sk_099",
+          "query": "What additional frameworks do I need to master to transition from React to full stack development?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.4809,
+          "secondary_intent": null,
+          "latency_ms": 1.7939999961527064
+        },
+        {
+          "id": "sk_069",
+          "query": "Identify missing technologies between my Node.js profile and a full stack requirement.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.7655,
+          "secondary_intent": null,
+          "latency_ms": 1.7395000031683594
+        },
+        {
+          "id": "sk_072",
+          "query": "What algorithms and data structures proficiency is expected for this role that I lack?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.6131,
+          "secondary_intent": null,
+          "latency_ms": 1.9699999975273386
+        },
+        {
+          "id": "sk_096",
+          "query": "Analyze my skill deficiency for this automation tester posting and give me sample interview questions for Selenium with Python.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "interview_preparation",
+          "is_correct": false,
+          "confidence": 0.4748,
+          "secondary_intent": "interview_preparation",
+          "latency_ms": 2.2923999931663275
+        },
+        {
+          "id": "sk_032",
+          "query": "What accounting standards and tools am I missing for an Audit Associate vacancy?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.6831,
+          "secondary_intent": null,
+          "latency_ms": 2.0772999996552244
+        },
+        {
+          "id": "sk_018",
+          "query": "Am I missing any mandatory skills for this junior blockchain developer posting?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.8189,
+          "secondary_intent": null,
+          "latency_ms": 1.7668000073172152
+        },
+        {
+          "id": "sk_034",
+          "query": "Check if my CAD and FEA experience matches this aerospace engineering opening.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.3088,
+          "secondary_intent": null,
+          "latency_ms": 2.352199997403659
+        },
+        {
+          "id": "sk_019",
+          "query": "Compare my resume technologies with current industry expectations for NLP engineers.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "resume_feedback",
+          "is_correct": false,
+          "confidence": 0.3111,
+          "secondary_intent": null,
+          "latency_ms": 1.880200012237765
+        },
+        {
+          "id": "sk_059",
+          "query": "What cloud architecture skills am I lacking for an enterprise cloud consultant job?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.7081,
+          "secondary_intent": null,
+          "latency_ms": 1.785200001904741
+        },
+        {
+          "id": "sk_083",
+          "query": "What caching strategies like Redis are expected for this high throughput backend vacancy?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.4422,
+          "secondary_intent": null,
+          "latency_ms": 1.7156000103568658
+        },
+        {
+          "id": "sk_051",
+          "query": "Here is the job description for a Junior Machine Learning Engineer at an AI healthcare startup. Please compare my resume projects and list the specific frameworks and mathematical foundations I am missing.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.3969,
+          "secondary_intent": null,
+          "latency_ms": 2.143300007446669
+        },
+        {
+          "id": "sk_064",
+          "query": "What system administration commands should a junior DevOps engineer know that I don't have listed?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "career_advice",
+          "is_correct": false,
+          "confidence": 0.3579,
+          "secondary_intent": null,
+          "latency_ms": 1.892900007078424
+        },
+        {
+          "id": "sk_084",
+          "query": "Identify missing knowledge in my profile for an entry level ETL pipeline developer.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.6952,
+          "secondary_intent": null,
+          "latency_ms": 2.103599996189587
+        },
+        {
+          "id": "sk_110",
+          "query": "Check if my current Python and SQL skills meet the cutoff for this data role, and list 3 companies hiring candidates with my exact stack.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.5051,
+          "secondary_intent": "job_search",
+          "latency_ms": 1.9773999956669286
+        },
+        {
+          "id": "sk_041",
+          "query": "missing skills in my profile for java backend",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.775,
+          "secondary_intent": null,
+          "latency_ms": 1.9043999927816913
+        },
+        {
+          "id": "sk_092",
+          "query": "Compare my profile against this fintech backend job and prepare me for technical interview questions on my weak areas.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "interview_preparation",
+          "is_correct": false,
+          "confidence": 0.628,
+          "secondary_intent": "interview_preparation",
+          "latency_ms": 2.231000005849637
+        },
+        {
+          "id": "sk_073",
+          "query": "Check if my current skills cover the minimum requirements for a data engineering internship.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.6267,
+          "secondary_intent": null,
+          "latency_ms": 1.7709999956423417
+        },
+        {
+          "id": "sk_028",
+          "query": "What digital marketing tools do I need to learn to qualify for growth marketing roles?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.7112,
+          "secondary_intent": null,
+          "latency_ms": 1.7832000012276694
+        },
+        {
+          "id": "re_066",
+          "query": "Can you check if my resume has repetitive action verbs like 'worked on' or 'responsible for'?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.7171,
+          "secondary_intent": null,
+          "latency_ms": 1.764300002832897
+        },
+        {
+          "id": "re_098",
+          "query": "Review my CV and explain how I can defend my lack of cloud experience during a technical interview.",
+          "ground_truth": "resume_feedback",
+          "predicted": "interview_preparation",
+          "is_correct": false,
+          "confidence": 0.4876,
+          "secondary_intent": "interview_preparation",
+          "latency_ms": 1.906499994220212
+        },
+        {
+          "id": "re_043",
+          "query": "fix grammar errors in my resume",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.8779,
+          "secondary_intent": null,
+          "latency_ms": 1.811399997677654
+        },
+        {
+          "id": "re_005",
+          "query": "Does my resume clearly highlight my Python, FastAPI, and PostgreSQL skills?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.6727,
+          "secondary_intent": null,
+          "latency_ms": 2.0609999919543043
+        },
+        {
+          "id": "re_107",
+          "query": "Critique my resume contact section: should I remove full residential address for privacy?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.8543,
+          "secondary_intent": null,
+          "latency_ms": 1.7965000006370246
+        },
+        {
+          "id": "re_102",
+          "query": "How should I describe my open source GitHub contributions on my CV?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.6166,
+          "secondary_intent": null,
+          "latency_ms": 1.8779000092763454
+        },
+        {
+          "id": "re_008",
+          "query": "Check if my resume bullets follow the Google X-Y-Z formula.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.8748,
+          "secondary_intent": null,
+          "latency_ms": 1.892300002509728
+        },
+        {
+          "id": "re_081",
+          "query": "Review the grammar, punctuation, and capitalization throughout my resume.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.8373,
+          "secondary_intent": null,
+          "latency_ms": 1.7125000013038516
+        },
+        {
+          "id": "re_091",
+          "query": "Rewrite my resume project bullets to match this specific job description, and check if my profile qualifies.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.728,
+          "secondary_intent": "skill_gap_analysis",
+          "latency_ms": 1.8349000019952655
+        },
+        {
+          "id": "re_010",
+          "query": "Suggest action verbs to strengthen my engineering project descriptions.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.4336,
+          "secondary_intent": null,
+          "latency_ms": 1.7595999961486086
+        },
+        {
+          "id": "re_001",
+          "query": "Can you review my resume and suggest improvements for software engineering roles?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.7214,
+          "secondary_intent": null,
+          "latency_ms": 1.8501000013202429
+        },
+        {
+          "id": "re_108",
+          "query": "Review my resume font choices and line spacing for readability.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.8475,
+          "secondary_intent": null,
+          "latency_ms": 3.8167000020621344
+        },
+        {
+          "id": "re_104",
+          "query": "Is it acceptable to list technical courses under education if I lack corporate internships?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.2455,
+          "secondary_intent": null,
+          "latency_ms": 1.9998000061605126
+        },
+        {
+          "id": "re_030",
+          "query": "Suggest improvements for my accounting resume aiming for Big 4 audit jobs.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.5202,
+          "secondary_intent": null,
+          "latency_ms": 2.940999998827465
+        },
+        {
+          "id": "re_071",
+          "query": "Help me rephrase my internship bullet points to emphasize problem solving.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.5593,
+          "secondary_intent": null,
+          "latency_ms": 1.9471999985398725
+        },
+        {
+          "id": "re_076",
+          "query": "Evaluate my resume for a DevOps role: does it show enough Linux command line proficiency?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.5042,
+          "secondary_intent": null,
+          "latency_ms": 1.7937999946298078
+        },
+        {
+          "id": "re_003",
+          "query": "How can I rewrite my project bullet points to showcase measurable outcomes?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.7901,
+          "secondary_intent": null,
+          "latency_ms": 1.6888999962247908
+        },
+        {
+          "id": "re_044",
+          "query": "how to improve my resume summary?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.8757,
+          "secondary_intent": null,
+          "latency_ms": 1.7413999885320663
+        },
+        {
+          "id": "re_009",
+          "query": "Is my resume too long for a fresher with one year of internship experience?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.4661,
+          "secondary_intent": null,
+          "latency_ms": 2.9760000034002587
+        },
+        {
+          "id": "re_029",
+          "query": "Evaluate my supply chain resume for warehouse operations roles.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.493,
+          "secondary_intent": null,
+          "latency_ms": 2.857699990272522
+        },
+        {
+          "id": "re_032",
+          "query": "How should a biomedical engineering graduate structure their lab project bullet points?",
+          "ground_truth": "resume_feedback",
+          "predicted": "career_advice",
+          "is_correct": false,
+          "confidence": 0.4068,
+          "secondary_intent": null,
+          "latency_ms": 1.9991999870399013
+        },
+        {
+          "id": "re_016",
+          "query": "Help me condense my 2-page fresher resume into a single clean page.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.6093,
+          "secondary_intent": null,
+          "latency_ms": 1.7810999997891486
+        },
+        {
+          "id": "ca_041",
+          "query": "wats the best path to become cloud architect?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.2827,
+          "secondary_intent": null,
+          "latency_ms": 1.9117000047117472
+        },
+        {
+          "id": "ca_067",
+          "query": "How does remote work impact mentorship, visibility, and promotion speed for freshers?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.392,
+          "secondary_intent": null,
+          "latency_ms": 1.7247999930987135
+        },
+        {
+          "id": "ca_101",
+          "query": "Is it advisable to switch companies within the first 8 months if learning has stagnated?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.6243,
+          "secondary_intent": null,
+          "latency_ms": 1.7122000135714188
+        },
+        {
+          "id": "ca_099",
+          "query": "What is the expected career growth for an SDE 1 in a Series B funded startup?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.7578,
+          "secondary_intent": null,
+          "latency_ms": 2.426600010949187
+        },
+        {
+          "id": "ca_085",
+          "query": "Should I accept a 5 LPA frontend offer or keep applying for full stack jobs that match my resume skills?",
+          "ground_truth": "career_advice",
+          "predicted": "resume_feedback",
+          "is_correct": false,
+          "confidence": 0.3159,
+          "secondary_intent": "job_search",
+          "latency_ms": 2.4279999925056472
+        },
+        {
+          "id": "ca_054",
+          "query": "I enjoy solving algorithmic puzzles in Python but I find frontend CSS styling frustrating. What specialized career paths in software engineering focus purely on backend logic, data pipelines, or systems programming?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.4461,
+          "secondary_intent": null,
+          "latency_ms": 2.4670999991940334
+        },
+        {
+          "id": "ca_011",
+          "query": "What certifications are actually valued by Indian tech recruiters: AWS, Azure, or Kubernetes?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.3289,
+          "secondary_intent": null,
+          "latency_ms": 2.016899990849197
+        },
+        {
+          "id": "ca_080",
+          "query": "What should I look for in an offer letter regarding notice period, non-compete clauses, and IP assignment?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.4651,
+          "secondary_intent": null,
+          "latency_ms": 1.9016000005649403
+        },
+        {
+          "id": "ca_006",
+          "query": "What are the pros and cons of joining an early stage startup versus a large IT services company as a fresher?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.5933,
+          "secondary_intent": null,
+          "latency_ms": 1.824299994041212
+        },
+        {
+          "id": "ca_107",
+          "query": "What factors should I weigh when deciding between remote work and in-office work in Bangalore?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.4842,
+          "secondary_intent": null,
+          "latency_ms": 1.7752999992808327
+        },
+        {
+          "id": "ca_075",
+          "query": "What are the key differences between product engineering and internal IT tooling teams?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.5802,
+          "secondary_intent": null,
+          "latency_ms": 1.7032000032486394
+        },
+        {
+          "id": "ca_032",
+          "query": "Is taking up a supply chain operations role a good starting point for logistics consulting?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.2948,
+          "secondary_intent": null,
+          "latency_ms": 2.590599993709475
+        },
+        {
+          "id": "ca_073",
+          "query": "What are the career implications of joining an IT consultancy on a 2-year service bond?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.6666,
+          "secondary_intent": null,
+          "latency_ms": 3.5029999999096617
+        },
+        {
+          "id": "ca_016",
+          "query": "What are the most in-demand AI specializations for the next 3 to 5 years?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.4482,
+          "secondary_intent": null,
+          "latency_ms": 2.709000007598661
+        },
+        {
+          "id": "ca_052",
+          "query": "I am working as a system administrator earning 4 LPA, but I want to transition into cloud security. What certification roadmap and practical homelab projects should I pursue over the next 9 months?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.4433,
+          "secondary_intent": null,
+          "latency_ms": 2.5594000035198405
+        },
+        {
+          "id": "ca_031",
+          "query": "How do I transition from technical writing into technical product marketing?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.5079,
+          "secondary_intent": null,
+          "latency_ms": 1.7656999989412725
+        },
+        {
+          "id": "ca_087",
+          "query": "Advise me on whether I should prepare for data science or web dev, and what interview questions are typically asked in each.",
+          "ground_truth": "career_advice",
+          "predicted": "interview_preparation",
+          "is_correct": false,
+          "confidence": 0.6417,
+          "secondary_intent": "interview_preparation",
+          "latency_ms": 1.8727999995462596
+        },
+        {
+          "id": "ca_108",
+          "query": "How do I prepare for off-campus recruitment season if my college placement cell has few companies?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.4388,
+          "secondary_intent": null,
+          "latency_ms": 1.742799999192357
+        },
+        {
+          "id": "ca_077",
+          "query": "Is learning Docker and Kubernetes too advanced for a second-year college student?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.3784,
+          "secondary_intent": null,
+          "latency_ms": 1.99199999042321
+        },
+        {
+          "id": "ca_009",
+          "query": "Should I learn Golang or Rust if my goal is high concurrency distributed backend systems?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.3756,
+          "secondary_intent": null,
+          "latency_ms": 3.4788999910233542
+        },
+        {
+          "id": "ca_024",
+          "query": "What career options exist for Commerce graduates who want to work in the technology sector?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.4694,
+          "secondary_intent": null,
+          "latency_ms": 2.055300006759353
+        },
+        {
+          "id": "ca_109",
+          "query": "Advise me on whether I should learn cloud computing or cybersecurity first, and what entry level roles hire for each.",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.3176,
+          "secondary_intent": "job_search",
+          "latency_ms": 2.142099998309277
+        },
+        {
+          "id": "in_092",
+          "query": "Conduct a mock behavioral interview and critique the project bullet point I referenced in my answer.",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.7,
+          "secondary_intent": "resume_feedback",
+          "latency_ms": 1.9213000050513074
+        },
+        {
+          "id": "in_004",
+          "query": "How do I answer 'What is the difference between processes and threads' in an operating systems round?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.5138,
+          "secondary_intent": null,
+          "latency_ms": 1.8246000108774751
+        },
+        {
+          "id": "in_098",
+          "query": "Conduct a mock interview on SQL and tell me what additional database topics I need to learn to pass the bar.",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.5836,
+          "secondary_intent": "skill_gap_analysis",
+          "latency_ms": 1.7825999966589734
+        },
+        {
+          "id": "in_023",
+          "query": "Prepare me for an interview for a Civil Engineer Trainee position at an infrastructure company.",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.3965,
+          "secondary_intent": null,
+          "latency_ms": 1.9987999985460192
+        },
+        {
+          "id": "in_021",
+          "query": "What technical questions are asked in mechanical engineering campus interviews?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.707,
+          "secondary_intent": null,
+          "latency_ms": 3.2764000061433762
+        },
+        {
+          "id": "in_031",
+          "query": "Prepare me for questions on digital marketing metrics like CAC, ROAS, and LTV.",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.4763,
+          "secondary_intent": null,
+          "latency_ms": 2.5652999902376905
+        },
+        {
+          "id": "in_020",
+          "query": "What behavioral questions are commonly asked in the managerial round at Indian IT firms?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.6596,
+          "secondary_intent": null,
+          "latency_ms": 1.8994999991264194
+        },
+        {
+          "id": "in_096",
+          "query": "How should I structure my self-introduction in an interview so that it highlights the strongest parts of my resume?",
+          "ground_truth": "interview_preparation",
+          "predicted": "resume_feedback",
+          "is_correct": false,
+          "confidence": 0.433,
+          "secondary_intent": "resume_feedback",
+          "latency_ms": 2.1019999985583127
+        },
+        {
+          "id": "in_080",
+          "query": "Provide practice questions on React useEffect dependencies and infinite loop pitfalls.",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.6759,
+          "secondary_intent": null,
+          "latency_ms": 1.8540000019129366
+        },
+        {
+          "id": "in_053",
+          "query": "I get very anxious during live coding interviews when the interviewer watches me write code in Google Docs. What mental strategies and communication habits can I practice to remain composed and explain my thought process out loud?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.4991,
+          "secondary_intent": null,
+          "latency_ms": 2.1764000121038407
+        },
+        {
+          "id": "in_072",
+          "query": "Evaluate my sample response explaining why I chose MongoDB over PostgreSQL for a document project.",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.4021,
+          "secondary_intent": null,
+          "latency_ms": 1.7909000016516075
+        },
+        {
+          "id": "in_106",
+          "query": "What behavioral questions evaluate how well an engineer collaborates with non-technical stakeholders?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.5895,
+          "secondary_intent": null,
+          "latency_ms": 2.2427999938372523
+        },
+        {
+          "id": "in_014",
+          "query": "What questions do interviewers ask to test candidate knowledge of SQL indexing and joins?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.7459,
+          "secondary_intent": null,
+          "latency_ms": 2.9375999874901026
+        },
+        {
+          "id": "in_086",
+          "query": "How should I explain the projects on my resume during an interview so that I get recommended for an SDE 1 role?",
+          "ground_truth": "interview_preparation",
+          "predicted": "resume_feedback",
+          "is_correct": false,
+          "confidence": 0.4162,
+          "secondary_intent": "resume_feedback",
+          "latency_ms": 2.6160999987041578
+        },
+        {
+          "id": "in_032",
+          "query": "What questions will hospital recruiters ask a fresher biomedical engineer?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.3192,
+          "secondary_intent": null,
+          "latency_ms": 2.2933000000193715
+        },
+        {
+          "id": "in_088",
+          "query": "Prepare me for interview questions on my resume gaps, and tell me how to phrase my answers without getting disqualified.",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.6162,
+          "secondary_intent": "resume_feedback",
+          "latency_ms": 1.9262999994680285
+        },
+        {
+          "id": "in_027",
+          "query": "What behavioral questions are asked to freshers applying for Human Resources internships?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.5794,
+          "secondary_intent": null,
+          "latency_ms": 1.7774999869288877
+        },
+        {
+          "id": "in_046",
+          "query": "technical interview ki preparation kaise start kare?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.6322,
+          "secondary_intent": null,
+          "latency_ms": 1.6500000056112185
+        },
+        {
+          "id": "in_006",
+          "query": "What technical questions will a recruiter ask about Docker containers and Kubernetes architecture?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.5522,
+          "secondary_intent": null,
+          "latency_ms": 1.8065000040223822
+        },
+        {
+          "id": "in_102",
+          "query": "What questions do interviewers ask to test candidate understanding of REST vs GraphQL?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.8028,
+          "secondary_intent": null,
+          "latency_ms": 1.9620000093709677
+        },
+        {
+          "id": "in_047",
+          "query": "interviewer ko project kaise explain kare STAR method me?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.6152,
+          "secondary_intent": null,
+          "latency_ms": 2.4556999997003004
+        },
+        {
+          "id": "in_040",
+          "query": "give me coding interview questins on arrays",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.8958,
+          "secondary_intent": null,
+          "latency_ms": 1.988299991353415
+        }
+      ]
+    },
+    "heuristic": {
+      "backend": "heuristic",
+      "accuracy": 0.5636,
+      "macro_f1": 0.5516,
+      "ci_95": [
+        0.4727,
+        0.6545
+      ],
+      "latency_ms_mean": 0.12,
+      "latency_ms_p95": 0.23,
+      "per_class": {
+        "job_search": {
+          "precision": 0.3774,
+          "recall": 0.9091,
+          "f1_score": 0.5333,
+          "support": 22
+        },
+        "skill_gap_analysis": {
+          "precision": 0.8889,
+          "recall": 0.3636,
+          "f1_score": 0.5161,
+          "support": 22
+        },
+        "resume_feedback": {
+          "precision": 0.72,
+          "recall": 0.8182,
+          "f1_score": 0.766,
+          "support": 22
+        },
+        "career_advice": {
+          "precision": 0.6667,
+          "recall": 0.2727,
+          "f1_score": 0.3871,
+          "support": 22
+        },
+        "interview_preparation": {
+          "precision": 0.7143,
+          "recall": 0.4545,
+          "f1_score": 0.5556,
+          "support": 22
+        }
+      },
+      "confusion_matrix": {
+        "classes": [
+          "job_search",
+          "skill_gap_analysis",
+          "resume_feedback",
+          "career_advice",
+          "interview_preparation"
+        ],
+        "matrix": [
+          [
+            20,
+            0,
+            0,
+            1,
+            1
+          ],
+          [
+            8,
+            8,
+            2,
+            2,
+            2
+          ],
+          [
+            4,
+            0,
+            18,
+            0,
+            0
+          ],
+          [
+            13,
+            1,
+            1,
+            6,
+            1
+          ],
+          [
+            8,
+            0,
+            4,
+            0,
+            10
+          ]
+        ]
+      },
+      "hard_cases": {
+        "count": 18,
+        "accuracy": 0.3333,
+        "macro_f1": 0.2622
+      },
+      "predictions": [
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "interview_preparation",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "career_advice",
+        "job_search",
+        "job_search",
+        "job_search",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "job_search",
+        "career_advice",
+        "skill_gap_analysis",
+        "job_search",
+        "interview_preparation",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "job_search",
+        "resume_feedback",
+        "job_search",
+        "job_search",
+        "resume_feedback",
+        "job_search",
+        "skill_gap_analysis",
+        "career_advice",
+        "skill_gap_analysis",
+        "interview_preparation",
+        "job_search",
+        "job_search",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "job_search",
+        "job_search",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "job_search",
+        "resume_feedback",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "career_advice",
+        "resume_feedback",
+        "career_advice",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "career_advice",
+        "career_advice",
+        "skill_gap_analysis",
+        "career_advice",
+        "interview_preparation",
+        "job_search",
+        "job_search",
+        "job_search",
+        "career_advice",
+        "job_search",
+        "resume_feedback",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "job_search",
+        "job_search",
+        "interview_preparation",
+        "resume_feedback",
+        "job_search",
+        "interview_preparation",
+        "job_search",
+        "interview_preparation",
+        "job_search",
+        "resume_feedback",
+        "job_search",
+        "resume_feedback",
+        "interview_preparation",
+        "interview_preparation",
+        "job_search",
+        "job_search",
+        "interview_preparation",
+        "interview_preparation"
+      ],
+      "per_item_results": [
+        {
+          "id": "jo_065",
+          "query": "Find embedded systems firmware engineer vacancies for electronics graduates.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.92,
+          "secondary_intent": null,
+          "latency_ms": 2.5991000002250075
+        },
+        {
+          "id": "jo_030",
+          "query": "Find digital marketing executive jobs for freshers in Jaipur.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.92,
+          "secondary_intent": null,
+          "latency_ms": 0.04699999408330768
+        },
+        {
+          "id": "jo_028",
+          "query": "Search for supply chain analyst fresher vacancies in Kolkata.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.92,
+          "secondary_intent": null,
+          "latency_ms": 0.040400002035312355
+        },
+        {
+          "id": "jo_097",
+          "query": "Show open backend developer jobs where my Python and SQL skills make me a top candidate.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.92,
+          "secondary_intent": "skill_gap_analysis",
+          "latency_ms": 0.04879999323748052
+        },
+        {
+          "id": "jo_108",
+          "query": "Find remote React jobs where the interview process has only 2 rounds.",
+          "ground_truth": "job_search",
+          "predicted": "interview_preparation",
+          "is_correct": false,
+          "confidence": 0.94,
+          "secondary_intent": "interview_preparation",
+          "latency_ms": 0.02469999890308827
+        },
+        {
+          "id": "jo_005",
+          "query": "I am looking for Java Spring Boot fresher jobs in Chennai.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.92,
+          "secondary_intent": null,
+          "latency_ms": 0.03779999678954482
+        },
+        {
+          "id": "jo_055",
+          "query": "frontend developer jobs without experience",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.92,
+          "secondary_intent": null,
+          "latency_ms": 0.02749999111983925
+        },
+        {
+          "id": "jo_076",
+          "query": "Entry level game developer vacancies using Unity and C#.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.92,
+          "secondary_intent": null,
+          "latency_ms": 0.030700000934302807
+        },
+        {
+          "id": "jo_012",
+          "query": "Are there remote data scientist jobs for college graduates?",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.92,
+          "secondary_intent": null,
+          "latency_ms": 0.033199990866705775
+        },
+        {
+          "id": "jo_070",
+          "query": "Find junior UI UX designer jobs in creative agencies.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.92,
+          "secondary_intent": null,
+          "latency_ms": 0.033199990866705775
+        },
+        {
+          "id": "jo_102",
+          "query": "Search for product analyst vacancies and compare the required skills against my background.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.92,
+          "secondary_intent": "skill_gap_analysis",
+          "latency_ms": 0.04359999729786068
+        },
+        {
+          "id": "jo_087",
+          "query": "Search for business intelligence developer jobs with Tableau.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.92,
+          "secondary_intent": null,
+          "latency_ms": 0.03229999856557697
+        },
+        {
+          "id": "jo_014",
+          "query": "Search for Android developer openings using Kotlin in India.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.92,
+          "secondary_intent": null,
+          "latency_ms": 0.03090000245720148
+        },
+        {
+          "id": "jo_107",
+          "query": "Find software trainee jobs in MNCs where my B.Tech percentage meets the cutoff.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.92,
+          "secondary_intent": "career_advice",
+          "latency_ms": 0.04169999738223851
+        },
+        {
+          "id": "jo_018",
+          "query": "Find AI research engineer openings for fresh B.Tech graduates.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.92,
+          "secondary_intent": null,
+          "latency_ms": 0.03329999162815511
+        },
+        {
+          "id": "jo_029",
+          "query": "Financial analyst entry level openings at investment banks in Mumbai.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.92,
+          "secondary_intent": null,
+          "latency_ms": 0.03530000685714185
+        },
+        {
+          "id": "jo_032",
+          "query": "Show junior accountant jobs in Bangalore requiring Tally and Excel.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.92,
+          "secondary_intent": null,
+          "latency_ms": 0.03440000000409782
+        },
+        {
+          "id": "jo_036",
+          "query": "Search for corporate sales trainee positions with incentives.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 1.108399999793619
+        },
+        {
+          "id": "jo_095",
+          "query": "Find software engineer openings matching my profile and tell me which ones pay the highest stipend.",
+          "ground_truth": "job_search",
+          "predicted": "career_advice",
+          "is_correct": false,
+          "confidence": 0.91,
+          "secondary_intent": "career_advice",
+          "latency_ms": 0.07729999197181314
+        },
+        {
+          "id": "jo_004",
+          "query": "List open full stack developer positions for 2024 graduates.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.1331999956164509
+        },
+        {
+          "id": "jo_015",
+          "query": "Find Flutter developer internships with stipend.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.11210000957362354
+        },
+        {
+          "id": "jo_082",
+          "query": "Show network engineer trainee jobs at telecom providers.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.92,
+          "secondary_intent": null,
+          "latency_ms": 0.031100003980100155
+        },
+        {
+          "id": "sk_052",
+          "query": "I know basic HTML, CSS, and JavaScript, but every frontend job asks for TypeScript, Redux, and Tailwind. How big is my skill gap and what should I prioritize first?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.9,
+          "secondary_intent": null,
+          "latency_ms": 0.1984000118682161
+        },
+        {
+          "id": "sk_108",
+          "query": "What machine learning libraries am I missing to apply for NLP research assistant positions?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.9,
+          "secondary_intent": null,
+          "latency_ms": 0.03810001362580806
+        },
+        {
+          "id": "sk_055",
+          "query": "What database indexing and performance tuning skills am I missing for senior backend roles?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.9,
+          "secondary_intent": null,
+          "latency_ms": 0.035599994589574635
+        },
+        {
+          "id": "sk_075",
+          "query": "Compare my knowledge of Git workflows with what is required for team collaboration in startups.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.16489998961333185
+        },
+        {
+          "id": "sk_099",
+          "query": "What additional frameworks do I need to master to transition from React to full stack development?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "career_advice",
+          "is_correct": false,
+          "confidence": 0.91,
+          "secondary_intent": null,
+          "latency_ms": 0.1306999911321327
+        },
+        {
+          "id": "sk_069",
+          "query": "Identify missing technologies between my Node.js profile and a full stack requirement.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.9,
+          "secondary_intent": null,
+          "latency_ms": 0.03239999932702631
+        },
+        {
+          "id": "sk_072",
+          "query": "What algorithms and data structures proficiency is expected for this role that I lack?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.15049999637994915
+        },
+        {
+          "id": "sk_096",
+          "query": "Analyze my skill deficiency for this automation tester posting and give me sample interview questions for Selenium with Python.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "interview_preparation",
+          "is_correct": false,
+          "confidence": 0.94,
+          "secondary_intent": "interview_preparation",
+          "latency_ms": 0.028700000257231295
+        },
+        {
+          "id": "sk_032",
+          "query": "What accounting standards and tools am I missing for an Audit Associate vacancy?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.9,
+          "secondary_intent": null,
+          "latency_ms": 0.03579999611247331
+        },
+        {
+          "id": "sk_018",
+          "query": "Am I missing any mandatory skills for this junior blockchain developer posting?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.9,
+          "secondary_intent": null,
+          "latency_ms": 0.030499999411404133
+        },
+        {
+          "id": "sk_034",
+          "query": "Check if my CAD and FEA experience matches this aerospace engineering opening.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.92,
+          "secondary_intent": null,
+          "latency_ms": 0.04400000034365803
+        },
+        {
+          "id": "sk_019",
+          "query": "Compare my resume technologies with current industry expectations for NLP engineers.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "resume_feedback",
+          "is_correct": false,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.22519999765791
+        },
+        {
+          "id": "sk_059",
+          "query": "What cloud architecture skills am I lacking for an enterprise cloud consultant job?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.92,
+          "secondary_intent": null,
+          "latency_ms": 0.046600005589425564
+        },
+        {
+          "id": "sk_083",
+          "query": "What caching strategies like Redis are expected for this high throughput backend vacancy?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.92,
+          "secondary_intent": null,
+          "latency_ms": 0.04410000110510737
+        },
+        {
+          "id": "sk_051",
+          "query": "Here is the job description for a Junior Machine Learning Engineer at an AI healthcare startup. Please compare my resume projects and list the specific frameworks and mathematical foundations I am missing.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "resume_feedback",
+          "is_correct": false,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.0450000079581514
+        },
+        {
+          "id": "sk_064",
+          "query": "What system administration commands should a junior DevOps engineer know that I don't have listed?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.1640999980736524
+        },
+        {
+          "id": "sk_084",
+          "query": "Identify missing knowledge in my profile for an entry level ETL pipeline developer.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.9,
+          "secondary_intent": null,
+          "latency_ms": 0.03309999010525644
+        },
+        {
+          "id": "sk_110",
+          "query": "Check if my current Python and SQL skills meet the cutoff for this data role, and list 3 companies hiring candidates with my exact stack.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "career_advice",
+          "is_correct": false,
+          "confidence": 0.91,
+          "secondary_intent": "job_search",
+          "latency_ms": 0.11870000162161887
+        },
+        {
+          "id": "sk_041",
+          "query": "missing skills in my profile for java backend",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.9,
+          "secondary_intent": null,
+          "latency_ms": 0.022799998987466097
+        },
+        {
+          "id": "sk_092",
+          "query": "Compare my profile against this fintech backend job and prepare me for technical interview questions on my weak areas.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "interview_preparation",
+          "is_correct": false,
+          "confidence": 0.94,
+          "secondary_intent": "interview_preparation",
+          "latency_ms": 0.03480000304989517
+        },
+        {
+          "id": "sk_073",
+          "query": "Check if my current skills cover the minimum requirements for a data engineering internship.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.16209999739658087
+        },
+        {
+          "id": "sk_028",
+          "query": "What digital marketing tools do I need to learn to qualify for growth marketing roles?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.15579999308101833
+        },
+        {
+          "id": "re_066",
+          "query": "Can you check if my resume has repetitive action verbs like 'worked on' or 'responsible for'?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.012699994840659201
+        },
+        {
+          "id": "re_098",
+          "query": "Review my CV and explain how I can defend my lack of cloud experience during a technical interview.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": "interview_preparation",
+          "latency_ms": 0.011600001016631722
+        },
+        {
+          "id": "re_043",
+          "query": "fix grammar errors in my resume",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.012599994079209864
+        },
+        {
+          "id": "re_005",
+          "query": "Does my resume clearly highlight my Python, FastAPI, and PostgreSQL skills?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.014299992471933365
+        },
+        {
+          "id": "re_107",
+          "query": "Critique my resume contact section: should I remove full residential address for privacy?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.010799994925037026
+        },
+        {
+          "id": "re_102",
+          "query": "How should I describe my open source GitHub contributions on my CV?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.017099999240599573
+        },
+        {
+          "id": "re_008",
+          "query": "Check if my resume bullets follow the Google X-Y-Z formula.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.008999995770864189
+        },
+        {
+          "id": "re_081",
+          "query": "Review the grammar, punctuation, and capitalization throughout my resume.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.008000002708286047
+        },
+        {
+          "id": "re_091",
+          "query": "Rewrite my resume project bullets to match this specific job description, and check if my profile qualifies.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": "skill_gap_analysis",
+          "latency_ms": 0.013500000932253897
+        },
+        {
+          "id": "re_010",
+          "query": "Suggest action verbs to strengthen my engineering project descriptions.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.018400009139440954
+        },
+        {
+          "id": "re_001",
+          "query": "Can you review my resume and suggest improvements for software engineering roles?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.01030000566970557
+        },
+        {
+          "id": "re_108",
+          "query": "Review my resume font choices and line spacing for readability.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.009099996532313526
+        },
+        {
+          "id": "re_104",
+          "query": "Is it acceptable to list technical courses under education if I lack corporate internships?",
+          "ground_truth": "resume_feedback",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.1548000000184402
+        },
+        {
+          "id": "re_030",
+          "query": "Suggest improvements for my accounting resume aiming for Big 4 audit jobs.",
+          "ground_truth": "resume_feedback",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.92,
+          "secondary_intent": null,
+          "latency_ms": 0.04400000034365803
+        },
+        {
+          "id": "re_071",
+          "query": "Help me rephrase my internship bullet points to emphasize problem solving.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.014200006262399256
+        },
+        {
+          "id": "re_076",
+          "query": "Evaluate my resume for a DevOps role: does it show enough Linux command line proficiency?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.021899992134422064
+        },
+        {
+          "id": "re_003",
+          "query": "How can I rewrite my project bullet points to showcase measurable outcomes?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.011099997209385037
+        },
+        {
+          "id": "re_044",
+          "query": "how to improve my resume summary?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.0109999964479357
+        },
+        {
+          "id": "re_009",
+          "query": "Is my resume too long for a fresher with one year of internship experience?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.019099999917671084
+        },
+        {
+          "id": "re_029",
+          "query": "Evaluate my supply chain resume for warehouse operations roles.",
+          "ground_truth": "resume_feedback",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.12889999197795987
+        },
+        {
+          "id": "re_032",
+          "query": "How should a biomedical engineering graduate structure their lab project bullet points?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.016000005416572094
+        },
+        {
+          "id": "re_016",
+          "query": "Help me condense my 2-page fresher resume into a single clean page.",
+          "ground_truth": "resume_feedback",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.13889999536331743
+        },
+        {
+          "id": "ca_041",
+          "query": "wats the best path to become cloud architect?",
+          "ground_truth": "career_advice",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.11340000492054969
+        },
+        {
+          "id": "ca_067",
+          "query": "How does remote work impact mentorship, visibility, and promotion speed for freshers?",
+          "ground_truth": "career_advice",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.14910000027157366
+        },
+        {
+          "id": "ca_101",
+          "query": "Is it advisable to switch companies within the first 8 months if learning has stagnated?",
+          "ground_truth": "career_advice",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.15409999468829483
+        },
+        {
+          "id": "ca_099",
+          "query": "What is the expected career growth for an SDE 1 in a Series B funded startup?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.91,
+          "secondary_intent": null,
+          "latency_ms": 0.10600000678095967
+        },
+        {
+          "id": "ca_085",
+          "query": "Should I accept a 5 LPA frontend offer or keep applying for full stack jobs that match my resume skills?",
+          "ground_truth": "career_advice",
+          "predicted": "resume_feedback",
+          "is_correct": false,
+          "confidence": 0.94,
+          "secondary_intent": "job_search",
+          "latency_ms": 0.03399999695830047
+        },
+        {
+          "id": "ca_054",
+          "query": "I enjoy solving algorithmic puzzles in Python but I find frontend CSS styling frustrating. What specialized career paths in software engineering focus purely on backend logic, data pipelines, or systems programming?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.91,
+          "secondary_intent": null,
+          "latency_ms": 0.19869999960064888
+        },
+        {
+          "id": "ca_011",
+          "query": "What certifications are actually valued by Indian tech recruiters: AWS, Azure, or Kubernetes?",
+          "ground_truth": "career_advice",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.16469998809043318
+        },
+        {
+          "id": "ca_080",
+          "query": "What should I look for in an offer letter regarding notice period, non-compete clauses, and IP assignment?",
+          "ground_truth": "career_advice",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.17330000991933048
+        },
+        {
+          "id": "ca_006",
+          "query": "What are the pros and cons of joining an early stage startup versus a large IT services company as a fresher?",
+          "ground_truth": "career_advice",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.17670000670477748
+        },
+        {
+          "id": "ca_107",
+          "query": "What factors should I weigh when deciding between remote work and in-office work in Bangalore?",
+          "ground_truth": "career_advice",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.15650001296307892
+        },
+        {
+          "id": "ca_075",
+          "query": "What are the key differences between product engineering and internal IT tooling teams?",
+          "ground_truth": "career_advice",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.14680001186206937
+        },
+        {
+          "id": "ca_032",
+          "query": "Is taking up a supply chain operations role a good starting point for logistics consulting?",
+          "ground_truth": "career_advice",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.1756999990902841
+        },
+        {
+          "id": "ca_073",
+          "query": "What are the career implications of joining an IT consultancy on a 2-year service bond?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.91,
+          "secondary_intent": null,
+          "latency_ms": 0.19540000357665122
+        },
+        {
+          "id": "ca_016",
+          "query": "What are the most in-demand AI specializations for the next 3 to 5 years?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.91,
+          "secondary_intent": null,
+          "latency_ms": 0.12280000373721123
+        },
+        {
+          "id": "ca_052",
+          "query": "I am working as a system administrator earning 4 LPA, but I want to transition into cloud security. What certification roadmap and practical homelab projects should I pursue over the next 9 months?",
+          "ground_truth": "career_advice",
+          "predicted": "skill_gap_analysis",
+          "is_correct": false,
+          "confidence": 0.9,
+          "secondary_intent": null,
+          "latency_ms": 0.0982999918051064
+        },
+        {
+          "id": "ca_031",
+          "query": "How do I transition from technical writing into technical product marketing?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.91,
+          "secondary_intent": null,
+          "latency_ms": 0.15829999756533653
+        },
+        {
+          "id": "ca_087",
+          "query": "Advise me on whether I should prepare for data science or web dev, and what interview questions are typically asked in each.",
+          "ground_truth": "career_advice",
+          "predicted": "interview_preparation",
+          "is_correct": false,
+          "confidence": 0.94,
+          "secondary_intent": "interview_preparation",
+          "latency_ms": 0.04270000499673188
+        },
+        {
+          "id": "ca_108",
+          "query": "How do I prepare for off-campus recruitment season if my college placement cell has few companies?",
+          "ground_truth": "career_advice",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.23299999884329736
+        },
+        {
+          "id": "ca_077",
+          "query": "Is learning Docker and Kubernetes too advanced for a second-year college student?",
+          "ground_truth": "career_advice",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.20680000307038426
+        },
+        {
+          "id": "ca_009",
+          "query": "Should I learn Golang or Rust if my goal is high concurrency distributed backend systems?",
+          "ground_truth": "career_advice",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.23639999562874436
+        },
+        {
+          "id": "ca_024",
+          "query": "What career options exist for Commerce graduates who want to work in the technology sector?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.91,
+          "secondary_intent": null,
+          "latency_ms": 0.1669000048423186
+        },
+        {
+          "id": "ca_109",
+          "query": "Advise me on whether I should learn cloud computing or cybersecurity first, and what entry level roles hire for each.",
+          "ground_truth": "career_advice",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": "job_search",
+          "latency_ms": 0.27010000485461205
+        },
+        {
+          "id": "in_092",
+          "query": "Conduct a mock behavioral interview and critique the project bullet point I referenced in my answer.",
+          "ground_truth": "interview_preparation",
+          "predicted": "resume_feedback",
+          "is_correct": false,
+          "confidence": 0.94,
+          "secondary_intent": "resume_feedback",
+          "latency_ms": 0.02750000567175448
+        },
+        {
+          "id": "in_004",
+          "query": "How do I answer 'What is the difference between processes and threads' in an operating systems round?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.0425000034738332
+        },
+        {
+          "id": "in_098",
+          "query": "Conduct a mock interview on SQL and tell me what additional database topics I need to learn to pass the bar.",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": "skill_gap_analysis",
+          "latency_ms": 0.03840000135824084
+        },
+        {
+          "id": "in_023",
+          "query": "Prepare me for an interview for a Civil Engineer Trainee position at an infrastructure company.",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.03440000000409782
+        },
+        {
+          "id": "in_021",
+          "query": "What technical questions are asked in mechanical engineering campus interviews?",
+          "ground_truth": "interview_preparation",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.21380001271609217
+        },
+        {
+          "id": "in_031",
+          "query": "Prepare me for questions on digital marketing metrics like CAC, ROAS, and LTV.",
+          "ground_truth": "interview_preparation",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.2182000025641173
+        },
+        {
+          "id": "in_020",
+          "query": "What behavioral questions are commonly asked in the managerial round at Indian IT firms?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.032500000088475645
+        },
+        {
+          "id": "in_096",
+          "query": "How should I structure my self-introduction in an interview so that it highlights the strongest parts of my resume?",
+          "ground_truth": "interview_preparation",
+          "predicted": "resume_feedback",
+          "is_correct": false,
+          "confidence": 0.94,
+          "secondary_intent": "resume_feedback",
+          "latency_ms": 0.03460000152699649
+        },
+        {
+          "id": "in_080",
+          "query": "Provide practice questions on React useEffect dependencies and infinite loop pitfalls.",
+          "ground_truth": "interview_preparation",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.23289999808184803
+        },
+        {
+          "id": "in_053",
+          "query": "I get very anxious during live coding interviews when the interviewer watches me write code in Google Docs. What mental strategies and communication habits can I practice to remain composed and explain my thought process out loud?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.0594000011915341
+        },
+        {
+          "id": "in_072",
+          "query": "Evaluate my sample response explaining why I chose MongoDB over PostgreSQL for a document project.",
+          "ground_truth": "interview_preparation",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.23019999207463115
+        },
+        {
+          "id": "in_106",
+          "query": "What behavioral questions evaluate how well an engineer collaborates with non-technical stakeholders?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.02890000178012997
+        },
+        {
+          "id": "in_014",
+          "query": "What questions do interviewers ask to test candidate knowledge of SQL indexing and joins?",
+          "ground_truth": "interview_preparation",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.2336999896215275
+        },
+        {
+          "id": "in_086",
+          "query": "How should I explain the projects on my resume during an interview so that I get recommended for an SDE 1 role?",
+          "ground_truth": "interview_preparation",
+          "predicted": "resume_feedback",
+          "is_correct": false,
+          "confidence": 0.94,
+          "secondary_intent": "resume_feedback",
+          "latency_ms": 0.03640000068116933
+        },
+        {
+          "id": "in_032",
+          "query": "What questions will hospital recruiters ask a fresher biomedical engineer?",
+          "ground_truth": "interview_preparation",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.19380000594537705
+        },
+        {
+          "id": "in_088",
+          "query": "Prepare me for interview questions on my resume gaps, and tell me how to phrase my answers without getting disqualified.",
+          "ground_truth": "interview_preparation",
+          "predicted": "resume_feedback",
+          "is_correct": false,
+          "confidence": 0.94,
+          "secondary_intent": "resume_feedback",
+          "latency_ms": 0.037299992982298136
+        },
+        {
+          "id": "in_027",
+          "query": "What behavioral questions are asked to freshers applying for Human Resources internships?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.0320999970426783
+        },
+        {
+          "id": "in_046",
+          "query": "technical interview ki preparation kaise start kare?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.02479999966453761
+        },
+        {
+          "id": "in_006",
+          "query": "What technical questions will a recruiter ask about Docker containers and Kubernetes architecture?",
+          "ground_truth": "interview_preparation",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.2364999963901937
+        },
+        {
+          "id": "in_102",
+          "query": "What questions do interviewers ask to test candidate understanding of REST vs GraphQL?",
+          "ground_truth": "interview_preparation",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.85,
+          "secondary_intent": null,
+          "latency_ms": 0.1520000078016892
+        },
+        {
+          "id": "in_047",
+          "query": "interviewer ko project kaise explain kare STAR method me?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.019000013708136976
+        },
+        {
+          "id": "in_040",
+          "query": "give me coding interview questins on arrays",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.94,
+          "secondary_intent": null,
+          "latency_ms": 0.014700010069645941
+        }
+      ]
+    },
+    "llm": {
+      "backend": "llm",
+      "accuracy": 0.7636,
+      "macro_f1": 0.7383,
+      "ci_95": [
+        0.6818,
+        0.8364
+      ],
+      "latency_ms_mean": 7139.08,
+      "latency_ms_p95": 8537.44,
+      "per_class": {
+        "job_search": {
+          "precision": 0.7333,
+          "recall": 1.0,
+          "f1_score": 0.8462,
+          "support": 22
+        },
+        "skill_gap_analysis": {
+          "precision": 0.5278,
+          "recall": 0.8636,
+          "f1_score": 0.6552,
+          "support": 22
+        },
+        "resume_feedback": {
+          "precision": 1.0,
+          "recall": 0.7273,
+          "f1_score": 0.8421,
+          "support": 22
+        },
+        "career_advice": {
+          "precision": 1.0,
+          "recall": 0.2273,
+          "f1_score": 0.3704,
+          "support": 22
+        },
+        "interview_preparation": {
+          "precision": 0.9565,
+          "recall": 1.0,
+          "f1_score": 0.9778,
+          "support": 22
+        }
+      },
+      "confusion_matrix": {
+        "classes": [
+          "job_search",
+          "skill_gap_analysis",
+          "resume_feedback",
+          "career_advice",
+          "interview_preparation"
+        ],
+        "matrix": [
+          [
+            22,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            19,
+            0,
+            0,
+            1
+          ],
+          [
+            1,
+            5,
+            16,
+            0,
+            0
+          ],
+          [
+            5,
+            12,
+            0,
+            5,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            22
+          ]
+        ]
+      },
+      "hard_cases": {
+        "count": 18,
+        "accuracy": 0.6667,
+        "macro_f1": 0.5357
+      },
+      "predictions": [
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "job_search",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "job_search",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "job_search",
+        "skill_gap_analysis",
+        "interview_preparation",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "job_search",
+        "skill_gap_analysis",
+        "resume_feedback",
+        "resume_feedback",
+        "skill_gap_analysis",
+        "resume_feedback",
+        "skill_gap_analysis",
+        "resume_feedback",
+        "skill_gap_analysis",
+        "resume_feedback",
+        "resume_feedback",
+        "resume_feedback",
+        "skill_gap_analysis",
+        "resume_feedback",
+        "skill_gap_analysis",
+        "career_advice",
+        "skill_gap_analysis",
+        "career_advice",
+        "job_search",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "job_search",
+        "career_advice",
+        "career_advice",
+        "skill_gap_analysis",
+        "job_search",
+        "career_advice",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "job_search",
+        "skill_gap_analysis",
+        "skill_gap_analysis",
+        "job_search",
+        "skill_gap_analysis",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation",
+        "interview_preparation"
+      ],
+      "per_item_results": [
+        {
+          "id": "jo_065",
+          "query": "Find embedded systems firmware engineer vacancies for electronics graduates.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6841.61609999137
+        },
+        {
+          "id": "jo_030",
+          "query": "Find digital marketing executive jobs for freshers in Jaipur.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7795.317100011744
+        },
+        {
+          "id": "jo_028",
+          "query": "Search for supply chain analyst fresher vacancies in Kolkata.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7018.504499996197
+        },
+        {
+          "id": "jo_097",
+          "query": "Show open backend developer jobs where my Python and SQL skills make me a top candidate.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": "skill_gap_analysis",
+          "latency_ms": 5817.941700006486
+        },
+        {
+          "id": "jo_108",
+          "query": "Find remote React jobs where the interview process has only 2 rounds.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": "interview_preparation",
+          "latency_ms": 6999.004899989814
+        },
+        {
+          "id": "jo_005",
+          "query": "I am looking for Java Spring Boot fresher jobs in Chennai.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 5640.255300007993
+        },
+        {
+          "id": "jo_055",
+          "query": "frontend developer jobs without experience",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7279.955199992401
+        },
+        {
+          "id": "jo_076",
+          "query": "Entry level game developer vacancies using Unity and C#.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6494.635199996992
+        },
+        {
+          "id": "jo_012",
+          "query": "Are there remote data scientist jobs for college graduates?",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6426.498600005289
+        },
+        {
+          "id": "jo_070",
+          "query": "Find junior UI UX designer jobs in creative agencies.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 8483.843200010597
+        },
+        {
+          "id": "jo_102",
+          "query": "Search for product analyst vacancies and compare the required skills against my background.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": "skill_gap_analysis",
+          "latency_ms": 6121.832400007406
+        },
+        {
+          "id": "jo_087",
+          "query": "Search for business intelligence developer jobs with Tableau.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6297.904899998684
+        },
+        {
+          "id": "jo_014",
+          "query": "Search for Android developer openings using Kotlin in India.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6685.653699998511
+        },
+        {
+          "id": "jo_107",
+          "query": "Find software trainee jobs in MNCs where my B.Tech percentage meets the cutoff.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": "career_advice",
+          "latency_ms": 6436.5438999957405
+        },
+        {
+          "id": "jo_018",
+          "query": "Find AI research engineer openings for fresh B.Tech graduates.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6914.257299999008
+        },
+        {
+          "id": "jo_029",
+          "query": "Financial analyst entry level openings at investment banks in Mumbai.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6037.797500001034
+        },
+        {
+          "id": "jo_032",
+          "query": "Show junior accountant jobs in Bangalore requiring Tally and Excel.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6630.758800005424
+        },
+        {
+          "id": "jo_036",
+          "query": "Search for corporate sales trainee positions with incentives.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6741.770500011626
+        },
+        {
+          "id": "jo_095",
+          "query": "Find software engineer openings matching my profile and tell me which ones pay the highest stipend.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": "career_advice",
+          "latency_ms": 6923.062100002426
+        },
+        {
+          "id": "jo_004",
+          "query": "List open full stack developer positions for 2024 graduates.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6776.581300000544
+        },
+        {
+          "id": "jo_015",
+          "query": "Find Flutter developer internships with stipend.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6930.655999996816
+        },
+        {
+          "id": "jo_082",
+          "query": "Show network engineer trainee jobs at telecom providers.",
+          "ground_truth": "job_search",
+          "predicted": "job_search",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6082.152400005725
+        },
+        {
+          "id": "sk_052",
+          "query": "I know basic HTML, CSS, and JavaScript, but every frontend job asks for TypeScript, Redux, and Tailwind. How big is my skill gap and what should I prioritize first?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 8021.378200006438
+        },
+        {
+          "id": "sk_108",
+          "query": "What machine learning libraries am I missing to apply for NLP research assistant positions?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7092.027999999118
+        },
+        {
+          "id": "sk_055",
+          "query": "What database indexing and performance tuning skills am I missing for senior backend roles?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 8045.831299998099
+        },
+        {
+          "id": "sk_075",
+          "query": "Compare my knowledge of Git workflows with what is required for team collaboration in startups.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7456.4877999946475
+        },
+        {
+          "id": "sk_099",
+          "query": "What additional frameworks do I need to master to transition from React to full stack development?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7727.484699993511
+        },
+        {
+          "id": "sk_069",
+          "query": "Identify missing technologies between my Node.js profile and a full stack requirement.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7254.487599988352
+        },
+        {
+          "id": "sk_072",
+          "query": "What algorithms and data structures proficiency is expected for this role that I lack?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6836.547400002019
+        },
+        {
+          "id": "sk_096",
+          "query": "Analyze my skill deficiency for this automation tester posting and give me sample interview questions for Selenium with Python.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": "interview_preparation",
+          "latency_ms": 7414.7579000127735
+        },
+        {
+          "id": "sk_032",
+          "query": "What accounting standards and tools am I missing for an Audit Associate vacancy?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 8050.740999999107
+        },
+        {
+          "id": "sk_018",
+          "query": "Am I missing any mandatory skills for this junior blockchain developer posting?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6479.548099989188
+        },
+        {
+          "id": "sk_034",
+          "query": "Check if my CAD and FEA experience matches this aerospace engineering opening.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6667.412499999045
+        },
+        {
+          "id": "sk_019",
+          "query": "Compare my resume technologies with current industry expectations for NLP engineers.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7732.67610000039
+        },
+        {
+          "id": "sk_059",
+          "query": "What cloud architecture skills am I lacking for an enterprise cloud consultant job?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6427.747400011867
+        },
+        {
+          "id": "sk_083",
+          "query": "What caching strategies like Redis are expected for this high throughput backend vacancy?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 8292.91760000342
+        },
+        {
+          "id": "sk_051",
+          "query": "Here is the job description for a Junior Machine Learning Engineer at an AI healthcare startup. Please compare my resume projects and list the specific frameworks and mathematical foundations I am missing.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7195.526900002733
+        },
+        {
+          "id": "sk_064",
+          "query": "What system administration commands should a junior DevOps engineer know that I don't have listed?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 8116.040099994279
+        },
+        {
+          "id": "sk_084",
+          "query": "Identify missing knowledge in my profile for an entry level ETL pipeline developer.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 8581.290800007991
+        },
+        {
+          "id": "sk_110",
+          "query": "Check if my current Python and SQL skills meet the cutoff for this data role, and list 3 companies hiring candidates with my exact stack.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": "job_search",
+          "latency_ms": 6339.784299998428
+        },
+        {
+          "id": "sk_041",
+          "query": "missing skills in my profile for java backend",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7007.707400000072
+        },
+        {
+          "id": "sk_092",
+          "query": "Compare my profile against this fintech backend job and prepare me for technical interview questions on my weak areas.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "interview_preparation",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": "interview_preparation",
+          "latency_ms": 7516.322299998137
+        },
+        {
+          "id": "sk_073",
+          "query": "Check if my current skills cover the minimum requirements for a data engineering internship.",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6253.470499999821
+        },
+        {
+          "id": "sk_028",
+          "query": "What digital marketing tools do I need to learn to qualify for growth marketing roles?",
+          "ground_truth": "skill_gap_analysis",
+          "predicted": "skill_gap_analysis",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7941.869000002043
+        },
+        {
+          "id": "re_066",
+          "query": "Can you check if my resume has repetitive action verbs like 'worked on' or 'responsible for'?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 5985.363700005109
+        },
+        {
+          "id": "re_098",
+          "query": "Review my CV and explain how I can defend my lack of cloud experience during a technical interview.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": "interview_preparation",
+          "latency_ms": 8110.519699999713
+        },
+        {
+          "id": "re_043",
+          "query": "fix grammar errors in my resume",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 5395.027499995194
+        },
+        {
+          "id": "re_005",
+          "query": "Does my resume clearly highlight my Python, FastAPI, and PostgreSQL skills?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 5972.949300004984
+        },
+        {
+          "id": "re_107",
+          "query": "Critique my resume contact section: should I remove full residential address for privacy?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7799.94959999749
+        },
+        {
+          "id": "re_102",
+          "query": "How should I describe my open source GitHub contributions on my CV?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6213.827200001106
+        },
+        {
+          "id": "re_008",
+          "query": "Check if my resume bullets follow the Google X-Y-Z formula.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6501.8344999989495
+        },
+        {
+          "id": "re_081",
+          "query": "Review the grammar, punctuation, and capitalization throughout my resume.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7168.99310000008
+        },
+        {
+          "id": "re_091",
+          "query": "Rewrite my resume project bullets to match this specific job description, and check if my profile qualifies.",
+          "ground_truth": "resume_feedback",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": "skill_gap_analysis",
+          "latency_ms": 6742.563299994799
+        },
+        {
+          "id": "re_010",
+          "query": "Suggest action verbs to strengthen my engineering project descriptions.",
+          "ground_truth": "resume_feedback",
+          "predicted": "skill_gap_analysis",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6428.878499995335
+        },
+        {
+          "id": "re_001",
+          "query": "Can you review my resume and suggest improvements for software engineering roles?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 5856.7314999963855
+        },
+        {
+          "id": "re_108",
+          "query": "Review my resume font choices and line spacing for readability.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 5217.470800009323
+        },
+        {
+          "id": "re_104",
+          "query": "Is it acceptable to list technical courses under education if I lack corporate internships?",
+          "ground_truth": "resume_feedback",
+          "predicted": "skill_gap_analysis",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 8310.396000000765
+        },
+        {
+          "id": "re_030",
+          "query": "Suggest improvements for my accounting resume aiming for Big 4 audit jobs.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 8328.306100011105
+        },
+        {
+          "id": "re_071",
+          "query": "Help me rephrase my internship bullet points to emphasize problem solving.",
+          "ground_truth": "resume_feedback",
+          "predicted": "skill_gap_analysis",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 8267.500600006315
+        },
+        {
+          "id": "re_076",
+          "query": "Evaluate my resume for a DevOps role: does it show enough Linux command line proficiency?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 5825.635500004864
+        },
+        {
+          "id": "re_003",
+          "query": "How can I rewrite my project bullet points to showcase measurable outcomes?",
+          "ground_truth": "resume_feedback",
+          "predicted": "skill_gap_analysis",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 8144.54090000072
+        },
+        {
+          "id": "re_044",
+          "query": "how to improve my resume summary?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6877.480099996319
+        },
+        {
+          "id": "re_009",
+          "query": "Is my resume too long for a fresher with one year of internship experience?",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6844.109999990906
+        },
+        {
+          "id": "re_029",
+          "query": "Evaluate my supply chain resume for warehouse operations roles.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7052.038299996639
+        },
+        {
+          "id": "re_032",
+          "query": "How should a biomedical engineering graduate structure their lab project bullet points?",
+          "ground_truth": "resume_feedback",
+          "predicted": "skill_gap_analysis",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 8054.960099994787
+        },
+        {
+          "id": "re_016",
+          "query": "Help me condense my 2-page fresher resume into a single clean page.",
+          "ground_truth": "resume_feedback",
+          "predicted": "resume_feedback",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6148.912399992696
+        },
+        {
+          "id": "ca_041",
+          "query": "wats the best path to become cloud architect?",
+          "ground_truth": "career_advice",
+          "predicted": "skill_gap_analysis",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 8773.99339999829
+        },
+        {
+          "id": "ca_067",
+          "query": "How does remote work impact mentorship, visibility, and promotion speed for freshers?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 5734.21349999262
+        },
+        {
+          "id": "ca_101",
+          "query": "Is it advisable to switch companies within the first 8 months if learning has stagnated?",
+          "ground_truth": "career_advice",
+          "predicted": "skill_gap_analysis",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7870.089800009737
+        },
+        {
+          "id": "ca_099",
+          "query": "What is the expected career growth for an SDE 1 in a Series B funded startup?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 8425.985399997444
+        },
+        {
+          "id": "ca_085",
+          "query": "Should I accept a 5 LPA frontend offer or keep applying for full stack jobs that match my resume skills?",
+          "ground_truth": "career_advice",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": "job_search",
+          "latency_ms": 7724.728899993352
+        },
+        {
+          "id": "ca_054",
+          "query": "I enjoy solving algorithmic puzzles in Python but I find frontend CSS styling frustrating. What specialized career paths in software engineering focus purely on backend logic, data pipelines, or systems programming?",
+          "ground_truth": "career_advice",
+          "predicted": "skill_gap_analysis",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7595.359400002053
+        },
+        {
+          "id": "ca_011",
+          "query": "What certifications are actually valued by Indian tech recruiters: AWS, Azure, or Kubernetes?",
+          "ground_truth": "career_advice",
+          "predicted": "skill_gap_analysis",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7606.5844999975525
+        },
+        {
+          "id": "ca_080",
+          "query": "What should I look for in an offer letter regarding notice period, non-compete clauses, and IP assignment?",
+          "ground_truth": "career_advice",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7726.100400002906
+        },
+        {
+          "id": "ca_006",
+          "query": "What are the pros and cons of joining an early stage startup versus a large IT services company as a fresher?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 8897.497499987367
+        },
+        {
+          "id": "ca_107",
+          "query": "What factors should I weigh when deciding between remote work and in-office work in Bangalore?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 8434.927599999355
+        },
+        {
+          "id": "ca_075",
+          "query": "What are the key differences between product engineering and internal IT tooling teams?",
+          "ground_truth": "career_advice",
+          "predicted": "skill_gap_analysis",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 9822.228999997606
+        },
+        {
+          "id": "ca_032",
+          "query": "Is taking up a supply chain operations role a good starting point for logistics consulting?",
+          "ground_truth": "career_advice",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7971.708600001875
+        },
+        {
+          "id": "ca_073",
+          "query": "What are the career implications of joining an IT consultancy on a 2-year service bond?",
+          "ground_truth": "career_advice",
+          "predicted": "career_advice",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 8061.326700000791
+        },
+        {
+          "id": "ca_016",
+          "query": "What are the most in-demand AI specializations for the next 3 to 5 years?",
+          "ground_truth": "career_advice",
+          "predicted": "skill_gap_analysis",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7838.421699998435
+        },
+        {
+          "id": "ca_052",
+          "query": "I am working as a system administrator earning 4 LPA, but I want to transition into cloud security. What certification roadmap and practical homelab projects should I pursue over the next 9 months?",
+          "ground_truth": "career_advice",
+          "predicted": "skill_gap_analysis",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 9556.747099995846
+        },
+        {
+          "id": "ca_031",
+          "query": "How do I transition from technical writing into technical product marketing?",
+          "ground_truth": "career_advice",
+          "predicted": "skill_gap_analysis",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 8236.409500008449
+        },
+        {
+          "id": "ca_087",
+          "query": "Advise me on whether I should prepare for data science or web dev, and what interview questions are typically asked in each.",
+          "ground_truth": "career_advice",
+          "predicted": "skill_gap_analysis",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": "interview_preparation",
+          "latency_ms": 7513.420300005237
+        },
+        {
+          "id": "ca_108",
+          "query": "How do I prepare for off-campus recruitment season if my college placement cell has few companies?",
+          "ground_truth": "career_advice",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6508.657700003823
+        },
+        {
+          "id": "ca_077",
+          "query": "Is learning Docker and Kubernetes too advanced for a second-year college student?",
+          "ground_truth": "career_advice",
+          "predicted": "skill_gap_analysis",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6807.527199998731
+        },
+        {
+          "id": "ca_009",
+          "query": "Should I learn Golang or Rust if my goal is high concurrency distributed backend systems?",
+          "ground_truth": "career_advice",
+          "predicted": "skill_gap_analysis",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7435.25550000777
+        },
+        {
+          "id": "ca_024",
+          "query": "What career options exist for Commerce graduates who want to work in the technology sector?",
+          "ground_truth": "career_advice",
+          "predicted": "job_search",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6914.150399999926
+        },
+        {
+          "id": "ca_109",
+          "query": "Advise me on whether I should learn cloud computing or cybersecurity first, and what entry level roles hire for each.",
+          "ground_truth": "career_advice",
+          "predicted": "skill_gap_analysis",
+          "is_correct": false,
+          "confidence": 0.95,
+          "secondary_intent": "job_search",
+          "latency_ms": 8703.352399999858
+        },
+        {
+          "id": "in_092",
+          "query": "Conduct a mock behavioral interview and critique the project bullet point I referenced in my answer.",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": "resume_feedback",
+          "latency_ms": 6799.394399989978
+        },
+        {
+          "id": "in_004",
+          "query": "How do I answer 'What is the difference between processes and threads' in an operating systems round?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6419.093199991039
+        },
+        {
+          "id": "in_098",
+          "query": "Conduct a mock interview on SQL and tell me what additional database topics I need to learn to pass the bar.",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": "skill_gap_analysis",
+          "latency_ms": 6755.230199996731
+        },
+        {
+          "id": "in_023",
+          "query": "Prepare me for an interview for a Civil Engineer Trainee position at an infrastructure company.",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7892.131700005848
+        },
+        {
+          "id": "in_021",
+          "query": "What technical questions are asked in mechanical engineering campus interviews?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6428.019999992102
+        },
+        {
+          "id": "in_031",
+          "query": "Prepare me for questions on digital marketing metrics like CAC, ROAS, and LTV.",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 5736.806800006889
+        },
+        {
+          "id": "in_020",
+          "query": "What behavioral questions are commonly asked in the managerial round at Indian IT firms?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6635.783600009745
+        },
+        {
+          "id": "in_096",
+          "query": "How should I structure my self-introduction in an interview so that it highlights the strongest parts of my resume?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": "resume_feedback",
+          "latency_ms": 7445.612499999697
+        },
+        {
+          "id": "in_080",
+          "query": "Provide practice questions on React useEffect dependencies and infinite loop pitfalls.",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6011.567499997909
+        },
+        {
+          "id": "in_053",
+          "query": "I get very anxious during live coding interviews when the interviewer watches me write code in Google Docs. What mental strategies and communication habits can I practice to remain composed and explain my thought process out loud?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7433.410800003912
+        },
+        {
+          "id": "in_072",
+          "query": "Evaluate my sample response explaining why I chose MongoDB over PostgreSQL for a document project.",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7632.8385999950115
+        },
+        {
+          "id": "in_106",
+          "query": "What behavioral questions evaluate how well an engineer collaborates with non-technical stakeholders?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6855.729999995674
+        },
+        {
+          "id": "in_014",
+          "query": "What questions do interviewers ask to test candidate knowledge of SQL indexing and joins?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6564.289599991753
+        },
+        {
+          "id": "in_086",
+          "query": "How should I explain the projects on my resume during an interview so that I get recommended for an SDE 1 role?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": "resume_feedback",
+          "latency_ms": 7809.454699992784
+        },
+        {
+          "id": "in_032",
+          "query": "What questions will hospital recruiters ask a fresher biomedical engineer?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6616.604299997562
+        },
+        {
+          "id": "in_088",
+          "query": "Prepare me for interview questions on my resume gaps, and tell me how to phrase my answers without getting disqualified.",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": "resume_feedback",
+          "latency_ms": 6719.7818999993615
+        },
+        {
+          "id": "in_027",
+          "query": "What behavioral questions are asked to freshers applying for Human Resources internships?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6709.660799999256
+        },
+        {
+          "id": "in_046",
+          "query": "technical interview ki preparation kaise start kare?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7758.896500003175
+        },
+        {
+          "id": "in_006",
+          "query": "What technical questions will a recruiter ask about Docker containers and Kubernetes architecture?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6098.967400001129
+        },
+        {
+          "id": "in_102",
+          "query": "What questions do interviewers ask to test candidate understanding of REST vs GraphQL?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6420.51770001126
+        },
+        {
+          "id": "in_047",
+          "query": "interviewer ko project kaise explain kare STAR method me?",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 6226.060900007724
+        },
+        {
+          "id": "in_040",
+          "query": "give me coding interview questins on arrays",
+          "ground_truth": "interview_preparation",
+          "predicted": "interview_preparation",
+          "is_correct": true,
+          "confidence": 0.95,
+          "secondary_intent": null,
+          "latency_ms": 7093.281699999352
+        }
+      ]
+    }
+  },
+  "mcnemar_test": {
+    "contingency_table": {
+      "n_both_correct": 59,
+      "n_trained_correct_heuristic_wrong": 39,
+      "n_heuristic_correct_trained_wrong": 3,
+      "n_both_wrong": 9,
+      "table": [
+        [
+          59,
+          39
+        ],
+        [
+          3,
+          9
+        ]
+      ]
+    },
+    "discordant_pairs": 42,
+    "statistic": 29.1667,
+    "p_value": 6.641198786386125e-08,
+    "significant_at_05": true
+  },
+  "legacy_benchmark_development_set": {
+    "trained": {
+      "dataset_name": "query_intent_benchmark_v1.json",
+      "description": "Historical development set (50 queries, appended to train split)",
+      "total_samples": 50,
+      "backend": "trained",
+      "accuracy": 1.0,
+      "macro_f1": 1.0
+    },
+    "heuristic": {
+      "dataset_name": "query_intent_benchmark_v1.json",
+      "description": "Historical development set (50 queries, appended to train split)",
+      "total_samples": 50,
+      "backend": "heuristic",
+      "accuracy": 1.0,
+      "macro_f1": 1.0
+    }
+  }
+}

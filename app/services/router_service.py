@@ -21,11 +21,16 @@ strategies:
     -> Real-time compensation percentiles & labor demand aggregations (Market Agent)
 """
 
+import hashlib
 import json
+import os
 import re
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import httpx
+import joblib
+import numpy as np
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -45,6 +50,23 @@ from app.services.embedding_service import embedding_service
 from app.services.market_service import market_agent
 
 
+STRATEGY_MAP: Dict[str, str] = {
+    "job_search": "Strategy 1: Hybrid Vector Search & XGBoost Re-ranking",
+    "skill_gap_analysis": "Strategy 2: Skill-Gap Diagnostic & Learning Roadmap Synthesis",
+    "interview_preparation": "Strategy 3: Curated Question Bank & STAR Rubric Retrieval",
+    "career_advice": "Strategy 4: Labor Market Dynamics & Career Advisory",
+    "resume_feedback": "Strategy 5: Resume Feedback & ATS Alignment Synthesis",
+}
+
+CANONICAL_TO_INTENT: Dict[str, IntentType] = {
+    "job_search": IntentType.JOB_SEARCH_AND_MATCH,
+    "skill_gap_analysis": IntentType.SKILL_PROGRESSION_AND_PATH,
+    "interview_preparation": IntentType.INTERVIEW_COACHING,
+    "career_advice": IntentType.MACRO_MARKET_DYNAMICS,
+    "resume_feedback": IntentType.RESUME_FEEDBACK,
+}
+
+
 class AdaptiveRouterService:
     """Classifies user queries and executes targeted Adaptive RAG retrieval strategies."""
 
@@ -52,6 +74,52 @@ class AdaptiveRouterService:
         self.ollama_base_url: Optional[str] = getattr(settings, "OLLAMA_BASE_URL", "http://localhost:11434")
         self.ollama_model: str = getattr(settings, "OLLAMA_MODEL", "llama3.2:3b")
         self.gemini_key: Optional[str] = "ollama"  # Retained for fallback toggling and test compatibility
+        self.router_backend: str = os.getenv("ROUTER_BACKEND", getattr(settings, "ROUTER_BACKEND", "trained")).lower()
+        self._model = None
+        self._meta: Optional[Dict[str, Any]] = None
+        self._tau: float = 0.33
+        self._classes: List[str] = []
+        self._model_loaded: bool = False
+        self._load_trained_model()
+
+    def _load_trained_model(self) -> None:
+        """Loads trained scikit-learn model with hash verification."""
+        model_path = Path("artifacts/models/intent_router_v1.joblib")
+        meta_path = Path("artifacts/models/intent_router_v1.meta.json")
+
+        if not model_path.exists() or not meta_path.exists():
+            logger.warning("Trained intent router model files not found at %s. Falling back to heuristic.", model_path)
+            self._model = None
+            self._model_loaded = False
+            return
+
+        try:
+            with open(meta_path, "r", encoding="utf-8") as f:
+                self._meta = json.load(f)
+
+            expected_sha = self._meta.get("model_sha256")
+            with open(model_path, "rb") as f:
+                actual_bytes = f.read()
+            actual_sha = hashlib.sha256(actual_bytes).hexdigest().upper()
+
+            if expected_sha and actual_sha != expected_sha:
+                logger.warning(
+                    "Model SHA-256 hash mismatch! Expected %s, got %s. Model may be tampered or corrupted. Falling back to heuristic.",
+                    expected_sha, actual_sha,
+                )
+                self._model = None
+                self._model_loaded = False
+                return
+
+            self._model = joblib.load(model_path)
+            self._tau = float(self._meta.get("validation_metrics", {}).get("tau", 0.33))
+            self._classes = list(self._meta.get("classes", []))
+            self._model_loaded = True
+            logger.info("Successfully loaded trained intent router model (hash: %s, tau: %.2f)", actual_sha[:8], self._tau)
+        except Exception as exc:
+            logger.warning("Failed to load trained intent router model: %s. Falling back to heuristic.", exc)
+            self._model = None
+            self._model_loaded = False
 
     # ---------------------------------------------------------------------------
     # Intent Classification Layer
@@ -80,19 +148,76 @@ class AdaptiveRouterService:
 
         raise ValueError(f"Could not extract valid JSON from response: {text_content[:200]}")
 
-    async def classify_intent(self, query: str, use_llm: bool = True) -> RouterDecision:
+    async def classify_intent(
+        self,
+        query: str,
+        use_llm: Optional[bool] = None,
+        backend: Optional[str] = None,
+    ) -> RouterDecision:
         """
-        Classifies user query intent using LLM with deterministic heuristic fallback.
+        Classifies user query intent using trained model, LLM, or heuristic.
+        Supports backend='trained' (default) | 'llm' | 'heuristic'.
         """
-        if use_llm and self.ollama_base_url and self.gemini_key is not None:
-            try:
-                decision = await self._classify_with_ollama(query)
-                if decision:
-                    return decision
-            except Exception as exc:
-                logger.warning("Ollama intent classification failed; falling back to heuristic: %s", exc)
+        selected_backend = (backend or os.getenv("ROUTER_BACKEND", self.router_backend)).lower()
+        if use_llm is True:
+            selected_backend = "llm"
+        elif use_llm is False and selected_backend == "llm":
+            selected_backend = "heuristic"
 
-        return self._classify_heuristic(query)
+        if selected_backend == "trained":
+            if not self._model_loaded:
+                self._load_trained_model()
+
+            if self._model_loaded and self._model is not None:
+                try:
+                    probs = self._model.predict_proba([query])[0]
+                    classes = self._model.classes_ if hasattr(self._model, "classes_") else self._classes
+                    max_idx = int(np.argmax(probs))
+                    pred_class = str(classes[max_idx])
+                    confidence = float(probs[max_idx])
+                    low_conf = bool(confidence < self._tau)
+
+                    canonical = pred_class.lower()
+                    intent_enum = CANONICAL_TO_INTENT.get(canonical, IntentType.JOB_SEARCH_AND_MATCH)
+                    strategy_str = STRATEGY_MAP.get(canonical, "Strategy 1: Hybrid Vector Search & XGBoost Re-ranking")
+
+                    return RouterDecision(
+                        intent=intent_enum,
+                        confidence=round(confidence, 4),
+                        strategy_selected=strategy_str,
+                        reasoning=f"Classified as '{canonical}' with confidence {confidence:.2f} via trained TF-IDF Logistic Regression.",
+                        backend="trained",
+                        low_confidence=low_conf,
+                        fallback_used=False,
+                        strategy=strategy_str,
+                    )
+                except Exception as exc:
+                    logger.warning("Trained model classification failed (%s); falling back to heuristic.", exc)
+                    fallback_decision = self._classify_heuristic(query)
+                    fallback_decision.fallback_used = True
+                    return fallback_decision
+            else:
+                fallback_decision = self._classify_heuristic(query)
+                fallback_decision.fallback_used = True
+                return fallback_decision
+
+        elif selected_backend == "llm":
+            if self.ollama_base_url and self.gemini_key is not None:
+                try:
+                    decision = await self._classify_with_ollama(query)
+                    if decision:
+                        decision.backend = "llm"
+                        decision.fallback_used = False
+                        return decision
+                except Exception as exc:
+                    logger.warning("Ollama intent classification failed; falling back to heuristic: %s", exc)
+
+            fallback_decision = self._classify_heuristic(query)
+            fallback_decision.fallback_used = True
+            return fallback_decision
+
+        else:  # heuristic
+            return self._classify_heuristic(query)
 
     async def _classify_with_ollama(self, query: str, max_attempts: int = 2) -> Optional[RouterDecision]:
         """Query Ollama to classify intent into one of the 4 canonical enum categories."""
@@ -197,11 +322,16 @@ Respond with ONLY a raw JSON object with this exact structure:
                             break
 
                 if intent_val:
+                    strat_str = parsed.get("strategy_selected", "Dynamic agent dispatch")
                     return RouterDecision(
                         intent=intent_val,
                         confidence=float(parsed.get("confidence", 0.95)),
-                        strategy_selected=parsed.get("strategy_selected", "Dynamic agent dispatch"),
+                        strategy_selected=strat_str,
                         reasoning=parsed.get("reasoning", "Classified via semantic intent analysis."),
+                        backend="llm",
+                        low_confidence=False,
+                        fallback_used=False,
+                        strategy=strat_str,
                     )
             except Exception as exc:
                 logger.warning(
@@ -243,6 +373,10 @@ Respond with ONLY a raw JSON object with this exact structure:
                 confidence=0.94,
                 strategy_selected="Strategy 5: Resume Feedback & ATS Alignment Synthesis",
                 reasoning="Detected resume critique, bullet point refinement, or ATS optimization query.",
+                backend="heuristic",
+                low_confidence=False,
+                fallback_used=False,
+                strategy="Strategy 5: Resume Feedback & ATS Alignment Synthesis",
             )
 
         # 2. Interview Preparation
@@ -257,6 +391,10 @@ Respond with ONLY a raw JSON object with this exact structure:
                 confidence=0.94,
                 strategy_selected="Strategy 3: Curated Question Bank & STAR Rubric Retrieval",
                 reasoning="Detected interview preparation, technical/behavioral question keywords.",
+                backend="heuristic",
+                low_confidence=False,
+                fallback_used=False,
+                strategy="Strategy 3: Curated Question Bank & STAR Rubric Retrieval",
             )
 
         # 3. Skill-Gap Analysis
@@ -271,6 +409,10 @@ Respond with ONLY a raw JSON object with this exact structure:
                 confidence=0.90,
                 strategy_selected="Strategy 2: Skill-Gap Diagnostic & Learning Roadmap Synthesis",
                 reasoning="Detected skill gap diagnostic and learning roadmap inquiry.",
+                backend="heuristic",
+                low_confidence=False,
+                fallback_used=False,
+                strategy="Strategy 2: Skill-Gap Diagnostic & Learning Roadmap Synthesis",
             )
 
         # 4. Job Search & Match
@@ -284,6 +426,10 @@ Respond with ONLY a raw JSON object with this exact structure:
                 confidence=0.92,
                 strategy_selected="Strategy 1: Hybrid Vector Search & XGBoost Re-ranking",
                 reasoning="Classified as job opportunity discovery or qualification matching.",
+                backend="heuristic",
+                low_confidence=False,
+                fallback_used=False,
+                strategy="Strategy 1: Hybrid Vector Search & XGBoost Re-ranking",
             )
 
         # 5. Career Advice & Macro Market Dynamics
@@ -300,6 +446,10 @@ Respond with ONLY a raw JSON object with this exact structure:
                 confidence=0.91,
                 strategy_selected="Strategy 4: Labor Market Dynamics & Career Advisory",
                 reasoning="Detected compensation, career path trajectory, or labor market trend keywords.",
+                backend="heuristic",
+                low_confidence=False,
+                fallback_used=False,
+                strategy="Strategy 4: Labor Market Dynamics & Career Advisory",
             )
 
         # Default Strategy 1: Job Search & Match
@@ -308,6 +458,10 @@ Respond with ONLY a raw JSON object with this exact structure:
             confidence=0.85,
             strategy_selected="Strategy 1: Hybrid Vector Search & XGBoost Re-ranking",
             reasoning="Classified as job opportunity discovery or qualification matching.",
+            backend="heuristic",
+            low_confidence=False,
+            fallback_used=False,
+            strategy="Strategy 1: Hybrid Vector Search & XGBoost Re-ranking",
         )
 
     # ---------------------------------------------------------------------------
