@@ -7,10 +7,12 @@ from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import enforce_resume_ownership, get_optional_current_user
 from app.core.config import settings
 from app.core.logging import logger
 from app.db.session import get_db
 from app.models.resume import Resume
+from app.models.user import User
 from app.schemas.resume import (
     ParsedResume,
     ResumeDetailResponse,
@@ -43,6 +45,7 @@ class SemanticSearchRequest(BaseModel):
 async def upload_resume(
     file: UploadFile = File(..., description="Resume document (.pdf, .docx, .txt)"),
     db: AsyncSession = Depends(get_db),
+    current_user: Optional[User] = Depends(get_optional_current_user),
 ) -> ResumeUploadResponse:
     # 1. Validate file extension
     file_ext = os.path.splitext(file.filename or "")[1].lower()
@@ -91,6 +94,7 @@ async def upload_resume(
     now = datetime.now(timezone.utc)
     resume_record = Resume(
         id=unique_id,
+        user_id=current_user.id if current_user else None,
         filename=file.filename or stored_filename,
         file_path=file_path,
         file_type=file_ext.lstrip("."),
@@ -153,8 +157,12 @@ async def list_resumes(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
+    current_user: Optional[User] = Depends(get_optional_current_user),
 ) -> List[ResumeListItemResponse]:
-    result = await db.execute(select(Resume).order_by(Resume.created_at.desc()).offset(skip).limit(limit))
+    stmt = select(Resume).order_by(Resume.created_at.desc())
+    if current_user and not current_user.is_superuser:
+        stmt = stmt.where(Resume.user_id == current_user.id)
+    result = await db.execute(stmt.offset(skip).limit(limit))
     resumes = result.scalars().all()
 
     items = []
@@ -182,12 +190,15 @@ async def list_resumes(
 async def get_resume(
     resume_id: str,
     db: AsyncSession = Depends(get_db),
+    current_user: Optional[User] = Depends(get_optional_current_user),
 ) -> ResumeDetailResponse:
     result = await db.execute(select(Resume).where(Resume.id == resume_id))
     resume = result.scalar_one_or_none()
 
     if not resume:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Resume with ID '{resume_id}' not found.")
+
+    enforce_resume_ownership(resume, current_user)
 
     return ResumeDetailResponse(
         id=resume.id,
@@ -212,12 +223,15 @@ async def get_resume(
 async def delete_resume(
     resume_id: str,
     db: AsyncSession = Depends(get_db),
+    current_user: Optional[User] = Depends(get_optional_current_user),
 ):
     result = await db.execute(select(Resume).where(Resume.id == resume_id))
     resume = result.scalar_one_or_none()
 
     if not resume:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Resume with ID '{resume_id}' not found.")
+
+    enforce_resume_ownership(resume, current_user)
 
     file_path = resume.file_path
     await db.delete(resume)

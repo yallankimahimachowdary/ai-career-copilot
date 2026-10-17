@@ -1,6 +1,7 @@
 import uuid
 from datetime import datetime, timezone
-from sqlalchemy import Column, DateTime, String, Text, JSON
+from sqlalchemy import Column, DateTime, ForeignKey, String, Text, JSON
+from sqlalchemy.orm import relationship
 from pgvector.sqlalchemy import Vector
 from app.core.config import settings
 from app.db.base import Base
@@ -10,6 +11,7 @@ class Resume(Base):
     __tablename__ = "resumes"
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=True, index=True)
     filename = Column(String(255), nullable=False)
     file_path = Column(String(1024), nullable=False)
     file_type = Column(String(50), nullable=False)
@@ -18,6 +20,9 @@ class Resume(Base):
     candidate_name = Column(String(255), nullable=True, index=True)
     email = Column(String(255), nullable=True, index=True)
     phone = Column(String(50), nullable=True)
+
+    # Relationships
+    user = relationship("User", back_populates="resumes")
 
     # Structured JSON data extracted by the Parser Agent
     parsed_data = Column(JSON, nullable=False, default=dict)

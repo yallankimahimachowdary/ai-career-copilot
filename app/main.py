@@ -49,16 +49,22 @@ def create_application() -> FastAPI:
     # Mount API v1 router
     application.include_router(api_router, prefix=settings.API_V1_STR)
 
-    # Global unhandled exception handler preserving CORS headers
     @application.exception_handler(Exception)
     async def global_exception_handler(request, exc: Exception):
         logger.error(f"Unhandled error on {request.method} {request.url.path}: {exc}", exc_info=True)
         origin = request.headers.get("origin", "*")
         from fastapi.responses import JSONResponse
+
+        # Prevent leaking database credentials, tokens, or internals in responses
+        detail_msg = (
+            f"Internal Server Error: {str(exc)}"
+            if settings.DEBUG and settings.ENVIRONMENT == "development"
+            else "An unexpected internal server error occurred."
+        )
         return JSONResponse(
             status_code=500,
             content={
-                "detail": f"Internal Server Error: {str(exc)}",
+                "detail": detail_msg,
                 "path": str(request.url.path),
             },
             headers={
