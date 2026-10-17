@@ -1,25 +1,29 @@
 import React, { useState, useEffect } from "react"
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom"
-import { Sidebar } from "@/components/layout/Sidebar"
-import { Header } from "@/components/layout/Header"
+import { AuthProvider } from "@/context/AuthContext"
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute"
+import { LoginPage } from "@/pages/LoginPage"
+import { RegisterPage } from "@/pages/RegisterPage"
+import { DashboardPage } from "@/pages/DashboardPage"
 import { ResumePage } from "@/pages/ResumePage"
 import { MatchesPage } from "@/pages/MatchesPage"
 import { CoachPage } from "@/pages/CoachPage"
 import { MarketPage } from "@/pages/MarketPage"
+import { Sidebar } from "@/components/layout/Sidebar"
+import { Header } from "@/components/layout/Header"
 import { CopilotChatDrawer } from "@/components/chat/CopilotChatDrawer"
 import { apiClient } from "@/api/client"
 import { resumeApi } from "@/api/resumeApi"
 import { demoResume } from "@/demo/demoData"
 
-export function App() {
+function AuthenticatedApp() {
   const [activeResume, setActiveResume] = useState(null)
   const [targetJobForCoach, setTargetJobForCoach] = useState(null)
   const [isConnected, setIsConnected] = useState(false)
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const navigate = useNavigate()
 
-  // Check backend health on initial mount
+  // Check backend health on initial mount and interval
   useEffect(() => {
     const checkHealth = async () => {
       try {
@@ -27,14 +31,13 @@ export function App() {
         if (res.data?.status === "healthy" || res.data?.status === "ok") {
           setIsConnected(true)
         }
-      } catch (err) {
-        console.warn("FastAPI backend health check unreachable, operating in offline/demo hybrid mode.")
+      } catch {
         setIsConnected(false)
       }
     }
 
     checkHealth()
-    const interval = setInterval(checkHealth, 15000) // check every 15s
+    const interval = setInterval(checkHealth, 15000)
     return () => clearInterval(interval)
   }, [])
 
@@ -45,8 +48,8 @@ export function App() {
         setActiveResume({ ...full, isDemo: true })
         return
       }
-    } catch (e) {
-      console.warn("Could not fetch designated demo resume from API:", e)
+    } catch {
+      // fallback to local demo data
     }
     setActiveResume(demoResume)
   }
@@ -73,7 +76,17 @@ export function App() {
         <main className="flex-1 pb-28">
           <Routes>
             <Route
-              path="/"
+              path="/dashboard"
+              element={
+                <DashboardPage
+                  activeResume={activeResume}
+                  onSelectDemoResume={handleSelectDemo}
+                  onSelectJobForCoach={(job) => setTargetJobForCoach(job)}
+                />
+              }
+            />
+            <Route
+              path="/resume"
               element={
                 <ResumePage
                   activeResume={activeResume}
@@ -104,7 +117,8 @@ export function App() {
               path="/market"
               element={<MarketPage activeResume={activeResume} />}
             />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </main>
       </div>
@@ -116,6 +130,25 @@ export function App() {
         onToggle={() => setIsChatOpen(!isChatOpen)}
       />
     </div>
+  )
+}
+
+export function App() {
+  return (
+    <AuthProvider>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route
+          path="/*"
+          element={
+            <ProtectedRoute>
+              <AuthenticatedApp />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </AuthProvider>
   )
 }
 

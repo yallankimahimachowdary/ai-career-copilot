@@ -9,6 +9,8 @@ export const jobApi = {
         limit: params.limit || 20,
         title: params.title || undefined,
         location: params.location || undefined,
+        is_active: params.is_active !== undefined ? params.is_active : undefined,
+        freshness: params.freshness || undefined,
       },
     })
     return response.data
@@ -21,10 +23,11 @@ export const jobApi = {
   },
 
   // Semantic search similar jobs
-  searchSimilar: async (query, limit = 10) => {
+  searchSimilar: async (query, limit = 10, includeInactive = false) => {
     const response = await apiClient.post("/jobs/search/similar", {
       query,
       limit,
+      include_inactive: includeInactive,
     })
     return response.data
   },
@@ -34,4 +37,18 @@ export const jobApi = {
     const response = await apiClient.get("/jobs/stats")
     return response.data
   },
+
+  // Get job refresh and freshness evaluation status
+  getRefreshStatus: async () => {
+    const response = await apiClient.get("/jobs/refresh/status")
+    return response.data
+  },
+
+  // Trigger manual job refresh & freshness evaluation
+  triggerRefresh: async (payload = {}) => {
+    const response = await apiClient.post("/jobs/refresh/run", payload)
+    return response.data
+  },
 }
+
+export default jobApi

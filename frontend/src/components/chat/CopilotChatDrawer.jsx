@@ -1,19 +1,17 @@
 import React, { useState, useRef, useEffect } from "react"
 import {
-  MessageSquare,
   X,
   Send,
   Sparkles,
   Bot,
-  User,
   Loader2,
   Compass,
   ArrowRight,
-  HelpCircle,
+  AlertCircle,
+  RotateCcw,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import { chatApi } from "@/api/chatApi"
 
 export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
@@ -62,7 +60,9 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
       const response = await chatApi.sendQuery({
         query: text,
         resumeId: activeResume?.id,
-        history: newHistory.map((m) => ({ role: m.role, content: m.content })),
+        history: newHistory
+          .filter((m) => !m.isError)
+          .map((m) => ({ role: m.role, content: m.content })),
       })
 
       setMessages((prev) => [
@@ -77,61 +77,13 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
         },
       ])
     } catch (err) {
-      console.warn("Live router API unavailable, using high-fidelity offline simulation:", err)
-      // High-fidelity fallback based on query keywords
-      const q = text.toLowerCase()
-      let intent = "JOB_SEARCH_AND_MATCH"
-      let strategy = "Strategy 1: Hybrid Vector Matcher"
-      let reply = ""
-      let followups = []
-
-      if (q.includes("salary") || q.includes("pay") || q.includes("market")) {
-        intent = "MACRO_MARKET_DYNAMICS"
-        strategy = "Strategy 4: Market Dynamics & Compensation Band"
-        reply =
-          "### 📊 Market Intelligence Synthesis\n\nFor **Senior Software Engineers**, our indexed 4,120 postings indicate:\n- **25th Percentile:** $135,000 / yr\n- **Median Total Pay:** **$168,000 / yr**\n- **75th Percentile:** $198,000 / yr\n\nCloud infrastructure (AWS, Docker, Kubernetes) and distributed async Python command a **+14% compensation premium**."
-        followups = [
-          "Which cities pay the highest?",
-          "What is the remote ratio for these roles?",
-        ]
-      } else if (q.includes("interview") || q.includes("question") || q.includes("star")) {
-        intent = "INTERVIEW_COACHING"
-        strategy = "Strategy 3: Curated Question Bank & STAR Rubric"
-        reply =
-          "### 🎤 Interview Coaching Practice\n\n**Question (FastAPI Concurrency):**\n*Explain when to use 'async def' vs standard 'def' in FastAPI and how worker thread starvation is prevented during heavy CPU computation?*\n\n**STAR Tip:** Quantify system metrics (e.g. *'halved event loop latency from 80ms to 28ms'*)."
-        followups = [
-          "Give me a behavioral question about team conflict",
-          "What criteria will the evaluator use for this answer?",
-        ]
-      } else if (q.includes("skill") || q.includes("gap") || q.includes("learn") || q.includes("roadmap")) {
-        intent = "SKILL_PROGRESSION_AND_PATH"
-        strategy = "Strategy 2: Skill-Gap Diagnostic & Learning Roadmap"
-        reply =
-          "### 🚀 Skill Progression Roadmap\n\nBased on your profile, your primary growth priorities are:\n1. **Apache Kafka:** Event streaming and consumer group partitions.\n2. **Kubernetes (K8s):** Pod lifecycle and Helm deployment manifests.\n3. **Distributed Caching:** Redis eviction policies and write-through patterns."
-        followups = [
-          "What are top courses for learning Kafka?",
-          "Show me sample interview questions for Kafka.",
-        ]
-      } else {
-        reply =
-          "### 🎯 Matched Opportunities\n\nFound 3 high-confidence opportunities matching your qualifications:\n1. **Senior Backend Engineer** at **Stripe** (87% fit, San Francisco, CA)\n2. **Lead Full Stack Developer** at **Vercel** (83% fit, Remote)\n3. **AI Systems Software Engineer** at **Databricks** (79% fit, San Francisco, CA)"
-        followups = [
-          "Explain why I matched with Stripe",
-          "What is the salary range for Vercel?",
-        ]
-      }
-
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: reply,
-          router_decision: {
-            intent,
-            strategy_selected: strategy,
-            confidence: 0.92,
-          },
-          suggested_followups: followups,
+          isError: true,
+          failedQuery: text,
+          content: `Unable to process query: ${err.message}. Please check that the FastAPI backend is operational and try again.`,
         },
       ])
     } finally {
@@ -139,16 +91,11 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
     }
   }
 
-  const getIntentColor = (intent) => {
-    switch (intent) {
-      case "MACRO_MARKET_DYNAMICS":
-        return "text-emerald-800 bg-emerald-50 border-emerald-200"
-      case "INTERVIEW_COACHING":
-        return "text-[#7A2D4A] bg-[#EDE7F6] border-[#DDD6E7]"
-      case "SKILL_PROGRESSION_AND_PATH":
-        return "text-amber-800 bg-amber-50 border-amber-200"
-      default:
-        return "text-[#3A3A52] bg-[#FAF7F3] border-[#DDD6E7]"
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      if (e.nativeEvent.isComposing) return // IME safe
+      e.preventDefault()
+      handleSend()
     }
   }
 
@@ -156,83 +103,105 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
     return (
       <button
         onClick={onToggle}
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-full bg-[#7A2D4A] hover:bg-[#63233B] text-white font-semibold text-sm shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer border border-[#63233B]"
+        aria-label="Open AI Career Copilot Assistant"
+        className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5 px-4 py-3 rounded-full bg-[#7A2D4A] hover:bg-[#63233B] text-white shadow-lg hover:shadow-xl transition-all duration-200 group cursor-pointer"
       >
-        <Sparkles className="h-4 w-4 animate-spin text-white" />
-        <span>Ask Copilot</span>
+        <Bot className="h-5 w-5 text-white animate-bounce" />
+        <span className="text-xs font-semibold tracking-wide">Ask Career Copilot</span>
+        <span className="h-2 w-2 rounded-full bg-emerald-400" />
       </button>
     )
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-full max-w-lg h-[620px] max-h-[85vh] rounded-2xl border border-[#DDD6E7] bg-white shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 text-[#3A3A52]">
-      {/* Header */}
-      <div className="p-4 border-b border-[#DDD6E7] bg-[#FAF7F3] flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl bg-[#7A2D4A] flex items-center justify-center text-white shadow-sm">
-            <Bot className="h-5 w-5" />
+    <div className="fixed bottom-6 right-6 z-50 w-[95vw] sm:w-[480px] h-[640px] max-h-[85vh] rounded-2xl bg-[#FAF7F3] border border-[#DDD6E7] shadow-2xl flex flex-col overflow-hidden font-sans">
+      {/* Drawer Header */}
+      <div className="p-3.5 border-b border-[#DDD6E7] bg-white flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-2.5">
+          <div className="h-8 w-8 rounded-xl bg-[#7A2D4A] text-white flex items-center justify-center">
+            <Bot className="h-4 w-4" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-sm text-[#3A3A52]">AI Career Copilot</span>
-              <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#EDE7F6] text-[#7A2D4A] border border-[#DDD6E7]">
-                Adaptive RAG
+              <span className="text-sm font-bold text-[#3A3A52]">AI Career Copilot</span>
+              <span className="text-[10px] font-mono bg-[#EDE7F6] text-[#7A2D4A] px-1.5 py-0.5 rounded font-medium">
+                Adaptive Router
               </span>
             </div>
-            <p className="text-[11px] text-[#5C5C7A]">Autonomous Intent Routing & Multi-Agent Assistant</p>
+            <p className="text-[11px] text-[#5C5C7A]">Multi-turn career coaching & RAG assistant</p>
           </div>
         </div>
 
         <button
           onClick={onToggle}
-          className="p-1.5 rounded-lg text-[#5C5C7A] hover:bg-[#EDE7F6] hover:text-[#3A3A52] transition-colors cursor-pointer"
+          aria-label="Close Assistant"
+          className="p-1.5 rounded-lg text-[#5C5C7A] hover:bg-[#EDE7F6] hover:text-[#3A3A52] transition-colors"
         >
-          <X className="h-5 w-5" />
+          <X className="h-4 w-4" />
         </button>
       </div>
 
       {/* Messages Scroll Area */}
-      <div className="flex-1 p-4 overflow-y-auto space-y-4 text-xs bg-[#FAF7F3]">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((m, idx) => (
           <div
             key={idx}
-            className={`flex flex-col ${m.role === "user" ? "items-end" : "items-start"} space-y-1.5`}
+            className={`flex flex-col space-y-2 ${
+              m.role === "user" ? "items-end" : "items-start"
+            }`}
           >
-            {/* Router Intent Tag Badge for Assistant responses */}
+            {/* Intent Router Strategy Badge */}
             {m.role === "assistant" && m.router_decision && (
-              <div
-                className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border text-[10px] font-mono font-bold ${getIntentColor(
-                  m.router_decision.intent
-                )}`}
-              >
-                <Compass className="h-3 w-3 shrink-0" />
-                <span>{m.router_decision.strategy_selected || m.router_decision.intent}</span>
+              <div className="flex items-center gap-1.5 text-[10px] text-[#5C5C7A] bg-[#EDE7F6] px-2 py-0.5 rounded-full border border-[#DDD6E7]">
+                <Compass className="h-3 w-3 text-[#7A2D4A]" />
+                <span className="font-semibold text-[#7A2D4A]">
+                  {m.router_decision.strategy_selected || m.router_decision.intent}
+                </span>
                 {m.router_decision.confidence && (
-                  <span className="opacity-75">
-                    ({Math.round(m.router_decision.confidence * 100)}%)
+                  <span className="font-mono text-[#5C5C7A]">
+                    ({Math.round(m.router_decision.confidence * 100)}% conf)
                   </span>
                 )}
               </div>
             )}
 
-            <div
-              className={`p-3.5 rounded-2xl max-w-[88%] leading-relaxed ${
-                m.role === "user"
-                  ? "bg-[#7A2D4A] text-white rounded-br-none shadow-sm whitespace-pre-line"
-                  : "bg-white text-[#3A3A52] border border-[#DDD6E7] rounded-bl-none shadow-sm space-y-2"
-              }`}
-            >
-              {m.role === "user" ? (
-                m.content
-              ) : (
-                <div className="space-y-1.5 leading-relaxed text-xs">
+            {/* Bubble Content */}
+            {m.isError ? (
+              <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-xs text-red-800 space-y-2 max-w-[90%] shadow-xs">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="h-4 w-4 text-red-600 shrink-0 mt-0.5" />
+                  <div className="flex-1 font-medium">{m.content}</div>
+                </div>
+                {m.failedQuery && (
+                  <div className="pt-1 flex justify-end">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleSend(m.failedQuery)}
+                      disabled={isLoading}
+                      className="text-xs h-7 border-red-300 text-red-800 hover:bg-red-100"
+                    >
+                      <RotateCcw className="h-3 w-3 mr-1" />
+                      Retry Query
+                    </Button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div
+                className={`p-3.5 rounded-2xl text-xs leading-relaxed max-w-[88%] shadow-xs ${
+                  m.role === "user"
+                    ? "bg-[#7A2D4A] text-white rounded-br-xs"
+                    : "bg-white text-[#3A3A52] border border-[#DDD6E7] rounded-bl-xs"
+                }`}
+              >
+                <div className="space-y-2">
                   {m.content.split("\n\n").map((block, bIdx) => {
                     const trimmed = block.trim()
-                    if (!trimmed) return null
                     if (trimmed.startsWith("### ")) {
                       return (
                         <h4 key={bIdx} className="font-bold text-sm text-[#7A2D4A] pt-1">
-                          {trimmed.replace(/^###\s+/, "")}
+                          {trimmed.slice(4)}
                         </h4>
                       )
                     }
@@ -242,7 +211,6 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
                         <ul key={bIdx} className="list-disc list-inside space-y-1 pl-1 text-[#3A3A52]">
                           {items.map((item, iIdx) => {
                             const clean = item.replace(/^[-*]\s+/, "")
-                            // parse **bold**
                             const parts = clean.split(/(\*\*[^*]+\*\*)/g)
                             return (
                               <li key={iIdx}>
@@ -285,13 +253,15 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
                         </ol>
                       )
                     }
-                    // Regular paragraph with bold support
                     const parts = trimmed.split(/(\*\*[^*]+\*\*)/g)
                     return (
                       <p key={bIdx}>
                         {parts.map((p, pIdx) =>
                           p.startsWith("**") && p.endsWith("**") ? (
-                            <strong key={pIdx} className="font-semibold text-[#3A3A52]">
+                            <strong
+                              key={pIdx}
+                              className={m.role === "user" ? "font-bold text-white" : "font-semibold text-[#3A3A52]"}
+                            >
                               {p.slice(2, -2)}
                             </strong>
                           ) : (
@@ -302,12 +272,12 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
                     )
                   })}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Actionable Recommendations */}
             {m.actionable_recommendations && m.actionable_recommendations.length > 0 && (
-              <div className="p-3 rounded-xl bg-white border border-[#DDD6E7] text-[11px] space-y-1 max-w-[88%] shadow-sm">
+              <div className="p-3 rounded-xl bg-white border border-[#DDD6E7] text-[11px] space-y-1 max-w-[88%] shadow-xs">
                 <span className="font-semibold text-[#3A3A52] block">Actionable Next Steps:</span>
                 <ul className="list-disc list-inside space-y-0.5 text-[#5C5C7A]">
                   {m.actionable_recommendations.map((rec, rIdx) => (
@@ -357,6 +327,7 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
           <Input
             value={inputQuery}
             onChange={(e) => setInputQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="Ask about jobs, skill gaps, interview practice, salaries..."
             className="text-xs h-9 bg-white border-[#DDD6E7] text-[#3A3A52] focus:border-[#7A2D4A]"
             disabled={isLoading}
@@ -364,7 +335,6 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
           <Button
             type="submit"
             size="sm"
-            variant="default"
             disabled={isLoading || !inputQuery.trim()}
             className="h-9 px-3 shrink-0 bg-[#7A2D4A] hover:bg-[#63233B] text-white"
           >
@@ -375,3 +345,5 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
     </div>
   )
 }
+
+export default CopilotChatDrawer

@@ -143,14 +143,24 @@ export function MatchDashboard({
         </div>
       )}
 
-      {/* Error Banner */}
+      {/* Error Banner with Retry */}
       {error && (
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
-          <AlertCircle className="h-5 w-5 shrink-0 text-red-600" />
-          <div>
-            <span className="font-semibold">Matching Service Error: </span>
-            <span>{error}</span>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="h-5 w-5 shrink-0 text-red-600" />
+            <div>
+              <span className="font-semibold">Matching Service Error: </span>
+              <span>{error}</span>
+            </div>
           </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleRunSearch}
+            className="border-red-300 text-red-800 hover:bg-red-100 shrink-0 self-start sm:self-auto"
+          >
+            Retry Matching
+          </Button>
         </div>
       )}
 

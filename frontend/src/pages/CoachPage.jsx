@@ -163,32 +163,12 @@ export function CoachPage({ activeResume, targetJob }) {
   const handleEvaluateAnswer = async (payload) => {
     setIsEvaluating(true)
     setError(null)
+    setEvaluationResult(null)
     try {
       const result = await coachApi.evaluateAnswer(payload)
       setEvaluationResult(result)
     } catch (err) {
-      console.warn("Answer evaluation API call failed, using heuristic evaluation:", err.message)
-      setEvaluationResult({
-        score: 8.2,
-        grade: "good",
-        strengths: [
-          "Directly addresses the core technical concept.",
-          "Clear explanation with practical context.",
-          "Demonstrates familiarity with production considerations.",
-        ],
-        weaknesses: [
-          "Could include explicit metrics or benchmarks.",
-          "Structure could follow the STAR method more closely.",
-        ],
-        improved_answer:
-          "A strong answer would open with context (Situation), define the challenge (Task), describe specific steps taken mentioning the target skill explicitly (Action), and close with a quantified or qualitative outcome (Result). Aim for 120-150 words.",
-        rubric_breakdown: {
-          technical_accuracy: 8.5,
-          depth: 8.0,
-          structure: 8.2,
-          specificity: 8.0,
-        },
-      })
+      setError(`Answer evaluation failed: ${err.message}. Please click "Submit for Rubric Evaluation" to retry.`)
     } finally {
       setIsEvaluating(false)
     }

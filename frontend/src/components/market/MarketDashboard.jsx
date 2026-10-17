@@ -8,8 +8,8 @@ import {
   Compass,
   Flame,
   Loader2,
-  Sparkles,
   AlertCircle,
+  ShieldCheck,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -20,6 +20,7 @@ import { SalaryChart } from "./SalaryChart"
 import { TrendingSkills } from "./TrendingSkills"
 import { DemandHeatmap } from "./DemandHeatmap"
 import { ResumePositioning } from "./ResumePositioning"
+import { JobFreshnessTracker } from "./JobFreshnessTracker"
 import { getCandidateDomainRole } from "@/pages/MarketPage"
 
 export function MarketDashboard({
@@ -117,7 +118,7 @@ export function MarketDashboard({
 
       {/* Sub-tabs Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid grid-cols-2 sm:grid-cols-5 w-full">
+        <TabsList className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 w-full">
           <TabsTrigger value="overview" className="text-xs">
             <PieChart className="h-3.5 w-3.5 mr-1.5 text-[#7A2D4A]" />
             Role Overview
@@ -137,6 +138,10 @@ export function MarketDashboard({
           <TabsTrigger value="positioning" className="text-xs">
             <Compass className="h-3.5 w-3.5 mr-1.5 text-[#7A2D4A]" />
             My Positioning
+          </TabsTrigger>
+          <TabsTrigger value="freshness" className="text-xs">
+            <ShieldCheck className="h-3.5 w-3.5 mr-1.5 text-[#7A2D4A]" />
+            Data Freshness
           </TabsTrigger>
         </TabsList>
 
@@ -208,6 +213,10 @@ export function MarketDashboard({
             <ResumePositioning positioning={positioningData} />
           </TabsContent>
         )}
+
+        <TabsContent value="freshness" className="pt-2">
+          <JobFreshnessTracker />
+        </TabsContent>
       </Tabs>
     </div>
   )

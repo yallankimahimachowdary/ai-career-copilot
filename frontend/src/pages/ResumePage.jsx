@@ -132,7 +132,7 @@ export function ResumePage({ activeResume, setActiveResume, isConnected }) {
 
         {/* Right Column: Parsed Profile Details (7 cols) */}
         <div className="lg:col-span-7">
-          <ResumeProfileCard resume={activeResume} />
+          <ResumeProfileCard resume={activeResume} onUpdateResume={setActiveResume} />
         </div>
       </div>
     </PageContainer>

@@ -4,17 +4,16 @@ import {
   AlertOctagon,
   AlertTriangle,
   BookOpen,
-  Calendar,
-  Sparkles,
-  ArrowRight,
   TrendingUp,
+  ShieldAlert,
+  Sparkles,
 } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ReadinessGauge } from "./ReadinessGauge"
 import { formatTitleCase } from "@/lib/utils"
 
-export function SkillGapReport({ report, activeResume, onProceedToQuestions }) {
+export function SkillGapReport({ report, activeResume }) {
   if (!report) {
     return (
       <div className="p-12 text-center text-xs text-[#5C5C7A] border border-[#DDD6E7] rounded-xl bg-white">
@@ -73,13 +72,18 @@ export function SkillGapReport({ report, activeResume, onProceedToQuestions }) {
         </CardContent>
       </Card>
 
-      {/* Confirmed Strengths */}
+      {/* Confirmed Strengths (Verified Qualifications) */}
       <Card className="border-[#DDD6E7] bg-white">
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2 text-emerald-800">
-            <CheckCircle className="h-4 w-4 text-emerald-700" />
-            Confirmed Strengths & Matched Core Capabilities ({strengths.length})
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-base flex items-center gap-2 text-emerald-800">
+              <CheckCircle className="h-4 w-4 text-emerald-700" />
+              Confirmed Strengths & Matched Core Capabilities ({strengths.length})
+            </CardTitle>
+            <Badge variant="outline" className="text-[10px] bg-emerald-50 text-emerald-800 border-emerald-300">
+              Verified Candidate Qualification
+            </Badge>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
@@ -96,14 +100,20 @@ export function SkillGapReport({ report, activeResume, onProceedToQuestions }) {
         </CardContent>
       </Card>
 
-      {/* Critical Gaps (Strictly RED per user instruction) */}
+      {/* Critical Gaps (Model-Generated Recommendations) */}
       {criticalGaps.length > 0 && (
         <Card className="border-red-200 bg-white">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2 text-red-700">
-              <AlertOctagon className="h-4 w-4 text-red-600" />
-              Critical Must-Have Gaps ({criticalGaps.length})
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base flex items-center gap-2 text-red-700">
+                <AlertOctagon className="h-4 w-4 text-red-600" />
+                Critical Must-Have Gaps ({criticalGaps.length})
+              </CardTitle>
+              <Badge variant="outline" className="text-[10px] bg-red-50 text-red-700 border-red-200">
+                <Sparkles className="h-3 w-3 mr-1" />
+                Model-Generated Recommendation
+              </Badge>
+            </div>
           </CardHeader>
           <CardContent className="space-y-3">
             {criticalGaps.map((gap, idx) => (
@@ -134,10 +144,16 @@ export function SkillGapReport({ report, activeResume, onProceedToQuestions }) {
       {growthGaps.length > 0 && (
         <Card className="border-amber-200 bg-white">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2 text-amber-800">
-              <AlertTriangle className="h-4 w-4 text-amber-600" />
-              Secondary / Nice-to-Have Growth Areas ({growthGaps.length})
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base flex items-center gap-2 text-amber-800">
+                <AlertTriangle className="h-4 w-4 text-amber-600" />
+                Secondary / Nice-to-Have Growth Areas ({growthGaps.length})
+              </CardTitle>
+              <Badge variant="outline" className="text-[10px] bg-amber-50 text-amber-800 border-amber-200">
+                <Sparkles className="h-3 w-3 mr-1" />
+                Suggested Development
+              </Badge>
+            </div>
           </CardHeader>
           <CardContent className="space-y-3">
             {growthGaps.map((gap, idx) => (
@@ -182,6 +198,16 @@ export function SkillGapReport({ report, activeResume, onProceedToQuestions }) {
           </CardContent>
         </Card>
       )}
+
+      {/* Employability & Scientific Disclaimer */}
+      <div className="flex items-start gap-3 p-4 rounded-xl bg-[#FAF7F3] border border-[#DDD6E7] text-xs text-[#5C5C7A]">
+        <ShieldAlert className="h-4 w-4 text-[#7A2D4A] shrink-0 mt-0.5" />
+        <div className="leading-relaxed">
+          <strong>Employability Notice:</strong> The readiness score and gap recommendations above are generated via algorithmic text and embedding comparison. They represent model-suggested preparation priorities and do not constitute a guarantee of employment, interview selection, or job offer.
+        </div>
+      </div>
     </div>
   )
 }
+
+export default SkillGapReport

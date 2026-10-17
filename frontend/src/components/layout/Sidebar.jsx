@@ -1,19 +1,28 @@
 import React from "react"
 import { NavLink } from "react-router-dom"
+import { useAuth } from "@/context/AuthContext"
 import {
   FileText,
   Briefcase,
   GraduationCap,
   TrendingUp,
-  Sparkles,
   Bot,
-  Layers,
+  LayoutDashboard,
   ChevronRight,
+  LogOut,
+  User,
 } from "lucide-react"
 
 const NAV_ITEMS = [
   {
-    to: "/",
+    to: "/dashboard",
+    label: "Command Dashboard",
+    icon: LayoutDashboard,
+    badge: "Central Hub",
+    description: "Student overview & active pipelines",
+  },
+  {
+    to: "/resume",
     label: "Resume & Profile",
     icon: FileText,
     badge: "Parser Agent",
@@ -38,11 +47,19 @@ const NAV_ITEMS = [
     label: "Market Insights",
     icon: TrendingUp,
     badge: "Market Agent",
-    description: "Salaries, demand & positioning",
+    description: "Salaries, demand & freshness",
   },
 ]
 
 export function Sidebar({ isConnected = true, isOpen = false, onClose }) {
+  const { user, logout } = useAuth()
+
+  const handleLogout = () => {
+    if (window.confirm("Are you sure you want to sign out?")) {
+      logout()
+    }
+  }
+
   return (
     <>
       {/* Mobile backdrop */}
@@ -75,9 +92,9 @@ export function Sidebar({ isConnected = true, isOpen = false, onClose }) {
           </div>
 
           {/* Navigation links */}
-          <nav className="p-3 space-y-1.5">
-            <div className="px-3 py-1.5 text-xs font-semibold text-[#5C5C7A] uppercase tracking-wider">
-              Agent Pipelines
+          <nav className="p-3 space-y-1">
+            <div className="px-3 py-1.5 text-[11px] font-semibold text-[#5C5C7A] uppercase tracking-wider">
+              Student Navigation
             </div>
 
             {NAV_ITEMS.map((item) => {
@@ -88,7 +105,7 @@ export function Sidebar({ isConnected = true, isOpen = false, onClose }) {
                   to={item.to}
                   onClick={() => onClose && onClose()}
                   className={({ isActive }) =>
-                    `group relative flex items-start gap-3 rounded-xl p-3 transition-all duration-150 ${
+                    `group relative flex items-start gap-3 rounded-xl p-2.5 transition-all duration-150 ${
                       isActive
                         ? "bg-[#FAF7F3] border-l-4 border-l-[#7A2D4A] border-y border-r border-[#DDD6E7] text-[#7A2D4A] shadow-xs font-semibold"
                         : "text-[#3A3A52] hover:text-[#7A2D4A] hover:bg-[#EDE7F6]/60 border border-transparent"
@@ -118,7 +135,7 @@ export function Sidebar({ isConnected = true, isOpen = false, onClose }) {
                         <span className="text-xs text-[#5C5C7A] block mt-0.5 leading-tight truncate">
                           {item.description}
                         </span>
-                        <span className="inline-block text-[10px] font-mono font-medium text-[#7A2D4A] bg-[#EDE7F6] px-2 py-0.5 rounded-md mt-1.5">
+                        <span className="inline-block text-[10px] font-mono font-medium text-[#7A2D4A] bg-[#EDE7F6] px-1.5 py-0.5 rounded-md mt-1">
                           {item.badge}
                         </span>
                       </div>
@@ -130,9 +147,36 @@ export function Sidebar({ isConnected = true, isOpen = false, onClose }) {
           </nav>
         </div>
 
-        {/* Footer System Status */}
-        <div className="p-3 border-t border-[#E5E3EB]">
-          <div className="rounded-xl bg-[#FAF7F3] p-2.5 border border-[#DDD6E7] text-xs space-y-1.5">
+        {/* Footer Area: User details + System status + Logout */}
+        <div className="p-3 border-t border-[#E5E3EB] space-y-2">
+          {user && (
+            <div className="flex items-center justify-between p-2 rounded-xl bg-[#FAF7F3] border border-[#DDD6E7]">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="h-7 w-7 rounded-full bg-[#EDE7F6] text-[#7A2D4A] flex items-center justify-center shrink-0">
+                  <User className="h-3.5 w-3.5" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-[#3A3A52] truncate">
+                    {user.full_name || user.email}
+                  </p>
+                  <p className="text-[10px] text-[#5C5C7A] truncate">{user.email}</p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                title="Sign Out"
+                aria-label="Sign Out"
+                className="p-1.5 rounded-lg text-[#5C5C7A] hover:bg-rose-50 hover:text-rose-700 transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+
+          {/* System status pill */}
+          <div className="rounded-xl bg-white p-2.5 border border-[#DDD6E7] text-xs space-y-1">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
                 <span
@@ -145,7 +189,7 @@ export function Sidebar({ isConnected = true, isOpen = false, onClose }) {
               <span className="text-[10px] font-mono text-[#5C5C7A]">v0.1.0</span>
             </div>
             <div className="text-[10px] text-[#5C5C7A] leading-tight">
-              XGBoost + pgvector + TreeSHAP + Ollama (llama3.2:3b)
+              XGBoost + pgvector + TreeSHAP + Ollama
             </div>
           </div>
         </div>
@@ -153,3 +197,5 @@ export function Sidebar({ isConnected = true, isOpen = false, onClose }) {
     </>
   )
 }
+
+export default Sidebar

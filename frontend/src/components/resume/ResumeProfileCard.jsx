@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import {
   Mail,
   Phone,
@@ -10,10 +10,16 @@ import {
   Award,
   Sparkles,
   CheckCircle2,
+  Plus,
+  UserCheck,
+  Edit3,
+  X,
 } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { SkillBadges } from "./SkillBadges"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { formatTitleCase } from "@/lib/utils"
 
 function LinkedinIcon({ className = "h-3.5 w-3.5" }) {
@@ -32,7 +38,11 @@ function GithubIcon({ className = "h-3.5 w-3.5" }) {
   )
 }
 
-export function ResumeProfileCard({ resume }) {
+export function ResumeProfileCard({ resume, onUpdateResume }) {
+  const [newSkillText, setNewSkillText] = useState("")
+  const [isEditingSummary, setIsEditingSummary] = useState(false)
+  const [customSummary, setCustomSummary] = useState("")
+
   if (!resume || !resume.parsed_data) {
     return (
       <div className="flex flex-col items-center justify-center p-12 border border-[#DDD6E7] rounded-2xl bg-white text-center space-y-3 shadow-xs">
@@ -44,13 +54,57 @@ export function ResumeProfileCard({ resume }) {
 
   const { parsed_data } = resume
   const contact = parsed_data.contact_info || {}
-  const skills = parsed_data.skills || []
+  const extractedSkills = parsed_data.skills || []
+  const manualSkills = resume.manual_skills || []
   const experience = (parsed_data.experience || []).filter(
     (exp) => (exp.title && exp.title.trim()) || (exp.company && exp.company.trim())
   )
   const education = parsed_data.education || []
   const projects = parsed_data.projects || []
   const certifications = parsed_data.certifications || []
+
+  const currentSummary =
+    resume.edited_summary !== undefined ? resume.edited_summary : parsed_data.summary
+
+  const handleAddManualSkill = (e) => {
+    e.preventDefault()
+    const clean = newSkillText.trim()
+    if (!clean) return
+    if (extractedSkills.includes(clean) || manualSkills.includes(clean)) {
+      setNewSkillText("")
+      return
+    }
+    const updatedManual = [...manualSkills, clean]
+    if (onUpdateResume) {
+      onUpdateResume({
+        ...resume,
+        manual_skills: updatedManual,
+        skills_count: extractedSkills.length + updatedManual.length,
+      })
+    }
+    setNewSkillText("")
+  }
+
+  const handleRemoveManualSkill = (skillToRemove) => {
+    const updatedManual = manualSkills.filter((s) => s !== skillToRemove)
+    if (onUpdateResume) {
+      onUpdateResume({
+        ...resume,
+        manual_skills: updatedManual,
+        skills_count: extractedSkills.length + updatedManual.length,
+      })
+    }
+  }
+
+  const handleSaveSummary = () => {
+    if (onUpdateResume) {
+      onUpdateResume({
+        ...resume,
+        edited_summary: customSummary,
+      })
+    }
+    setIsEditingSummary(false)
+  }
 
   return (
     <div className="space-y-6">
@@ -141,8 +195,10 @@ export function ResumeProfileCard({ resume }) {
             {/* Quick Metrics */}
             <div className="flex sm:flex-col gap-2 shrink-0">
               <div className="rounded-xl bg-white p-3 border border-[#DDD6E7] text-center min-w-[110px] shadow-xs">
-                <div className="text-xl font-bold text-[#7A2D4A]">{skills.length}</div>
-                <div className="text-[11px] text-[#5C5C7A] uppercase tracking-wider">Identified Skills</div>
+                <div className="text-xl font-bold text-[#7A2D4A]">
+                  {extractedSkills.length + manualSkills.length}
+                </div>
+                <div className="text-[11px] text-[#5C5C7A] uppercase tracking-wider">Total Skills</div>
               </div>
               <div className="rounded-xl bg-white p-3 border border-[#DDD6E7] text-center min-w-[110px] shadow-xs">
                 <div className="text-xl font-bold text-emerald-800">{experience.length}</div>
@@ -151,30 +207,138 @@ export function ResumeProfileCard({ resume }) {
             </div>
           </div>
 
-          {/* Professional Summary */}
-          {parsed_data.summary && (
-            <div className="mt-5 pt-4 border-t border-[#DDD6E7]">
-              <h4 className="text-xs font-semibold text-[#5C5C7A] uppercase tracking-wider mb-1.5">
-                Professional Summary
-              </h4>
-              <p className="text-sm text-[#3A3A52] leading-relaxed">{parsed_data.summary}</p>
+          {/* Professional Summary with Provenance Indicator */}
+          {currentSummary && (
+            <div className="mt-5 pt-4 border-t border-[#DDD6E7] space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <h4 className="text-xs font-semibold text-[#5C5C7A] uppercase tracking-wider">
+                    Professional Summary
+                  </h4>
+                  {resume.edited_summary !== undefined ? (
+                    <Badge variant="outline" className="text-[10px] bg-amber-50 text-amber-800 border-amber-300">
+                      <UserCheck className="h-3 w-3 mr-1" />
+                      Candidate Edited
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="text-[10px] bg-[#EDE7F6] text-[#7A2D4A] border-[#DDD6E7]">
+                      <Sparkles className="h-3 w-3 mr-1" />
+                      AI Extracted
+                    </Badge>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCustomSummary(currentSummary)
+                    setIsEditingSummary(!isEditingSummary)
+                  }}
+                  className="text-xs text-[#7A2D4A] hover:underline flex items-center gap-1"
+                >
+                  <Edit3 className="h-3 w-3" />
+                  <span>{isEditingSummary ? "Cancel" : "Edit"}</span>
+                </button>
+              </div>
+
+              {isEditingSummary ? (
+                <div className="space-y-2 pt-1">
+                  <textarea
+                    value={customSummary}
+                    onChange={(e) => setCustomSummary(e.target.value)}
+                    rows={3}
+                    className="w-full text-xs p-2.5 rounded-lg border border-[#DDD6E7] bg-white text-[#3A3A52] focus:ring-1 focus:ring-[#7A2D4A] focus:outline-none"
+                  />
+                  <div className="flex justify-end gap-2">
+                    <Button size="sm" variant="ghost" onClick={() => setIsEditingSummary(false)}>
+                      Cancel
+                    </Button>
+                    <Button size="sm" onClick={handleSaveSummary} className="bg-[#7A2D4A] text-white">
+                      Save Summary
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-[#3A3A52] leading-relaxed">{currentSummary}</p>
+              )}
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Skills Section */}
+      {/* Skills Section with Clear Distinction between Extracted vs User Edited */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-[#7A2D4A]" />
-              Extracted Technical Skills & Tools ({skills.length})
-            </CardTitle>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <CardTitle className="text-base flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-[#7A2D4A]" />
+                Technical Skills & Tools ({extractedSkills.length + manualSkills.length})
+              </CardTitle>
+              <p className="text-xs text-[#5C5C7A] mt-0.5">
+                AI extracted skills from document and candidate-verified additions
+              </p>
+            </div>
+
+            {/* Form to Add Verified Skill */}
+            <form onSubmit={handleAddManualSkill} className="flex items-center gap-2">
+              <Input
+                placeholder="Add custom skill..."
+                value={newSkillText}
+                onChange={(e) => setNewSkillText(e.target.value)}
+                className="h-8 text-xs max-w-[160px] sm:max-w-[200px]"
+              />
+              <Button type="submit" size="sm" variant="secondary" className="h-8 text-xs text-[#7A2D4A]">
+                <Plus className="h-3.5 w-3.5 mr-1" />
+                Add
+              </Button>
+            </form>
           </div>
         </CardHeader>
-        <CardContent>
-          <SkillBadges skills={skills} />
+        <CardContent className="space-y-5">
+          {/* AI Extracted Skills */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#5C5C7A]">
+                AI-Extracted Skills ({extractedSkills.length})
+              </span>
+              <span className="text-[10px] bg-[#EDE7F6] text-[#7A2D4A] px-2 py-0.5 rounded font-mono font-medium border border-[#DDD6E7]">
+                Verified by Parser Agent
+              </span>
+            </div>
+            <SkillBadges skills={extractedSkills} />
+          </div>
+
+          {/* Manually Added Skills */}
+          {manualSkills.length > 0 && (
+            <div className="space-y-2 pt-3 border-t border-[#E5E3EB]">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#7A2D4A]">
+                  Manually Added by Candidate ({manualSkills.length})
+                </span>
+                <span className="text-[10px] bg-amber-50 text-amber-800 px-2 py-0.5 rounded font-mono font-medium border border-amber-200">
+                  User Verified
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {manualSkills.map((skill, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#F9EBF0] text-[#7A2D4A] border border-[#DDD6E7]"
+                  >
+                    <span>{skill}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveManualSkill(skill)}
+                      className="hover:text-red-700 focus:outline-none"
+                      title="Remove manual skill"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -319,3 +483,5 @@ export function ResumeProfileCard({ resume }) {
     </div>
   )
 }
+
+export default ResumeProfileCard

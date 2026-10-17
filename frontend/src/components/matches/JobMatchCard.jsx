@@ -7,6 +7,7 @@ import {
   TrendingUp,
   AlertCircle,
   Building,
+  Clock,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -28,9 +29,40 @@ export function JobMatchCard({ match, onSelect }) {
   }
 
   const badgeInfo = getScoreBadge(fitScore)
+  const freshness = match.freshness_status || match.freshness || "fresh"
+  const isInactive = match.is_active === false || freshness === "expired" || freshness === "inactive"
+
+  const getFreshnessBadge = (status) => {
+    switch (status) {
+      case "fresh":
+        return (
+          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-300 px-2 py-0.5 rounded-full">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
+            Fresh
+          </span>
+        )
+      case "stale":
+        return (
+          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-800 bg-amber-50 border border-amber-300 px-2 py-0.5 rounded-full">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+            Stale
+          </span>
+        )
+      case "expired":
+      case "inactive":
+        return (
+          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-rose-800 bg-rose-50 border border-rose-300 px-2 py-0.5 rounded-full">
+            <span className="h-1.5 w-1.5 rounded-full bg-rose-600" />
+            {status === "expired" ? "Expired" : "Inactive"}
+          </span>
+        )
+      default:
+        return null
+    }
+  }
 
   return (
-    <Card className="hover:border-[#7A2D4A]/50 hover:shadow-lg transition-all duration-200 group bg-white border-[#DDD6E7]">
+    <Card className={`hover:border-[#7A2D4A]/50 hover:shadow-lg transition-all duration-200 group bg-white border-[#DDD6E7] ${isInactive ? "opacity-75 bg-[#FAF7F3]" : ""}`}>
       <CardContent className="p-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           {/* Main Job Info */}
@@ -38,20 +70,34 @@ export function JobMatchCard({ match, onSelect }) {
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs font-mono font-bold text-[#5C5C7A]">#{match.rank || 1}</span>
               <Badge variant={badgeInfo.variant}>{badgeInfo.label}</Badge>
+              {getFreshnessBadge(freshness)}
               {match.remote_allowed && (
-                <Badge variant="outline" className="text-emerald-700 bg-emerald-50 border-emerald-200">
+                <Badge variant="outline" className="text-emerald-700 bg-emerald-50 border-emerald-200 text-[11px]">
                   Remote
                 </Badge>
               )}
               {match.work_type && (
                 <span className="text-xs text-[#5C5C7A] font-medium">{match.work_type}</span>
               )}
+              {match.published_at && (
+                <span className="flex items-center gap-1 text-[11px] text-[#797996] font-mono">
+                  <Clock className="h-3 w-3" />
+                  {new Date(match.published_at).toLocaleDateString()}
+                </span>
+              )}
             </div>
 
             <div>
-              <h3 className="text-lg font-bold text-[#3A3A52] group-hover:text-[#7A2D4A] transition-colors">
-                {match.title}
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-bold text-[#3A3A52] group-hover:text-[#7A2D4A] transition-colors">
+                  {match.title}
+                </h3>
+                {isInactive && (
+                  <span className="text-[10px] font-mono text-rose-700 bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded">
+                    Not currently accepting
+                  </span>
+                )}
+              </div>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#5C5C7A] mt-1">
                 <span className="font-semibold text-[#3A3A52] flex items-center gap-1">
                   <Building className="h-3.5 w-3.5 text-[#5C5C7A]" />
@@ -138,3 +184,5 @@ export function JobMatchCard({ match, onSelect }) {
     </Card>
   )
 }
+
+export default JobMatchCard
