@@ -39,8 +39,8 @@ def main():
     records, meta = load_snapshot("data/snapshots/test_snap_1.json")
     pool = records[:100]
 
-    mahi_res = prepare_resume("uploads/resumes/*Mahima*", "Mahima")
-    deepika_res = prepare_resume("uploads/resumes/*Deepika*", "Deepika")
+    cand_a_res = prepare_resume("uploads/resumes/*candidate_a*", "Candidate A")
+    cand_b_res = prepare_resume("uploads/resumes/*candidate_b*", "Candidate B")
 
     sbert = SbertRanker()
     hybrid = HybridRanker(sbert_ranker=sbert)
@@ -48,13 +48,13 @@ def main():
 
     # 3 target jobs per resume
     # Pick jobs with relevant titles and some missing requirements
-    mahi_targets = [
+    cand_a_targets = [
         (pool[0], ["Docker", "AWS", "FastAPI"]),
         (pool[3], ["React", "TypeScript", "Node.js"]),
         (pool[7], ["Kubernetes", "CI/CD", "Redis"]),
     ]
 
-    deepika_targets = [
+    cand_b_targets = [
         (pool[1], ["Bioinformatics", "Microbiology", "Data Science"]),
         (pool[4], ["PCR", "Cell Culture", "Molecular Biology"]),
         (pool[8], ["Machine Learning", "Python", "Data Science"]),
@@ -64,7 +64,7 @@ def main():
 
     print("\n================ Counterfactual Skill-Gap Evaluation (20 Draws, 3 Jobs/Resume) ================")
 
-    for cand_name, resume, targets in [("Mahi", mahi_res, mahi_targets), ("Deepika", deepika_res, deepika_targets)]:
+    for cand_name, resume, targets in [("Candidate A", cand_a_res, cand_a_targets), ("Candidate B", cand_b_res, cand_b_targets)]:
         print(f"\nCandidate: {cand_name}")
         print("-" * 80)
         for job_idx, (job, suggested_skills) in enumerate(targets, 1):

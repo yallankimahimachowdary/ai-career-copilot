@@ -84,8 +84,8 @@ def mock_db_session():
 async def test_upload_resume_success(async_client: AsyncClient, mock_db_session):
     _, storage = mock_db_session
     sample_content = b"""
-    Mahima Sharma
-    mahima@example.com
+    Alice Sharma
+    alice@example.com
     Skills: Python, FastAPI, Docker, PostgreSQL
     Experience: Software Engineer at Acme Corp
     """
@@ -95,8 +95,8 @@ async def test_upload_resume_success(async_client: AsyncClient, mock_db_session)
     assert response.status_code == 201
     data = response.json()
     assert data["filename"] == "resume.txt"
-    assert data["candidate_name"] == "Mahima Sharma"
-    assert data["email"] == "mahima@example.com"
+    assert data["candidate_name"] == "Alice Sharma"
+    assert data["email"] == "alice@example.com"
     assert data["embedding_dimension"] == 384
     assert "Python" in data["parsed_data"]["skills"]
     assert data["id"] in storage

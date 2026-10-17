@@ -51,23 +51,44 @@ class ParserAgent:
         self.openai_key = settings.OPENAI_API_KEY
         self.openai_model = getattr(settings, "OPENAI_MODEL", "gpt-4o-mini")
 
-    async def parse(self, raw_text: str) -> ParsedResume:
+    async def parse(self, raw_text: str, metadata: Optional[dict] = None) -> ParsedResume:
         """Parse raw resume text into a structured ParsedResume object."""
         # 1. Primary extraction via local Ollama LLM
         try:
-            return await self._parse_with_ollama(raw_text)
+            parsed = await self._parse_with_ollama(raw_text)
+            self._apply_metadata(parsed, raw_text, metadata, engine="ollama")
+            return parsed
         except Exception as e:
             logger.warning(f"Ollama parsing failed: {e}. Falling back to secondary/rule-based parser.")
 
         # 2. Secondary fallback via OpenAI if configured
         if self.openai_key:
             try:
-                return await self._parse_with_openai(raw_text)
+                parsed = await self._parse_with_openai(raw_text)
+                self._apply_metadata(parsed, raw_text, metadata, engine="openai")
+                return parsed
             except Exception as e:
                 logger.warning(f"OpenAI parsing failed: {e}. Falling back to rule-based parser.")
 
         # 3. Default fallback to heuristic rule-based extraction
-        return self._parse_with_rules(raw_text)
+        parsed = self._parse_with_rules(raw_text)
+        self._apply_metadata(parsed, raw_text, metadata, engine="rules")
+        return parsed
+
+    def _apply_metadata(
+        self,
+        parsed: ParsedResume,
+        raw_text: str,
+        metadata: Optional[dict] = None,
+        engine: str = "rules",
+    ) -> None:
+        """Attach parsing provenance and extractor metadata to the parsed resume."""
+        meta = dict(metadata or {})
+        meta["parser_engine"] = engine
+        meta["extractor"] = meta.get("extractor", "unknown")
+        meta["spacy_ner_available"] = get_spacy_ner() is not None
+        parsed.parse_metadata = meta
+
 
     def _clean_and_parse_json(self, text_content: str) -> dict:
         """Strip markdown fences, locate JSON delimiters, fix common syntax flaws, and parse."""
@@ -256,7 +277,7 @@ class ParserAgent:
         return parsed
 
     def _extract_name(self, raw_text: str, lines: Optional[List[str]] = None) -> Optional[str]:
-        """Robust candidate name extractor handling initials (e.g. S.Deepika), prefixes, and filtering locations/titles."""
+        """Robust candidate name extractor handling initials (e.g. S.Kumar), prefixes, and filtering locations/titles."""
         if lines is None:
             lines = [line.strip() for line in raw_text.split("\n") if line.strip()]
 
@@ -286,7 +307,7 @@ class ParserAgent:
             if re.search(r"\d", line):
                 continue
 
-            # Normalize dotted initials without space: "S.Deepika" -> "S. Deepika"
+            # Normalize dotted initials without space: "S.Kumar" -> "S. Kumar"
             norm = re.sub(r"([A-Za-z]\.)([A-Za-z])", r"\1 \2", line).strip()
             # Clean non-alphabetic except spaces and dots
             cleaned = re.sub(r"[^a-zA-Z\s\.]", " ", norm).strip()

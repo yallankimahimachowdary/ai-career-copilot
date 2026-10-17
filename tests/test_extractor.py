@@ -86,3 +86,35 @@ def test_extract_text_empty_pdf():
     with pytest.raises(ExtractionError, match="No extractable text found"):
         extract_text(pdf_bytes, "blank.pdf")
 
+
+def test_extract_text_with_metadata_provenance(monkeypatch):
+    """Verify that extract_text_with_metadata records the exact extractor used and does not silently fall back."""
+    import fitz
+    from app.services.extractor import extract_text_with_metadata
+
+    doc = fitz.open()
+    page = doc.new_page()
+    page.insert_text((50, 72), "Provenance Candidate\nSoftware Engineer\nPython, FastAPI")
+    pdf_bytes = doc.tobytes()
+    doc.close()
+
+    # 1. Primary extractor: PyMuPDF
+    text, meta = extract_text_with_metadata(pdf_bytes, "resume.pdf")
+    assert "Provenance Candidate" in text
+    assert meta["extractor"] == "PyMuPDF"
+    assert meta["char_count"] > 0
+    assert meta["word_count"] > 0
+
+    # 2. Fallback extractor: pypdf when fitz is unavailable
+    import sys
+    monkeypatch.setitem(sys.modules, "fitz", None)
+    text_fallback, meta_fallback = extract_text_with_metadata(pdf_bytes, "resume.pdf")
+    assert "Provenance Candidate" in text_fallback
+    assert meta_fallback["extractor"] == "pypdf"
+
+    # 3. Text file extractor
+    txt_content = b"Candidate\nPython, Django"
+    text_txt, meta_txt = extract_text_with_metadata(txt_content, "resume.txt")
+    assert meta_txt["extractor"] == "builtin-text"
+
+

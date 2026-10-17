@@ -22,7 +22,7 @@ def clean_text(text: str) -> str:
     return text.strip()
 
 
-def extract_text_from_pdf(content: bytes) -> str:
+def extract_text_from_pdf(content: bytes, return_engine: bool = False):
     """Extract plain text from a PDF byte stream using PyMuPDF with pypdf fallback."""
     if not content or not content.strip():
         raise ExtractionError("PDF content is empty.")
@@ -39,7 +39,7 @@ def extract_text_from_pdf(content: bytes) -> str:
         doc.close()
         text = clean_text("\n\n".join(extracted_pages))
         if text:
-            return text
+            return (text, "PyMuPDF") if return_engine else text
     except ImportError:
         pass
     except Exception as exc:
@@ -56,7 +56,8 @@ def extract_text_from_pdf(content: bytes) -> str:
                 extracted_pages.append(page_text)
         text = clean_text("\n\n".join(extracted_pages))
         if text:
-            return text
+            logger.info("PDF extracted via pypdf fallback")
+            return (text, "pypdf") if return_engine else text
         raise ExtractionError("No extractable text found in PDF. File might be empty or scanned image.")
     except ExtractionError:
         raise
@@ -89,19 +90,35 @@ def extract_text_from_txt(content: bytes) -> str:
     raise ExtractionError("Failed to decode text file with supported encodings (utf-8, latin-1, cp1252).")
 
 
-def extract_text(content: bytes, filename: str) -> str:
-    """Extract clean plain text based on file extension."""
+def extract_text_with_metadata(content: bytes, filename: str) -> tuple[str, dict]:
+    """Extract clean plain text based on file extension and record provenance metadata."""
     lower_filename = filename.lower()
+    engine = "unknown"
     if lower_filename.endswith(".pdf"):
-        text = extract_text_from_pdf(content)
+        text, engine = extract_text_from_pdf(content, return_engine=True)
     elif lower_filename.endswith(".docx"):
         text = extract_text_from_docx(content)
+        engine = "python-docx"
     elif lower_filename.endswith(".txt"):
         text = extract_text_from_txt(content)
+        engine = "builtin-text"
     else:
         raise ExtractionError(f"Unsupported file format for '{filename}'. Allowed: .pdf, .docx, .txt")
 
     if not text:
         raise ExtractionError(f"No extractable text found in '{filename}'. File might be empty or scanned image.")
 
+    metadata = {
+        "filename": filename,
+        "extractor": engine,
+        "char_count": len(text),
+        "word_count": len(text.split()),
+    }
+    return text, metadata
+
+
+def extract_text(content: bytes, filename: str) -> str:
+    """Extract clean plain text based on file extension."""
+    text, _ = extract_text_with_metadata(content, filename)
     return text
+

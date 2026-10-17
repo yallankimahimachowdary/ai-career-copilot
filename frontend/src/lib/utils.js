@@ -37,7 +37,7 @@ export function formatPercent(value) {
 
 export function formatTitleCase(str) {
   if (!str) return ""
-  // Handle initials like "S. Deepika" or "S.Deepika"
+  // Handle initials like "J. Doe" or "J.Doe"
   return str
     .replace(/\b([A-Z])\.\s*([a-z])/g, (_, i, next) => `${i}. ${next.toUpperCase()}`)
     .split(" ")

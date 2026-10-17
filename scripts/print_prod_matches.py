@@ -1,9 +1,9 @@
 import json
 
-with open("artifacts/experiments/actual_prod_matches_mahi_deepika.json", "r", encoding="utf-8") as f:
+with open("artifacts/experiments/actual_prod_matches_cand_a_cand_b.json", "r", encoding="utf-8") as f:
     data = json.load(f)
 
-for name in ["Mahi", "Deepika"]:
+for name in ["Candidate A", "Candidate B"]:
     res = data[name]
     print(f"=== {name} (Resume ID: {res['resume_id']}) ===")
     print(f"Total matches returned by API: {len(res['matches'])}")

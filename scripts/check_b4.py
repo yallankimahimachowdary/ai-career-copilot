@@ -1,4 +1,4 @@
-"""B4 Checkpoint: Test LLMReranker with Ollama on both Mahi's and Deepika's resumes."""
+"""B4 Checkpoint: Test LLMReranker with Ollama on both Candidate A's and Candidate B's resumes."""
 
 import glob
 import pypdf
@@ -26,12 +26,12 @@ def prepare_resume(glob_pattern, candidate_name):
         'experience': [e.model_dump() for e in parsed.experience],
     }
 
-mahi_res = prepare_resume('uploads/resumes/*Mahima*', 'Mahima')
-deepika_res = prepare_resume('uploads/resumes/*Deepika*', 'Deepika')
+cand_a_res = prepare_resume('uploads/resumes/*candidate_a*', 'Candidate A')
+cand_b_res = prepare_resume('uploads/resumes/*candidate_b*', 'Candidate B')
 
 reranker = LLMReranker(name="hybrid_llm_ollama", provider_name="ollama")
 
-for name, res in [('Mahi', mahi_res), ('Deepika', deepika_res)]:
+for name, res in [('Candidate A', cand_a_res), ('Candidate B', cand_b_res)]:
     print(f"\n================ Running B4 Ollama Re-Ranker for {name} ================")
     t0 = time.time()
     result = reranker.rank(res, sample_jobs, k=10)

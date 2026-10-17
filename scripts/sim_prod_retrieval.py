@@ -21,8 +21,8 @@ def prepare_resume(glob_pattern, candidate_name):
         'experience': [e.model_dump() for e in parsed.experience],
     }
 
-mahi_res = prepare_resume('uploads/resumes/*Mahima*', 'Mahima')
-deepika_res = prepare_resume('uploads/resumes/*Deepika*', 'Deepika')
+cand_a_res = prepare_resume('uploads/resumes/*candidate_a*', 'Candidate A')
+cand_b_res = prepare_resume('uploads/resumes/*candidate_b*', 'Candidate B')
 
 def simulate_prod_retrieval(resume, job_pool, limit=10):
     candidate_skills = resume.get('skills', [])
@@ -48,7 +48,7 @@ def simulate_prod_retrieval(resume, job_pool, limit=10):
             if any(k in title for k in biotech_kws):
                 filtered_pool.append(j)
         else:
-            # Mahi: general
+            # Candidate A: general
             filtered_pool.append(j)
             
     print(f"Filtered candidate pool count: {len(filtered_pool)} (from {len(job_pool)})")
@@ -69,7 +69,7 @@ def simulate_prod_retrieval(resume, job_pool, limit=10):
     scored.sort(key=lambda x: (x[0], x[1], str(x[2])), reverse=True)
     return scored[:limit]
 
-for name, res in [('Mahi', mahi_res), ('Deepika', deepika_res)]:
+for name, res in [('Candidate A', cand_a_res), ('Candidate B', cand_b_res)]:
     print(f"\n=== Production Simulation for {name} ===")
     top = simulate_prod_retrieval(res, records, limit=10)
     for rank, (fs, cs, jid, title, comp, n_m, m_skills) in enumerate(top, 1):

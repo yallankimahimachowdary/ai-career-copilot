@@ -61,10 +61,10 @@ def score_after(cand_skills, job, min_skills=4):
 
 def main():
     records, _ = load_snapshot("data/snapshots/test_snap_1.json")
-    mahi = prepare_resume("uploads/resumes/*Mahima*", "Mahima")
-    deepika = prepare_resume("uploads/resumes/*Deepika*", "Deepika")
+    cand_a = prepare_resume("uploads/resumes/*candidate_a*", "Candidate A")
+    cand_b = prepare_resume("uploads/resumes/*candidate_b*", "Candidate B")
 
-    for name, resume in [("Mahi", mahi), ("Deepika", deepika)]:
+    for name, resume in [("Candidate A", cand_a), ("Candidate B", cand_b)]:
         cand_skills = extract_skills_set(resume)
         scores_b = [score_before(cand_skills, j) for j in records]
         scores_a = [score_after(cand_skills, j, min_skills=4) for j in records]

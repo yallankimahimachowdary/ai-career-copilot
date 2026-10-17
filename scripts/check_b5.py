@@ -26,9 +26,9 @@ def prepare_resume(glob_pattern, candidate_name):
         'experience': [e.model_dump() for e in parsed.experience],
     }
 
-mahi_res = prepare_resume('uploads/resumes/*Mahima*', 'Mahima')
+cand_a_res = prepare_resume('uploads/resumes/*candidate_a*', 'Candidate A')
 
-# Evaluate explanation claims from Mahi's top explanation
+# Evaluate explanation claims from Candidate A's top explanation
 verifier = ClaimVerifier()
 
 # Test sample explanation from real Ollama output
@@ -41,7 +41,7 @@ sample_explanation = {
 }
 
 job = jobs_map.get("1b94478e-9f81-4eca-82a0-915e216bbce4") or sample_jobs[0]
-res = verifier.verify_explanation(sample_explanation, mahi_res, job)
+res = verifier.verify_explanation(sample_explanation, cand_a_res, job)
 
 print("=== B5 Real Ollama Explanation Faithfulness ===")
 print("Job ID:", res.job_id)

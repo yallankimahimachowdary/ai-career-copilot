@@ -62,20 +62,22 @@ The table below lists all core dependencies and their validated pins from the cl
 | | `alembic` | `1.20.0` | Database schema migration engine |
 | | `pgvector` | `0.5.1` | PostgreSQL vector extension bindings |
 | | `neo4j` | `6.4.1` | Neo4j async graph database driver |
-| **Cache & HTTP** | `redis` | `8.1.0` | In-memory key-value cache client |
-| | `httpx` | `0.28.1` | Async HTTP client for external AI APIs |
+| **HTTP & Networking** | `httpx` | `0.28.1` | Async HTTP client for external AI APIs |
 | **Testing** | `pytest` | `9.1.1` | Test framework and test runner |
 | | `pytest-asyncio` | `1.4.0` | Asyncio test runner plugin |
-| **Document Parsing** | `python-multipart` | `0.0.32` | Form data and multipart file upload handling |
-| | `pypdf` | `6.20.1` | PDF resume parsing and extraction |
+| **Document Parsing & NLP** | `python-multipart` | `0.0.32` | Form data and multipart file upload handling |
+| | `pymupdf` | `1.28.2` | High-fidelity PDF text and layout extraction (`fitz`) |
+| | `pypdf` | `6.20.1` | Fallback PDF extraction engine |
 | | `python-docx` | `1.2.0` | DOCX resume parsing and extraction |
+| | `spacy` | `3.8.16` | Named entity recognition and text preprocessing (`en_core_web_sm`) |
 | **Data & Modeling** | `pandas` | `3.0.6` | Tabular data processing and analytics |
 | | `tqdm` | `4.70.1` | Experiment and processing progress bars |
 | | `xgboost` | `3.4.1` | GBDT ranking and classification model |
 | | `shap` | `0.54.1` | TreeSHAP explainability engine |
 | | `scikit-learn` | `1.9.1` | Machine learning utilities and metrics |
-| **Web & Batch** | `beautifulsoup4` | `4.15.0` | HTML parsing for job scrapers |
+| **Web Scraping & Batch** | `beautifulsoup4` | `4.15.0` | HTML parsing for job scrapers |
 | | `apscheduler` | `3.11.3` | Periodic background task scheduling |
+| | `python-jobspy` | `1.2.0` | Multi-board live job ingestion client |
 | **Embeddings & Vector** | `chromadb` | `1.5.9` | Embedded vector database |
 | | `sentence-transformers` | `6.1.0` | Neural semantic embeddings (`all-MiniLM-L6-v2`) |
 | **Ranking & Math** | `rank-bm25` | `0.2.2` | BM25 lexical keyword ranking algorithm |

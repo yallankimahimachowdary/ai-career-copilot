@@ -26,8 +26,8 @@ from app.ranking.evaluation import confidence_interval
 # Representative synthetic evaluation names across cultural/regional naming conventions
 DEFAULT_SYNTHETIC_NAMES = [
     # South Asian
-    "Mahima Chowdary",
-    "Deepika Sharma",
+    "Ananya Rao",
+    "Aarav Sharma",
     "Rohan Patel",
     "Priya Nair",
     # Western / Anglo

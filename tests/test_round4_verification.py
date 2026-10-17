@@ -20,7 +20,7 @@ from app.services.llm_provider import GeminiProvider
 def test_safe_merge_preserves_education_and_skills():
     """Ensure safe_merge_parsed_data prevents wiping out education and merges skills."""
     existing_pd = {
-        "contact_info": {"name": "Mahima Chowdary", "email": "mahi@example.com"},
+        "contact_info": {"name": "Candidate Alpha", "email": "cand_alpha@example.com"},
         "skills": ["Java", "Python", "SQL"],
         "education": [
             {
@@ -35,7 +35,7 @@ def test_safe_merge_preserves_education_and_skills():
 
     # Simulate an incomplete parse that returned empty education
     new_pd = {
-        "contact_info": {"name": "Mahima Chowdary", "email": "mahi@example.com"},
+        "contact_info": {"name": "Candidate Alpha", "email": "cand_alpha@example.com"},
         "skills": ["Java", "Git/GitHub", "Blender"],
         "education": [],
         "projects": [],

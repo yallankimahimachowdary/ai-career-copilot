@@ -21,12 +21,12 @@ def prepare_resume(glob_pattern, candidate_name):
         'experience': [e.model_dump() for e in parsed.experience],
     }
 
-mahi_res = prepare_resume('uploads/resumes/*Mahima*', 'Mahima')
-deepika_res = prepare_resume('uploads/resumes/*Deepika*', 'Deepika')
+cand_a_res = prepare_resume('uploads/resumes/*candidate_a*', 'Candidate A')
+cand_b_res = prepare_resume('uploads/resumes/*candidate_b*', 'Candidate B')
 
 reranker = LLMReranker(name='hybrid_llm_gemini', provider_name='gemini')
 
-for name, res in [('Mahi', mahi_res), ('Deepika', deepika_res)]:
+for name, res in [('Candidate A', cand_a_res), ('Candidate B', cand_b_res)]:
     print(f"\n=== Testing Gemini Re-Ranker for {name} ===")
     t0 = time.time()
     try:

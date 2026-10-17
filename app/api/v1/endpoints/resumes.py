@@ -21,7 +21,7 @@ from app.schemas.resume import (
     SimilarResumeResponse,
 )
 from app.services.embedding_service import embedding_service
-from app.services.extractor import ExtractionError, extract_text
+from app.services.extractor import ExtractionError, extract_text, extract_text_with_metadata
 from app.services.graph_service import graph_service
 from app.services.parser_agent import parser_agent
 
@@ -70,7 +70,7 @@ async def upload_resume(
 
     # 3. Extract text
     try:
-        raw_text = extract_text(content, file.filename or f"resume{file_ext}")
+        raw_text, extract_meta = extract_text_with_metadata(content, file.filename or f"resume{file_ext}")
     except ExtractionError as e:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(e))
 
@@ -84,7 +84,7 @@ async def upload_resume(
         f.write(content)
 
     # 5. Parse resume with Parser Agent
-    parsed_resume: ParsedResume = await parser_agent.parse(raw_text)
+    parsed_resume: ParsedResume = await parser_agent.parse(raw_text, metadata=extract_meta)
 
     # 6. Generate semantic embedding
     embed_text = embedding_service.construct_embed_text(parsed_resume)

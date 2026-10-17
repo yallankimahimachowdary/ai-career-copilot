@@ -105,6 +105,7 @@ class ParsedResume(BaseModel):
     education: List[Education] = Field(default_factory=list, description="Educational background")
     projects: List[Project] = Field(default_factory=list, description="Key projects")
     certifications: List[str] = Field(default_factory=list, description="Certifications and licenses")
+    parse_metadata: dict = Field(default_factory=dict, description="Metadata regarding extractor and NER provenance")
 
     @model_validator(mode="before")
     @classmethod

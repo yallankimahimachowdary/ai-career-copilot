@@ -22,7 +22,7 @@ def audit_b5():
         print(f"\n================ Provider: {provider.upper()} ================")
         audit_results[provider] = {}
 
-        for cand_name in ["Deepika", "Mahima"]:
+        for cand_name in ["Candidate B", "Candidate A"]:
             c_data = b4_data[provider][cand_name]
             explanations = c_data["explanations"]
             resume = resume_map[cand_name]

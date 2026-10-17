@@ -3,9 +3,9 @@ from app.services.parser_agent import parser_agent
 
 
 SAMPLE_RESUME = """
-Mahima Sharma
-mahima.sharma@example.com | (555) 234-5678 | San Francisco, CA
-https://linkedin.com/in/mahimasharma | https://github.com/mahimasharma
+Alice Sharma
+alice.sharma@example.com | (555) 234-5678 | San Francisco, CA
+https://linkedin.com/in/alicesharma | https://github.com/alicesharma
 
 PROFESSIONAL SUMMARY
 Experienced Full-Stack and AI Engineer with expertise in building scalable backend systems,
@@ -37,11 +37,11 @@ AI Career Copilot
 @pytest.mark.asyncio
 async def test_parser_agent_contact_info():
     parsed = await parser_agent.parse(SAMPLE_RESUME)
-    assert parsed.contact_info.name == "Mahima Sharma"
-    assert parsed.contact_info.email == "mahima.sharma@example.com"
+    assert parsed.contact_info.name == "Alice Sharma"
+    assert parsed.contact_info.email == "alice.sharma@example.com"
     assert parsed.contact_info.phone == "(555) 234-5678"
-    assert "linkedin.com/in/mahimasharma" in (parsed.contact_info.linkedin_url or "")
-    assert "github.com/mahimasharma" in (parsed.contact_info.github_url or "")
+    assert "linkedin.com/in/alicesharma" in (parsed.contact_info.linkedin_url or "")
+    assert "github.com/alicesharma" in (parsed.contact_info.github_url or "")
 
 
 @pytest.mark.asyncio
@@ -64,11 +64,11 @@ async def test_parser_agent_experience_and_education():
 
 
 def test_parser_initial_name_and_location():
-    resume_text = """S.Deepika
-sdeepika3057 @gmail.com
-7639506998
+    resume_text = """S.Kavitha
+skavitha.test @example.com
+5550192834
 Chennai,Tamil Nadu
-linkedin.com/in/s-deepika-4256b63ab
+linkedin.com/in/s-kavitha-test-profile
 
 SUMMARY
 Enthusiastic Biotechnology student with knowledge in molecular biology.
@@ -78,11 +78,11 @@ B.Tech-Biotechnology
 Vel Tech Institute
 """
     parsed = parser_agent._parse_with_rules(resume_text)
-    assert parsed.contact_info.name == "S. Deepika"
-    assert parsed.contact_info.email == "sdeepika3057@gmail.com"
-    assert parsed.contact_info.phone == "7639506998"
+    assert parsed.contact_info.name == "S. Kavitha"
+    assert parsed.contact_info.email == "skavitha.test@example.com"
+    assert parsed.contact_info.phone == "5550192834"
     assert parsed.contact_info.location == "Chennai, Tamil Nadu"
-    assert parsed.contact_info.linkedin_url == "https://linkedin.com/in/s-deepika-4256b63ab"
+    assert parsed.contact_info.linkedin_url == "https://linkedin.com/in/s-kavitha-test-profile"
 
 
 def test_parser_noisy_resume_and_duplicate_skills():

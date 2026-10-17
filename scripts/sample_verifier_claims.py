@@ -23,57 +23,57 @@ def prepare_resume(glob_pattern, candidate_name):
         'experience': [e.model_dump() for e in parsed.experience],
     }
 
-mahi_res = prepare_resume('uploads/resumes/*Mahima*', 'Mahima')
-deepika_res = prepare_resume('uploads/resumes/*Deepika*', 'Deepika')
+cand_a_res = prepare_resume('uploads/resumes/*candidate_a*', 'Candidate A')
+cand_b_res = prepare_resume('uploads/resumes/*candidate_b*', 'Candidate B')
 
 verifier = ClaimVerifier()
 
 # Real explanations collected from Ollama and Gemini runs:
 sample_exps = [
-    # Mahi - Job 1 (Ollama)
-    ("Mahi", "54d2b933-a4f8-4142-9a68-929dba9d89d5", {
+    # Candidate A - Job 1 (Ollama)
+    ("Candidate A", "54d2b933-a4f8-4142-9a68-929dba9d89d5", {
         "job_id": "54d2b933-a4f8-4142-9a68-929dba9d89d5", "rank": 1,
         "matched_skills": ["Data Science", "Machine Learning", "Python"],
         "missing_skills": ["Agile/Scrum", "Git/GitHub", "Leadership"],
         "reason": "The candidate has relevant skills in Data Science, Machine Learning, and Python, making them a strong fit for this role."
     }),
-    # Mahi - Job 2 (Ollama)
-    ("Mahi", "09db5aa5-b74a-4c37-9f7f-b64a207eb2bc", {
+    # Candidate A - Job 2 (Ollama)
+    ("Candidate A", "09db5aa5-b74a-4c37-9f7f-b64a207eb2bc", {
         "job_id": "09db5aa5-b74a-4c37-9f7f-b64a207eb2bc", "rank": 2,
         "matched_skills": ["Java", "SQL"],
         "missing_skills": ["Spring Boot", "Microservices"],
         "reason": "Strong core skills in Java and SQL for backend engineering."
     }),
-    # Mahi - Job 3 (Gemini)
-    ("Mahi", "f4dbdcdc-c272-4149-8002-95c9fb03b0fd", {
+    # Candidate A - Job 3 (Gemini)
+    ("Candidate A", "f4dbdcdc-c272-4149-8002-95c9fb03b0fd", {
         "job_id": "f4dbdcdc-c272-4149-8002-95c9fb03b0fd", "rank": 1,
         "matched_skills": ["Communication", "Java", "JavaScript", "Problem Solving", "Python"],
         "missing_skills": ["HTML/CSS"],
         "reason": "Excellent alignment with candidate's core programming languages (Java, Python, JavaScript) and soft skills for a fullstack role."
     }),
-    # Deepika - Job 1 (Ollama)
-    ("Deepika", "4b7cb06f-2f90-4297-a25e-3ab507327897", {
+    # Candidate B - Job 1 (Ollama)
+    ("Candidate B", "4b7cb06f-2f90-4297-a25e-3ab507327897", {
         "job_id": "4b7cb06f-2f90-4297-a25e-3ab507327897", "rank": 1,
         "matched_skills": ["Microbiology", "Molecular Biology"],
         "missing_skills": ["Communication", "Drug Discovery", "Leadership"],
         "reason": "The candidate has relevant skills in Microbiology and Molecular Biology, but lacks skills in Communication, Drug Discovery, and Leadership, which are required for the Senior Scientist - Biologist role."
     }),
-    # Deepika - Job 2 (Gemini)
-    ("Deepika", "4b7cb06f-2f90-4297-a25e-3ab507327897", {
+    # Candidate B - Job 2 (Gemini)
+    ("Candidate B", "4b7cb06f-2f90-4297-a25e-3ab507327897", {
         "job_id": "4b7cb06f-2f90-4297-a25e-3ab507327897", "rank": 1,
         "matched_skills": ["Microbiology"],
         "missing_skills": [],
         "reason": "This Chennai-based R&D trainee role perfectly aligns with the candidate's microbiology background, location, and seeking of research hands-on experience."
     }),
-    # Deepika - Job 3 (Ollama)
-    ("Deepika", "54d2b933-a4f8-4142-9a68-929dba9d89d5", {
+    # Candidate B - Job 3 (Ollama)
+    ("Candidate B", "54d2b933-a4f8-4142-9a68-929dba9d89d5", {
         "job_id": "54d2b933-a4f8-4142-9a68-929dba9d89d5", "rank": 2,
         "matched_skills": ["Python"],
         "missing_skills": ["Machine Learning", "Data Science"],
         "reason": "Candidate has basic Python programming but lacks required advanced machine learning frameworks."
     }),
-    # Deepika - Job 4 (Gemini)
-    ("Deepika", "b039b9cf-1ea4-4168-b1be-e0ba370b87d1", {
+    # Candidate B - Job 4 (Gemini)
+    ("Candidate B", "b039b9cf-1ea4-4168-b1be-e0ba370b87d1", {
         "job_id": "b039b9cf-1ea4-4168-b1be-e0ba370b87d1", "rank": 2,
         "matched_skills": ["Molecular Biology", "Cell Culture"],
         "missing_skills": ["Next-Generation Sequencing", "CRISPR"],
@@ -84,7 +84,7 @@ sample_exps = [
 individual_claims = []
 
 for cand_name, jid, exp in sample_exps:
-    resume = mahi_res if cand_name == "Mahi" else deepika_res
+    resume = cand_a_res if cand_name == "Candidate A" else cand_b_res
     job = jobs_map.get(jid, sample_jobs[0])
     res_skills = verifier._get_resume_skills(resume)
     job_skills = verifier._get_job_skills(job)

@@ -140,6 +140,8 @@ class AccessControlMockDB:
     async def delete(self, instance):
         if isinstance(instance, Resume):
             self.resume_map.pop(instance.id, None)
+        elif isinstance(instance, JobPosting):
+            self.job_map.pop(instance.id, None)
 
 
 @pytest.fixture
@@ -186,6 +188,8 @@ def mock_system_db(auth_users):
         company_name="Acme Tech",
         description="Looking for Python backend engineer.",
         skills=["Python", "SQL"],
+        source="internal",
+        remote_allowed=True,
         is_active=True,
         freshness_status="fresh",
         created_at=now,
@@ -573,3 +577,52 @@ async def test_enforce_resume_ownership_unit():
 
     # 6. Legacy resume + superuser -> passes
     enforce_resume_ownership(legacy_resume, current_user=superuser)
+
+
+# ---------------------------------------------------------------------------
+# Test 10: Job deletion permissions: 401 unauthenticated, 403 ordinary, 204 admin
+# ---------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_job_deletion_permissions_role_enforcement(
+    async_client: AsyncClient, auth_users, mock_system_db
+):
+    """
+    Ensure administrative job deletion is accessible strictly to superusers.
+    - Unauthenticated request -> 401 Unauthorized
+    - Ordinary authenticated user (non-superuser) -> 403 Forbidden
+    - Authorized superuser -> 204 No Content
+    Legitimate read / search functionality remains fully functional for ordinary users.
+    """
+    mock_db, _, _, job_target = mock_system_db
+    job_id = job_target.id
+
+    # 1. Unauthenticated request -> 401 Unauthorized
+    res_anon = await async_client.delete(f"/api/v1/jobs/{job_id}")
+    assert res_anon.status_code == 401, f"Expected 401, got {res_anon.status_code}"
+
+    # 2. Ordinary authenticated user (User A, non-superuser) -> 403 Forbidden
+    res_ordinary = await async_client.delete(
+        f"/api/v1/jobs/{job_id}",
+        headers=auth_users["headers_a"],
+    )
+    assert res_ordinary.status_code == 403, f"Expected 403, got {res_ordinary.status_code}"
+    assert "administrative" in res_ordinary.json()["detail"].lower()
+
+    # 3. Legitimate read functionality works for ordinary user
+    res_get = await async_client.get(
+        f"/api/v1/jobs/{job_id}",
+        headers=auth_users["headers_a"],
+    )
+    assert res_get.status_code == 200
+    assert res_get.json()["id"] == job_id
+
+    # 4. Authorized superuser -> 204 No Content
+    res_admin = await async_client.delete(
+        f"/api/v1/jobs/{job_id}",
+        headers=auth_users["headers_admin"],
+    )
+    assert res_admin.status_code == 204
+
+    # 5. Verify the job is removed from database
+    assert job_id not in mock_db.job_map

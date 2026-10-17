@@ -95,12 +95,12 @@ def main():
     records, meta = load_snapshot("data/snapshots/test_snap_1.json")
     print(f"Loaded snapshot: {len(records)} jobs")
 
-    mahi = prepare_resume("uploads/resumes/*Mahima*", "Mahima")
-    deepika = prepare_resume("uploads/resumes/*Deepika*", "Deepika")
+    cand_a = prepare_resume("uploads/resumes/*candidate_a*", "Candidate A")
+    cand_b = prepare_resume("uploads/resumes/*candidate_b*", "Candidate B")
 
     composite_xgb_arm = CompositeXGBRanker()
 
-    for name, resume in [("Mahi", mahi), ("Deepika", deepika)]:
+    for name, resume in [("Candidate A", cand_a), ("Candidate B", cand_b)]:
         print(f"\n==================== Parity Evaluation for {name} ====================")
         prod_top10 = run_production_matcher_on_snapshot(records, resume, top_k=10)
         arm_res = composite_xgb_arm.rank(resume, records, k=10)

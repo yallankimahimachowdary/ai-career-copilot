@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_user
+from app.api.deps import get_current_active_superuser, get_current_user
 from app.core.logging import logger
 from app.db.session import get_db
 from app.models.job_posting import JobPosting
@@ -117,14 +117,14 @@ async def get_job(
         description=job.description,
         location=job.location,
         work_type=job.work_type,
-        remote_allowed=job.remote_allowed,
+        remote_allowed=bool(job.remote_allowed) if job.remote_allowed is not None else False,
         skills=job.skills if isinstance(job.skills, list) else [],
         min_salary=job.min_salary,
         max_salary=job.max_salary,
         med_salary=job.med_salary,
         pay_period=job.pay_period,
         external_id=job.external_id,
-        source=job.source,
+        source=job.source or "internal",
         source_job_id=job.source_job_id,
         source_url=job.source_url,
         published_at=job.published_at,
@@ -141,12 +141,12 @@ async def get_job(
     "/{job_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Delete Job Posting",
-    description="Delete a job posting from the database.",
+    description="Delete a job posting from the database. Requires superuser privileges.",
 )
 async def delete_job(
     job_id: str,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_superuser),
 ):
     result = await db.execute(select(JobPosting).where(JobPosting.id == job_id))
     job = result.scalar_one_or_none()

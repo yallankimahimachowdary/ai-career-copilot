@@ -78,7 +78,7 @@
 - **Framework**: [React 19](https://react.dev/) + [Vite 8](https://vite.dev/)
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
 - **Motion & UI Primitives**: Framer Motion, Radix UI custom primitives
-- **Visualizations**: [Recharts](https://recharts.org/) (TreeSHAP diverging attribution waterfall, salary distributions, radar rubrics)
+- **Visualizations**: [Recharts](https://recharts.org/) (TreeSHAP diverging attribution waterfall, salary distributions; radar rubrics planned)
 - **Icons**: [Lucide React](https://lucide.dev/)
 - **Data Flow**: Connects to the live FastAPI backend with graceful fallback to anonymized demo data (`frontend/src/demo/demoData.js`) for offline demonstration.
 
@@ -86,7 +86,7 @@
 
 ## 🔬 System Capabilities: Evaluated vs. Prototype Features
 
-To maintain scientific integrity and transparent engineering standards, system components are divided into empirically evaluated pipelines versus interactive prototypes:
+To maintain scientific integrity and transparent engineering standards, system components are divided into empirically evaluated pipelines versus interactive prototypes. For a full architectural accounting of boundaries and fallbacks, see [docs/known_limitations.md](docs/known_limitations.md):
 
 ### 1. Empirically Evaluated Pipelines (Benchmark-Verified)
 - **Phase B Ranking Pipeline**: Evaluated on held-out test splits with gold annotations, measuring Precision@K, NDCG@K, and MRR.

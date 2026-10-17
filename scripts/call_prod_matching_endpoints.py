@@ -1,14 +1,14 @@
 import json
 import httpx
 
-MAHI_ID = "91cb0770-b345-420f-b83d-79ba108f4166"
-DEEPIKA_ID = "3386e2b7-fced-4fdd-8276-19baddeeef2c"
+CAND_A_ID = "91cb0770-b345-420f-b83d-79ba108f4166"
+CAND_B_ID = "3386e2b7-fced-4fdd-8276-19baddeeef2c"
 
 client = httpx.Client(base_url="http://localhost:8000", timeout=60.0)
 
 results = {}
 
-for name, rid in [("Mahi", MAHI_ID), ("Deepika", DEEPIKA_ID)]:
+for name, rid in [("Candidate A", CAND_A_ID), ("Candidate B", CAND_B_ID)]:
     url = f"/api/v1/matches/resume/{rid}?limit=10"
     print(f"Calling POST {url} for {name}...")
     resp = client.post(url)
@@ -41,7 +41,7 @@ for name, rid in [("Mahi", MAHI_ID), ("Deepika", DEEPIKA_ID)]:
     else:
         print(f"Error {resp.status_code}: {resp.text}")
 
-with open("artifacts/experiments/actual_prod_matches_mahi_deepika.json", "w", encoding="utf-8") as f:
+with open("artifacts/experiments/actual_prod_matches_cand_a_cand_b.json", "w", encoding="utf-8") as f:
     json.dump(results, f, indent=2)
 
-print("\nSaved real responses to artifacts/experiments/actual_prod_matches_mahi_deepika.json")
+print("\nSaved real responses to artifacts/experiments/actual_prod_matches_cand_a_cand_b.json")

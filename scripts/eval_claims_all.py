@@ -1,4 +1,4 @@
-"""Evaluate ClaimVerifier across all 10 explanations for Mahi and Deepika (Ollama and Gemini)."""
+"""Evaluate ClaimVerifier across all 10 explanations for Candidate A and Candidate B (Ollama and Gemini)."""
 
 import glob
 import pypdf
@@ -28,8 +28,8 @@ def prepare_resume(glob_pattern, candidate_name):
         'experience': [e.model_dump() for e in parsed.experience],
     }
 
-mahi_res = prepare_resume('uploads/resumes/*Mahima*', 'Mahima')
-deepika_res = prepare_resume('uploads/resumes/*Deepika*', 'Deepika')
+cand_a_res = prepare_resume('uploads/resumes/*candidate_a*', 'Candidate A')
+cand_b_res = prepare_resume('uploads/resumes/*candidate_b*', 'Candidate B')
 
 verifier = ClaimVerifier()
 
@@ -39,7 +39,7 @@ for provider in ["ollama", "gemini"]:
     print(f"=======================================================")
     reranker = LLMReranker(name=f"hybrid_llm_{provider}", provider_name=provider)
     
-    for c_name, resume in [("Mahi", mahi_res), ("Deepika", deepika_res)]:
+    for c_name, resume in [("Candidate A", cand_a_res), ("Candidate B", cand_b_res)]:
         print(f"\n--- Candidate: {c_name} (Provider: {provider}) ---")
         t0 = time.time()
         try:

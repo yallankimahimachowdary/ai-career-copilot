@@ -280,8 +280,8 @@ def test_confidence_interval_calculations():
 def test_annotation_template_export_and_import(tmp_path):
     """Verify export of annotation template and subsequent import of completed judgments."""
     candidate_results = [
-        {"candidate_id": "cand_1", "candidate_name": "Mahi", "ranked_job_ids": ["job_101", "job_102"]},
-        {"candidate_id": "cand_2", "candidate_name": "Deepika", "ranked_job_ids": ["job_201"]},
+        {"candidate_id": "cand_1", "candidate_name": "Candidate 1", "ranked_job_ids": ["job_101", "job_102"]},
+        {"candidate_id": "cand_2", "candidate_name": "Candidate 2", "ranked_job_ids": ["job_201"]},
     ]
     snapshot_records = [
         {"id": "job_101", "title": "AI Engineer", "company_name": "Tech Corp", "location": "Remote"},

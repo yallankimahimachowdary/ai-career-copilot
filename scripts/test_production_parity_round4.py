@@ -1,7 +1,7 @@
 """
 scripts/test_production_parity_round4.py
 ----------------------------------------
-Runs production matcher_agent.match_jobs_for_resume for Mahi and Deepika
+Runs production matcher_agent.match_jobs_for_resume for Candidate A and Candidate B
 and prints ranked top 10 results, scores, deduplication status, and explanations.
 """
 

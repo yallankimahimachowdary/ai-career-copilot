@@ -31,8 +31,8 @@ def prepare_resume(glob_pattern, candidate_name):
         'experience': [e.model_dump() for e in parsed.experience],
     }
 
-mahi_res = prepare_resume('uploads/resumes/*Mahima*', 'Mahima')
-deepika_res = prepare_resume('uploads/resumes/*Deepika*', 'Deepika')
+cand_a_res = prepare_resume('uploads/resumes/*candidate_a*', 'Candidate A')
+cand_b_res = prepare_resume('uploads/resumes/*candidate_b*', 'Candidate B')
 
 job_map = {str(j.get('id') or j.get('external_id')): (j.get('title') or 'Unknown')[:28] for j in sample_jobs}
 
@@ -42,7 +42,7 @@ overlap = SkillOverlapRanker()
 hybrid = HybridRanker(bm25_ranker=bm25, sbert_ranker=sbert, overlap_ranker=overlap)
 composite_xgb = CompositeXGBRanker()
 
-for name, res in [('Mahi', mahi_res), ('Deepika', deepika_res)]:
+for name, res in [('Candidate A', cand_a_res), ('Candidate B', cand_b_res)]:
     print(f"\n================ Top 5 Comparison for {name} ================")
     r_bm25 = bm25.rank(res, sample_jobs, k=5)
     r_sbert = sbert.rank(res, sample_jobs, k=5)

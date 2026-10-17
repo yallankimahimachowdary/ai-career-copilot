@@ -85,12 +85,12 @@ def main():
     records, meta = load_snapshot("data/snapshots/test_snap_1.json")
     print(f"Loaded snapshot with {len(records)} jobs.")
 
-    mahi_res = prepare_resume("uploads/resumes/*Mahima*", "Mahima")
-    deepika_res = prepare_resume("uploads/resumes/*Deepika*", "Deepika")
+    cand_a_res = prepare_resume("uploads/resumes/*candidate_a*", "Candidate A")
+    cand_b_res = prepare_resume("uploads/resumes/*candidate_b*", "Candidate B")
 
     results = {}
 
-    for cand_name, res in [("Mahi", mahi_res), ("Deepika", deepika_res)]:
+    for cand_name, res in [("Candidate A", cand_a_res), ("Candidate B", cand_b_res)]:
         # 1. Real production pipeline (with domain tokens & candidate filtering)
         prod_top10 = run_production_pipeline(res, records, limit=10)
 

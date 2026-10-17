@@ -33,20 +33,20 @@ def audit_b6():
     pool = records[:100]
     job_map = {str(j.get("id") or j.get("external_id")): j for j in pool}
 
-    mahi_res = prepare_resume("uploads/resumes/*Mahima*", "Mahima")
-    deepika_res = prepare_resume("uploads/resumes/*Deepika*", "Deepika")
+    cand_a_res = prepare_resume("uploads/resumes/*candidate_a*", "Candidate A")
+    cand_b_res = prepare_resume("uploads/resumes/*candidate_b*", "Candidate B")
 
     sbert = SbertRanker()
     hybrid = HybridRanker(sbert_ranker=sbert)
     tester = CounterfactualTester(hybrid_ranker=hybrid, sbert_ranker=sbert, seed=42)
 
-    mahi_targets = [
+    cand_a_targets = [
         (job_map.get("09db5aa5-b74a-4c37-9f7f-b64a207eb2bc") or pool[2], ["Spring Boot", "Microservices", "REST API"]),
         (job_map.get("60cc8518-539a-40ec-a64e-44e977668905") or pool[3], ["React", "TypeScript", "Node.js"]),
         (job_map.get("a87e149f-ddb4-4612-8a10-f9e67e1619aa") or pool[5], ["Django", "FastAPI", "Docker"]),
     ]
 
-    deepika_targets = [
+    cand_b_targets = [
         (job_map.get("54d2b933-a4f8-4142-9a68-929dba9d89d5") or pool[1], ["Machine Learning", "Data Science", "SQL"]),
         (job_map.get("dd5c8a5a-c0a0-4edb-945c-3f0b99dbaf63") or pool[4], ["Django", "FastAPI", "REST API"]),
         (job_map.get("b039b9cf-1ea4-4168-b1be-e0ba370b87d1") or pool[8], ["Cell Culture", "Molecular Biology", "PCR"]),
@@ -58,7 +58,7 @@ def audit_b6():
     sbert_sug_gains = []
     sbert_ctrl_gains = []
 
-    for cand_name, resume, targets in [("Mahi", mahi_res, mahi_targets), ("Deepika", deepika_res, deepika_targets)]:
+    for cand_name, resume, targets in [("Candidate A", cand_a_res, cand_a_targets), ("Candidate B", cand_b_res, cand_b_targets)]:
         print(f"\nCandidate: {cand_name}")
         for job_idx, (job, suggested_skills) in enumerate(targets, 1):
             res = tester.run_multi_draw_test(
