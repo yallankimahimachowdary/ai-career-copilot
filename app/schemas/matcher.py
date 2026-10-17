@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
@@ -46,6 +47,10 @@ class JobMatchItem(BaseModel):
     rank: int = Field(..., description="Position in recommendation ranking")
     merged_sources: List[str] = Field(default_factory=list, description="Aggregated job sources if duplicate postings were merged")
     duplicate_count: int = Field(default=1, description="Number of duplicate postings merged into this canonical match")
+    freshness_status: Optional[str] = Field(default="fresh", description="Freshness status of the matched job")
+    is_active: bool = Field(default=True, description="Whether the matched job is currently active")
+    published_at: Optional[datetime] = Field(default=None, description="Original publication timestamp")
+    last_seen_at: Optional[datetime] = Field(default=None, description="Timestamp when job was last observed active")
     skills_breakdown: SkillsBreakdown
     features: FeatureBreakdown
     explanations: List[ShapExplanation]

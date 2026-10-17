@@ -15,6 +15,7 @@ from app.db.chroma import chroma_service
 from app.db.session import AsyncSessionLocal
 from app.models.job_posting import JobPosting
 from app.services.embedding_service import embedding_service
+from app.services.job_ingestion_service import job_ingestion_service, normalize_job_url
 
 
 class AdzunaIngestService:
@@ -117,6 +118,8 @@ class AdzunaIngestService:
 
             record = {
                 "external_id": ext_id,
+                "source_job_id": str(item.get("id") or "") or None,
+                "source_url": normalize_job_url(redirect_url),
                 "title": title[:500],
                 "company_name": company[:500] if company else None,
                 "description": desc,
@@ -134,6 +137,12 @@ class AdzunaIngestService:
                 "currency": "INR",
                 "source": source_label,
                 "embedding": embedding,
+                "published_at": posting_date,
+                "first_seen_at": fetch_time,
+                "last_seen_at": fetch_time,
+                "last_refreshed_at": fetch_time,
+                "is_active": True,
+                "freshness_status": "fresh",
                 "created_at": posting_date,
                 "updated_at": fetch_time,
             }
@@ -147,27 +156,13 @@ class AdzunaIngestService:
             logger.info("Adzuna mock ingest executed in isolated mode. Records labeled source='adzuna_mock' and not written to live stores.")
             return normalized_records
 
-        # 1. Upsert into PostgreSQL
+        # 1. Upsert into PostgreSQL via JobIngestionService
         async with AsyncSessionLocal() as session:
-            stmt = insert(JobPosting).values(normalized_records)
-            stmt = stmt.on_conflict_do_update(
-                index_elements=["external_id"],
-                set_={
-                    "title": stmt.excluded.title,
-                    "company_name": stmt.excluded.company_name,
-                    "description": stmt.excluded.description,
-                    "location": stmt.excluded.location,
-                    "skills": stmt.excluded.skills,
-                    "min_salary": stmt.excluded.min_salary,
-                    "max_salary": stmt.excluded.max_salary,
-                    "med_salary": stmt.excluded.med_salary,
-                    "source": source_label,
-                    "embedding": stmt.excluded.embedding,
-                    "updated_at": fetch_time,
-                },
+            await job_ingestion_service.ingest_normalized_records(
+                db=session,
+                records=normalized_records,
+                source_name=source_label,
             )
-            await session.execute(stmt)
-            await session.commit()
 
 
         # 2. Upsert into ChromaDB

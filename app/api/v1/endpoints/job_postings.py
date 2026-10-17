@@ -10,10 +10,14 @@ from app.models.job_posting import JobPosting
 from app.schemas.job_posting import (
     JobPostingDetailResponse,
     JobPostingListResponse,
+    JobRefreshRequest,
+    JobRefreshRunResponse,
+    JobRefreshStatusResponse,
     SemanticJobSearchRequest,
     SimilarJobResponse,
 )
 from app.services.embedding_service import embedding_service
+from app.services.job_refresh_coordinator import job_refresh_coordinator
 
 router = APIRouter()
 
@@ -35,13 +39,15 @@ async def get_job_stats(
     "",
     response_model=List[JobPostingListResponse],
     summary="List Job Postings",
-    description="Paginated listing of job postings with optional title and location filters.",
+    description="Paginated listing of job postings with optional filters for title, location, active status, and freshness.",
 )
 async def list_jobs(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
     title: Optional[str] = Query(None, description="Filter by title (case-insensitive substring)"),
     location: Optional[str] = Query(None, description="Filter by location (case-insensitive substring)"),
+    is_active: Optional[bool] = Query(None, description="Filter by active status (True/False)"),
+    freshness: Optional[str] = Query(None, description="Filter by freshness status (fresh, stale, expired, inactive)"),
     db: AsyncSession = Depends(get_db),
 ) -> List[JobPostingListResponse]:
     stmt = select(JobPosting).order_by(JobPosting.created_at.desc())
@@ -50,6 +56,10 @@ async def list_jobs(
         stmt = stmt.where(JobPosting.title.ilike(f"%{title}%"))
     if location:
         stmt = stmt.where(JobPosting.location.ilike(f"%{location}%"))
+    if is_active is not None:
+        stmt = stmt.where(JobPosting.is_active == is_active)
+    if freshness:
+        stmt = stmt.where(JobPosting.freshness_status == freshness)
 
     stmt = stmt.offset(skip).limit(limit)
     result = await db.execute(stmt)
@@ -66,6 +76,10 @@ async def list_jobs(
                 location=job.location,
                 work_type=job.work_type,
                 skills_count=len(skills_list),
+                is_active=job.is_active if job.is_active is not None else True,
+                freshness_status=job.freshness_status or "fresh",
+                published_at=job.published_at,
+                last_seen_at=job.last_seen_at,
                 created_at=job.created_at,
             )
         )
@@ -76,7 +90,7 @@ async def list_jobs(
     "/{job_id}",
     response_model=JobPostingDetailResponse,
     summary="Get Job Posting Details",
-    description="Retrieve full details for a specific job posting.",
+    description="Retrieve full details for a specific job posting, including freshness and source information.",
 )
 async def get_job(
     job_id: str,
@@ -106,6 +120,14 @@ async def get_job(
         pay_period=job.pay_period,
         external_id=job.external_id,
         source=job.source,
+        source_job_id=job.source_job_id,
+        source_url=job.source_url,
+        published_at=job.published_at,
+        first_seen_at=job.first_seen_at,
+        last_seen_at=job.last_seen_at,
+        last_refreshed_at=job.last_refreshed_at,
+        is_active=job.is_active if job.is_active is not None else True,
+        freshness_status=job.freshness_status or "fresh",
         created_at=job.created_at,
     )
 
@@ -138,7 +160,7 @@ async def delete_job(
     "/search/similar",
     response_model=List[SimilarJobResponse],
     summary="Semantic Job Search",
-    description="Find job postings matching a resume text, skill query, or job description using vector cosine similarity.",
+    description="Find job postings matching a resume text, skill query, or job description using vector cosine similarity. Excludes inactive jobs by default.",
 )
 async def search_similar_jobs(
     search_req: SemanticJobSearchRequest,
@@ -155,12 +177,18 @@ async def search_similar_jobs(
                 JobPosting.title,
                 JobPosting.company_name,
                 JobPosting.location,
+                JobPosting.freshness_status,
+                JobPosting.is_active,
                 JobPosting.embedding.cosine_distance(query_vector).label("distance"),
             )
             .where(JobPosting.embedding.is_not(None))
-            .order_by("distance")
-            .limit(search_req.limit)
         )
+
+        # Exclude inactive or expired jobs by default
+        if not search_req.include_inactive:
+            stmt = stmt.where(JobPosting.is_active.is_(True))
+
+        stmt = stmt.order_by("distance").limit(search_req.limit)
         result = await db.execute(stmt)
         rows = result.all()
 
@@ -174,6 +202,8 @@ async def search_similar_jobs(
                     company_name=row.company_name,
                     location=row.location,
                     similarity_score=round(sim_score, 4),
+                    freshness_status=row.freshness_status or "fresh",
+                    is_active=row.is_active if row.is_active is not None else True,
                 )
             )
         return results
@@ -184,3 +214,72 @@ async def search_similar_jobs(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Semantic search is currently unavailable. Ensure pgvector is configured.",
         )
+
+
+@router.post(
+    "/refresh/run",
+    response_model=JobRefreshRunResponse,
+    summary="Trigger Manual Job Refresh",
+    description="Manually trigger a job refresh and freshness evaluation cycle.",
+)
+async def trigger_refresh(
+    body: Optional[JobRefreshRequest] = None,
+    db: AsyncSession = Depends(get_db),
+) -> JobRefreshRunResponse:
+    queries = body.queries if body else None
+    sources = body.sources if body else None
+    max_retries = body.max_retries if body else None
+    evaluate_freshness = body.evaluate_freshness if body else True
+
+    run_record = await job_refresh_coordinator.run_refresh(
+        queries=queries,
+        sources=sources,
+        max_retries=max_retries,
+        evaluate_freshness=evaluate_freshness,
+        db_session=db,
+    )
+
+    if run_record.status == "skipped":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="A job refresh run is already actively running.",
+        )
+
+    return JobRefreshRunResponse(
+        run_id=run_record.run_id,
+        started_at=run_record.started_at,
+        finished_at=run_record.finished_at,
+        duration_seconds=run_record.duration_seconds,
+        status=run_record.status,
+        sources=run_record.sources,
+        freshness_summary=run_record.freshness_summary,
+        error_category=run_record.error_category,
+        error_message=run_record.error_message,
+    )
+
+
+@router.get(
+    "/refresh/status",
+    response_model=JobRefreshStatusResponse,
+    summary="Get Job Refresh Status",
+    description="Check whether a job refresh is actively executing and retrieve the last completed run.",
+)
+async def get_refresh_status() -> JobRefreshStatusResponse:
+    last_run = job_refresh_coordinator.get_last_run()
+    last_run_resp = None
+    if last_run:
+        last_run_resp = JobRefreshRunResponse(
+            run_id=last_run.run_id,
+            started_at=last_run.started_at,
+            finished_at=last_run.finished_at,
+            duration_seconds=last_run.duration_seconds,
+            status=last_run.status,
+            sources=last_run.sources,
+            freshness_summary=last_run.freshness_summary,
+            error_category=last_run.error_category,
+            error_message=last_run.error_message,
+        )
+    return JobRefreshStatusResponse(
+        is_running=job_refresh_coordinator.is_running(),
+        last_run=last_run_resp,
+    )

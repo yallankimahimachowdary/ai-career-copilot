@@ -892,6 +892,7 @@ class MatcherAgent:
                 JobPosting.embedding.cosine_distance(resume.embedding).label("distance"),
             )
             .where(JobPosting.embedding.is_not(None))
+            .where(JobPosting.is_active.is_(True))
         )
         if is_biotech:
             vector_stmt = vector_stmt.where(or_(
@@ -971,6 +972,7 @@ class MatcherAgent:
                     JobPosting.embedding.cosine_distance(resume.embedding).label("distance"),
                 )
                 .where(or_(*kw_filters))
+                .where(JobPosting.is_active.is_(True))
             )
             if location:
                 kw_stmt = kw_stmt.where(JobPosting.location.ilike(f"%{location}%"))
@@ -1019,6 +1021,10 @@ class MatcherAgent:
                     rank=0,
                     merged_sources=[job.source] if getattr(job, "source", None) else [],
                     duplicate_count=1,
+                    freshness_status=getattr(job, "freshness_status", "fresh"),
+                    is_active=getattr(job, "is_active", True),
+                    published_at=getattr(job, "published_at", None),
+                    last_seen_at=getattr(job, "last_seen_at", None),
                     skills_breakdown=skills_breakdown,
                     features=features,
                     explanations=explanations,

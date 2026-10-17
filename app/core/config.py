@@ -82,6 +82,13 @@ class Settings(BaseSettings):
     EXPERIENCE_PENALTY_FACTOR: float = 0.08
     MATCHER_MODEL_PATH: str = "artifacts/models/matcher_xgboost.json"
 
+    # Job Freshness & Scheduled Ingestion Settings (Phase 6)
+    JOB_STALE_DAYS_THRESHOLD: int = 14
+    JOB_EXPIRED_DAYS_THRESHOLD: int = 30
+    JOB_REFRESH_INTERVAL_HOURS: int = 24
+    JOB_INGESTION_MAX_RETRIES: int = 3
+    JOB_INGESTION_TIMEOUT_SECONDS: float = 30.0
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
