@@ -11,6 +11,7 @@ so that all automated tests pass without network access.
 
 import json
 import re
+from collections import defaultdict
 from typing import Any, Dict, List, Optional, Tuple
 
 import httpx
@@ -27,6 +28,7 @@ from app.schemas.coach import (
     FullCoachingSessionResponse,
     InterviewQuestion,
     QuestionBank,
+    ResourceItem,
     SkillGapItem,
     SkillGapReport,
 )
@@ -658,6 +660,153 @@ def invalidate_coach_cache(resume_id: str, job_id: Optional[str] = None) -> None
         _QB_CACHE.pop(k, None)
 
 
+async def _attach_learning_resources(
+    gaps: List[SkillGapItem], db: Optional[AsyncSession] = None
+) -> None:
+    """Fetch and attach active learning resources from PostgreSQL for critical and growth gaps."""
+    if not gaps:
+        return
+    skill_names = [g.skill for g in gaps]
+    try:
+        from app.models.learning_resource import LearningResource
+        from sqlalchemy import select
+
+        async def _query(session: AsyncSession):
+            stmt = (
+                select(LearningResource)
+                .where(
+                    LearningResource.skill_name.in_(skill_names),
+                    LearningResource.is_active.is_(True),
+                )
+                .order_by(LearningResource.difficulty.asc())
+            )
+            res = await session.execute(stmt)
+            return res.scalars().all()
+
+        if db is not None:
+            records = await _query(db)
+        else:
+            from app.db.session import AsyncSessionLocal
+            async with AsyncSessionLocal() as session:
+                records = await _query(session)
+
+        res_by_skill = defaultdict(list)
+        for r in records:
+            res_by_skill[r.skill_name.lower()].append(
+                ResourceItem(
+                    title=r.title,
+                    url=r.url,
+                    provider=r.provider,
+                    resource_type=r.resource_type,
+                    difficulty=r.difficulty,
+                    est_hours=float(r.est_hours) if r.est_hours is not None else None,
+                )
+            )
+
+        for gap in gaps:
+            matched = res_by_skill.get(gap.skill.lower(), [])
+            gap.learning_resources = matched[:3]
+    except Exception as exc:
+        logger.warning(f"Failed to attach learning resources: {exc}")
+
+
+async def _chroma_retrieve_questions(
+    gap_report: SkillGapReport,
+    req: CoachQuestionBankRequest,
+) -> Tuple[List[InterviewQuestion], List[InterviewQuestion], List[InterviewQuestion]]:
+    """Retrieve grounded interview questions from ChromaDB interview_material_embeddings."""
+    try:
+        from app.db.chroma import get_interview_material_collection
+        from app.services.embedding_service import get_sentence_transformer
+        col = get_interview_material_collection()
+        if col.count() == 0:
+            return [], [], []
+
+        model = get_sentence_transformer()
+        technical_questions: List[InterviewQuestion] = []
+        behavioral_questions: List[InterviewQuestion] = []
+        gap_questions: List[InterviewQuestion] = []
+
+        # 1. Technical questions for confirmed strengths
+        for skill in gap_report.confirmed_strengths[:req.max_technical]:
+            emb = model.encode(f"Technical interview question on {skill}", normalize_embeddings=True).tolist()
+            res = col.query(
+                query_embeddings=[emb],
+                n_results=1,
+                where={"question_type": "technical"},
+            )
+            if res and res.get("documents") and res["documents"][0]:
+                doc = res["documents"][0][0]
+                meta = res["metadatas"][0][0]
+                pts = json.loads(meta.get("key_points_json", "[]"))
+                technical_questions.append(
+                    InterviewQuestion(
+                        id=f"TQ-{len(technical_questions)+1:03d}",
+                        category="technical",
+                        difficulty=meta.get("difficulty", "junior"),
+                        target_skill=skill,
+                        question=doc,
+                        why_asked=f"Assesses technical competency and depth in {skill}.",
+                        sample_answer="; ".join(pts) if pts else "Provide a concrete explanation with real-world examples.",
+                        evaluation_criteria=pts or ["Correct technical details", "Practical implementation awareness"],
+                    )
+                )
+
+        # 2. Behavioral questions
+        if req.max_behavioral > 0:
+            b_emb = model.encode("STAR behavioral teamwork challenge project conflict", normalize_embeddings=True).tolist()
+            b_res = col.query(
+                query_embeddings=[b_emb],
+                n_results=req.max_behavioral,
+                where={"question_type": "behavioral"},
+            )
+            if b_res and b_res.get("documents") and b_res["documents"][0]:
+                for idx, doc in enumerate(b_res["documents"][0]):
+                    meta = b_res["metadatas"][0][idx]
+                    pts = json.loads(meta.get("key_points_json", "[]"))
+                    behavioral_questions.append(
+                        InterviewQuestion(
+                            id=f"BQ-{len(behavioral_questions)+1:03d}",
+                            category="behavioral",
+                            difficulty=meta.get("difficulty", "junior"),
+                            target_skill="Communication & Teamwork",
+                            question=doc,
+                            why_asked="Evaluates problem-solving mindset, STAR framing, and team collaboration.",
+                            sample_answer="; ".join(pts) if pts else "Use the STAR method to describe Situation, Task, Action, and Result.",
+                            evaluation_criteria=pts or ["Specific Situation", "Clear Task", "Concrete Action", "Quantified Result"],
+                        )
+                    )
+
+        # 3. Gap-probing questions
+        for gap in gap_report.critical_gaps[:req.max_gap]:
+            g_emb = model.encode(f"Gap probing question regarding {gap.skill} learning curve", normalize_embeddings=True).tolist()
+            g_res = col.query(
+                query_embeddings=[g_emb],
+                n_results=1,
+            )
+            if g_res and g_res.get("documents") and g_res["documents"][0]:
+                doc = g_res["documents"][0][0]
+                meta = g_res["metadatas"][0][0]
+                pts = json.loads(meta.get("key_points_json", "[]"))
+                gap_questions.append(
+                    InterviewQuestion(
+                        id=f"GQ-{len(gap_questions)+1:03d}",
+                        category="gap_probing",
+                        difficulty=meta.get("difficulty", "junior"),
+                        target_skill=gap.skill,
+                        question=f"This role requires {gap.skill}. {doc}",
+                        why_asked=f"Evaluates learning agility and transferable skills for {gap.skill}.",
+                        sample_answer="; ".join(pts) if pts else "Acknowledge the gap honestly and share your concrete upskilling roadmap.",
+                        evaluation_criteria=pts or ["Honesty about skill level", "Transferable experience", "Concrete learning plan"],
+                    )
+                )
+
+        return technical_questions, behavioral_questions, gap_questions
+    except Exception as exc:
+        logger.warning(f"Chroma interview retrieval failed: {exc}. Falling back.")
+        return [], [], []
+
+
 # ---------------------------------------------------------------------------
 # CoachAgent - main entry point
 # ---------------------------------------------------------------------------
@@ -666,7 +815,7 @@ class CoachAgent:
     """3-step AI interview coaching agent.
 
     Step 1 (skill-gap) is fully deterministic — no LLM, returns in <100ms.
-    Step 2 (question bank) uses Ollama with num_predict capping for speed.
+    Step 2 (question bank) uses Chroma retrieval with Ollama/rule fallback.
     Step 3 (evaluate answer) uses Ollama with tight num_predict limit.
     Both Steps 1 and 2 are cached by (resume_id, job_id).
     """
@@ -682,7 +831,7 @@ class CoachAgent:
     # -----------------------------------------------------------------------
 
     async def generate_skill_gap_report(
-        self, resume: Resume, job: JobPosting
+        self, resume: Resume, job: JobPosting, db: Optional[AsyncSession] = None
     ) -> SkillGapReport:
         """Step 1: Deterministic skill-gap diagnostic — no LLM needed, <100ms."""
         cache_key = (str(resume.id), str(job.id))
@@ -693,6 +842,9 @@ class CoachAgent:
         resume_skills = _extract_resume_skills(resume)
         job_reqs = _extract_job_requirements(job)
         report = _rule_based_gap_report(resume, job, resume_skills, job_reqs)
+
+        # Attach real learning resources from PostgreSQL
+        await _attach_learning_resources(report.critical_gaps + report.growth_gaps, db=db)
 
         _cache_put(_GAP_CACHE, cache_key, report)
         return report
@@ -707,7 +859,7 @@ class CoachAgent:
             raise ValueError(f"Resume {resume_id} not found.")
         if not job:
             raise ValueError(f"Job posting {job_id} not found.")
-        return await self.generate_skill_gap_report(resume, job)
+        return await self.generate_skill_gap_report(resume, job, db=db)
 
     async def generate_question_bank(
         self,
@@ -716,11 +868,36 @@ class CoachAgent:
         gap_report: SkillGapReport,
         req: CoachQuestionBankRequest,
     ) -> QuestionBank:
-        """Step 2: Generate a curated question bank (Ollama with num_predict cap)."""
+        """Step 2: Generate a curated question bank (Chroma retrieval + Ollama/rule fallback)."""
         cache_key = (str(resume.id), str(job.id))
         if cache_key in _QB_CACHE:
             logger.debug(f"Coach cache hit (question-bank): {cache_key}")
             return _QB_CACHE[cache_key]
+
+        # 1. First attempt grounded Chroma retrieval from interview corpus
+        try:
+            chroma_t, chroma_b, chroma_g = await _chroma_retrieve_questions(gap_report, req)
+            if chroma_t or chroma_b or chroma_g:
+                rb = _rule_based_question_bank(resume, job, gap_report, req)
+                final_t = chroma_t + [q for q in rb.technical_questions if q.target_skill not in {x.target_skill for x in chroma_t}]
+                final_b = chroma_b + [q for q in rb.behavioral_questions if len(chroma_b) < req.max_behavioral]
+                final_g = chroma_g + [q for q in rb.gap_questions if q.target_skill not in {x.target_skill for x in chroma_g}]
+
+                candidate_name = getattr(resume, "candidate_name", "Candidate") or "Candidate"
+                qb = QuestionBank(
+                    resume_id=str(resume.id),
+                    job_id=str(job.id),
+                    job_title=gap_report.job_title,
+                    candidate_name=candidate_name,
+                    technical_questions=final_t[:req.max_technical],
+                    behavioral_questions=final_b[:req.max_behavioral],
+                    gap_questions=final_g[:req.max_gap],
+                    preparation_tips=rb.preparation_tips,
+                )
+                _cache_put(_QB_CACHE, cache_key, qb)
+                return qb
+        except Exception as exc:
+            logger.warning(f"Chroma question retrieval failed: {exc}. Proceeding to LLM/rule fallback.")
 
         resume_skills = _extract_resume_skills(resume)
 
@@ -753,11 +930,12 @@ class CoachAgent:
         resume: Resume,
         job: JobPosting,
         qb_req: CoachQuestionBankRequest,
+        db: Optional[AsyncSession] = None,
     ) -> FullCoachingSessionResponse:
         """Run Steps 1+2 and return the combined coaching session.
-        Step 1 is deterministic (<100ms). Step 2 uses cached Ollama output.
+        Step 1 is deterministic (<100ms). Step 2 uses cached Ollama/Chroma output.
         """
-        gap_report = await self.generate_skill_gap_report(resume, job)
+        gap_report = await self.generate_skill_gap_report(resume, job, db=db)
         question_bank = await self.generate_question_bank(resume, job, gap_report, qb_req)
 
         priorities: List[str] = [

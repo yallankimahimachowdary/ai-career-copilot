@@ -63,7 +63,7 @@ async def skill_gap(
     current_user: User = Depends(get_current_user),
 ) -> SkillGapReport:
     resume, job = await _get_resume_and_job(body.resume_id, body.job_id, db, current_user)
-    return await coach_agent.generate_skill_gap_report(resume, job)
+    return await coach_agent.generate_skill_gap_report(resume, job, db=db)
 
 
 @router.post(
@@ -122,5 +122,5 @@ async def full_session(
         resume_id=body.resume_id,
         job_id=body.job_id,
     )
-    return await coach_agent.run_full_session(resume, job, qb_req)
+    return await coach_agent.run_full_session(resume, job, qb_req, db=db)
 

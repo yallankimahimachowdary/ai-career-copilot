@@ -9,12 +9,19 @@ from app.core.config import settings
 from app.core.logging import logger
 
 _neo4j_driver: Optional[AsyncDriver] = None
+_neo4j_loop_id: Optional[int] = None
 
 
 def get_neo4j_driver() -> AsyncDriver:
-    """Get or initialize the global Neo4j AsyncDriver singleton."""
-    global _neo4j_driver
-    if _neo4j_driver is None:
+    """Get or initialize the global Neo4j AsyncDriver singleton, refreshing if event loop changed."""
+    global _neo4j_driver, _neo4j_loop_id
+    try:
+        loop = asyncio.get_running_loop()
+        loop_id = id(loop)
+    except RuntimeError:
+        loop_id = None
+
+    if _neo4j_driver is None or _neo4j_loop_id != loop_id:
         logger.info(f"Initializing Neo4j driver connection to {settings.NEO4J_URI}...")
         _neo4j_driver = AsyncGraphDatabase.driver(
             settings.NEO4J_URI,
@@ -23,6 +30,7 @@ def get_neo4j_driver() -> AsyncDriver:
             max_connection_pool_size=50,
             connection_acquisition_timeout=10.0,
         )
+        _neo4j_loop_id = loop_id
     return _neo4j_driver
 
 

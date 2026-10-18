@@ -12,11 +12,13 @@ Coordinates Parser, Matcher, Market, and Coach agents with:
   6. Explainable synthesis and full backward compatibility with ChatQueryResponse
 """
 
+import asyncio
 from datetime import datetime, timezone
 import time
 from typing import Any, Callable, Dict, List, Optional, TypedDict
 import uuid
 
+import httpx
 from langgraph.graph import END, START, StateGraph
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -41,10 +43,23 @@ from app.services.router_service import extract_canonical_skills, router_service
 # Maximum retry attempts per node for transient errors
 MAX_NODE_RETRIES: int = 1
 
+# Permanent exception types that must NEVER be treated as transient
+PERMANENT_EXCEPTIONS = (
+    FileNotFoundError,
+    PermissionError,
+)
+
 # Transient exception types eligible for bounded retry
 TRANSIENT_EXCEPTIONS = (
     TimeoutError,
     ConnectionError,
+    asyncio.TimeoutError,
+    httpx.TimeoutException,
+    httpx.ConnectError,
+    httpx.ConnectTimeout,
+    httpx.ReadTimeout,
+    httpx.WriteTimeout,
+    httpx.NetworkError,
     OSError,
 )
 
@@ -105,10 +120,92 @@ class GraphState(TypedDict, total=False):
 
 def _is_transient_error(exc: Exception) -> bool:
     """Determine whether an error is transient (network/timeout) vs permanent."""
+    if isinstance(exc, PERMANENT_EXCEPTIONS):
+        return False
     if isinstance(exc, TRANSIENT_EXCEPTIONS):
         return True
     msg = str(exc).lower()
-    return any(term in msg for term in ("timeout", "connection refused", "temporary", "connection reset", "econnreset"))
+    return any(
+        term in msg
+        for term in (
+            "timeout",
+            "connection refused",
+            "temporary",
+            "connection reset",
+            "econnreset",
+            "remote computer refused",
+            "winerror 1225",
+        )
+    )
+
+
+def _is_connection_error(exc: Exception) -> bool:
+    """Determine whether an error stems from network/host connection refusal or failure."""
+    if isinstance(exc, (ConnectionError, httpx.ConnectError, httpx.ConnectTimeout)):
+        return True
+    msg = str(exc).lower()
+    return any(
+        term in msg
+        for term in (
+            "connection refused",
+            "connection reset",
+            "remote computer refused",
+            "winerror 1225",
+            "econnrefused",
+            "connect error",
+        )
+    )
+
+
+def _build_error_record(
+    agent_name: str,
+    step: str,
+    exc: Exception,
+    default_host_port: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Builds a standardized error record with target host:port attribution on connection failure."""
+    msg = str(exc)
+    record: Dict[str, Any] = {
+        "agent_name": agent_name,
+        "step": step,
+        "error_message": msg,
+        "recovered": True,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+    if _is_connection_error(exc) and default_host_port:
+        record["target_host_port"] = default_host_port
+        if default_host_port not in msg:
+            record["error_message"] = f"{msg} (target: {default_host_port})"
+    return record
+
+
+def determine_execution_status(
+    completed_nodes: List[str],
+    errors: List[Dict[str, Any]],
+    fallback_used: bool = False,
+    fallbacks: Optional[List[str]] = None,
+) -> str:
+    """
+    Computes orchestrator execution status according to Stage 0 rule:
+    Status is 'success' ONLY if no agent used a fallback and no errors were recorded;
+    otherwise 'degraded: <failing_agent(s)>'.
+    """
+    failing_agents: List[str] = []
+    if errors:
+        for err in errors:
+            agent = err.get("agent_name", "unknown")
+            if agent not in failing_agents:
+                failing_agents.append(agent)
+    if fallbacks:
+        for fb in fallbacks:
+            if fb not in failing_agents:
+                failing_agents.append(fb)
+    elif fallback_used and "router" not in failing_agents:
+        failing_agents.append("router")
+
+    if not failing_agents:
+        return "success"
+    return f"degraded: {', '.join(failing_agents)}"
 
 
 class LangGraphOrchestrator:
@@ -295,13 +392,9 @@ class LangGraphOrchestrator:
                 return {"retries": retries, "retry_target": "route"}
 
             # Permanent failure or retries exhausted -> fallback to JOB_SEARCH
-            errors.append({
-                "agent_name": "route",
-                "step": "ROUTE",
-                "error_message": str(exc),
-                "recovered": True,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            })
+            errors.append(
+                _build_error_record("route", "ROUTE", exc, default_host_port="localhost:11434 (Ollama)")
+            )
             fallback_decision = RouterDecision(
                 intent=IntentType.JOB_SEARCH,
                 confidence=0.50,
@@ -364,13 +457,9 @@ class LangGraphOrchestrator:
                 retries["parse"] = current_retries + 1
                 return {"retries": retries, "retry_target": "parse"}
 
-            errors.append({
-                "agent_name": "parse",
-                "step": "PARSE",
-                "error_message": str(exc),
-                "recovered": True,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            })
+            errors.append(
+                _build_error_record("parse", "PARSE", exc, default_host_port="localhost:5432 (Postgres)")
+            )
             elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)
             node_timings["parse"] = elapsed_ms
 
@@ -477,13 +566,9 @@ class LangGraphOrchestrator:
                 retries["match"] = current_retries + 1
                 return {"retries": retries, "retry_target": "match"}
 
-            errors.append({
-                "agent_name": "match",
-                "step": "MATCH",
-                "error_message": str(exc),
-                "recovered": True,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            })
+            errors.append(
+                _build_error_record("match", "MATCH", exc, default_host_port="localhost:5432 (Postgres)")
+            )
             elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)
             node_timings["match"] = elapsed_ms
 
@@ -566,13 +651,9 @@ class LangGraphOrchestrator:
                 retries["market"] = current_retries + 1
                 return {"retries": retries, "retry_target": "market"}
 
-            errors.append({
-                "agent_name": "market",
-                "step": "MARKET",
-                "error_message": str(exc),
-                "recovered": True,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            })
+            errors.append(
+                _build_error_record("market", "MARKET", exc, default_host_port="localhost:5432 (Postgres)")
+            )
             elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)
             node_timings["market"] = elapsed_ms
 
@@ -661,13 +742,9 @@ class LangGraphOrchestrator:
                 retries["coach"] = current_retries + 1
                 return {"retries": retries, "retry_target": "coach"}
 
-            errors.append({
-                "agent_name": "coach",
-                "step": "COACH",
-                "error_message": str(exc),
-                "recovered": True,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            })
+            errors.append(
+                _build_error_record("coach", "COACH", exc, default_host_port="localhost:11434 (Ollama)")
+            )
             elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)
             node_timings["coach"] = elapsed_ms
 
@@ -855,10 +932,19 @@ class LangGraphOrchestrator:
         if "synthesize" not in completed:
             completed.append("synthesize")
 
+        # Determine status according to Stage 0 rule (success ONLY if no fallbacks and no errors)
+        rd = state.get("router_decision") or {}
+        trace_status = determine_execution_status(
+            completed_nodes=completed,
+            errors=errors,
+            fallback_used=rd.get("fallback_used", False),
+        )
+
         # Attach execution trace to sources for transparency & testing
         sources.append({
             "type": "orchestrator_trace",
             "backend": "langgraph",
+            "status": trace_status,
             "completed_nodes": completed,
             "node_timings_ms": node_timings,
             "retries": retries,

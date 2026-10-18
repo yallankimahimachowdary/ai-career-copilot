@@ -348,3 +348,145 @@ async def test_orchestrator_backend_toggle_behavior():
             res = await chat.process_chat_query(request=req, db=None, current_user=None)
             assert res.response == "Response from Sequential Router"
             mock_seq_exec.assert_awaited_once()
+
+
+# ---------------------------------------------------------------------------
+# 7. Transient Error Classification & Status Determination (R4 Follow-ups)
+# ---------------------------------------------------------------------------
+
+def test_transient_error_classification():
+    """Verify that network, timeout, and httpx exceptions are transient while filesystem/value errors are permanent."""
+    import httpx
+    from app.services.graph_orchestrator import _is_transient_error
+
+    # Transient exceptions must return True
+    assert _is_transient_error(httpx.ConnectTimeout("Connection timeout")) is True
+    assert _is_transient_error(httpx.ConnectError("Connection refused")) is True
+    assert _is_transient_error(httpx.ReadTimeout("Read timed out")) is True
+    assert _is_transient_error(httpx.WriteTimeout("Write timed out")) is True
+    assert _is_transient_error(httpx.NetworkError("Network unreachable")) is True
+    assert _is_transient_error(asyncio.TimeoutError()) is True
+    assert _is_transient_error(TimeoutError("Upstream timeout")) is True
+    assert _is_transient_error(ConnectionError("Connection reset by peer")) is True
+    assert _is_transient_error(OSError(1225, "The remote computer refused the network connection")) is True
+
+    # Permanent exceptions MUST return False (crucially FileNotFoundError and PermissionError inherit from OSError)
+    assert _is_transient_error(FileNotFoundError("Missing config file")) is False
+    assert _is_transient_error(PermissionError("Permission denied")) is False
+    assert _is_transient_error(ValueError("Invalid parameter")) is False
+    assert _is_transient_error(KeyError("missing_key")) is False
+    assert _is_transient_error(TypeError("unexpected type")) is False
+
+
+def test_determine_execution_status_rule():
+    """Verify status is 'success' ONLY if no errors and no fallbacks occurred, else 'degraded: <agent>'."""
+    from app.services.graph_orchestrator import determine_execution_status
+
+    # 1. Clean execution -> success
+    assert determine_execution_status(
+        completed_nodes=["route", "match", "synthesize"],
+        errors=[],
+        fallback_used=False,
+    ) == "success"
+
+    # 2. Match error -> degraded naming match
+    assert determine_execution_status(
+        completed_nodes=["route", "synthesize"],
+        errors=[{"agent_name": "match", "error_message": "DB timeout"}],
+        fallback_used=False,
+    ) == "degraded: match"
+
+    # 3. Multiple errors -> degraded naming both agents
+    assert determine_execution_status(
+        completed_nodes=["route", "synthesize"],
+        errors=[
+            {"agent_name": "match", "error_message": "DB timeout"},
+            {"agent_name": "market", "error_message": "Market DB error"},
+        ],
+        fallback_used=False,
+    ) == "degraded: match, market"
+
+    # 4. Fallback used -> degraded naming router
+    assert determine_execution_status(
+        completed_nodes=["route", "match", "synthesize"],
+        errors=[],
+        fallback_used=True,
+    ) == "degraded: router"
+
+
+@pytest.mark.asyncio
+async def test_cross_backend_equivalence_with_stubs():
+    """
+    Run identical stub requests through both sequential and langgraph orchestrators,
+    verifying consistent intent dispatch, structure, and documenting known trace differences.
+    """
+    from app.api.v1.endpoints import chat
+    from app.core.config import settings
+
+    req = ChatQueryRequest(query="Find Python developer roles in New York")
+
+    stub_rd = RouterDecision(
+        intent=IntentType.JOB_SEARCH,
+        confidence=0.95,
+        strategy_selected="Strategy 1: Hybrid Vector Search & XGBoost Re-ranking",
+        reasoning="Targeted job search inquiry.",
+        backend="trained",
+        low_confidence=False,
+        fallback_used=False,
+        strategy="Strategy 1: Hybrid Vector Search & XGBoost Re-ranking",
+    )
+
+    stub_jobs = [
+        {
+            "type": "job_posting",
+            "id": "job_stub_001",
+            "title": "Senior Python Engineer",
+            "company": "Tech Corp",
+            "location": "New York, NY",
+            "skills": ["Python", "FastAPI"],
+        }
+    ]
+
+    # Run LangGraph backend
+    with patch.object(settings, "ORCHESTRATOR_BACKEND", "langgraph"):
+        with patch.object(
+            langgraph_orchestrator, "execute",
+            AsyncMock(return_value=ChatQueryResponse(
+                query=req.query,
+                router_decision=stub_rd,
+                response="### Job Search Results\nFound top matches in New York.",
+                sources=list(stub_jobs) + [{"type": "orchestrator_trace", "backend": "langgraph", "status": "success"}],
+                actionable_recommendations=["Inspect match contributions"],
+                suggested_followups=["What skills are missing?"],
+            )),
+        ):
+            res_langgraph = await chat.process_chat_query(request=req, db=None, current_user=None)
+
+    # Run Sequential backend
+    with patch.object(settings, "ORCHESTRATOR_BACKEND", "sequential"):
+        with patch.object(
+            router_service, "route_and_execute",
+            AsyncMock(return_value=ChatQueryResponse(
+                query=req.query,
+                router_decision=stub_rd,
+                response="### Job Search Results\nFound top matches in New York.",
+                sources=list(stub_jobs),
+                actionable_recommendations=["Inspect match contributions"],
+                suggested_followups=["What skills are missing?"],
+            )),
+        ):
+            res_sequential = await chat.process_chat_query(request=req, db=None, current_user=None)
+
+    # Assert behavioral equivalence
+    assert res_langgraph.query == res_sequential.query
+    assert res_langgraph.router_decision.intent == res_sequential.router_decision.intent
+    assert res_langgraph.router_decision.confidence == res_sequential.router_decision.confidence
+    assert res_langgraph.response == res_sequential.response
+    assert res_langgraph.actionable_recommendations == res_sequential.actionable_recommendations
+    assert res_langgraph.suggested_followups == res_sequential.suggested_followups
+
+    # The ONLY intentional difference is the orchestrator_trace record attached to sources in LangGraph
+    lg_sources_without_trace = [s for s in res_langgraph.sources if s.get("type") != "orchestrator_trace"]
+    assert lg_sources_without_trace == res_sequential.sources
+    assert any(s.get("type") == "orchestrator_trace" for s in res_langgraph.sources)
+

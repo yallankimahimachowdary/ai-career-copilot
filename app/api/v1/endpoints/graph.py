@@ -13,6 +13,7 @@ from app.schemas.graph import (
     CareerPathwayResponse,
     GraphStatsResponse,
     GraphSyncResponse,
+    RoleProgressionResponse,
     SkillBridgeResponse,
 )
 from app.services.graph_service import graph_service
@@ -60,6 +61,34 @@ async def get_bridge_skills(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Graph bridging query failed: {str(exc)}",
+        )
+
+
+@router.get(
+    "/role-pathway",
+    response_model=RoleProgressionResponse,
+    summary="Role-based Career Progression Pathways (Neo4j LEADS_TO)",
+    description=(
+        "Traverses Role-[:LEADS_TO*1..3]->Role progression hierarchy in Neo4j, "
+        "returning target roles, transition types, depth, estimated years, and missing skills."
+    ),
+)
+async def get_role_pathway(
+    role_name: str = Query(..., min_length=2, description="Source role name e.g. 'Junior Web Developer Trainee'"),
+    candidate_skills: Optional[str] = Query(None, description="Comma-separated skills candidate possesses"),
+    current_user: User = Depends(get_current_user),
+) -> RoleProgressionResponse:
+    try:
+        skills_list = [s.strip() for s in candidate_skills.split(",")] if candidate_skills else []
+        return await graph_service.find_role_progression_pathways(
+            role_name=role_name,
+            candidate_skills=skills_list,
+        )
+    except Exception as exc:
+        logger.error(f"Failed to query role pathway for '{role_name}': {exc}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Role pathway query failed: {str(exc)}",
         )
 
 

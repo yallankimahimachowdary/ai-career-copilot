@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "source": "curated_seed",
+  "generation_statement": "Authored by an AI assistant, not reviewed by a domain expert.",
+  "sha256": "9EB1D9A105B91EBADF26BAC3AB2F6024C250BF4DE20C24A68E304E9ED88B3874",
+  "total_items": 157,
+  "counts_by_family": {
+    "web_software": 32,
+    "data_ai": 32,
+    "cloud_devops": 32,
+    "core_engineering": 30,
+    "business_nontech": 31
+  },
+  "counts_by_type": {
+    "technical": 106,
+    "situational": 19,
+    "behavioral": 17,
+    "hr": 13,
+    "senior": 2
+  },
+  "note": "Curated interview question corpus for grounded career coaching. LEADS_TO edges and question associations are assumptions, not empirical career data."
+}

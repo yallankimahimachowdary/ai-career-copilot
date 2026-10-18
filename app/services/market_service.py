@@ -384,6 +384,32 @@ class MarketAgent:
             db, req.title_query, req.location
         )
         items = compute_skill_demand(skills_arrays, total, req.top_n)
+
+        # Enrich items with stored market trend data and dynamic velocity
+        try:
+            from app.models.job_market_trend import JobMarketTrend
+            skill_names = [it.skill for it in items]
+            if skill_names:
+                t_stmt = (
+                    select(JobMarketTrend)
+                    .where(
+                        JobMarketTrend.skill_name.in_(skill_names),
+                        JobMarketTrend.period_type == "month",
+                    )
+                )
+                t_res = await db.execute(t_stmt)
+                trend_records = {r.skill_name.lower(): r for r in t_res.scalars().all()}
+                for it in items:
+                    tr = trend_records.get(it.skill.lower())
+                    if tr:
+                        it.demand_share = tr.demand_share
+                        it.velocity = round(min(tr.postings_with_skill / 50.0, 1.5), 2)
+                    else:
+                        it.demand_share = it.percentage
+                        it.velocity = 0.0
+        except Exception as exc:
+            logger.warning(f"Failed to query job_market_trends: {exc}")
+
         role_context = req.title_query or "all roles"
 
         narrative = await self._gemini_narrative(

@@ -62,13 +62,13 @@ from app.services.job_refresh_coordinator import JobRefreshCoordinator
 # ============================================================================
 
 def test_alembic_migrations_dag_and_head_integrity():
-    """Verify that Alembic migrations form an unbroken linear DAG ending at head 5e9f2b3c4d5a."""
+    """Verify that Alembic migrations form an unbroken linear DAG ending at head 6f0a1b2c3d4e."""
     alembic_cfg = Config("alembic.ini")
     script_dir = ScriptDirectory.from_config(alembic_cfg)
 
     heads = script_dir.get_heads()
     assert len(heads) == 1, f"Expected exactly one migration head, found: {heads}"
-    assert heads[0] == "5e9f2b3c4d5a", f"Expected head 5e9f2b3c4d5a, got {heads[0]}"
+    assert heads[0] == "6f0a1b2c3d4e", f"Expected head 6f0a1b2c3d4e, got {heads[0]}"
 
     # Traverse backwards through down_revisions to ensure unbroken linear history
     current_rev = heads[0]
@@ -82,6 +82,7 @@ def test_alembic_migrations_dag_and_head_integrity():
         current_rev = rev_obj.down_revision
 
     expected_revisions = [
+        "6f0a1b2c3d4e",  # add data layer tables (evaluation_logs, learning_resources, job_market_trends)
         "5e9f2b3c4d5a",  # add job freshness tracking fields
         "4d8f1a2b3c4e",  # create users table and resume ownership
         "2c9e71a9dd54",  # switch embedding to 384 dimensions

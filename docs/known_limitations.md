@@ -118,14 +118,26 @@ This document provides a transparent, technically precise accounting of known sy
 
 ---
 
-## 9. Graph Schema & Secondary Database Population
+## 9. Data Layer, Role Progression Graph & Curated Corpora
 - **Relevant Files:**
+  - [`alembic/versions/6f0a1b2c3d4e_add_data_layer_tables.py`](../alembic/versions/6f0a1b2c3d4e_add_data_layer_tables.py)
+  - [`app/models/evaluation_log.py`](../app/models/evaluation_log.py)
+  - [`app/models/learning_resource.py`](../app/models/learning_resource.py)
+  - [`app/models/job_market_trend.py`](../app/models/job_market_trend.py)
   - [`app/services/graph_service.py`](../app/services/graph_service.py)
-  - [`alembic/versions/`](../alembic/versions/)
-  - [`app/services/embedding_service.py`](../app/services/embedding_service.py)
+  - [`app/db/neo4j.py`](../app/db/neo4j.py)
+  - [`app/db/chroma.py`](../app/db/chroma.py)
+  - [`data/graph/role_graph_seed.json`](../data/graph/role_graph_seed.json)
+  - [`data/learning/learning_resources_seed.json`](../data/learning/learning_resources_seed.json)
+  - [`data/interview_corpus/interview_corpus_v1.jsonl`](../data/interview_corpus/interview_corpus_v1.jsonl)
+  - [`docs/data_layer_design.md`](data_layer_design.md)
 - **Status & Scope:**
-  - The Neo4j graph implementation models basic skill-category nodes: the Neo4j graph has no Role/LEADS_TO/OFFERS; no learning_resources, job_market_trends or evaluation_logs tables; the interview-material Chroma collection is never populated.
-  - Relational database tables focus on `users`, `resumes`, and `job_postings`. Skeletons for additional relational tracking remain inactive or deferred.
+  - **Curated Seed Role Ontology**: Seeded from `data/graph/role_graph_seed.json` (52 roles across Software Engineering, Data & AI, Cloud & DevOps, Product & Agile, and Cybersecurity; 53 directed `LEADS_TO` progression edges; 0 loops or orphan roles; typical years between 1 and 5). Progression paths represent curated standard industry milestones rather than exhaustive empirical career trajectories.
+  - **Curated Learning Resources**: Seeded from `data/learning/learning_resources_seed.json` (76 resources spanning canonical skills: 69 active, 7 inactive). All active resources link to official documentation or verified educational platforms; inactive resources represent deprecations or placeholder guides.
+  - **Curated Interview Corpus**: Seeded from `data/interview_corpus/interview_corpus_v1.jsonl` (157 questions across 5 role families, including 49 non-technical behavioral, situational, and HR questions, each with 3-6 rubric evaluation points and embedding vectors stored in Chroma collection `interview_material_embeddings`). The corpus was curated and synthesized by an AI assistant and has not been reviewed by an external domain expert panel.
+  - **Evaluation Logs Persistence**: Implemented via the `evaluation_logs` table (migration `6f0a1b2c3d4e`), storing benchmark metrics, model parameters, and dataset provenance hashes (`dataset_sha256`) strictly for offline and automated evaluation tracking without storing personal identifiers or candidate-identifying data.
+  - **Job Market Trends & Dynamic Velocity**: Implemented via the `job_market_trends` table (migration `6f0a1b2c3d4e`), populated from the current job postings snapshot (1,555 postings) with verified `source_snapshot_sha256`. Velocity is dynamically computed at query time by `market_agent.get_trending_skills` relative to the stored baseline rather than precomputed as static delta values.
+  - **Intentional Omission of Skeletons**: Separate `parsed_skills` and `match_scores` tables were intentionally omitted from the schema. Candidate parsed skills are stored natively as structured JSON in `resumes.parsed_data`, and match scores are dynamically generated at ranking time by `matcher_service` and `ranker.py`, avoiding synchronization drift and schema redundancy.
 
 ---
 

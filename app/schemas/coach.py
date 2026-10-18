@@ -4,6 +4,16 @@ from typing import Dict, List, Literal, Optional
 from pydantic import BaseModel, Field
 
 
+class ResourceItem(BaseModel):
+    """Educational or documentation resource for a specific skill."""
+    title: str
+    url: Optional[str] = None
+    provider: Optional[str] = None
+    resource_type: Optional[str] = None
+    difficulty: Optional[str] = None
+    est_hours: Optional[float] = None
+
+
 class SkillGapItem(BaseModel):
     """Single skill examined in the gap analysis."""
     skill: str = Field(..., description="Skill name")
@@ -11,6 +21,7 @@ class SkillGapItem(BaseModel):
     importance: Literal["high", "medium", "low"] = Field(..., description="How critical the skill is for this role")
     candidate_has: bool = Field(..., description="Whether the candidate already possesses this skill")
     recommendation: str = Field(..., description="Action recommendation, e.g. a course, project idea, or certification")
+    learning_resources: List[ResourceItem] = Field(default_factory=list, description="Curated learning resources")
 
 
 class SkillGapReport(BaseModel):

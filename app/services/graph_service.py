@@ -18,6 +18,8 @@ from app.schemas.graph import (
     GraphRelStats,
     GraphStatsResponse,
     ReachableRoleItem,
+    RolePathStep,
+    RoleProgressionResponse,
     SkillBridgeItem,
     SkillBridgeResponse,
 )
@@ -277,36 +279,42 @@ class GraphService:
           count { MATCH (c:Candidate) } AS candidates,
           count { MATCH (s:Skill) } AS skills,
           count { MATCH (j:JobPosting) } AS job_postings,
-          count { MATCH (comp:Company) } AS companies
+          count { MATCH (comp:Company) } AS companies,
+          count { MATCH (r:Role) } AS roles
         """
         rels_q = """
         RETURN
           count { MATCH ()-[r:HAS_SKILL]->() } AS has_skill,
           count { MATCH ()-[r:REQUIRES]->() } AS requires,
           count { MATCH ()-[r:MATCHED_TO]->() } AS matched_to,
-          count { MATCH ()-[r:POSTED_BY]->() } AS posted_by
+          count { MATCH ()-[r:POSTED_BY]->() } AS posted_by,
+          count { MATCH ()-[r:LEADS_TO]->() } AS leads_to,
+          count { MATCH ()-[r:OFFERS]->() } AS offers
         """
         node_res = await execute_cypher(nodes_q)
         rel_res = await execute_cypher(rels_q)
 
-        n_row = node_res[0] if node_res else {"candidates": 0, "skills": 0, "job_postings": 0, "companies": 0}
-        r_row = rel_res[0] if rel_res else {"has_skill": 0, "requires": 0, "matched_to": 0, "posted_by": 0}
+        n_row = node_res[0] if node_res else {"candidates": 0, "skills": 0, "job_postings": 0, "companies": 0, "roles": 0}
+        r_row = rel_res[0] if rel_res else {"has_skill": 0, "requires": 0, "matched_to": 0, "posted_by": 0, "leads_to": 0, "offers": 0}
 
         nodes = GraphNodeStats(
             candidates=n_row.get("candidates", 0),
             skills=n_row.get("skills", 0),
             job_postings=n_row.get("job_postings", 0),
             companies=n_row.get("companies", 0),
+            roles=n_row.get("roles", 0),
         )
         rels = GraphRelStats(
             has_skill=r_row.get("has_skill", 0),
             requires=r_row.get("requires", 0),
             matched_to=r_row.get("matched_to", 0),
             posted_by=r_row.get("posted_by", 0),
+            leads_to=r_row.get("leads_to", 0),
+            offers=r_row.get("offers", 0),
         )
 
-        total_nodes = nodes.candidates + nodes.skills + nodes.job_postings + nodes.companies
-        total_rels = rels.has_skill + rels.requires + rels.matched_to + rels.posted_by
+        total_nodes = nodes.candidates + nodes.skills + nodes.job_postings + nodes.companies + nodes.roles
+        total_rels = rels.has_skill + rels.requires + rels.matched_to + rels.posted_by + rels.leads_to + rels.offers
 
         return GraphStatsResponse(
             total_nodes=total_nodes,
@@ -560,6 +568,79 @@ class GraphService:
         logger.info(f"Graph: Successfully synchronized {synced} job postings from PostgreSQL to Neo4j.")
         return synced
 
+    async def find_role_progression_pathways(
+        self,
+        role_name: str,
+        candidate_skills: Optional[List[str]] = None,
+        max_depth: int = 3,
+    ) -> RoleProgressionResponse:
+        """Find reachable Role nodes via LEADS_TO paths (length 1 to max_depth) using parameterized Cypher.
+        
+        Computes missing skills required by target roles along the pathway.
+        """
+        cand_skills = candidate_skills or []
+        cand_skills_lower = {s.lower() for s in cand_skills}
+
+        cypher_q = """
+        MATCH (start:Role)
+        WHERE toLower(start.name) = toLower($role_name)
+        MATCH path = (start)-[:LEADS_TO*1..3]->(target:Role)
+        WITH target,
+             [r IN relationships(path) | r.transition_type] AS transitions,
+             [r IN relationships(path) | r.typical_years] AS years,
+             length(path) AS depth,
+             [n IN nodes(path) | n.name] AS role_path
+        OPTIONAL MATCH (target)-[req:REQUIRES]->(sk:Skill)
+        WITH target, transitions, years, depth, role_path,
+             collect(DISTINCT sk.name) AS required_skills
+        RETURN target.name AS target_role,
+               target.family AS target_family,
+               target.level AS target_level,
+               depth,
+               role_path,
+               transitions,
+               reduce(acc = 0.0, y IN years | acc + y) AS total_years,
+               required_skills
+        ORDER BY depth ASC, total_years ASC
+        """
+        records = await execute_cypher(cypher_q, {"role_name": role_name.strip()})
+
+        pathways: List[RolePathStep] = []
+        for r in records:
+            req_skills = [s for s in r.get("required_skills", []) if s]
+            missing = [s for s in req_skills if s.lower() not in cand_skills_lower]
+            pathways.append(
+                RolePathStep(
+                    target_role=r["target_role"],
+                    target_family=r.get("target_family", "general"),
+                    target_level=r.get("target_level", "mid"),
+                    depth=r["depth"],
+                    role_path=r["role_path"],
+                    transition_types=r.get("transitions", []),
+                    total_years=round(float(r.get("total_years", 0.0)), 1),
+                    required_skills=req_skills,
+                    missing_skills=missing,
+                )
+            )
+
+        if pathways:
+            summary = (
+                f"Starting from '{role_name}', found {len(pathways)} reachable career pathway(s) "
+                f"spanning up to {max_depth} progression step(s). "
+                f"Next immediate role: {pathways[0].target_role} ({pathways[0].total_years} yrs)."
+            )
+        else:
+            summary = f"No progressive pathways found starting from '{role_name}'. Verify role exists in the ontology."
+
+        return RoleProgressionResponse(
+            starting_role=role_name,
+            candidate_skills=cand_skills,
+            pathways=pathways,
+            total_reachable_roles=len(pathways),
+            summary=summary,
+        )
+
 
 # Module-level singleton
 graph_service = GraphService()
+

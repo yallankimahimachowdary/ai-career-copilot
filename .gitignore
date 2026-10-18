@@ -34,6 +34,9 @@ uploads/
 /data/*
 !/data/evaluation/
 !/data/router/
+!/data/graph/
+!/data/learning/
+!/data/interview_corpus/
 backups/
 
 # IDE & OS

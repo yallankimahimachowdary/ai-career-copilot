@@ -56,6 +56,8 @@ class SkillDemandItem(BaseModel):
     posting_count: int
     percentage: float  # % of analysed postings that mention this skill
     trend_signal: Literal["high", "moderate", "low"]
+    velocity: Optional[float] = None
+    demand_share: Optional[float] = None
 
 
 class SkillDemandRequest(BaseModel):

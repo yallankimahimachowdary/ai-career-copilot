@@ -9,13 +9,16 @@ class GraphNodeStats(BaseModel):
     skills: int = Field(default=0, description="Total Skill nodes")
     job_postings: int = Field(default=0, description="Total JobPosting nodes")
     companies: int = Field(default=0, description="Total Company nodes")
+    roles: int = Field(default=0, description="Total Role nodes")
 
 
 class GraphRelStats(BaseModel):
     has_skill: int = Field(default=0, description="Candidate HAS_SKILL relationships")
-    requires: int = Field(default=0, description="JobPosting REQUIRES relationships")
+    requires: int = Field(default=0, description="REQUIRES relationships")
     matched_to: int = Field(default=0, description="Candidate MATCHED_TO relationships")
     posted_by: int = Field(default=0, description="JobPosting POSTED_BY relationships")
+    leads_to: int = Field(default=0, description="Role LEADS_TO relationships")
+    offers: int = Field(default=0, description="Company OFFERS relationships")
 
 
 class GraphStatsResponse(BaseModel):
@@ -77,3 +80,23 @@ class GraphSyncResponse(BaseModel):
     synced_jobs_count: int
     total_skills_count: int
     message: str
+
+
+class RolePathStep(BaseModel):
+    target_role: str
+    target_family: str
+    target_level: str
+    depth: int
+    role_path: List[str]
+    transition_types: List[str]
+    total_years: float
+    required_skills: List[str]
+    missing_skills: List[str] = Field(default_factory=list)
+
+
+class RoleProgressionResponse(BaseModel):
+    starting_role: str
+    candidate_skills: List[str] = Field(default_factory=list)
+    pathways: List[RolePathStep] = Field(default_factory=list)
+    total_reachable_roles: int
+    summary: str

@@ -99,3 +99,24 @@ Metadata such as `orchestrator_backend`, `execution_trace`, and per-node latenci
   - `data/evaluation/rag_coach_eval_v1.json`: `E6EA387146511A11139B42F53A3DD302E9C98EE57B211B2AB0C5299500B24598`
   - `data/router/test.jsonl`: `6340BB8A778BDC19A65A7E72EEF8F771AD7AE4AC7A0889912DC50BC679335AD4`
   - `artifacts/models/intent_router_v1.joblib`: `9FB2A9031E1910DC321FA69E14F3A67A711080019CF03235C15E4BCDC55785FD`
+
+## 5. Cross-Backend Differences (Sequential vs. LangGraph)
+
+The system supports toggling between `ORCHESTRATOR_BACKEND=sequential` (legacy `router_service.route_and_execute`) and `ORCHESTRATOR_BACKEND=langgraph` (`langgraph_orchestrator.execute`). The behavioral differences are intentional and detailed below:
+
+1. **Observability & Trace Attributions**:
+   - `langgraph`: Attaches an `orchestrator_trace` dictionary to the `sources` list containing `backend: "langgraph"`, `status` ("success" or "degraded: <agent>"), `completed_nodes`, `node_timings_ms`, `retries`, and `errors`.
+   - `sequential`: Does not attach an execution trace or per-node latencies; `sources` contains only domain data items (e.g. `job_posting` objects).
+
+2. **Multi-Agent State Accumulation**:
+   - `langgraph`: Implements a `StateGraph` over typed `GraphState`. State is passed sequentially through nodes (`route` -> `parse` -> `match`/`market`/`coach` -> `synthesize`). Outputs from early nodes (such as parsed candidate skills from `parse` or retrieved opportunities from `match`) directly inform downstream prompts in `coach` or synthesis.
+   - `sequential`: Dispatches immediately to an isolated single-strategy function (`_execute_job_search`, `_execute_skill_progression`, `_execute_interview_coaching`, `_execute_market_dynamics`, `_execute_resume_feedback`). Intermediate artifacts are not accumulated into a unified graph state.
+
+3. **Fault Tolerance and Retry Semantics**:
+   - `langgraph`: Implements bounded retry (`MAX_NODE_RETRIES = 1`) on transient network/timeout exceptions (`httpx.TimeoutException`, `httpx.ConnectError`, `asyncio.TimeoutError`, connection reset). Catches node failures non-fatally, records error diagnostics with target host/port attribution (`localhost:5432` Postgres, `localhost:11434` Ollama, etc.), and proceeds gracefully to downstream synthesis.
+   - `sequential`: Relies on internal try-except blocks per strategy function with static mock fallbacks and no structured retry loops.
+
+4. **Synthesis Formatting**:
+   - `langgraph`: Formats synthesized responses with structured markdown headers, contextual skill highlights, actionable steps, and suggested follow-ups grounded in graph state.
+   - `sequential`: Formats text within each separate strategy method with varying layout styles.
+

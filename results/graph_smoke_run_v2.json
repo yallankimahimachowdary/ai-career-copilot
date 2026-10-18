@@ -1,0 +1,143 @@
+[
+  {
+    "intent": "JOB_SEARCH",
+    "query": "What Python backend developer jobs are open in San Francisco?",
+    "status": "degraded: match",
+    "classified_intent": "JOB_SEARCH_AND_MATCH",
+    "confidence": 0.95,
+    "backend": "llm",
+    "completed_nodes": [
+      "route",
+      "synthesize"
+    ],
+    "node_timings_ms": {
+      "route": 23692.03,
+      "match": 51489.08,
+      "synthesize": 0.05
+    },
+    "retries": {},
+    "errors": [
+      {
+        "agent_name": "match",
+        "step": "MATCH",
+        "error_message": "(sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.InFailedSQLTransactionError'>: current transaction is aborted, commands ignored until end of transaction block\n[SQL: SELECT job_postings.id, job_postings.external_id, job_postings.title, job_postings.company_name, job_postings.description, job_postings.location, job_postings.work_type, job_postings.remote_allowed, job_postings.skills, job_postings.min_salary, job_postings.max_salary, job_postings.med_salary, job_postings.pay_period, job_postings.country, job_postings.currency, job_postings.source, job_postings.embedding, job_postings.published_at, job_postings.first_seen_at, job_postings.last_seen_at, job_postings.last_refreshed_at, job_postings.is_active, job_postings.source_job_id, job_postings.source_url, job_postings.freshness_status, job_postings.created_at, job_postings.updated_at \nFROM job_postings \n LIMIT $1::INTEGER]\n[parameters: (4,)]\n(Background on this error at: https://sqlalche.me/e/20/dbapi)",
+        "recovered": true,
+        "timestamp": "2026-10-18T08:09:17.577602+00:00"
+      }
+    ],
+    "total_latency_ms": 75233.79,
+    "has_real_content": true,
+    "response_char_count": 315,
+    "sources_count": 1,
+    "recommendations_count": 3
+  },
+  {
+    "intent": "SKILL_GAP_ANALYSIS",
+    "query": "What skills do I need to learn to transition to a DevOps Engineer?",
+    "status": "degraded: match",
+    "classified_intent": "SKILL_PROGRESSION_AND_PATH",
+    "confidence": 0.95,
+    "backend": "llm",
+    "completed_nodes": [
+      "route",
+      "coach",
+      "synthesize"
+    ],
+    "node_timings_ms": {
+      "route": 16533.3,
+      "match": 56.31,
+      "coach": 61510.66,
+      "synthesize": 0.04
+    },
+    "retries": {},
+    "errors": [
+      {
+        "agent_name": "match",
+        "step": "MATCH",
+        "error_message": "(sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.InFailedSQLTransactionError'>: current transaction is aborted, commands ignored until end of transaction block\n[SQL: SELECT job_postings.id, job_postings.external_id, job_postings.title, job_postings.company_name, job_postings.description, job_postings.location, job_postings.work_type, job_postings.remote_allowed, job_postings.skills, job_postings.min_salary, job_postings.max_salary, job_postings.med_salary, job_postings.pay_period, job_postings.country, job_postings.currency, job_postings.source, job_postings.embedding, job_postings.published_at, job_postings.first_seen_at, job_postings.last_seen_at, job_postings.last_refreshed_at, job_postings.is_active, job_postings.source_job_id, job_postings.source_url, job_postings.freshness_status, job_postings.created_at, job_postings.updated_at \nFROM job_postings \n LIMIT $1::INTEGER]\n[parameters: (4,)]\n(Background on this error at: https://sqlalche.me/e/20/dbapi)",
+        "recovered": true,
+        "timestamp": "2026-10-18T08:09:34.219367+00:00"
+      }
+    ],
+    "total_latency_ms": 78125.51,
+    "has_real_content": true,
+    "response_char_count": 618,
+    "sources_count": 1,
+    "recommendations_count": 3
+  },
+  {
+    "intent": "INTERVIEW_PREPARATION",
+    "query": "Can you give me practice behavioral interview questions for a senior role?",
+    "status": "success",
+    "classified_intent": "INTERVIEW_COACHING",
+    "confidence": 0.95,
+    "backend": "llm",
+    "completed_nodes": [
+      "route",
+      "coach",
+      "synthesize"
+    ],
+    "node_timings_ms": {
+      "route": 6256.75,
+      "coach": 33965.71,
+      "synthesize": 0.01
+    },
+    "retries": {},
+    "errors": [],
+    "total_latency_ms": 40233.63,
+    "has_real_content": true,
+    "response_char_count": 676,
+    "sources_count": 2,
+    "recommendations_count": 3
+  },
+  {
+    "intent": "CAREER_ADVICE",
+    "query": "What is the median salary and hiring outlook for Machine Learning Engineers?",
+    "status": "success",
+    "classified_intent": "MACRO_MARKET_DYNAMICS",
+    "confidence": 0.95,
+    "backend": "llm",
+    "completed_nodes": [
+      "route",
+      "market",
+      "synthesize"
+    ],
+    "node_timings_ms": {
+      "route": 5084.83,
+      "market": 4.49,
+      "synthesize": 0.02
+    },
+    "retries": {},
+    "errors": [],
+    "total_latency_ms": 5099.16,
+    "has_real_content": true,
+    "response_char_count": 362,
+    "sources_count": 2,
+    "recommendations_count": 3
+  },
+  {
+    "intent": "RESUME_FEEDBACK",
+    "query": "How can I optimize my resume bullet points for software engineering?",
+    "status": "success",
+    "classified_intent": "RESUME_FEEDBACK",
+    "confidence": 0.95,
+    "backend": "llm",
+    "completed_nodes": [
+      "route",
+      "coach",
+      "synthesize"
+    ],
+    "node_timings_ms": {
+      "route": 6481.4,
+      "coach": 32918.02,
+      "synthesize": 0.02
+    },
+    "retries": {},
+    "errors": [],
+    "total_latency_ms": 39407.96,
+    "has_real_content": true,
+    "response_char_count": 506,
+    "sources_count": 2,
+    "recommendations_count": 3
+  }
+]
