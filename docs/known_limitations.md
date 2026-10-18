@@ -90,14 +90,21 @@ This document provides a transparent, technically precise accounting of known sy
 
 ---
 
-## 7. Fairness Audits & Name-Swap Invariance
+## 7. Fairness Audits, Fairlearn Metrics & Positive Controls
 - **Relevant Files:**
-  - [`app/ranking/fairness.py`](../app/ranking/fairness.py)
-  - [`scripts/evaluate_fairness_and_counterfactuals.py`](../scripts/evaluate_fairness_and_counterfactuals.py)
+  - [`scripts/evaluate_fairness_v2.py`](../scripts/evaluate_fairness_v2.py)
+  - [`data/fairness/synthetic_resumes_v1.jsonl`](../data/fairness/synthetic_resumes_v1.jsonl)
+  - [`data/fairness/perturbations_v1.json`](../data/fairness/perturbations_v1.json)
+  - [`docs/fairness_rag_design.md`](../docs/fairness_rag_design.md)
+  - [`results/fairness_v2.json`](../results/fairness_v2.json)
+  - [`tests/test_fairness_eval.py`](../tests/test_fairness_eval.py)
 - **Status & Scope:**
-  - Demographic invariance audits evaluate score stability under candidate name substitutions (e.g., gender and cultural variants).
-  - Crucially, the name-swap test changes fields no ranker reads (invariance holds by construction), because the underlying ranking features rely exclusively on extracted skills, project descriptions, and experience text, ignoring candidate personal names.
-  - The repository does not utilize the external `fairlearn` package.
+  - In earlier project iterations, demographic invariance audits evaluated candidate name substitutions exclusively on candidate name fields. Because no production ranker reads candidate personal names, reported invariance was $1.0$ by construction and could not fail.
+  - In Remediation R6, the fairness evaluation harness was redesigned to include verified positive controls that **must fail** when ranking bias is present:
+    - **Demographic Disparity**: Evaluated using the official `fairlearn` package (`fairlearn==0.15.0`). Computes Demographic Parity Difference (DPD) and Demographic Parity Ratio (DPR, 4/5ths rule threshold $\ge 0.80$). Production rankers with anonymization enabled achieve $\text{DPD} = 0.0$ and $\text{DPR} = 1.0$.
+    - **Positive Control A (`DemographicBiasedRanker`)**: Injects deliberate scoring penalties and boosts across demographic groups. Verified to fail the audit ($\text{DPD} = 0.8333 > 0.10$, $\text{DPR} = 0.0 < 0.80$).
+    - **Institution-Tier Fairness**: Evaluates 24 universities across 3 tiers (Tier 1 Elite, Tier 2 Public Flagship, Tier 3 Regional/Community). While production anonymization strips educational institutions to eliminate prestige bias ($\text{Tier Gap} = 0.0$), **Positive Control B (`InstitutionPrestigeBiasedRanker`)** intentionally penalizes non-elite schools and fails the prestige fairness threshold ($\text{Tier Gap} = 0.3725 > 0.05$, $\text{Tier DPR} = 0.0 < 0.80$).
+  - **Sequential Orchestrator Heuristic Ranking Disclaimer**: In `app/services/orchestrator.py`, the sequential pipeline computes a local skill-overlap heuristic rather than invoking the full ML-based `matcher_service`. This is maintained for minimal-dependency sequential pipelines, while the primary production path in `app/services/graph_orchestrator.py` uses the full feature-extracted XGBoost ranker.
 
 ---
 
@@ -177,13 +184,25 @@ This document provides a transparent, technically precise accounting of known sy
 
 ---
 
-## 12. RAG Grounding & Hallucination Metrics
+## 12. RAG Retrieval & Generation Evaluation Harness
 - **Relevant Files:**
-  - [`app/evaluation/rag_eval.py`](../app/evaluation/rag_eval.py)
-  - [`scripts/eval_rag_grounding.py`](../scripts/eval_rag_grounding.py)
+  - [`scripts/eval_rag_retrieval.py`](../scripts/eval_rag_retrieval.py)
+  - [`scripts/eval_rag_generation.py`](../scripts/eval_rag_generation.py)
+  - [`scripts/score_rag_human_validation.py`](../scripts/score_rag_human_validation.py)
+  - [`data/rag_eval/rag_queries_v1.jsonl`](../data/rag_eval/rag_queries_v1.jsonl)
+  - [`results/rag_retrieval.json`](../results/rag_retrieval.json)
+  - [`results/rag_generation.json`](../results/rag_generation.json)
+  - [`results/rag_human_validation_sample.csv`](../results/rag_human_validation_sample.csv)
+  - [`tests/test_rag_eval.py`](../tests/test_rag_eval.py)
 - **Status & Scope:**
-  - RAG evaluation for career coaching responses measures Context Recall, Context Precision, Factual Grounding Pass Rate, and Hallucination Count against gold reference datasets (`data/evaluation/rag_coach_eval_v1.json`).
-  - These metrics are evaluated using deterministic, reproducible token-overlap and n-gram factual verification algorithms, rather than the external `ragas` library. This ensures zero API cost and deterministic benchmarking.
+  - In earlier project iterations, RAG grounding metrics were derived from a limited 5-sample set without confidence intervals or retrieval ablation.
+  - In Remediation R6, a comprehensive, zero-third-party-dependency RAG evaluation harness was constructed:
+    - **Dataset**: 100 balanced queries across 4 categories (`interview_prep`, `learning_resources`, `role_progression`, `market_demand`) with verified zero leakage ($\text{Trigram Jaccard} = 0.0007 < 0.60$).
+    - **Retrieval Ablation (100 queries, 1,000 bootstrap resamples)**:
+      - Router-Driven Retrieval achieved Mean Reciprocal Rank (MRR) of **0.4587** (95% CI: [0.3740, 0.5420]) and Hit@1 of **0.40** (95% CI: [0.31, 0.49]).
+      - Outperforms the Fixed Baseline (MRR: **0.3510**, Hit@1: **0.21**) by nearly 2x at top-1, with an over 3x gain in interview preparation queries (MRR **0.5200** vs. **0.1727**).
+    - **$2 \times 2$ Factorial Generation Matrix**: Evaluates (Fixed vs. Router Retrieval) $\times$ (Local Ollama `llama3.2:3b` vs. Google Gemini `gemini-2.0-flash`). Measures in-house RAGAS metrics: Faithfulness, Answer Relevancy, Context Precision, and Context Recall.
+    - **Self-Judging Bias Mitigation**: When an LLM evaluates its own generated responses, it exhibits systematic positive bias. The harness mitigates self-judging bias by utilizing objective sentence-transformer cosine similarity and deterministic claim extraction, supplemented by an exported stratified blinded human validation sample (`results/rag_human_validation_sample.csv`, scored via Cohen's kappa with `scripts/score_rag_human_validation.py`).
 
 ---
 

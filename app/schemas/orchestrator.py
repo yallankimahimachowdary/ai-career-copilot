@@ -66,6 +66,8 @@ class CareerWorkflowState(BaseModel):
     actionable_next_steps: List[str] = Field(default_factory=list)
 
     # Error handling & Graceful degradation
+    match_unavailable: bool = Field(default=False, description="True if matcher agent experienced an error or backend failure.")
+    no_matching_jobs: bool = Field(default=False, description="True if matcher query ran successfully but returned 0 matches.")
     errors: List[AgentFailureRecord] = Field(default_factory=list)
     metadata: Dict[str, Any] = Field(default_factory=dict)
 

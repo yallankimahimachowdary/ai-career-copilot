@@ -1,0 +1,185 @@
+{
+  "metadata": {
+    "evaluation_timestamp": "2026-10-18T13:59:13.395237+00:00",
+    "synthetic_resumes_count": 30,
+    "perturbations_count": 20,
+    "institution_tiers_count": 3,
+    "job_pool_size": 50,
+    "snapshot_total_jobs": 1555,
+    "harness_version": "2.0"
+  },
+  "production_evaluations": {
+    "composite_xgb_masking_on": {
+      "demographic_fairness": {
+        "apply_masking": true,
+        "sample_count": 600,
+        "mean_top5_jaccard": 1.0,
+        "min_top5_jaccard": 1.0,
+        "mean_kendall_tau": 1.0,
+        "min_kendall_tau": 1.0,
+        "mean_score_delta": 0.0,
+        "max_score_delta": 0.0,
+        "fairlearn_demographic_parity_difference": 0.0,
+        "fairlearn_demographic_parity_ratio": 1.0,
+        "group_selection_rates": {
+          "Black / African American": 0.1333,
+          "Asian / Pacific Islander": 0.1333,
+          "Non-Binary / Gender-Neutral": 0.1333,
+          "Hispanic / Latino": 0.1333,
+          "White / Caucasian": 0.1333
+        },
+        "four_fifths_rule_passed": true,
+        "dpd_threshold_passed": true,
+        "overall_fairness_passed": true
+      },
+      "institution_tier_fairness": {
+        "apply_masking": true,
+        "mean_scores_by_tier": {
+          "tier_1_elite": 0.5092,
+          "tier_2_public_flagship": 0.5092,
+          "tier_3_regional_community": 0.5092
+        },
+        "selection_rates_by_tier": {
+          "tier_1_elite": 0.1333,
+          "tier_2_public_flagship": 0.1333,
+          "tier_3_regional_community": 0.1333
+        },
+        "tier_demographic_parity_difference": 0.0,
+        "tier_demographic_parity_ratio": 1.0,
+        "four_fifths_passed": true,
+        "tier_score_gap_t1_minus_t3": 0.0
+      }
+    },
+    "hybrid_ranker_masking_on": {
+      "demographic_fairness": {
+        "apply_masking": true,
+        "sample_count": 600,
+        "mean_top5_jaccard": 1.0,
+        "min_top5_jaccard": 1.0,
+        "mean_kendall_tau": 1.0,
+        "min_kendall_tau": 1.0,
+        "mean_score_delta": 0.0,
+        "max_score_delta": 0.0,
+        "fairlearn_demographic_parity_difference": 0.0,
+        "fairlearn_demographic_parity_ratio": 1.0,
+        "group_selection_rates": {
+          "Black / African American": 1.0,
+          "Asian / Pacific Islander": 1.0,
+          "Non-Binary / Gender-Neutral": 1.0,
+          "Hispanic / Latino": 1.0,
+          "White / Caucasian": 1.0
+        },
+        "four_fifths_rule_passed": true,
+        "dpd_threshold_passed": true,
+        "overall_fairness_passed": true
+      },
+      "institution_tier_fairness": {
+        "apply_masking": true,
+        "mean_scores_by_tier": {
+          "tier_1_elite": 0.9675,
+          "tier_2_public_flagship": 0.9675,
+          "tier_3_regional_community": 0.9675
+        },
+        "selection_rates_by_tier": {
+          "tier_1_elite": 1.0,
+          "tier_2_public_flagship": 1.0,
+          "tier_3_regional_community": 1.0
+        },
+        "tier_demographic_parity_difference": 0.0,
+        "tier_demographic_parity_ratio": 1.0,
+        "four_fifths_passed": true,
+        "tier_score_gap_t1_minus_t3": 0.0
+      }
+    },
+    "hybrid_ranker_masking_off": {
+      "demographic_fairness": {
+        "apply_masking": false,
+        "sample_count": 600,
+        "mean_top5_jaccard": 1.0,
+        "min_top5_jaccard": 1.0,
+        "mean_kendall_tau": 1.0,
+        "min_kendall_tau": 1.0,
+        "mean_score_delta": 0.0,
+        "max_score_delta": 0.0,
+        "fairlearn_demographic_parity_difference": 0.0,
+        "fairlearn_demographic_parity_ratio": 1.0,
+        "group_selection_rates": {
+          "Black / African American": 1.0,
+          "Asian / Pacific Islander": 1.0,
+          "Non-Binary / Gender-Neutral": 1.0,
+          "Hispanic / Latino": 1.0,
+          "White / Caucasian": 1.0
+        },
+        "four_fifths_rule_passed": true,
+        "dpd_threshold_passed": true,
+        "overall_fairness_passed": true
+      },
+      "institution_tier_fairness": {
+        "apply_masking": false,
+        "mean_scores_by_tier": {
+          "tier_1_elite": 0.9675,
+          "tier_2_public_flagship": 0.9675,
+          "tier_3_regional_community": 0.9675
+        },
+        "selection_rates_by_tier": {
+          "tier_1_elite": 1.0,
+          "tier_2_public_flagship": 1.0,
+          "tier_3_regional_community": 1.0
+        },
+        "tier_demographic_parity_difference": 0.0,
+        "tier_demographic_parity_ratio": 1.0,
+        "four_fifths_passed": true,
+        "tier_score_gap_t1_minus_t3": 0.0
+      }
+    }
+  },
+  "positive_controls": {
+    "demographic_biased_ranker": {
+      "audit": {
+        "apply_masking": false,
+        "sample_count": 600,
+        "mean_top5_jaccard": 1.0,
+        "min_top5_jaccard": 1.0,
+        "mean_kendall_tau": 1.0,
+        "min_kendall_tau": 1.0,
+        "mean_score_delta": 0.17316,
+        "max_score_delta": 0.35,
+        "fairlearn_demographic_parity_difference": 0.8333,
+        "fairlearn_demographic_parity_ratio": 0.0,
+        "group_selection_rates": {
+          "Black / African American": 0.0,
+          "Asian / Pacific Islander": 0.1333,
+          "Non-Binary / Gender-Neutral": 0.1333,
+          "Hispanic / Latino": 0.0,
+          "White / Caucasian": 0.8333
+        },
+        "four_fifths_rule_passed": false,
+        "dpd_threshold_passed": false,
+        "overall_fairness_passed": false
+      },
+      "failed_as_expected": true,
+      "failure_reason": "DPR below 0.80 four-fifths rule and DPD above 0.10 threshold."
+    },
+    "institution_prestige_biased_ranker": {
+      "audit": {
+        "apply_masking": false,
+        "mean_scores_by_tier": {
+          "tier_1_elite": 0.99,
+          "tier_2_public_flagship": 0.9651,
+          "tier_3_regional_community": 0.6175
+        },
+        "selection_rates_by_tier": {
+          "tier_1_elite": 1.0,
+          "tier_2_public_flagship": 1.0,
+          "tier_3_regional_community": 0.0
+        },
+        "tier_demographic_parity_difference": 1.0,
+        "tier_demographic_parity_ratio": 0.0,
+        "four_fifths_passed": false,
+        "tier_score_gap_t1_minus_t3": 0.3725
+      },
+      "failed_as_expected": true,
+      "failure_reason": "Tier DPR below 0.80 and substantial Tier 1 vs Tier 3 score gap."
+    }
+  }
+}

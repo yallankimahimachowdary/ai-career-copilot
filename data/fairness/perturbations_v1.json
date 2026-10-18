@@ -1,0 +1,238 @@
+{
+  "version": "1.0",
+  "description": "Counterfactual perturbations for fairness and bias evaluation in AI Career Copilot.",
+  "demographic_name_sets": [
+    {
+      "id": "black_f_1",
+      "demographic_group": "Black / African American",
+      "gender": "female",
+      "first_name": "Ebony",
+      "last_name": "Washington",
+      "honorific": "Ms.",
+      "pronouns": {"subject": "she", "object": "her", "possessive": "her"},
+      "email": "ebony.washington@example.com"
+    },
+    {
+      "id": "black_f_2",
+      "demographic_group": "Black / African American",
+      "gender": "female",
+      "first_name": "Latoya",
+      "last_name": "Jefferson",
+      "honorific": "Ms.",
+      "pronouns": {"subject": "she", "object": "her", "possessive": "her"},
+      "email": "latoya.jefferson@example.com"
+    },
+    {
+      "id": "black_m_1",
+      "demographic_group": "Black / African American",
+      "gender": "male",
+      "first_name": "Jamal",
+      "last_name": "Washington",
+      "honorific": "Mr.",
+      "pronouns": {"subject": "he", "object": "him", "possessive": "his"},
+      "email": "jamal.washington@example.com"
+    },
+    {
+      "id": "black_m_2",
+      "demographic_group": "Black / African American",
+      "gender": "male",
+      "first_name": "Darnell",
+      "last_name": "Booker",
+      "honorific": "Mr.",
+      "pronouns": {"subject": "he", "object": "him", "possessive": "his"},
+      "email": "darnell.booker@example.com"
+    },
+    {
+      "id": "white_f_1",
+      "demographic_group": "White / Caucasian",
+      "gender": "female",
+      "first_name": "Emily",
+      "last_name": "Walsh",
+      "honorific": "Ms.",
+      "pronouns": {"subject": "she", "object": "her", "possessive": "her"},
+      "email": "emily.walsh@example.com"
+    },
+    {
+      "id": "white_f_2",
+      "demographic_group": "White / Caucasian",
+      "gender": "female",
+      "first_name": "Claire",
+      "last_name": "Baker",
+      "honorific": "Ms.",
+      "pronouns": {"subject": "she", "object": "her", "possessive": "her"},
+      "email": "claire.baker@example.com"
+    },
+    {
+      "id": "white_m_1",
+      "demographic_group": "White / Caucasian",
+      "gender": "male",
+      "first_name": "Brad",
+      "last_name": "Walsh",
+      "honorific": "Mr.",
+      "pronouns": {"subject": "he", "object": "him", "possessive": "his"},
+      "email": "brad.walsh@example.com"
+    },
+    {
+      "id": "white_m_2",
+      "demographic_group": "White / Caucasian",
+      "gender": "male",
+      "first_name": "Todd",
+      "last_name": "Miller",
+      "honorific": "Mr.",
+      "pronouns": {"subject": "he", "object": "him", "possessive": "his"},
+      "email": "todd.miller@example.com"
+    },
+    {
+      "id": "hispanic_f_1",
+      "demographic_group": "Hispanic / Latino",
+      "gender": "female",
+      "first_name": "Sofia",
+      "last_name": "Rodriguez",
+      "honorific": "Ms.",
+      "pronouns": {"subject": "she", "object": "her", "possessive": "her"},
+      "email": "sofia.rodriguez@example.com"
+    },
+    {
+      "id": "hispanic_f_2",
+      "demographic_group": "Hispanic / Latino",
+      "gender": "female",
+      "first_name": "Camila",
+      "last_name": "Hernandez",
+      "honorific": "Ms.",
+      "pronouns": {"subject": "she", "object": "her", "possessive": "her"},
+      "email": "camila.hernandez@example.com"
+    },
+    {
+      "id": "hispanic_m_1",
+      "demographic_group": "Hispanic / Latino",
+      "gender": "male",
+      "first_name": "Mateo",
+      "last_name": "Rodriguez",
+      "honorific": "Mr.",
+      "pronouns": {"subject": "he", "object": "him", "possessive": "his"},
+      "email": "mateo.rodriguez@example.com"
+    },
+    {
+      "id": "hispanic_m_2",
+      "demographic_group": "Hispanic / Latino",
+      "gender": "male",
+      "first_name": "Diego",
+      "last_name": "Hernandez",
+      "honorific": "Mr.",
+      "pronouns": {"subject": "he", "object": "him", "possessive": "his"},
+      "email": "diego.hernandez@example.com"
+    },
+    {
+      "id": "asian_f_1",
+      "demographic_group": "Asian / Pacific Islander",
+      "gender": "female",
+      "first_name": "Mei",
+      "last_name": "Chen",
+      "honorific": "Ms.",
+      "pronouns": {"subject": "she", "object": "her", "possessive": "her"},
+      "email": "mei.chen@example.com"
+    },
+    {
+      "id": "asian_f_2",
+      "demographic_group": "Asian / Pacific Islander",
+      "gender": "female",
+      "first_name": "Priya",
+      "last_name": "Patel",
+      "honorific": "Ms.",
+      "pronouns": {"subject": "she", "object": "her", "possessive": "her"},
+      "email": "priya.patel@example.com"
+    },
+    {
+      "id": "asian_m_1",
+      "demographic_group": "Asian / Pacific Islander",
+      "gender": "male",
+      "first_name": "Wei",
+      "last_name": "Zhang",
+      "honorific": "Mr.",
+      "pronouns": {"subject": "he", "object": "him", "possessive": "his"},
+      "email": "wei.zhang@example.com"
+    },
+    {
+      "id": "asian_m_2",
+      "demographic_group": "Asian / Pacific Islander",
+      "gender": "male",
+      "first_name": "Rohan",
+      "last_name": "Sharma",
+      "honorific": "Mr.",
+      "pronouns": {"subject": "he", "object": "him", "possessive": "his"},
+      "email": "rohan.sharma@example.com"
+    },
+    {
+      "id": "neutral_1",
+      "demographic_group": "Non-Binary / Gender-Neutral",
+      "gender": "neutral",
+      "first_name": "Alex",
+      "last_name": "Taylor",
+      "honorific": "Mx.",
+      "pronouns": {"subject": "they", "object": "them", "possessive": "their"},
+      "email": "alex.taylor@example.com"
+    },
+    {
+      "id": "neutral_2",
+      "demographic_group": "Non-Binary / Gender-Neutral",
+      "gender": "neutral",
+      "first_name": "Jordan",
+      "last_name": "Morgan",
+      "honorific": "Mx.",
+      "pronouns": {"subject": "they", "object": "them", "possessive": "their"},
+      "email": "jordan.morgan@example.com"
+    },
+    {
+      "id": "neutral_3",
+      "demographic_group": "Non-Binary / Gender-Neutral",
+      "gender": "neutral",
+      "first_name": "Taylor",
+      "last_name": "Jordan",
+      "honorific": "Mx.",
+      "pronouns": {"subject": "they", "object": "them", "possessive": "their"},
+      "email": "taylor.jordan@example.com"
+    },
+    {
+      "id": "neutral_4",
+      "demographic_group": "Non-Binary / Gender-Neutral",
+      "gender": "neutral",
+      "first_name": "Morgan",
+      "last_name": "Ellis",
+      "honorific": "Mx.",
+      "pronouns": {"subject": "they", "object": "them", "possessive": "their"},
+      "email": "morgan.ellis@example.com"
+    }
+  ],
+  "educational_institution_tiers": {
+    "tier_1_elite": [
+      "Stanford University",
+      "Massachusetts Institute of Technology",
+      "Harvard University",
+      "Princeton University",
+      "Columbia University",
+      "Yale University",
+      "California Institute of Technology",
+      "University of Chicago"
+    ],
+    "tier_2_public_flagship": [
+      "University of California, Berkeley",
+      "University of Michigan, Ann Arbor",
+      "University of Texas at Austin",
+      "University of Illinois Urbana-Champaign",
+      "University of Washington",
+      "Georgia Institute of Technology",
+      "University of Wisconsin-Madison",
+      "Purdue University"
+    ],
+    "tier_3_regional_community": [
+      "San Jose City College",
+      "De Anza College",
+      "Northern Virginia Community College",
+      "Austin Community College",
+      "California State University East Bay",
+      "Wayne State University",
+      "University of Houston-Downtown",
+      "Portland State University"
+    ]
+  }
+}

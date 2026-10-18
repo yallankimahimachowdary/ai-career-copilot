@@ -5,9 +5,11 @@ Unit and integration tests for MultiAgentOrchestrator.
 Tests state propagation, custom workflow routing, and agent failure recovery.
 """
 
-from unittest.mock import AsyncMock, patch
+import uuid
+from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
+from app.models.job_posting import JobPosting
 from app.schemas.orchestrator import (
     CareerWorkflowState,
     WorkflowExecutionRequest,
@@ -47,7 +49,20 @@ async def test_orchestrator_state_propagation_full_pipeline():
         enabled_agents=["parser", "matcher", "market", "coach"],
     )
 
-    state = await multi_agent_orchestrator.execute_workflow(req, db=None)
+    mock_job = JobPosting(
+        id=uuid.uuid4(),
+        title="Senior Backend Engineer",
+        company_name="Cloud Corp",
+        location="San Francisco, CA",
+        description="Looking for Senior Backend Engineer with Python and FastAPI.",
+        skills=["Python", "FastAPI", "Docker", "PostgreSQL"],
+    )
+    mock_db = AsyncMock()
+    mock_result = MagicMock()
+    mock_result.scalars.return_value.all.return_value = [mock_job]
+    mock_db.execute.return_value = mock_result
+
+    state = await multi_agent_orchestrator.execute_workflow(req, db=mock_db)
 
     # 1. Workflow Status and Lifecycle
     assert state.status == WorkflowStatus.COMPLETED
@@ -63,10 +78,12 @@ async def test_orchestrator_state_propagation_full_pipeline():
     assert "FastAPI" in state.parsed_resume.skills
     assert state.parsed_resume.contact_info.email == "john.dev@example.com"
 
-    # 3. Matcher Artifacts (propagated from Parser skills)
-    assert len(state.matched_jobs) >= 1
+    # 3. Matcher Artifacts (propagated from Parser skills and real DB results)
+    assert len(state.matched_jobs) == 1
     top_match = state.matched_jobs[0]
-    assert "title" in top_match
+    assert top_match["title"] == "Senior Backend Engineer"
+    assert top_match["company_name"] == "Cloud Corp"
+    assert top_match["location"] == "San Francisco, CA"
     assert "match_score" in top_match
     assert top_match["match_score"] > 0.0
 
@@ -86,6 +103,26 @@ async def test_orchestrator_state_propagation_full_pipeline():
     assert state.executive_summary is not None
     assert "Johnathan Developer" in state.executive_summary or "Candidate" in state.executive_summary
     assert len(state.actionable_next_steps) >= 2
+
+
+@pytest.mark.asyncio
+async def test_orchestrator_empty_database_returns_no_invented_jobs():
+    """Verify that when database returns 0 jobs, matched_jobs is empty and no_matching_jobs is True."""
+    req = WorkflowExecutionRequest(
+        raw_resume_text=SAMPLE_RESUME,
+        target_role="Senior Backend Engineer",
+        enabled_agents=["matcher"],
+    )
+    mock_db = AsyncMock()
+    mock_result = MagicMock()
+    mock_result.scalars.return_value.all.return_value = []
+    mock_db.execute.return_value = mock_result
+
+    state = await multi_agent_orchestrator.execute_workflow(req, db=mock_db)
+
+    assert state.status == WorkflowStatus.COMPLETED
+    assert len(state.matched_jobs) == 0
+    assert state.no_matching_jobs is True
 
 
 @pytest.mark.asyncio
@@ -135,10 +172,11 @@ async def test_orchestrator_agent_failure_and_graceful_recovery():
     assert err.agent_name == "parser"
     assert err.step == WorkflowStep.PARSER
     assert "Simulated OCR Parser Failure" in err.error_message
-    assert err.recovered is True
+    assert err.recovered is False
 
-    # Subsequent agents still produced valid artifacts
-    assert len(state.matched_jobs) >= 1
+    # When db is None, matcher produces 0 jobs honestly, not invented Databricks or Stripe
+    assert len(state.matched_jobs) == 0
+    assert state.no_matching_jobs is True
     assert state.market_insights is not None
     assert state.coaching_plan is not None
     assert state.executive_summary is not None

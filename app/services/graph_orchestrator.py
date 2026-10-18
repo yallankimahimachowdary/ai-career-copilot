@@ -14,6 +14,7 @@ Coordinates Parser, Matcher, Market, and Coach agents with:
 
 import asyncio
 from datetime import datetime, timezone
+import re
 import time
 from typing import Any, Callable, Dict, List, Optional, TypedDict
 import uuid
@@ -163,6 +164,42 @@ def _is_connection_error(exc: Exception) -> bool:
     )
 
 
+def extract_error_target(exc: Exception, default_fallback: Optional[str] = None) -> Optional[str]:
+    """Dynamically extracts the target host:port from an exception whenever possible."""
+    # 1. httpx exceptions
+    if isinstance(exc, httpx.RequestError):
+        req = getattr(exc, "request", None)
+        if req and req.url:
+            port = req.url.port or (443 if req.url.scheme == "https" else 80)
+            return f"{req.url.host}:{port}"
+
+    # 2. Inspect exception message for explicit URL or host:port
+    msg = str(exc)
+    url_match = re.search(r"https?://([a-zA-Z0-9.-]+):?(\d+)?", msg)
+    if url_match:
+        host = url_match.group(1)
+        port = url_match.group(2) or ("443" if "https" in url_match.group(0) else "80")
+        return f"{host}:{port}"
+
+    host_port_match = re.search(r"\b([a-zA-Z0-9.-]+):(\d{2,5})\b", msg)
+    if host_port_match:
+        return f"{host_port_match.group(1)}:{host_port_match.group(2)}"
+
+    # 3. Inspect socket/os error tuple args
+    for arg in getattr(exc, "args", ()):
+        if isinstance(arg, tuple) and len(arg) == 2 and isinstance(arg[1], int):
+            return f"{arg[0]}:{arg[1]}"
+
+    # 4. Check for nested/underlying exception (e.g. SQLAlchemy orig)
+    orig = getattr(exc, "orig", None)
+    if orig and orig is not exc and isinstance(orig, Exception):
+        target = extract_error_target(orig)
+        if target:
+            return target
+
+    return default_fallback
+
+
 def _build_error_record(
     agent_name: str,
     step: str,
@@ -170,7 +207,7 @@ def _build_error_record(
     default_host_port: Optional[str] = None,
     recovered: bool = False,
 ) -> Dict[str, Any]:
-    """Builds a standardized error record with target host:port attribution on failure."""
+    """Builds a standardized error record with dynamic target host:port attribution on failure."""
     msg = str(exc)
     record: Dict[str, Any] = {
         "agent_name": agent_name,
@@ -179,10 +216,11 @@ def _build_error_record(
         "recovered": recovered,
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
-    if default_host_port:
-        record["target_host_port"] = default_host_port
-        if default_host_port not in msg:
-            record["error_message"] = f"{msg} (target: {default_host_port})"
+    target = extract_error_target(exc, default_fallback=default_host_port)
+    if target:
+        record["target_host_port"] = target
+        if target not in msg:
+            record["error_message"] = f"{msg} (target: {target})"
     return record
 
 
@@ -537,9 +575,9 @@ class LangGraphOrchestrator:
                         "id": str(job.id),
                         "job_id": str(job.id),
                         "title": job.title,
-                        "company": job.company_name or "Tech Employer",
-                        "company_name": job.company_name or "Tech Employer",
-                        "location": job.location or "Remote",
+                        "company": job.company_name,
+                        "company_name": job.company_name,
+                        "location": job.location,
                         "match_score": match_score,
                         "skills": job_skills[:8],
                     })
@@ -606,7 +644,7 @@ class LangGraphOrchestrator:
                     band = salary_info.salary_band
                     market_data = {
                         "target_role": clean_role,
-                        "location": state.get("target_location") or "Remote",
+                        "location": state.get("target_location"),
                         "compensation": {
                             "p25": band.p25_annual or 125000,
                             "median": band.median_annual or 155000,
@@ -627,7 +665,7 @@ class LangGraphOrchestrator:
             if not market_data:
                 market_data = {
                     "target_role": clean_role,
-                    "location": state.get("target_location") or "Remote",
+                    "location": state.get("target_location"),
                     "compensation": {
                         "p25": 125000,
                         "median": 155000,
@@ -694,12 +732,7 @@ class LangGraphOrchestrator:
             )
 
             matched_jobs = state.get("matched_jobs") or []
-            top_job = matched_jobs[0] if matched_jobs else {
-                "job_id": str(uuid.uuid4()),
-                "title": state.get("target_role") or "Software Engineer",
-                "skills": ["Python", "Docker", "Kubernetes", "FastAPI"],
-                "company_name": "Target Employer",
-            }
+            top_job = matched_jobs[0] if matched_jobs else None
 
             dummy_resume = Resume(
                 id=str(uuid.uuid4()),
@@ -707,12 +740,20 @@ class LangGraphOrchestrator:
                 parsed_data=parsed_data,
             )
 
+            job_title = top_job.get("title") if top_job else (state.get("target_role") or "Career Development")
+            company_name = top_job.get("company_name") if top_job else None
+            job_skills = (
+                top_job.get("skills", [])
+                if top_job
+                else (parsed_data.get("skills", [])[:4] if isinstance(parsed_data, dict) and parsed_data.get("skills") else ["Python"])
+            )
+
             dummy_job = JobPosting(
-                id=str(top_job.get("job_id") or uuid.uuid4()),
-                title=top_job.get("title", "Software Engineer"),
-                company_name=top_job.get("company_name", "Target Employer"),
-                description=f"Seeking {top_job.get('title')} with {', '.join(top_job.get('skills', []))}.",
-                skills=top_job.get("skills", []),
+                id=str(top_job.get("job_id") or uuid.uuid4()) if top_job else str(uuid.uuid4()),
+                title=job_title,
+                company_name=company_name,
+                description=f"Career coaching and skill gap assessment for {job_title}.",
+                skills=job_skills,
             )
 
             gap_report = await coach_agent.generate_skill_gap_report(dummy_resume, dummy_job)

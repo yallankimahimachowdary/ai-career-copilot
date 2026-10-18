@@ -335,14 +335,12 @@ export function DashboardPage({ activeResume, onSelectDemoResume, onSelectJobFor
                         <div className="flex items-center gap-3 text-xs text-[#5C5C7A]">
                           <span className="flex items-center gap-1 truncate">
                             <Building className="h-3 w-3" />
-                            {m.company_name}
+                            {m.company_name || "Not specified"}
                           </span>
-                          {m.location && (
-                            <span className="flex items-center gap-1 truncate">
-                              <MapPin className="h-3 w-3" />
-                              {m.location}
-                            </span>
-                          )}
+                          <span className="flex items-center gap-1 truncate">
+                            <MapPin className="h-3 w-3" />
+                            {m.location || "Location not specified"}
+                          </span>
                         </div>
                       </div>
 

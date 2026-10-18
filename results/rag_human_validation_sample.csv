@@ -1,0 +1,106 @@
+sample_id,query_id,category,query_text,system_alias,generated_answer,annotator_1_score,annotator_2_score,notes
+human_val_001,rag_q_md_08,market_demand,What is the typical salary differential for Cloud Engineers holding professional AWS or Kubernetes certifications?,system_B,"Based on the context provided, there is no mention of the typical salary differential for Cloud Engineers holding professional AWS or Kubernetes certifications.",,,
+human_val_002,rag_q_ip_04,interview_prep,How should I structure a 45-minute system design interview for a global URL shortening service?,system_A,"There is no context provided about a system design interview for a global URL shortening service. The provided context is about job openings for Full Stack Developer, Python Developer, and Mechanical Engineer positions.",,,
+human_val_003,rag_q_ip_21,interview_prep,How to explain event-driven architecture using Kafka partitions and consumer groups?,system_C,"In an event-driven architecture using Kafka, partitions and consumer groups work together to achieve scalability and high throughput.
+
+Kafka partitions are distributed across multiple broker nodes, and each partition acts as an append-only immutable commit log. This allows for efficient and fault-tolerant message processing.
+
+Consumer groups are used to coordinate message processing across multiple consumers. Each partition is read by exactly one consumer within the group, ensuring that no partition is left unprocessed. This allows for efficient and scalable consumption of messages from Kafka.
+
+By using Kafka partitions and consumer groups, event-driven architectures can achieve high throughput and scalability, as well as fault tolerance and durability. The partitioning and consumer group model allows for efficient distribution of message processing across multiple nodes, ensuring that no message is left unprocessed.",,,
+human_val_004,rag_q_md_08,market_demand,What is the typical salary differential for Cloud Engineers holding professional AWS or Kubernetes certifications?,system_D,"Based on the provided context, there is no information regarding salaries or salary differentials for Cloud Engineers holding AWS or Kubernetes certifications.",,,
+human_val_005,rag_q_md_08,market_demand,What is the typical salary differential for Cloud Engineers holding professional AWS or Kubernetes certifications?,system_C,"Based on the context provided, there is no information about the typical salary differential for Cloud Engineers holding professional AWS or Kubernetes certifications. The context only provides demand share data for AWS and Kubernetes skills, but does not include salary information.",,,
+human_val_006,rag_q_lr_24,learning_resources,Where can technical professionals study effective technical documentation and style guides?,system_B,"Based on the provided context, there is no information about where technical professionals can study effective technical documentation and style guides.",,,
+human_val_007,rag_q_rp_09,role_progression,What technical skills bridge the gap between Frontend Engineer and Full-Stack Engineering roles?,system_C,"Based on the context provided, the technical skills that bridge the gap between Frontend Engineer and Full-Stack Engineering roles are:
+
+1. REST API
+2. JavaScript
+3. TypeScript
+
+These skills are mentioned as required competencies for the Frontend Engineer role and are also relevant to the Full-Stack Engineer role.",,,
+human_val_008,rag_q_rp_09,role_progression,What technical skills bridge the gap between Frontend Engineer and Full-Stack Engineering roles?,system_D,"Based on the provided context, the progression pathway from Frontend Engineer to Full Stack Engineer is mentioned, but the specific technical skills required to bridge this gap are **not provided** in the context.",,,
+human_val_009,rag_q_rp_09,role_progression,What technical skills bridge the gap between Frontend Engineer and Full-Stack Engineering roles?,system_B,"Based on the provided context, the required technical skills for the Full Stack Developer role at Byteon Infotech are:
+
+* React
+* Node.js
+* TypeScript
+* REST APIs
+* SQL",,,
+human_val_010,rag_q_rp_09,role_progression,What technical skills bridge the gap between Frontend Engineer and Full-Stack Engineering roles?,system_A,"The technical skills that bridge the gap between Frontend Engineer and Full-Stack Engineer roles are:
+
+* REST APIs
+* SQL
+* Node.js
+* TypeScript
+* React
+* Next.js
+* AWS
+* Docker
+
+These skills are mentioned in the job descriptions for both Frontend Engineer and Full-Stack Engineer roles, indicating that they are common to both positions and can help bridge the gap between the two roles.",,,
+human_val_011,rag_q_ip_04,interview_prep,How should I structure a 45-minute system design interview for a global URL shortening service?,system_C,"Based on the provided context, here's a suggested structure for a 45-minute system design interview for a global URL shortening service:
+
+1. Introduction (5 minutes):
+	* Briefly introduce the problem and the requirements of the URL shortening service.
+	* Explain the expected outcome of the interview.
+2. High-Level Design (15 minutes):
+	* Discuss the high-level architecture of the system, including the components and their interactions.
+	* Focus on the key design decisions, such as data storage, caching, and load balancing.
+	* Emphasize the importance of scalability, reliability, and performance.
+3. System Components (10 minutes):
+	* Dive deeper into the design of specific system components, such as:
+		+ URL shortening algorithm
+		+ Database schema
+		+ Caching mechanisms
+	* Ask behavioral questions to assess the candidate's problem-solving skills and ability to design scalable systems.
+4. Performance and Scalability (10 minutes):
+	* Discuss the performance and scalability requirements of the system, including:
+		+ Handling bursts of 10,000 requests per minute
+		+ Maintaining low latency and high throughput
+	* Ask the candidate to explain their design decisions and trade-offs.
+5. Conclusion (5 minutes",,,
+human_val_012,rag_q_md_05,market_demand,What are the fastest growing cloud skills in DevOps job descriptions over the past two quarters?,system_C,"There is no information provided about cloud skills in DevOps job descriptions over the past two quarters. The context only mentions market demand trend and compensation for a specific job title, but does not provide any data or insights about cloud skills in DevOps job descriptions.",,,
+human_val_013,rag_q_rp_08,role_progression,How can a Technical Writer advance into a Head of Developer Relations or Product Management role?,system_A,"Based on the provided context, it appears that the required skills for the Head of Developer Relations or Product Management role are not explicitly mentioned. However, some relevant skills mentioned in the context include:
+
+* Strong problem-solving skills
+* Experience in large-scale enterprise application implementation
+* Creative individual with a track record of working on and implementing innovative tech-based solutions
+* Exceptional intelligence and problem-solving skills
+
+To advance into a Head of Developer Relations or Product Management role, a Technical Writer may need to acquire additional skills and experience, such as:
+
+* Leadership and management skills
+* Product management and product development experience
+* Strong communication and interpersonal skills
+* Ability to work with cross-functional teams and stakeholders
+* Experience in product development, product launch, and product maintenance
+
+It is also possible that the required skills for the Head of Developer Relations or Product Management role are not directly related to Technical Writing, and that the role requires a different set of skills and experience.",,,
+human_val_014,rag_q_ip_04,interview_prep,How should I structure a 45-minute system design interview for a global URL shortening service?,system_B,"Based on the context provided, there is no information regarding how to structure a 45-minute system design interview for a global URL shortening service.",,,
+human_val_015,rag_q_md_08,market_demand,What is the typical salary differential for Cloud Engineers holding professional AWS or Kubernetes certifications?,system_A,The context provided does not include information about the typical salary differential for Cloud Engineers holding professional AWS or Kubernetes certifications.,,,
+human_val_016,rag_q_lr_24,learning_resources,Where can technical professionals study effective technical documentation and style guides?,system_A,"Unfortunately, the provided context does not mention any specific resources or recommendations for studying effective technical documentation and style guides.",,,
+human_val_017,rag_q_ip_21,interview_prep,How to explain event-driven architecture using Kafka partitions and consumer groups?,system_A,"There is no context provided about event-driven architecture, Kafka partitions, or consumer groups. The context provided is about Full Stack Developer roles at Byteon Infotech and VOIS.",,,
+human_val_018,rag_q_lr_01,learning_resources,What official tutorials or courses are recommended for learning Kubernetes cluster administration?,system_C,"There is no information provided in the context about Kubernetes cluster administration or any tutorials/courses related to it. The context only provides information about official documentation and guides for React, C#, and PostgreSQL.",,,
+human_val_019,rag_q_lr_01,learning_resources,What official tutorials or courses are recommended for learning Kubernetes cluster administration?,system_A,There is no information provided in the context about official tutorials or courses for learning Kubernetes cluster administration.,,,
+human_val_020,rag_q_lr_24,learning_resources,Where can technical professionals study effective technical documentation and style guides?,system_D,"Based on the provided context, there is no mention of resources specifically for studying *how* to write effective technical documentation and style guides. The context only provides documentation and tutorials for specific technologies (Python, React, and Node.js).",,,
+human_val_021,rag_q_ip_21,interview_prep,How to explain event-driven architecture using Kafka partitions and consumer groups?,system_D,"Based on the provided context, Apache Kafka achieves horizontal scalability and high throughput through topics that are partitioned and distributed across broker nodes, where partitions act as append-only immutable commit logs. Sequential disk I/O, zero-copy kernel pagecache transfers (using `sendfile`), and batching further maximize network and disk throughput. 
+
+Consumer groups coordinate message processing through partition ownership, where each partition is read by exactly one consumer within the group.",,,
+human_val_022,rag_q_rp_08,role_progression,How can a Technical Writer advance into a Head of Developer Relations or Product Management role?,system_C,"Based on the provided context, there is no direct progression pathway from Technical Writer to Head of Developer Relations or Product Management. The required competencies for these roles are not explicitly mentioned in the context.
+
+However, a Technical Writer may need to acquire additional skills and competencies to be considered for these roles. Some possible steps a Technical Writer could take to advance into these roles include:
+
+* Acquiring leadership and management skills through training or experience in leading teams or projects.
+* Developing expertise in software engineering, product management, or a related field through additional education or training.
+* Building a strong understanding of business operations, market trends, and customer needs to inform product decisions.
+* Gaining experience in communication, collaboration, and stakeholder management to effectively work with developers, product managers, and other stakeholders.
+
+It's worth noting that the provided context does not provide a clear path for a Technical Writer to advance into these roles, and additional information would be needed to provide a more detailed and accurate answer.",,,
+human_val_023,rag_q_rp_08,role_progression,How can a Technical Writer advance into a Head of Developer Relations or Product Management role?,system_B,"Based on the provided context, there is no information explaining how a Technical Writer can advance into a Head of Developer Relations or Product Management role. The context only contains job descriptions and requirements for Python Developer and Data Scientist Intern positions.",,,
+human_val_024,rag_q_ip_21,interview_prep,How to explain event-driven architecture using Kafka partitions and consumer groups?,system_B,"Based on the provided context, there is no mention of event-driven architecture, Kafka partitions, or consumer groups. Therefore, I cannot answer your question using only the provided context.",,,
+human_val_025,rag_q_lr_01,learning_resources,What official tutorials or courses are recommended for learning Kubernetes cluster administration?,system_B,"Based on the provided context, there is no mention of recommended official tutorials or courses for learning Kubernetes cluster administration.",,,
+human_val_026,rag_q_md_05,market_demand,What are the fastest growing cloud skills in DevOps job descriptions over the past two quarters?,system_B,"Based on the context provided, there is no mention of DevOps job descriptions, cloud skills, or their growth over the past two quarters. Therefore, the information is not available in the context.",,,
+human_val_027,rag_q_md_05,market_demand,What are the fastest growing cloud skills in DevOps job descriptions over the past two quarters?,system_D,"Based on the provided context, there is no information available regarding the fastest-growing cloud skills in DevOps job descriptions over the past two quarters.",,,
+human_val_028,rag_q_md_05,market_demand,What are the fastest growing cloud skills in DevOps job descriptions over the past two quarters?,system_A,"Based on the provided context, there is no information about cloud skills or DevOps job descriptions. The context only provides job descriptions for three different roles: Site Engineer, Full Stack Developer, and Python Developer.",,,
+human_val_029,rag_q_ip_04,interview_prep,How should I structure a 45-minute system design interview for a global URL shortening service?,system_D,"Based on the provided context information, there is no mention or guidance regarding how to structure a 45-minute system design interview for a global URL shortening service.",,,
+human_val_030,rag_q_rp_08,role_progression,How can a Technical Writer advance into a Head of Developer Relations or Product Management role?,system_D,"Based on the context provided, there is no information about the role of a Technical Writer, nor are there any pathways mentioned for advancing into a Head of Developer Relations or Product Management role.",,,

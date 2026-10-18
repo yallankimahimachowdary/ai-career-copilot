@@ -101,14 +101,12 @@ export function JobMatchCard({ match, onSelect }) {
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#5C5C7A] mt-1">
                 <span className="font-semibold text-[#3A3A52] flex items-center gap-1">
                   <Building className="h-3.5 w-3.5 text-[#5C5C7A]" />
-                  {match.company_name}
+                  {match.company_name || "Not specified"}
                 </span>
-                {match.location && (
-                  <span className="flex items-center gap-1">
-                    <MapPin className="h-3.5 w-3.5 text-[#5C5C7A]" />
-                    {match.location}
-                  </span>
-                )}
+                <span className="flex items-center gap-1">
+                  <MapPin className="h-3.5 w-3.5 text-[#5C5C7A]" />
+                  {match.location || "Location not specified"}
+                </span>
               </div>
             </div>
 

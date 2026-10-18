@@ -1,0 +1,33 @@
+{
+  "dataset_version": "1.0",
+  "created_at": "2026-10-18T19:08:00Z",
+  "files": {
+    "perturbations_v1.json": {
+      "sha256": "54481C29BA673E4C8C7D9A80C9B42DC0573E1D9930137ED2918025E65ED05117",
+      "demographic_name_sets_count": 20,
+      "educational_institution_tiers_count": 24,
+      "demographic_groups_covered": [
+        "Black / African American",
+        "White / Caucasian",
+        "Hispanic / Latino",
+        "Asian / Pacific Islander",
+        "Non-Binary / Gender-Neutral"
+      ]
+    },
+    "synthetic_resumes_v1.jsonl": {
+      "sha256": "C4068DD0632408B7A3FE779E905E94D9F136D48B136E3560DEFA250B8F75D96F",
+      "resume_count": 30,
+      "fields_covered": [
+        "software_engineering",
+        "data_science_ml",
+        "devops_cloud",
+        "product_management",
+        "technical_writing"
+      ],
+      "resumes_per_field": 6,
+      "max_trigram_jaccard_vs_evaluation_sets": 0.0003,
+      "leakage_threshold": 0.60,
+      "leakage_passed": true
+    }
+  }
+}

@@ -57,13 +57,11 @@ export function MatchDetailModal({ match, resumeId, open, onOpenChange, onStartC
             </div>
             <DialogTitle>{match.title}</DialogTitle>
             <DialogDescription className="flex items-center gap-3 mt-1 text-[#5C5C7A]">
-              <span className="text-[#7A2D4A] font-semibold">{match.company_name}</span>
-              {match.location && (
-                <span className="flex items-center gap-1 text-[#5C5C7A]">
-                  <MapPin className="h-3 w-3" />
-                  {match.location}
-                </span>
-              )}
+              <span className="text-[#7A2D4A] font-semibold">{match.company_name || "Not specified"}</span>
+              <span className="flex items-center gap-1 text-[#5C5C7A]">
+                <MapPin className="h-3 w-3" />
+                {match.location || "Location not specified"}
+              </span>
               {match.work_type && <span className="text-[#5C5C7A]">• {match.work_type}</span>}
             </DialogDescription>
           </div>

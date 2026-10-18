@@ -140,12 +140,14 @@ class MultiAgentOrchestrator:
                 logger.debug("Parser node skipped: neither raw_resume_text nor resume_id provided.")
         except Exception as exc:
             logger.warning("Parser Agent execution error: %s", exc)
+            if db:
+                await db.rollback()
             state.errors.append(
                 AgentFailureRecord(
                     agent_name="parser",
                     step=WorkflowStep.PARSER,
                     error_message=str(exc),
-                    recovered=True,
+                    recovered=False,
                     timestamp=datetime.now(timezone.utc).isoformat(),
                 )
             )
@@ -156,7 +158,15 @@ class MultiAgentOrchestrator:
         db: Optional[AsyncSession],
         limit: int = 5,
     ) -> None:
-        """Executes Matcher Agent, scoring candidate qualifications against available jobs."""
+        """Executes Matcher Agent, scoring candidate qualifications against available jobs.
+
+        NOTE ON SCORING ARCHITECTURE:
+        This reference sequential orchestrator uses a local Jaccard overlap heuristic
+        (scoring 0.70 when skills cannot be compared or overlap is zero) to evaluate candidates.
+        This is distinct from the production hybrid vector search + XGBoost ranker in
+        graph_orchestrator.py. The match_score values produced here are not directly
+        comparable to the production ranker's calibrated relevance scores.
+        """
         try:
             matched_items: List[Dict[str, Any]] = []
 
@@ -193,44 +203,28 @@ class MultiAgentOrchestrator:
                     matched_items.append({
                         "job_id": str(job.id),
                         "title": job.title,
-                        "company_name": job.company_name or "Tech Employer",
-                        "location": job.location or "Remote",
+                        "company_name": job.company_name,
+                        "location": job.location,
                         "match_score": match_score,
                         "skills": job_skills[:8],
                     })
 
-            # If no db or db has 0 jobs, provide fallback structured match items
             if not matched_items:
-                target = title_query or "Software Engineer"
-                matched_items = [
-                    {
-                        "job_id": "matched_job_001",
-                        "title": f"Senior {target}",
-                        "company_name": "Databricks",
-                        "location": state.target_location or "Remote",
-                        "match_score": 0.88,
-                        "skills": candidate_skills[:4] if candidate_skills else ["Python", "Docker", "SQL"],
-                    },
-                    {
-                        "job_id": "matched_job_002",
-                        "title": f"Staff {target}",
-                        "company_name": "Stripe",
-                        "location": state.target_location or "San Francisco, CA",
-                        "match_score": 0.82,
-                        "skills": candidate_skills[:3] if candidate_skills else ["FastAPI", "Kubernetes"],
-                    },
-                ]
+                state.no_matching_jobs = True
 
             state.matched_jobs = matched_items
             state.completed_steps.append(WorkflowStep.MATCHER)
         except Exception as exc:
             logger.warning("Matcher Agent execution error: %s", exc)
+            if db:
+                await db.rollback()
+            state.match_unavailable = True
             state.errors.append(
                 AgentFailureRecord(
                     agent_name="matcher",
                     step=WorkflowStep.MATCHER,
                     error_message=str(exc),
-                    recovered=True,
+                    recovered=False,
                     timestamp=datetime.now(timezone.utc).isoformat(),
                 )
             )
@@ -265,12 +259,14 @@ class MultiAgentOrchestrator:
             state.completed_steps.append(WorkflowStep.MARKET)
         except Exception as exc:
             logger.warning("Market Agent execution error: %s", exc)
+            if db:
+                await db.rollback()
             state.errors.append(
                 AgentFailureRecord(
                     agent_name="market",
                     step=WorkflowStep.MARKET,
                     error_message=str(exc),
-                    recovered=True,
+                    recovered=False,
                     timestamp=datetime.now(timezone.utc).isoformat(),
                 )
             )
@@ -279,13 +275,8 @@ class MultiAgentOrchestrator:
         """Executes Coach Agent, synthesizing skill gaps, roadmaps, and tailored interview prep."""
         try:
             resume_uuid = str(state.resume_id or uuid.uuid4())
-            top_job = state.matched_jobs[0] if state.matched_jobs else {
-                "job_id": str(uuid.uuid4()),
-                "title": state.target_role or "Software Engineer",
-                "skills": ["Python", "Docker", "Kubernetes", "FastAPI"],
-                "company_name": "Target Employer",
-            }
-            job_uuid = str(top_job.get("job_id") or uuid.uuid4())
+            top_job = state.matched_jobs[0] if state.matched_jobs else None
+            job_uuid = str(top_job.get("job_id") or uuid.uuid4()) if top_job else str(uuid.uuid4())
 
             # Build minimal dummy Resume and Job objects to reuse CoachAgent
             dummy_resume = Resume(
@@ -298,12 +289,20 @@ class MultiAgentOrchestrator:
                 parsed_data=state.parsed_resume.model_dump() if state.parsed_resume else {"skills": ["Python"]},
             )
 
+            job_title = top_job.get("title") if top_job else (state.target_role or "Career Development")
+            company_name = top_job.get("company_name") if top_job else None
+            job_skills = (
+                top_job.get("skills", [])
+                if top_job
+                else (state.parsed_resume.skills[:4] if state.parsed_resume and state.parsed_resume.skills else ["Python"])
+            )
+
             dummy_job = JobPosting(
                 id=job_uuid,
-                title=top_job.get("title", "Software Engineer"),
-                company_name=top_job.get("company_name", "Target Employer"),
-                description=f"Seeking {top_job.get('title')} proficient in {', '.join(top_job.get('skills', []))}.",
-                skills=top_job.get("skills", []),
+                title=job_title,
+                company_name=company_name,
+                description=f"Career coaching and skill gap assessment for {job_title}.",
+                skills=job_skills,
             )
 
             # Step 1: Gap report
@@ -332,12 +331,14 @@ class MultiAgentOrchestrator:
             state.completed_steps.append(WorkflowStep.COACH)
         except Exception as exc:
             logger.warning("Coach Agent execution error: %s", exc)
+            if db:
+                await db.rollback()
             state.errors.append(
                 AgentFailureRecord(
                     agent_name="coach",
                     step=WorkflowStep.COACH,
                     error_message=str(exc),
-                    recovered=True,
+                    recovered=False,
                     timestamp=datetime.now(timezone.utc).isoformat(),
                 )
             )
@@ -371,8 +372,11 @@ class MultiAgentOrchestrator:
 
         if state.matched_jobs:
             top_role = state.matched_jobs[0]["title"]
-            top_co = state.matched_jobs[0]["company_name"]
-            steps.append(f"Review and apply to top matched opening: {top_role} at {top_co}.")
+            top_co = state.matched_jobs[0].get("company_name")
+            if top_co:
+                steps.append(f"Review and apply to top matched opening: {top_role} at {top_co}.")
+            else:
+                steps.append(f"Review and apply to top matched opening: {top_role}.")
 
         if state.coaching_plan and state.coaching_plan.get("behavioral_questions"):
             steps.append("Practice STAR method responses for your candidate projects before live interviews.")

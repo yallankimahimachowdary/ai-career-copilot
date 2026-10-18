@@ -107,7 +107,7 @@ export function CoachDashboard({
                     const id = j.job_id || j.id
                     return (
                       <option key={id} value={id}>
-                        {j.title} — {j.company_name} ({j.location || "Remote"})
+                        {j.title} — {j.company_name || "Company Not Specified"} ({j.location || "Location Not Specified"})
                       </option>
                     )
                   })}

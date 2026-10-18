@@ -1,0 +1,119 @@
+{
+  "metadata": {
+    "evaluation_timestamp": "2026-10-18T14:06:56.639534+00:00",
+    "query_count": 100,
+    "dataset_sha256": "34E34398A127F63361E5FE18BDF9904076E1E58B631DE130B38A5553883800AE",
+    "bootstrap_iterations": 1000,
+    "confidence_level": 0.95
+  },
+  "overall_summary": {
+    "fixed_baseline": {
+      "hit_at_1": {
+        "mean": 0.21,
+        "ci_lower": 0.13,
+        "ci_upper": 0.29
+      },
+      "hit_at_3": {
+        "mean": 0.43,
+        "ci_lower": 0.33,
+        "ci_upper": 0.52
+      },
+      "hit_at_5": {
+        "mean": 0.61,
+        "ci_lower": 0.52,
+        "ci_upper": 0.7
+      },
+      "recall_at_5": {
+        "mean": 0.4642,
+        "ci_lower": 0.3841,
+        "ci_upper": 0.54
+      },
+      "mrr": {
+        "mean": 0.351,
+        "ci_lower": 0.2783,
+        "ci_upper": 0.4233
+      }
+    },
+    "router_driven": {
+      "hit_at_1": {
+        "mean": 0.4,
+        "ci_lower": 0.31,
+        "ci_upper": 0.49
+      },
+      "hit_at_3": {
+        "mean": 0.51,
+        "ci_lower": 0.4198,
+        "ci_upper": 0.6002
+      },
+      "hit_at_5": {
+        "mean": 0.56,
+        "ci_lower": 0.47,
+        "ci_upper": 0.65
+      },
+      "recall_at_5": {
+        "mean": 0.4983,
+        "ci_lower": 0.41,
+        "ci_upper": 0.5833
+      },
+      "mrr": {
+        "mean": 0.4587,
+        "ci_lower": 0.374,
+        "ci_upper": 0.542
+      }
+    }
+  },
+  "per_category_summary": {
+    "interview_prep": {
+      "query_count": 25,
+      "fixed_baseline": {
+        "hit_at_5": 0.44,
+        "recall_at_5": 0.2367,
+        "mrr": 0.1727
+      },
+      "router_driven": {
+        "hit_at_5": 0.52,
+        "recall_at_5": 0.36,
+        "mrr": 0.52
+      }
+    },
+    "learning_resources": {
+      "query_count": 25,
+      "fixed_baseline": {
+        "hit_at_5": 0.76,
+        "recall_at_5": 0.52,
+        "mrr": 0.3867
+      },
+      "router_driven": {
+        "hit_at_5": 0.52,
+        "recall_at_5": 0.4533,
+        "mrr": 0.3747
+      }
+    },
+    "market_demand": {
+      "query_count": 25,
+      "fixed_baseline": {
+        "hit_at_5": 0.44,
+        "recall_at_5": 0.42,
+        "mrr": 0.2433
+      },
+      "router_driven": {
+        "hit_at_5": 0.48,
+        "recall_at_5": 0.48,
+        "mrr": 0.3367
+      }
+    },
+    "role_progression": {
+      "query_count": 25,
+      "fixed_baseline": {
+        "hit_at_5": 0.8,
+        "recall_at_5": 0.68,
+        "mrr": 0.6013
+      },
+      "router_driven": {
+        "hit_at_5": 0.72,
+        "recall_at_5": 0.7,
+        "mrr": 0.6033
+      }
+    }
+  }
+}

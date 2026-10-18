@@ -142,6 +142,8 @@ async def main():
             "iterations_verified": 2,
             "pass_1_status": p1["status"],
             "pass_2_status": p2["status"],
+            "pass_1_detail": p1,
+            "pass_2_detail": p2,
         }
         v3_summary.append(combined_entry)
 

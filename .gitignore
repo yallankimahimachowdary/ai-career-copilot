@@ -37,6 +37,8 @@ uploads/
 !/data/graph/
 !/data/learning/
 !/data/interview_corpus/
+!/data/fairness/
+!/data/rag_eval/
 backups/
 
 # IDE & OS

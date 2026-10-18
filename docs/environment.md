@@ -75,6 +75,7 @@ The table below lists all core dependencies and their validated pins from the cl
 | | `xgboost` | `3.4.1` | GBDT ranking and classification model |
 | | `shap` | `0.54.1` | TreeSHAP explainability engine |
 | | `scikit-learn` | `1.9.1` | Machine learning utilities and metrics |
+| | `fairlearn` | `0.15.0` | Algorithmic fairness assessment and demographic disparity metrics |
 | **Web Scraping & Batch** | `beautifulsoup4` | `4.15.0` | HTML parsing for job scrapers |
 | | `apscheduler` | `3.11.3` | Periodic background task scheduling |
 | | `python-jobspy` | `1.2.0` | Multi-board live job ingestion client |
