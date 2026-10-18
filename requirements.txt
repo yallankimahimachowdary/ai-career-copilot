@@ -62,3 +62,6 @@ scipy==1.18.1
 # Resilient Parsing & Async Utilities
 json-repair==0.64.0
 nest-asyncio==1.6.0
+
+# Multi-Agent Orchestration
+langgraph==0.2.76

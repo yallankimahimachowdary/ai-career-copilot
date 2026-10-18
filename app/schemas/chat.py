@@ -75,6 +75,10 @@ class ChatQueryRequest(BaseModel):
         default=None,
         description="Optional target job ID context."
     )
+    raw_resume_text: Optional[str] = Field(
+        default=None,
+        description="Optional raw resume text for inline parsing or analysis."
+    )
     history: Optional[List[Dict[str, str]]] = Field(
         default_factory=list,
         description="Prior conversational turns [{'role': 'user'|'assistant', 'content': '...'}]"

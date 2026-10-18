@@ -91,6 +91,9 @@ class Settings(BaseSettings):
     JOB_INGESTION_MAX_RETRIES: int = 3
     JOB_INGESTION_TIMEOUT_SECONDS: float = 30.0
 
+    # Multi-Agent Orchestrator Configuration (Phase R4)
+    ORCHESTRATOR_BACKEND: str = "langgraph"  # "langgraph" | "sequential"
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

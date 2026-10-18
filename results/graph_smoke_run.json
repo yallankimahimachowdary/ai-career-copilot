@@ -1,0 +1,126 @@
+[
+  {
+    "intent": "JOB_SEARCH",
+    "query": "What Python backend developer jobs are open in San Francisco?",
+    "status": "success",
+    "classified_intent": "JOB_SEARCH_AND_MATCH",
+    "confidence": 0.95,
+    "completed_nodes": [
+      "route",
+      "synthesize"
+    ],
+    "node_timings_ms": {
+      "route": 5909.75,
+      "match": 8148.91,
+      "synthesize": 0.01
+    },
+    "retries": {
+      "match": 1
+    },
+    "errors": [
+      {
+        "agent_name": "match",
+        "step": "MATCH",
+        "error_message": "[WinError 1225] The remote computer refused the network connection",
+        "recovered": true,
+        "timestamp": "2026-10-18T07:01:07.882803+00:00"
+      }
+    ]
+  },
+  {
+    "intent": "SKILL_GAP_ANALYSIS",
+    "query": "What skills do I need to learn to transition to a DevOps Engineer?",
+    "status": "success",
+    "classified_intent": "SKILL_PROGRESSION_AND_PATH",
+    "confidence": 0.95,
+    "completed_nodes": [
+      "route",
+      "coach",
+      "synthesize"
+    ],
+    "node_timings_ms": {
+      "route": 6202.98,
+      "match": 8164.23,
+      "coach": 30335.69,
+      "synthesize": 0.03
+    },
+    "retries": {
+      "match": 1
+    },
+    "errors": [
+      {
+        "agent_name": "match",
+        "step": "MATCH",
+        "error_message": "[WinError 1225] The remote computer refused the network connection",
+        "recovered": true,
+        "timestamp": "2026-10-18T07:01:30.414931+00:00"
+      }
+    ]
+  },
+  {
+    "intent": "INTERVIEW_PREPARATION",
+    "query": "Can you give me practice behavioral interview questions for a senior role?",
+    "status": "success",
+    "classified_intent": "INTERVIEW_COACHING",
+    "confidence": 0.95,
+    "completed_nodes": [
+      "route",
+      "coach",
+      "synthesize"
+    ],
+    "node_timings_ms": {
+      "route": 5125.71,
+      "coach": 28447.39,
+      "synthesize": 0.01
+    },
+    "retries": {},
+    "errors": []
+  },
+  {
+    "intent": "CAREER_ADVICE",
+    "query": "What is the median salary and hiring outlook for Machine Learning Engineers?",
+    "status": "success",
+    "classified_intent": "MACRO_MARKET_DYNAMICS",
+    "confidence": 0.95,
+    "completed_nodes": [
+      "route",
+      "synthesize"
+    ],
+    "node_timings_ms": {
+      "route": 4822.72,
+      "market": 4050.47,
+      "synthesize": 0.01
+    },
+    "retries": {
+      "market": 1
+    },
+    "errors": [
+      {
+        "agent_name": "market",
+        "step": "MARKET",
+        "error_message": "[WinError 1225] The remote computer refused the network connection",
+        "recovered": true,
+        "timestamp": "2026-10-18T07:02:47.265037+00:00"
+      }
+    ]
+  },
+  {
+    "intent": "RESUME_FEEDBACK",
+    "query": "How can I optimize my resume bullet points for software engineering?",
+    "status": "success",
+    "classified_intent": "RESUME_FEEDBACK",
+    "confidence": 0.95,
+    "completed_nodes": [
+      "route",
+      "coach",
+      "synthesize"
+    ],
+    "node_timings_ms": {
+      "route": 6192.5,
+      "coach": 28307.46,
+      "synthesize": 0.01
+    },
+    "retries": {},
+    "errors": []
+  }
+]

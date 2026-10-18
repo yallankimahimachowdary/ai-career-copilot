@@ -85,6 +85,7 @@ The table below lists all core dependencies and their validated pins from the cl
 | | `scipy` | `1.18.1` | Statistical significance testing (Wilcoxon, Kendall) |
 | **Utilities** | `json-repair` | `0.64.0` | Resilient JSON decoding for LLM responses |
 | | `nest-asyncio` | `1.6.0` | Nested event loop patch for asynchronous runners |
+| **Orchestration** | `langgraph` | `0.2.76` | Cyclic state graph orchestrator with router-driven execution |
 
 ---
 

@@ -103,11 +103,18 @@ This document provides a transparent, technically precise accounting of known sy
 
 ## 8. Multi-Agent Orchestration Architecture
 - **Relevant Files:**
-  - [`app/services/router_service.py`](../app/services/router_service.py)
+  - [`app/services/graph_orchestrator.py`](../app/services/graph_orchestrator.py)
   - [`app/services/orchestrator.py`](../app/services/orchestrator.py)
+  - [`app/services/router_service.py`](../app/services/router_service.py)
+  - [`app/api/v1/endpoints/chat.py`](../app/api/v1/endpoints/chat.py)
+  - [`docs/orchestrator_graph.md`](../docs/orchestrator_graph.md)
 - **Status & Scope:**
-  - Multi-agent coordination is executed via lightweight, asynchronous Python routing logic with strict Pydantic schemas: orchestration is a sequential typed pipeline, not LangGraph.
-  - The system does not utilize heavy third-party workflow graph runtimes (e.g., LangGraph). Orchestration decisions (direct retrieval vs. skill gap analysis vs. interview preparation) are deterministic and testable without external graph runtime dependencies. LangGraph integration remains a planned future architecture exploration.
+  - Multi-agent coordination is executed via a compiled LangGraph `StateGraph` (`app/services/graph_orchestrator.py`) driven directly by the trained intent router (`artifacts/models/intent_router_v1.joblib`).
+  - Architecture: The graph maintains a typed shared state (`GraphState`), conditional edges corresponding strictly to target intent agent sets (`JOB_SEARCH`, `SKILL_GAP_ANALYSIS`, `INTERVIEW_PREPARATION`, `CAREER_ADVICE`, `RESUME_FEEDBACK`), and cyclic retry transitions for bounded retry (`MAX_NODE_RETRIES = 1`) on transient exceptions.
+  - Resilience: Transient errors (timeouts, network resets) trigger bounded retry before graceful fallback, while permanent errors record an `AgentFailureRecord` and allow surviving nodes to complete with state preservation.
+  - Latency & Observability: Per-node execution latencies are measured and attached to the response metadata as an `orchestrator_trace`.
+  - Backend Toggle: Controlled via `ORCHESTRATOR_BACKEND` (`"langgraph"` by default, with `"sequential"` fallback to the legacy linear pipeline).
+  - Scope Limits: LangGraph StateGraph executes within the FastAPI process; distributed task broker execution (e.g. Celery / Ray) or multi-machine agent distribution is out of current scope.
 
 ---
 

@@ -97,6 +97,7 @@ def test_all_codebase_imports_mapped_in_requirements():
         "numpy": "numpy",
         "scipy": "scipy",
         "spacy": "spacy",
+        "langgraph": "langgraph",
     }
 
     scanned_dirs = [repo_root / "app", repo_root / "scripts"]

@@ -11,11 +11,13 @@ from app.api.deps import enforce_resume_ownership, get_current_user
 from app.db.session import get_db
 from app.models.resume import Resume
 from app.models.user import User
+from app.core.config import settings
 from app.schemas.chat import (
     ChatQueryRequest,
     ChatQueryResponse,
     RouterDecision,
 )
+from app.services.graph_orchestrator import langgraph_orchestrator
 from app.services.router_service import router_service
 
 router = APIRouter()
@@ -46,7 +48,9 @@ async def process_chat_query(
         enforce_resume_ownership(res_obj, current_user)
 
     try:
-        return await router_service.route_and_execute(db=db, request=request)
+        if getattr(settings, "ORCHESTRATOR_BACKEND", "langgraph").lower() == "sequential":
+            return await router_service.route_and_execute(db=db, request=request)
+        return await langgraph_orchestrator.execute(request=request, db=db)
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
