@@ -108,10 +108,22 @@ This document provides a transparent, technically precise accounting of known sy
   - [`app/services/router_service.py`](../app/services/router_service.py)
   - [`app/api/v1/endpoints/chat.py`](../app/api/v1/endpoints/chat.py)
   - [`docs/orchestrator_graph.md`](../docs/orchestrator_graph.md)
+  - [`results/graph_smoke_run_v3.json`](../results/graph_smoke_run_v3.json)
+  - [`tests/test_graph_degradation.py`](../tests/test_graph_degradation.py)
 - **Status & Scope:**
   - Multi-agent coordination is executed via a compiled LangGraph `StateGraph` (`app/services/graph_orchestrator.py`) driven directly by the trained intent router (`artifacts/models/intent_router_v1.joblib`).
   - Architecture: The graph maintains a typed shared state (`GraphState`), conditional edges corresponding strictly to target intent agent sets (`JOB_SEARCH`, `SKILL_GAP_ANALYSIS`, `INTERVIEW_PREPARATION`, `CAREER_ADVICE`, `RESUME_FEEDBACK`), and cyclic retry transitions for bounded retry (`MAX_NODE_RETRIES = 1`) on transient exceptions.
-  - Resilience: Transient errors (timeouts, network resets) trigger bounded retry before graceful fallback, while permanent errors record an `AgentFailureRecord` and allow surviving nodes to complete with state preservation.
+  - Resilience & Honest Degradation:
+    - Transient errors (timeouts, network resets) trigger bounded retry before graceful fallback.
+    - Honest Failure Reporting: All unranked arbitrary query fallbacks (`select(JobPosting).limit(4)`) and synthetic mock job payloads (e.g. "Databricks", "Stripe") were completely removed from `match_node` and `router_service`. If database matching or embedding lookup fails, the system marks `match_unavailable=True`, records the original error attributed to its target service (`host:port`), returns `matched_jobs=[]`, and `synthesize_node` explicitly states that matching is currently unavailable rather than fabricating postings.
+    - Error Recovery Semantics: Error records have `recovered=True` ONLY if a subsequent bounded retry of that specific node succeeded; all unrecovered errors remain `recovered=False` and accurately cause `determine_execution_status` to report `"degraded: <failing_agent(s)>"`.
+  - Database Session Hygiene & Transaction Isolation:
+    - Any exception caught on an `AsyncSession` executes an immediate `await session.rollback()` prior to retry or handler return, eliminating `InFailedSQLTransactionError` cascades on subsequent queries.
+    - Test isolation: Negative database constraint tests wrap inserts in `session.begin_nested()` savepoints, ensuring constraint violations rollback cleanly without leaving aborted transactions or polluting server logs.
+  - Smoke-Run Verification History:
+    - Smoke Run v1 (`results/graph_smoke_run.json`): Erroneously reported `"success"` across all intents despite 3 of 5 queries logging network connection refusal errors (`WinError 1225`) because the status aggregation rule did not inspect error payloads.
+    - Smoke Run v2 (`results/graph_smoke_run_v2.json`): Revealed honest degradation where `JOB_SEARCH` and `SKILL_GAP_ANALYSIS` reported `degraded: match` due to an inner try/except block running `select(JobPosting).limit(4)` on an unrolled-back session, triggering `asyncpg.InFailedSQLTransactionError`.
+    - Smoke Run v3 (`results/graph_smoke_run_v3.json`): Fully verified across 2 consecutive passes for all 5 canonical intents against live Ollama (`llama3.2:3b`), PostgreSQL (with pgvector), and Neo4j. All 5 intents achieved verified `"status": "success"` with 0 errors and 0 unrecovered failures.
   - Latency & Observability: Per-node execution latencies are measured and attached to the response metadata as an `orchestrator_trace`.
   - Backend Toggle: Controlled via `ORCHESTRATOR_BACKEND` (`"langgraph"` by default, with `"sequential"` fallback to the legacy linear pipeline).
   - Scope Limits: LangGraph StateGraph executes within the FastAPI process; distributed task broker execution (e.g. Celery / Ray) or multi-machine agent distribution is out of current scope.

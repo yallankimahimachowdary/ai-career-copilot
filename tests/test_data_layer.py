@@ -195,9 +195,8 @@ async def test_postgres_learning_resources_constraints():
             )
         """)
         with pytest.raises(Exception):
-            await session.execute(bad_resource)
-            await session.commit()
-        await session.rollback()
+            async with session.begin_nested():
+                await session.execute(bad_resource)
 
         # Invalid difficulty check constraint violation
         bad_diff = text("""
@@ -208,9 +207,8 @@ async def test_postgres_learning_resources_constraints():
             )
         """)
         with pytest.raises(Exception):
-            await session.execute(bad_diff)
-            await session.commit()
-        await session.rollback()
+            async with session.begin_nested():
+                await session.execute(bad_diff)
 
 
 @pytest.mark.requires_postgres
@@ -229,9 +227,8 @@ async def test_postgres_job_market_trends_constraints():
             )
         """)
         with pytest.raises(Exception):
-            await session.execute(bad_trend)
-            await session.commit()
-        await session.rollback()
+            async with session.begin_nested():
+                await session.execute(bad_trend)
 
 
 @pytest.mark.requires_postgres

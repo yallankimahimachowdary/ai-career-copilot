@@ -116,6 +116,7 @@ class GraphState(TypedDict, total=False):
     node_timings_ms: Dict[str, float]
     next_node: Optional[str]
     retry_target: Optional[str]
+    match_unavailable: bool
 
 
 def _is_transient_error(exc: Exception) -> bool:
@@ -149,9 +150,14 @@ def _is_connection_error(exc: Exception) -> bool:
         for term in (
             "connection refused",
             "connection reset",
+            "connection terminated",
+            "connection closed",
+            "connection error",
+            "connection failed",
             "remote computer refused",
             "winerror 1225",
             "econnrefused",
+            "econnreset",
             "connect error",
         )
     )
@@ -162,21 +168,29 @@ def _build_error_record(
     step: str,
     exc: Exception,
     default_host_port: Optional[str] = None,
+    recovered: bool = False,
 ) -> Dict[str, Any]:
-    """Builds a standardized error record with target host:port attribution on connection failure."""
+    """Builds a standardized error record with target host:port attribution on failure."""
     msg = str(exc)
     record: Dict[str, Any] = {
         "agent_name": agent_name,
         "step": step,
         "error_message": msg,
-        "recovered": True,
+        "recovered": recovered,
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
-    if _is_connection_error(exc) and default_host_port:
+    if default_host_port:
         record["target_host_port"] = default_host_port
         if default_host_port not in msg:
             record["error_message"] = f"{msg} (target: {default_host_port})"
     return record
+
+
+def _mark_recovered(errors: List[Dict[str, Any]], agent_name: str) -> None:
+    """Marks previous errors for an agent as recovered after a successful retry."""
+    for err in errors:
+        if err.get("agent_name") == agent_name:
+            err["recovered"] = True
 
 
 def determine_execution_status(
@@ -184,18 +198,22 @@ def determine_execution_status(
     errors: List[Dict[str, Any]],
     fallback_used: bool = False,
     fallbacks: Optional[List[str]] = None,
+    match_unavailable: bool = False,
 ) -> str:
     """
     Computes orchestrator execution status according to Stage 0 rule:
-    Status is 'success' ONLY if no agent used a fallback and no errors were recorded;
-    otherwise 'degraded: <failing_agent(s)>'.
+    Status is 'success' ONLY if no agent has unrecovered errors, no fallbacks were used,
+    and match was available; otherwise 'degraded: <failing_agent(s)>'.
     """
     failing_agents: List[str] = []
     if errors:
         for err in errors:
-            agent = err.get("agent_name", "unknown")
-            if agent not in failing_agents:
-                failing_agents.append(agent)
+            if not err.get("recovered", False):
+                agent = err.get("agent_name", "unknown")
+                if agent not in failing_agents:
+                    failing_agents.append(agent)
+    if match_unavailable and "match" not in failing_agents:
+        failing_agents.append("match")
     if fallbacks:
         for fb in fallbacks:
             if fb not in failing_agents:
@@ -370,6 +388,8 @@ class LangGraphOrchestrator:
 
         try:
             decision = await router_service.classify_intent(query, use_llm=True)
+            if retries.get("route", 0) > 0:
+                _mark_recovered(errors, "route")
             elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)
             node_timings["route"] = elapsed_ms
             if "route" not in completed:
@@ -382,6 +402,7 @@ class LangGraphOrchestrator:
                 "router_decision": decision.model_dump(),
                 "completed_nodes": completed,
                 "node_timings_ms": node_timings,
+                "errors": errors,
                 "retry_target": None,
             }
         except Exception as exc:
@@ -393,7 +414,7 @@ class LangGraphOrchestrator:
 
             # Permanent failure or retries exhausted -> fallback to JOB_SEARCH
             errors.append(
-                _build_error_record("route", "ROUTE", exc, default_host_port="localhost:11434 (Ollama)")
+                _build_error_record("route", "ROUTE", exc, default_host_port="localhost:11434 (Ollama)", recovered=False)
             )
             fallback_decision = RouterDecision(
                 intent=IntentType.JOB_SEARCH,
@@ -439,6 +460,9 @@ class LangGraphOrchestrator:
                 if res_obj and res_obj.parsed_data:
                     parsed_dict = res_obj.parsed_data
 
+            if retries.get("parse", 0) > 0:
+                _mark_recovered(errors, "parse")
+
             elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)
             node_timings["parse"] = elapsed_ms
             if "parse" not in completed:
@@ -448,17 +472,20 @@ class LangGraphOrchestrator:
                 "parsed_resume": parsed_dict,
                 "completed_nodes": completed,
                 "node_timings_ms": node_timings,
+                "errors": errors,
                 "retry_target": None,
             }
         except Exception as exc:
             logger.warning("Parse node failure: %s", exc)
+            if db:
+                await db.rollback()
             current_retries = retries.get("parse", 0)
             if _is_transient_error(exc) and current_retries < MAX_NODE_RETRIES:
                 retries["parse"] = current_retries + 1
                 return {"retries": retries, "retry_target": "parse"}
 
             errors.append(
-                _build_error_record("parse", "PARSE", exc, default_host_port="localhost:5432 (Postgres)")
+                _build_error_record("parse", "PARSE", exc, default_host_port="localhost:5432 (Postgres)", recovered=False)
             )
             elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)
             node_timings["parse"] = elapsed_ms
@@ -487,20 +514,14 @@ class LangGraphOrchestrator:
             candidate_skills = parsed_resume.get("skills", [])
 
             if db:
-                try:
-                    query_vector = await embedding_service.get_embedding(query)
-                    sql = (
-                        select(JobPosting)
-                        .order_by(JobPosting.embedding.cosine_distance(query_vector))
-                        .limit(4)
-                    )
-                    res = await db.execute(sql)
-                    jobs = res.scalars().all()
-                except Exception:
-                    # Fallback to title search
-                    stmt = select(JobPosting).limit(4)
-                    res = await db.execute(stmt)
-                    jobs = res.scalars().all()
+                query_vector = await embedding_service.get_embedding(query)
+                sql = (
+                    select(JobPosting)
+                    .order_by(JobPosting.embedding.cosine_distance(query_vector))
+                    .limit(4)
+                )
+                res = await db.execute(sql)
+                jobs = res.scalars().all()
 
                 for job in jobs:
                     job_skills = job.skills or []
@@ -523,30 +544,8 @@ class LangGraphOrchestrator:
                         "skills": job_skills[:8],
                     })
 
-            if not matched_items:
-                target = state.get("target_role") or "Software Engineer"
-                matched_items = [
-                    {
-                        "id": "matched_job_001",
-                        "job_id": "matched_job_001",
-                        "title": f"Senior {target}",
-                        "company": "Databricks",
-                        "company_name": "Databricks",
-                        "location": state.get("target_location") or "Remote",
-                        "match_score": 0.88,
-                        "skills": candidate_skills[:4] if candidate_skills else ["Python", "Docker", "SQL"],
-                    },
-                    {
-                        "id": "matched_job_002",
-                        "job_id": "matched_job_002",
-                        "title": f"Staff {target}",
-                        "company": "Stripe",
-                        "company_name": "Stripe",
-                        "location": state.get("target_location") or "San Francisco, CA",
-                        "match_score": 0.82,
-                        "skills": candidate_skills[:3] if candidate_skills else ["FastAPI", "Kubernetes"],
-                    },
-                ]
+            if retries.get("match", 0) > 0:
+                _mark_recovered(errors, "match")
 
             elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)
             node_timings["match"] = elapsed_ms
@@ -555,25 +554,30 @@ class LangGraphOrchestrator:
 
             return {
                 "matched_jobs": matched_items,
+                "match_unavailable": False,
                 "completed_nodes": completed,
                 "node_timings_ms": node_timings,
+                "errors": errors,
                 "retry_target": None,
             }
         except Exception as exc:
             logger.warning("Match node failure: %s", exc)
+            if db:
+                await db.rollback()
             current_retries = retries.get("match", 0)
             if _is_transient_error(exc) and current_retries < MAX_NODE_RETRIES:
                 retries["match"] = current_retries + 1
                 return {"retries": retries, "retry_target": "match"}
 
             errors.append(
-                _build_error_record("match", "MATCH", exc, default_host_port="localhost:5432 (Postgres)")
+                _build_error_record("match", "MATCH", exc, default_host_port="localhost:5432 (Postgres)", recovered=False)
             )
             elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)
             node_timings["match"] = elapsed_ms
 
             return {
                 "matched_jobs": [],
+                "match_unavailable": True,
                 "completed_nodes": completed,
                 "node_timings_ms": node_timings,
                 "errors": errors,
@@ -614,6 +618,8 @@ class LangGraphOrchestrator:
                         "narrative": salary_info.narrative,
                     }
                 except Exception as db_exc:
+                    if db:
+                        await db.rollback()
                     if _is_transient_error(db_exc):
                         raise
                     logger.debug("Market DB query fallback: %s", db_exc)
@@ -633,6 +639,9 @@ class LangGraphOrchestrator:
                     "trending_skills": ["Python", "FastAPI", "Docker", "Kubernetes", "AWS"],
                 }
 
+            if retries.get("market", 0) > 0:
+                _mark_recovered(errors, "market")
+
             elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)
             node_timings["market"] = elapsed_ms
             if "market" not in completed:
@@ -642,17 +651,20 @@ class LangGraphOrchestrator:
                 "market_insights": market_data,
                 "completed_nodes": completed,
                 "node_timings_ms": node_timings,
+                "errors": errors,
                 "retry_target": None,
             }
         except Exception as exc:
             logger.warning("Market node failure: %s", exc)
+            if db:
+                await db.rollback()
             current_retries = retries.get("market", 0)
             if _is_transient_error(exc) and current_retries < MAX_NODE_RETRIES:
                 retries["market"] = current_retries + 1
                 return {"retries": retries, "retry_target": "market"}
 
             errors.append(
-                _build_error_record("market", "MARKET", exc, default_host_port="localhost:5432 (Postgres)")
+                _build_error_record("market", "MARKET", exc, default_host_port="localhost:5432 (Postgres)", recovered=False)
             )
             elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)
             node_timings["market"] = elapsed_ms
@@ -724,6 +736,9 @@ class LangGraphOrchestrator:
                 "gap_questions": [q.model_dump() for q in qb.gap_questions],
             }
 
+            if retries.get("coach", 0) > 0:
+                _mark_recovered(errors, "coach")
+
             elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)
             node_timings["coach"] = elapsed_ms
             if "coach" not in completed:
@@ -733,17 +748,21 @@ class LangGraphOrchestrator:
                 "coaching_plan": coaching_data,
                 "completed_nodes": completed,
                 "node_timings_ms": node_timings,
+                "errors": errors,
                 "retry_target": None,
             }
         except Exception as exc:
             logger.warning("Coach node failure: %s", exc)
+            db = state.get("db")
+            if db:
+                await db.rollback()
             current_retries = retries.get("coach", 0)
             if _is_transient_error(exc) and current_retries < MAX_NODE_RETRIES:
                 retries["coach"] = current_retries + 1
                 return {"retries": retries, "retry_target": "coach"}
 
             errors.append(
-                _build_error_record("coach", "COACH", exc, default_host_port="localhost:11434 (Ollama)")
+                _build_error_record("coach", "COACH", exc, default_host_port="localhost:11434 (Ollama)", recovered=False)
             )
             elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)
             node_timings["coach"] = elapsed_ms
@@ -782,26 +801,35 @@ class LangGraphOrchestrator:
         followups: List[str] = []
         response_lines: List[str] = []
 
+        match_unavailable = state.get("match_unavailable", False)
+
         if intent in ("JOB_SEARCH", "JOB_SEARCH_AND_MATCH"):
-            response_lines = [
-                f"### 🎯 Job Search & Opportunity Matching for {candidate_name}\n",
-                f"Based on your query *\"{query}\"*, the LangGraph orchestrator executed **{strategy_selected}**.\n",
-                "Here are the top aligned opportunities indexed in our database:\n",
-            ]
-            for idx, job in enumerate(matched_jobs[:4], 1):
-                sources.append({
-                    "type": "job_posting",
-                    "id": job.get("id") or job.get("job_id"),
-                    "title": job.get("title"),
-                    "company": job.get("company") or job.get("company_name"),
-                    "location": job.get("location"),
-                    "skills": job.get("skills", [])[:5],
-                })
-                skills_str = ", ".join(job.get("skills", [])[:5]) or "General Engineering"
-                response_lines.append(
-                    f"{idx}. **{job.get('title')}** at **{job.get('company') or job.get('company_name')}** ({job.get('location') or 'Remote'})\n"
-                    f"   - Core Requirements: {skills_str}"
-                )
+            if match_unavailable or not matched_jobs:
+                response_lines = [
+                    f"### 🎯 Job Search & Opportunity Matching for {candidate_name}\n",
+                    f"Based on your query *\"{query}\"*, the LangGraph orchestrator executed **{strategy_selected}**.\n",
+                    "⚠️ **Job matching is currently unavailable.** We could not retrieve aligned job postings at this time. Please try again later.\n",
+                ]
+            else:
+                response_lines = [
+                    f"### 🎯 Job Search & Opportunity Matching for {candidate_name}\n",
+                    f"Based on your query *\"{query}\"*, the LangGraph orchestrator executed **{strategy_selected}**.\n",
+                    "Here are the top aligned opportunities indexed in our database:\n",
+                ]
+                for idx, job in enumerate(matched_jobs[:4], 1):
+                    sources.append({
+                        "type": "job_posting",
+                        "id": job.get("id") or job.get("job_id"),
+                        "title": job.get("title"),
+                        "company": job.get("company") or job.get("company_name"),
+                        "location": job.get("location"),
+                        "skills": job.get("skills", [])[:5],
+                    })
+                    skills_str = ", ".join(job.get("skills", [])[:5]) or "General Engineering"
+                    response_lines.append(
+                        f"{idx}. **{job.get('title')}** at **{job.get('company') or job.get('company_name')}** ({job.get('location') or 'Remote'})\n"
+                        f"   - Core Requirements: {skills_str}"
+                    )
             recommendations = [
                 "Use the 'Job Matches & XAI' tab to inspect TreeSHAP marginal feature contributions.",
                 "Compare your candidate experience against job requirements to verify seniority level.",
@@ -932,12 +960,13 @@ class LangGraphOrchestrator:
         if "synthesize" not in completed:
             completed.append("synthesize")
 
-        # Determine status according to Stage 0 rule (success ONLY if no fallbacks and no errors)
+        # Determine status according to Stage 0 rule (success ONLY if no unrecovered errors, no fallbacks, and match available)
         rd = state.get("router_decision") or {}
         trace_status = determine_execution_status(
             completed_nodes=completed,
             errors=errors,
             fallback_used=rd.get("fallback_used", False),
+            match_unavailable=match_unavailable,
         )
 
         # Attach execution trace to sources for transparency & testing
@@ -985,6 +1014,7 @@ class LangGraphOrchestrator:
             "retries": {},
             "node_timings_ms": {},
             "matched_jobs": [],
+            "match_unavailable": False,
             "sources": [],
             "actionable_recommendations": [],
             "suggested_followups": [],

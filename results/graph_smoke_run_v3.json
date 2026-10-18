@@ -1,0 +1,144 @@
+[
+  {
+    "intent": "JOB_SEARCH",
+    "query": "What Python backend developer jobs are open in San Francisco?",
+    "status": "success",
+    "classified_intent": "JOB_SEARCH_AND_MATCH",
+    "confidence": 0.95,
+    "backend": "llm",
+    "completed_nodes": [
+      "route",
+      "match",
+      "synthesize"
+    ],
+    "node_timings_ms": {
+      "route": 5395.65,
+      "match": 61.47,
+      "synthesize": 0.02
+    },
+    "retries": {},
+    "errors": [],
+    "total_latency_ms": 5466.32,
+    "has_real_content": true,
+    "response_char_count": 875,
+    "sources_count": 5,
+    "recommendations_count": 3,
+    "iterations_verified": 2,
+    "pass_1_status": "success",
+    "pass_2_status": "success"
+  },
+  {
+    "intent": "SKILL_GAP_ANALYSIS",
+    "query": "What skills do I need to learn to transition to a DevOps Engineer?",
+    "status": "success",
+    "classified_intent": "SKILL_PROGRESSION_AND_PATH",
+    "confidence": 0.95,
+    "backend": "llm",
+    "completed_nodes": [
+      "route",
+      "match",
+      "coach",
+      "synthesize"
+    ],
+    "node_timings_ms": {
+      "route": 6079.13,
+      "match": 67.94,
+      "coach": 108.43,
+      "synthesize": 0.01
+    },
+    "retries": {},
+    "errors": [],
+    "total_latency_ms": 6266.93,
+    "has_real_content": true,
+    "response_char_count": 613,
+    "sources_count": 1,
+    "recommendations_count": 3,
+    "iterations_verified": 2,
+    "pass_1_status": "success",
+    "pass_2_status": "success"
+  },
+  {
+    "intent": "INTERVIEW_PREPARATION",
+    "query": "Can you give me practice behavioral interview questions for a senior role?",
+    "status": "success",
+    "classified_intent": "INTERVIEW_COACHING",
+    "confidence": 0.95,
+    "backend": "llm",
+    "completed_nodes": [
+      "route",
+      "coach",
+      "synthesize"
+    ],
+    "node_timings_ms": {
+      "route": 5035.45,
+      "coach": 94.32,
+      "synthesize": 0.01
+    },
+    "retries": {},
+    "errors": [],
+    "total_latency_ms": 5136.86,
+    "has_real_content": true,
+    "response_char_count": 676,
+    "sources_count": 2,
+    "recommendations_count": 3,
+    "iterations_verified": 2,
+    "pass_1_status": "success",
+    "pass_2_status": "success"
+  },
+  {
+    "intent": "CAREER_ADVICE",
+    "query": "What is the median salary and hiring outlook for Machine Learning Engineers?",
+    "status": "success",
+    "classified_intent": "MACRO_MARKET_DYNAMICS",
+    "confidence": 0.95,
+    "backend": "llm",
+    "completed_nodes": [
+      "route",
+      "market",
+      "synthesize"
+    ],
+    "node_timings_ms": {
+      "route": 4747.25,
+      "market": 22711.11,
+      "synthesize": 0.03
+    },
+    "retries": {},
+    "errors": [],
+    "total_latency_ms": 27500.87,
+    "has_real_content": true,
+    "response_char_count": 362,
+    "sources_count": 2,
+    "recommendations_count": 3,
+    "iterations_verified": 2,
+    "pass_1_status": "success",
+    "pass_2_status": "success"
+  },
+  {
+    "intent": "RESUME_FEEDBACK",
+    "query": "How can I optimize my resume bullet points for software engineering?",
+    "status": "success",
+    "classified_intent": "RESUME_FEEDBACK",
+    "confidence": 0.95,
+    "backend": "llm",
+    "completed_nodes": [
+      "route",
+      "coach",
+      "synthesize"
+    ],
+    "node_timings_ms": {
+      "route": 5933.83,
+      "coach": 149.04,
+      "synthesize": 0.01
+    },
+    "retries": {},
+    "errors": [],
+    "total_latency_ms": 6090.98,
+    "has_real_content": true,
+    "response_char_count": 506,
+    "sources_count": 2,
+    "recommendations_count": 3,
+    "iterations_verified": 2,
+    "pass_1_status": "success",
+    "pass_2_status": "success"
+  }
+]

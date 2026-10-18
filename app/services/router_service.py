@@ -592,6 +592,7 @@ Respond with ONLY a raw JSON object with this exact structure:
         sources = []
 
         # Retrieve top job postings
+        jobs = []
         try:
             query_vector = await embedding_service.get_embedding(query_text)
             sql = (
@@ -602,10 +603,10 @@ Respond with ONLY a raw JSON object with this exact structure:
             result = await db.execute(sql)
             jobs = result.scalars().all()
         except Exception as exc:
-            logger.warning("Vector search error in router, falling back to title search: %s", exc)
-            sql = select(JobPosting).limit(4)
-            result = await db.execute(sql)
-            jobs = result.scalars().all()
+            logger.warning("Vector search error in router: %s", exc)
+            if db:
+                await db.rollback()
+            jobs = []
 
         for j in jobs:
             sources.append({
@@ -622,14 +623,17 @@ Respond with ONLY a raw JSON object with this exact structure:
         response_lines = [
             f"### 🎯 Job Search & Opportunity Matching for {candidate_name}\n",
             f"Based on your query *\"{request.query}\"*, I executed **{decision.strategy_selected}**.\n",
-            "Here are the top aligned opportunities indexed in our database:\n"
         ]
 
-        for idx, s in enumerate(sources, 1):
-            response_lines.append(
-                f"{idx}. **{s['title']}** at **{s['company']}** ({s['location'] or 'Remote'})\n"
-                f"   - Core Requirements: {', '.join(s['skills']) if s['skills'] else 'General Engineering'}"
-            )
+        if jobs:
+            response_lines.append("Here are the top aligned opportunities indexed in our database:\n")
+            for idx, s in enumerate(sources, 1):
+                response_lines.append(
+                    f"{idx}. **{s['title']}** at **{s['company']}** ({s['location'] or 'Remote'})\n"
+                    f"   - Core Requirements: {', '.join(s['skills']) if s['skills'] else 'General Engineering'}"
+                )
+        else:
+            response_lines.append("Matching is currently unavailable or no matching job postings were found for your query.")
 
         recommendations = [
             "Use the 'Job Matches & XAI' tab to inspect TreeSHAP marginal feature contributions.",
