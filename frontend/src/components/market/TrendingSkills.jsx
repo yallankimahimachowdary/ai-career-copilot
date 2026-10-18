@@ -124,9 +124,27 @@ export function TrendingSkills({ skills = [], totalPostings = 0, narrative }) {
             >
               <div>
                 <span className="text-sm font-semibold text-[#3A3A52] block">{s.skill}</span>
-                <span className="text-xs text-[#5C5C7A] font-mono">
+                <span className="text-xs text-[#5C5C7A] font-mono block">
                   {s.posting_count} postings ({s.percentage}%)
                 </span>
+                <div className="flex flex-col gap-0.5 pt-1 text-[11px] text-[#5C5C7A]">
+                  <span>
+                    Demand Share:{" "}
+                    <strong className="text-[#3A3A52]">
+                      {s.demand_share != null
+                        ? `${(s.demand_share * (s.demand_share <= 1 ? 100 : 1)).toFixed(1)}%`
+                        : "N/A"}
+                    </strong>
+                  </span>
+                  <span>
+                    Velocity:{" "}
+                    <strong className="text-[#3A3A52]">
+                      {s.velocity != null
+                        ? `${s.velocity > 0 ? "+" : ""}${s.velocity}`
+                        : "N/A (single baseline period)"}
+                    </strong>
+                  </span>
+                </div>
               </div>
               <Badge variant={badge.variant} className="text-[10px]">
                 {badge.label}

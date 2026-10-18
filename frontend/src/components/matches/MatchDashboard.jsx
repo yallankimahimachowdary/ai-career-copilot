@@ -19,6 +19,8 @@ export function MatchDashboard({
   matches = [],
   isLoading,
   error,
+  matchUnavailable = false,
+  noMatchingJobs = false,
   isDemoMatches = false,
   activeResume,
   onRunMatch,
@@ -143,8 +145,19 @@ export function MatchDashboard({
         </div>
       )}
 
+      {/* Match Unavailable Banner */}
+      {matchUnavailable && (
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-900 shadow-xs" role="alert">
+          <AlertCircle className="h-5 w-5 text-amber-600 shrink-0" />
+          <div>
+            <span className="font-semibold">Matching Unavailable: </span>
+            <span>Job matching is currently unavailable. The database or vector matcher encountered an issue. Please try again later.</span>
+          </div>
+        </div>
+      )}
+
       {/* Error Banner with Retry */}
-      {error && (
+      {error && !matchUnavailable && (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
           <div className="flex items-center gap-3">
             <AlertCircle className="h-5 w-5 shrink-0 text-red-600" />
@@ -226,10 +239,21 @@ export function MatchDashboard({
       ) : activeResume ? (
         <div className="p-12 text-center rounded-2xl border border-[#DDD6E7] bg-white space-y-3">
           <Sparkles className="h-8 w-8 text-[#7A2D4A] mx-auto" />
-          <p className="text-sm font-semibold text-[#3A3A52]">No matches found matching these filters.</p>
-          <p className="text-xs text-[#5C5C7A]">
-            Try lowering your minimum score threshold or clearing location filters.
-          </p>
+          {noMatchingJobs || (matches.length === 0 && !locationFilter.trim() && !remoteOnly && minScore === 0) ? (
+            <>
+              <p className="text-sm font-semibold text-[#3A3A52]">No matching jobs qualify for this profile in our database.</p>
+              <p className="text-xs text-[#5C5C7A]">
+                Our indexing did not identify job postings meeting the alignment criteria. Try updating your candidate skills or check back as new opportunities are ingested.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-sm font-semibold text-[#3A3A52]">No matches found matching these filters.</p>
+              <p className="text-xs text-[#5C5C7A]">
+                Try lowering your minimum score threshold or clearing location filters.
+              </p>
+            </>
+          )}
         </div>
       ) : null}
 

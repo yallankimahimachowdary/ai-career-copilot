@@ -1,0 +1,316 @@
+{
+  "paired_mrr_comparison": {
+    "mean_fixed_mrr": 0.351,
+    "mean_router_mrr": 0.4587,
+    "mean_mrr_diff_router_minus_fixed": 0.1077,
+    "paired_bootstrap_95_ci": [
+      0.0188,
+      0.1993
+    ],
+    "bootstrap_iterations": 2000
+  },
+  "mcnemar_hit1_test": {
+    "contingency_table_fixed_vs_router": {
+      "both_hit_n11": 11,
+      "fixed_hit_router_miss_n10": 10,
+      "router_hit_fixed_miss_n01": 29,
+      "both_miss_n00": 50
+    },
+    "discordant_pairs_count": 39,
+    "exact_pvalue": 0.0033778479119064286,
+    "statistically_significant_at_05": true
+  },
+  "router_failure_cases_hit1": [
+    {
+      "query_id": "Q-039",
+      "query_text": "What materials help software engineers learn structured root cause analysis and troubleshooting methodology?",
+      "category": "learning_resources",
+      "fixed_hit1": 1,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 0,
+      "fixed_mrr": 1.0,
+      "router_mrr": 0.0,
+      "mrr_diff": -1.0
+    },
+    {
+      "query_id": "Q-041",
+      "query_text": "What tutorials cover CI/CD automation with GitHub Actions for automated testing and package publishing?",
+      "category": "learning_resources",
+      "fixed_hit1": 1,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 1,
+      "fixed_mrr": 1.0,
+      "router_mrr": 0.5,
+      "mrr_diff": -0.5
+    },
+    {
+      "query_id": "Q-045",
+      "query_text": "What materials teach software design patterns and architectural decoupling principles?",
+      "category": "learning_resources",
+      "fixed_hit1": 1,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 0,
+      "fixed_mrr": 1.0,
+      "router_mrr": 0.0,
+      "mrr_diff": -1.0
+    },
+    {
+      "query_id": "Q-046",
+      "query_text": "What courses are best for preparing for AWS Certified Solutions Architect Associate exam?",
+      "category": "learning_resources",
+      "fixed_hit1": 1,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 1,
+      "fixed_mrr": 1.0,
+      "router_mrr": 0.3333333333333333,
+      "mrr_diff": -0.6666666666666667
+    },
+    {
+      "query_id": "Q-060",
+      "query_text": "What are the common career paths for a Systems Administrator moving into modern Site Reliability Engineering?",
+      "category": "role_progression",
+      "fixed_hit1": 1,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 1,
+      "fixed_mrr": 1.0,
+      "router_mrr": 0.3333333333333333,
+      "mrr_diff": -0.6666666666666667
+    },
+    {
+      "query_id": "Q-067",
+      "query_text": "What career progression options exist for Database Administrators in the era of managed cloud databases?",
+      "category": "role_progression",
+      "fixed_hit1": 1,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 1,
+      "fixed_mrr": 1.0,
+      "router_mrr": 0.5,
+      "mrr_diff": -0.5
+    },
+    {
+      "query_id": "Q-070",
+      "query_text": "Can a Solutions Architect transition into an Enterprise Product Manager role?",
+      "category": "role_progression",
+      "fixed_hit1": 1,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 1,
+      "fixed_mrr": 1.0,
+      "router_mrr": 0.5,
+      "mrr_diff": -0.5
+    },
+    {
+      "query_id": "Q-075",
+      "query_text": "What career transition pathways are available for Technical Support Engineers seeking engineering roles?",
+      "category": "role_progression",
+      "fixed_hit1": 1,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 1,
+      "fixed_mrr": 1.0,
+      "router_mrr": 0.5,
+      "mrr_diff": -0.5
+    },
+    {
+      "query_id": "Q-077",
+      "query_text": "Which programming languages currently have the highest active hiring demand across backend software engineering?",
+      "category": "market_demand",
+      "fixed_hit1": 1,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 0,
+      "fixed_mrr": 1.0,
+      "router_mrr": 0.0,
+      "mrr_diff": -1.0
+    },
+    {
+      "query_id": "Q-079",
+      "query_text": "What is the average compensation for Machine Learning Engineers with PyTorch and distributed training experience?",
+      "category": "market_demand",
+      "fixed_hit1": 1,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 1,
+      "fixed_mrr": 1.0,
+      "router_mrr": 0.3333333333333333,
+      "mrr_diff": -0.6666666666666667
+    }
+  ],
+  "router_failure_cases_hit5": [
+    {
+      "query_id": "Q-005",
+      "query_text": "What are the key questions an engineering candidate should ask to evaluate company engineering culture?",
+      "category": "interview_prep",
+      "fixed_hit1": 0,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 0,
+      "fixed_mrr": 0.5,
+      "router_mrr": 0.0,
+      "mrr_diff": -0.5
+    },
+    {
+      "query_id": "Q-013",
+      "query_text": "What are the primary differences between REST API idempotency and GraphQL batching in architecture questions?",
+      "category": "interview_prep",
+      "fixed_hit1": 0,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 0,
+      "fixed_mrr": 0.25,
+      "router_mrr": 0.0,
+      "mrr_diff": -0.25
+    },
+    {
+      "query_id": "Q-030",
+      "query_text": "Where can engineers study Terraform Infrastructure as Code for multi-region cloud deployment?",
+      "category": "learning_resources",
+      "fixed_hit1": 0,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 0,
+      "fixed_mrr": 0.2,
+      "router_mrr": 0.0,
+      "mrr_diff": -0.2
+    },
+    {
+      "query_id": "Q-031",
+      "query_text": "What resources cover distributed systems consensus algorithms like Raft and Paxos?",
+      "category": "learning_resources",
+      "fixed_hit1": 0,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 0,
+      "fixed_mrr": 0.2,
+      "router_mrr": 0.0,
+      "mrr_diff": -0.2
+    },
+    {
+      "query_id": "Q-038",
+      "query_text": "What courses teach modern product management discovery frameworks and user interview synthesis?",
+      "category": "learning_resources",
+      "fixed_hit1": 0,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 0,
+      "fixed_mrr": 0.2,
+      "router_mrr": 0.0,
+      "mrr_diff": -0.2
+    },
+    {
+      "query_id": "Q-039",
+      "query_text": "What materials help software engineers learn structured root cause analysis and troubleshooting methodology?",
+      "category": "learning_resources",
+      "fixed_hit1": 1,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 0,
+      "fixed_mrr": 1.0,
+      "router_mrr": 0.0,
+      "mrr_diff": -1.0
+    },
+    {
+      "query_id": "Q-042",
+      "query_text": "What resources cover industrial automation PLC programming standards and SCADA systems?",
+      "category": "learning_resources",
+      "fixed_hit1": 0,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 0,
+      "fixed_mrr": 0.5,
+      "router_mrr": 0.0,
+      "mrr_diff": -0.5
+    },
+    {
+      "query_id": "Q-045",
+      "query_text": "What materials teach software design patterns and architectural decoupling principles?",
+      "category": "learning_resources",
+      "fixed_hit1": 1,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 0,
+      "fixed_mrr": 1.0,
+      "router_mrr": 0.0,
+      "mrr_diff": -1.0
+    },
+    {
+      "query_id": "Q-047",
+      "query_text": "What resources cover GraphQL schema stitching, federation, and Apollo Server integration?",
+      "category": "learning_resources",
+      "fixed_hit1": 0,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 0,
+      "fixed_mrr": 0.5,
+      "router_mrr": 0.0,
+      "mrr_diff": -0.5
+    },
+    {
+      "query_id": "Q-052",
+      "query_text": "How does a Senior Backend Engineer advance to Staff Engineer versus Engineering Manager?",
+      "category": "role_progression",
+      "fixed_hit1": 0,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 0,
+      "fixed_mrr": 0.3333333333333333,
+      "router_mrr": 0.0,
+      "mrr_diff": -0.3333333333333333
+    },
+    {
+      "query_id": "Q-064",
+      "query_text": "What are the next career steps after reaching Senior Site Reliability Engineer?",
+      "category": "role_progression",
+      "fixed_hit1": 0,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 0,
+      "fixed_mrr": 0.25,
+      "router_mrr": 0.0,
+      "mrr_diff": -0.25
+    },
+    {
+      "query_id": "Q-077",
+      "query_text": "Which programming languages currently have the highest active hiring demand across backend software engineering?",
+      "category": "market_demand",
+      "fixed_hit1": 1,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 0,
+      "fixed_mrr": 1.0,
+      "router_mrr": 0.0,
+      "mrr_diff": -1.0
+    },
+    {
+      "query_id": "Q-081",
+      "query_text": "What is the median salary range for Associate Product Managers versus Senior Product Managers?",
+      "category": "market_demand",
+      "fixed_hit1": 0,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 0,
+      "fixed_mrr": 0.5,
+      "router_mrr": 0.0,
+      "mrr_diff": -0.5
+    },
+    {
+      "query_id": "Q-082",
+      "query_text": "Which cities are the primary hiring hubs for Data Science and Quantitative Analytics positions?",
+      "category": "market_demand",
+      "fixed_hit1": 0,
+      "router_hit1": 0,
+      "fixed_hit5": 1,
+      "router_hit5": 0,
+      "fixed_mrr": 0.25,
+      "router_mrr": 0.0,
+      "mrr_diff": -0.25
+    }
+  ],
+  "benchmark_design_caveat": "Because queries were written with intent labels, the benchmark has a built-in advantage for router-driven retrieval: the query phrasing often reflects domain-specific terminology that aligns closely with the target store's corpus vocabulary."
+}

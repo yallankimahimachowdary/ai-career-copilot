@@ -1,0 +1,483 @@
+{
+  "metadata": {
+    "evaluation_timestamp": "2026-10-18T15:07:13.885178+00:00",
+    "synthetic_resumes_count": 30,
+    "perturbations_file": "data\\fairness\\perturbations_v2_indian.json",
+    "perturbations_sha256": "DCDB18CF8BFB66CAF3E04EABF8C9CA8BE3CD2AA36ABE6025B3BC7E0CCEC65DDB",
+    "perturbations_count": 20,
+    "institution_tiers_count": 3,
+    "job_pool_size": 50,
+    "rankers_evaluated": [
+      "bm25",
+      "sbert",
+      "hybrid",
+      "composite_xgb"
+    ],
+    "equivalence_margin": {
+      "kendall_tau_threshold": 0.9,
+      "top5_jaccard_threshold": 0.9,
+      "score_delta_epsilon": 0.05,
+      "tier_score_gap_epsilon": 0.05,
+      "justification": "Equivalence margin epsilon=0.05 corresponds to 5% score deviation, ensuring candidate ranking order is statistically and practically invariant to protected demographic attributes."
+    }
+  },
+  "evaluations": {
+    "bm25": {
+      "masking_on": {
+        "demographic_fairness": {
+          "apply_masking": true,
+          "sample_count": 600,
+          "mean_top5_jaccard": 1.0,
+          "min_top5_jaccard": 1.0,
+          "mean_kendall_tau": 1.0,
+          "min_kendall_tau": 1.0,
+          "mean_score_delta": 0.0,
+          "max_score_delta": 0.0,
+          "fairlearn_demographic_parity_difference": 0.0,
+          "fairlearn_demographic_parity_ratio": 1.0,
+          "group_selection_rates": {
+            "Pan-India (Gender-Neutral)": 1.0,
+            "East Indian (Odia)": 1.0,
+            "North Indian (Muslim)": 1.0,
+            "West Indian (Marathi)": 1.0,
+            "North Indian (Hindu)": 1.0,
+            "North Indian (Sikh)": 1.0,
+            "South Indian (Telugu)": 1.0,
+            "East Indian (Bengali)": 1.0,
+            "South Indian (Malayali Christian)": 1.0,
+            "South Indian (Kannada)": 1.0,
+            "West Indian (Gujarati)": 1.0,
+            "East Indian (Assamese)": 1.0,
+            "South Indian (Tamil)": 1.0
+          },
+          "dpr_threshold_passed": true,
+          "dpd_threshold_passed": true,
+          "overall_fairness_passed": true
+        },
+        "institution_tier_fairness": {
+          "apply_masking": true,
+          "mean_scores_by_tier": {
+            "tier_1_elite": 20.6542,
+            "tier_2_public_flagship": 20.6542,
+            "tier_3_regional_community": 20.6542
+          },
+          "selection_rates_by_tier": {
+            "tier_1_elite": 1.0,
+            "tier_2_public_flagship": 1.0,
+            "tier_3_regional_community": 1.0
+          },
+          "tier_demographic_parity_difference": 0.0,
+          "tier_demographic_parity_ratio": 1.0,
+          "tier_dpr_threshold_passed": true,
+          "tier_score_gap_t1_minus_t3": 0.0
+        }
+      },
+      "masking_off": {
+        "demographic_fairness": {
+          "apply_masking": false,
+          "sample_count": 600,
+          "mean_top5_jaccard": 1.0,
+          "min_top5_jaccard": 1.0,
+          "mean_kendall_tau": 1.0,
+          "min_kendall_tau": 1.0,
+          "mean_score_delta": 0.0,
+          "max_score_delta": 0.0,
+          "fairlearn_demographic_parity_difference": 0.0,
+          "fairlearn_demographic_parity_ratio": 1.0,
+          "group_selection_rates": {
+            "Pan-India (Gender-Neutral)": 1.0,
+            "East Indian (Odia)": 1.0,
+            "North Indian (Muslim)": 1.0,
+            "West Indian (Marathi)": 1.0,
+            "North Indian (Hindu)": 1.0,
+            "North Indian (Sikh)": 1.0,
+            "South Indian (Telugu)": 1.0,
+            "East Indian (Bengali)": 1.0,
+            "South Indian (Malayali Christian)": 1.0,
+            "South Indian (Kannada)": 1.0,
+            "West Indian (Gujarati)": 1.0,
+            "East Indian (Assamese)": 1.0,
+            "South Indian (Tamil)": 1.0
+          },
+          "dpr_threshold_passed": true,
+          "dpd_threshold_passed": true,
+          "overall_fairness_passed": true
+        },
+        "institution_tier_fairness": {
+          "apply_masking": false,
+          "mean_scores_by_tier": {
+            "tier_1_elite": 20.6542,
+            "tier_2_public_flagship": 20.6542,
+            "tier_3_regional_community": 20.6542
+          },
+          "selection_rates_by_tier": {
+            "tier_1_elite": 1.0,
+            "tier_2_public_flagship": 1.0,
+            "tier_3_regional_community": 1.0
+          },
+          "tier_demographic_parity_difference": 0.0,
+          "tier_demographic_parity_ratio": 1.0,
+          "tier_dpr_threshold_passed": true,
+          "tier_score_gap_t1_minus_t3": 0.0
+        }
+      }
+    },
+    "sbert": {
+      "masking_on": {
+        "demographic_fairness": {
+          "apply_masking": true,
+          "sample_count": 600,
+          "mean_top5_jaccard": 1.0,
+          "min_top5_jaccard": 1.0,
+          "mean_kendall_tau": 1.0,
+          "min_kendall_tau": 1.0,
+          "mean_score_delta": 0.0,
+          "max_score_delta": 0.0,
+          "fairlearn_demographic_parity_difference": 0.0,
+          "fairlearn_demographic_parity_ratio": 1.0,
+          "group_selection_rates": {
+            "Pan-India (Gender-Neutral)": 0.0667,
+            "East Indian (Odia)": 0.0667,
+            "North Indian (Muslim)": 0.0667,
+            "West Indian (Marathi)": 0.0667,
+            "North Indian (Hindu)": 0.0667,
+            "North Indian (Sikh)": 0.0667,
+            "South Indian (Telugu)": 0.0667,
+            "East Indian (Bengali)": 0.0667,
+            "South Indian (Malayali Christian)": 0.0667,
+            "South Indian (Kannada)": 0.0667,
+            "West Indian (Gujarati)": 0.0667,
+            "East Indian (Assamese)": 0.0667,
+            "South Indian (Tamil)": 0.0667
+          },
+          "dpr_threshold_passed": true,
+          "dpd_threshold_passed": true,
+          "overall_fairness_passed": true
+        },
+        "institution_tier_fairness": {
+          "apply_masking": true,
+          "mean_scores_by_tier": {
+            "tier_1_elite": 0.4788,
+            "tier_2_public_flagship": 0.4788,
+            "tier_3_regional_community": 0.4788
+          },
+          "selection_rates_by_tier": {
+            "tier_1_elite": 0.0667,
+            "tier_2_public_flagship": 0.0667,
+            "tier_3_regional_community": 0.0667
+          },
+          "tier_demographic_parity_difference": 0.0,
+          "tier_demographic_parity_ratio": 1.0,
+          "tier_dpr_threshold_passed": true,
+          "tier_score_gap_t1_minus_t3": 0.0
+        }
+      },
+      "masking_off": {
+        "demographic_fairness": {
+          "apply_masking": false,
+          "sample_count": 600,
+          "mean_top5_jaccard": 1.0,
+          "min_top5_jaccard": 1.0,
+          "mean_kendall_tau": 1.0,
+          "min_kendall_tau": 1.0,
+          "mean_score_delta": 0.0,
+          "max_score_delta": 0.0,
+          "fairlearn_demographic_parity_difference": 0.0,
+          "fairlearn_demographic_parity_ratio": 1.0,
+          "group_selection_rates": {
+            "Pan-India (Gender-Neutral)": 0.0667,
+            "East Indian (Odia)": 0.0667,
+            "North Indian (Muslim)": 0.0667,
+            "West Indian (Marathi)": 0.0667,
+            "North Indian (Hindu)": 0.0667,
+            "North Indian (Sikh)": 0.0667,
+            "South Indian (Telugu)": 0.0667,
+            "East Indian (Bengali)": 0.0667,
+            "South Indian (Malayali Christian)": 0.0667,
+            "South Indian (Kannada)": 0.0667,
+            "West Indian (Gujarati)": 0.0667,
+            "East Indian (Assamese)": 0.0667,
+            "South Indian (Tamil)": 0.0667
+          },
+          "dpr_threshold_passed": true,
+          "dpd_threshold_passed": true,
+          "overall_fairness_passed": true
+        },
+        "institution_tier_fairness": {
+          "apply_masking": false,
+          "mean_scores_by_tier": {
+            "tier_1_elite": 0.4788,
+            "tier_2_public_flagship": 0.4788,
+            "tier_3_regional_community": 0.4788
+          },
+          "selection_rates_by_tier": {
+            "tier_1_elite": 0.0667,
+            "tier_2_public_flagship": 0.0667,
+            "tier_3_regional_community": 0.0667
+          },
+          "tier_demographic_parity_difference": 0.0,
+          "tier_demographic_parity_ratio": 1.0,
+          "tier_dpr_threshold_passed": true,
+          "tier_score_gap_t1_minus_t3": 0.0
+        }
+      }
+    },
+    "hybrid": {
+      "masking_on": {
+        "demographic_fairness": {
+          "apply_masking": true,
+          "sample_count": 600,
+          "mean_top5_jaccard": 1.0,
+          "min_top5_jaccard": 1.0,
+          "mean_kendall_tau": 1.0,
+          "min_kendall_tau": 1.0,
+          "mean_score_delta": 0.0,
+          "max_score_delta": 0.0,
+          "fairlearn_demographic_parity_difference": 0.0,
+          "fairlearn_demographic_parity_ratio": 1.0,
+          "group_selection_rates": {
+            "Pan-India (Gender-Neutral)": 1.0,
+            "East Indian (Odia)": 1.0,
+            "North Indian (Muslim)": 1.0,
+            "West Indian (Marathi)": 1.0,
+            "North Indian (Hindu)": 1.0,
+            "North Indian (Sikh)": 1.0,
+            "South Indian (Telugu)": 1.0,
+            "East Indian (Bengali)": 1.0,
+            "South Indian (Malayali Christian)": 1.0,
+            "South Indian (Kannada)": 1.0,
+            "West Indian (Gujarati)": 1.0,
+            "East Indian (Assamese)": 1.0,
+            "South Indian (Tamil)": 1.0
+          },
+          "dpr_threshold_passed": true,
+          "dpd_threshold_passed": true,
+          "overall_fairness_passed": true
+        },
+        "institution_tier_fairness": {
+          "apply_masking": true,
+          "mean_scores_by_tier": {
+            "tier_1_elite": 0.9675,
+            "tier_2_public_flagship": 0.9675,
+            "tier_3_regional_community": 0.9675
+          },
+          "selection_rates_by_tier": {
+            "tier_1_elite": 1.0,
+            "tier_2_public_flagship": 1.0,
+            "tier_3_regional_community": 1.0
+          },
+          "tier_demographic_parity_difference": 0.0,
+          "tier_demographic_parity_ratio": 1.0,
+          "tier_dpr_threshold_passed": true,
+          "tier_score_gap_t1_minus_t3": 0.0
+        }
+      },
+      "masking_off": {
+        "demographic_fairness": {
+          "apply_masking": false,
+          "sample_count": 600,
+          "mean_top5_jaccard": 1.0,
+          "min_top5_jaccard": 1.0,
+          "mean_kendall_tau": 1.0,
+          "min_kendall_tau": 1.0,
+          "mean_score_delta": 0.0,
+          "max_score_delta": 0.0,
+          "fairlearn_demographic_parity_difference": 0.0,
+          "fairlearn_demographic_parity_ratio": 1.0,
+          "group_selection_rates": {
+            "Pan-India (Gender-Neutral)": 1.0,
+            "East Indian (Odia)": 1.0,
+            "North Indian (Muslim)": 1.0,
+            "West Indian (Marathi)": 1.0,
+            "North Indian (Hindu)": 1.0,
+            "North Indian (Sikh)": 1.0,
+            "South Indian (Telugu)": 1.0,
+            "East Indian (Bengali)": 1.0,
+            "South Indian (Malayali Christian)": 1.0,
+            "South Indian (Kannada)": 1.0,
+            "West Indian (Gujarati)": 1.0,
+            "East Indian (Assamese)": 1.0,
+            "South Indian (Tamil)": 1.0
+          },
+          "dpr_threshold_passed": true,
+          "dpd_threshold_passed": true,
+          "overall_fairness_passed": true
+        },
+        "institution_tier_fairness": {
+          "apply_masking": false,
+          "mean_scores_by_tier": {
+            "tier_1_elite": 0.9675,
+            "tier_2_public_flagship": 0.9675,
+            "tier_3_regional_community": 0.9675
+          },
+          "selection_rates_by_tier": {
+            "tier_1_elite": 1.0,
+            "tier_2_public_flagship": 1.0,
+            "tier_3_regional_community": 1.0
+          },
+          "tier_demographic_parity_difference": 0.0,
+          "tier_demographic_parity_ratio": 1.0,
+          "tier_dpr_threshold_passed": true,
+          "tier_score_gap_t1_minus_t3": 0.0
+        }
+      }
+    },
+    "composite_xgb": {
+      "masking_on": {
+        "demographic_fairness": {
+          "apply_masking": true,
+          "sample_count": 600,
+          "mean_top5_jaccard": 1.0,
+          "min_top5_jaccard": 1.0,
+          "mean_kendall_tau": 1.0,
+          "min_kendall_tau": 1.0,
+          "mean_score_delta": 0.0,
+          "max_score_delta": 0.0,
+          "fairlearn_demographic_parity_difference": 0.0,
+          "fairlearn_demographic_parity_ratio": 1.0,
+          "group_selection_rates": {
+            "Pan-India (Gender-Neutral)": 0.1333,
+            "East Indian (Odia)": 0.1333,
+            "North Indian (Muslim)": 0.1333,
+            "West Indian (Marathi)": 0.1333,
+            "North Indian (Hindu)": 0.1333,
+            "North Indian (Sikh)": 0.1333,
+            "South Indian (Telugu)": 0.1333,
+            "East Indian (Bengali)": 0.1333,
+            "South Indian (Malayali Christian)": 0.1333,
+            "South Indian (Kannada)": 0.1333,
+            "West Indian (Gujarati)": 0.1333,
+            "East Indian (Assamese)": 0.1333,
+            "South Indian (Tamil)": 0.1333
+          },
+          "dpr_threshold_passed": true,
+          "dpd_threshold_passed": true,
+          "overall_fairness_passed": true
+        },
+        "institution_tier_fairness": {
+          "apply_masking": true,
+          "mean_scores_by_tier": {
+            "tier_1_elite": 0.5092,
+            "tier_2_public_flagship": 0.5092,
+            "tier_3_regional_community": 0.5092
+          },
+          "selection_rates_by_tier": {
+            "tier_1_elite": 0.1333,
+            "tier_2_public_flagship": 0.1333,
+            "tier_3_regional_community": 0.1333
+          },
+          "tier_demographic_parity_difference": 0.0,
+          "tier_demographic_parity_ratio": 1.0,
+          "tier_dpr_threshold_passed": true,
+          "tier_score_gap_t1_minus_t3": 0.0
+        }
+      },
+      "masking_off": {
+        "demographic_fairness": {
+          "apply_masking": false,
+          "sample_count": 600,
+          "mean_top5_jaccard": 1.0,
+          "min_top5_jaccard": 1.0,
+          "mean_kendall_tau": 1.0,
+          "min_kendall_tau": 1.0,
+          "mean_score_delta": 0.0,
+          "max_score_delta": 0.0,
+          "fairlearn_demographic_parity_difference": 0.0,
+          "fairlearn_demographic_parity_ratio": 1.0,
+          "group_selection_rates": {
+            "Pan-India (Gender-Neutral)": 0.1333,
+            "East Indian (Odia)": 0.1333,
+            "North Indian (Muslim)": 0.1333,
+            "West Indian (Marathi)": 0.1333,
+            "North Indian (Hindu)": 0.1333,
+            "North Indian (Sikh)": 0.1333,
+            "South Indian (Telugu)": 0.1333,
+            "East Indian (Bengali)": 0.1333,
+            "South Indian (Malayali Christian)": 0.1333,
+            "South Indian (Kannada)": 0.1333,
+            "West Indian (Gujarati)": 0.1333,
+            "East Indian (Assamese)": 0.1333,
+            "South Indian (Tamil)": 0.1333
+          },
+          "dpr_threshold_passed": true,
+          "dpd_threshold_passed": true,
+          "overall_fairness_passed": true
+        },
+        "institution_tier_fairness": {
+          "apply_masking": false,
+          "mean_scores_by_tier": {
+            "tier_1_elite": 0.5092,
+            "tier_2_public_flagship": 0.5092,
+            "tier_3_regional_community": 0.5092
+          },
+          "selection_rates_by_tier": {
+            "tier_1_elite": 0.1333,
+            "tier_2_public_flagship": 0.1333,
+            "tier_3_regional_community": 0.1333
+          },
+          "tier_demographic_parity_difference": 0.0,
+          "tier_demographic_parity_ratio": 1.0,
+          "tier_dpr_threshold_passed": true,
+          "tier_score_gap_t1_minus_t3": 0.0
+        }
+      }
+    }
+  },
+  "positive_controls": {
+    "demographic_biased_ranker": {
+      "audit": {
+        "apply_masking": false,
+        "sample_count": 600,
+        "mean_top5_jaccard": 1.0,
+        "min_top5_jaccard": 1.0,
+        "mean_kendall_tau": 1.0,
+        "min_kendall_tau": 1.0,
+        "mean_score_delta": 0.12514,
+        "max_score_delta": 0.35,
+        "fairlearn_demographic_parity_difference": 1.0,
+        "fairlearn_demographic_parity_ratio": 0.0,
+        "group_selection_rates": {
+          "Pan-India (Gender-Neutral)": 1.0,
+          "East Indian (Odia)": 0.0,
+          "North Indian (Muslim)": 1.0,
+          "West Indian (Marathi)": 1.0,
+          "North Indian (Hindu)": 1.0,
+          "North Indian (Sikh)": 1.0,
+          "South Indian (Telugu)": 1.0,
+          "East Indian (Bengali)": 0.0,
+          "South Indian (Malayali Christian)": 0.1667,
+          "South Indian (Kannada)": 1.0,
+          "West Indian (Gujarati)": 1.0,
+          "East Indian (Assamese)": 0.0,
+          "South Indian (Tamil)": 1.0
+        },
+        "dpr_threshold_passed": false,
+        "dpd_threshold_passed": false,
+        "overall_fairness_passed": false
+      },
+      "failed_as_expected": true,
+      "failure_reason": "DPR below 0.80 threshold and DPD above 0.10 threshold under Indian demographic perturbations."
+    },
+    "institution_prestige_biased_ranker": {
+      "audit": {
+        "apply_masking": false,
+        "mean_scores_by_tier": {
+          "tier_1_elite": 0.99,
+          "tier_2_public_flagship": 0.9651,
+          "tier_3_regional_community": 0.6175
+        },
+        "selection_rates_by_tier": {
+          "tier_1_elite": 1.0,
+          "tier_2_public_flagship": 1.0,
+          "tier_3_regional_community": 0.0
+        },
+        "tier_demographic_parity_difference": 1.0,
+        "tier_demographic_parity_ratio": 0.0,
+        "tier_dpr_threshold_passed": false,
+        "tier_score_gap_t1_minus_t3": 0.3725
+      },
+      "failed_as_expected": true,
+      "failure_reason": "Tier DPR below 0.80 and substantial Tier 1 vs Tier 3 score gap."
+    }
+  }
+}

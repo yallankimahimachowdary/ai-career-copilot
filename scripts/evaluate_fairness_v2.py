@@ -4,7 +4,7 @@ Fairness Evaluation Harness with Fairlearn Metrics & Positive Controls (Remediat
 
 Evaluates:
 1. Production CompositeXGBRanker & HybridRanker across 30 synthetic resumes x 20 demographic perturbations.
-2. Fairlearn metrics: Demographic Parity Difference (DPD), Demographic Parity Ratio (DPR, 4/5ths rule),
+2. Fairlearn metrics: Demographic Parity Difference (DPD), Demographic Parity Ratio (DPR, threshold >= 0.80),
    and group selection rates.
 3. Continuous ranking invariance: top-10 Kendall tau, top-5 Jaccard overlap, and score delta.
 4. Educational institution tier sensitivity (Tier 1 Elite, Tier 2 Flagship, Tier 3 Community/Regional)
@@ -55,7 +55,7 @@ class DemographicBiasedRanker(BaseRanker):
     """Positive Control Ranker: intentionally penalizes underrepresented demographic names.
 
     Used to verify that the fairness test harness correctly detects bias and fails
-    the 4/5ths rule (DPR < 0.80) when real algorithmic disparity exists.
+    the DPR threshold (DPR < 0.80) when real algorithmic disparity exists.
     """
 
     def __init__(self, base_ranker: BaseRanker, name: str = "biased_control_demographic"):
@@ -76,11 +76,11 @@ class DemographicBiasedRanker(BaseRanker):
 
         # Injected deliberate bias
         bias_delta = 0.0
-        if "White" in demo_group or any(n in name_str for n in ["Brad", "Todd", "Emily", "Claire"]):
+        if "White" in demo_group or any(n in name_str for n in ["Brad", "Todd", "Emily", "Claire"]) or "North Indian (Hindu)" in demo_group or any(n in name_str for n in ["Vikramaditya", "Aaradhya"]):
             bias_delta = +0.35
-        elif "Black" in demo_group or any(n in name_str for n in ["Jamal", "Darnell", "Ebony", "Latoya"]):
+        elif "Black" in demo_group or any(n in name_str for n in ["Jamal", "Darnell", "Ebony", "Latoya"]) or "East Indian" in demo_group or any(n in name_str for n in ["Soumyajit", "Debolina", "Nilav", "Ipsita"]):
             bias_delta = -0.35
-        elif "Hispanic" in demo_group or any(n in name_str for n in ["Mateo", "Diego", "Sofia", "Camila"]):
+        elif "Hispanic" in demo_group or any(n in name_str for n in ["Mateo", "Diego", "Sofia", "Camila"]) or "South Indian (Malayali Christian)" in demo_group or any(n in name_str for n in ["Robin", "Ancy"]):
             bias_delta = -0.30
 
         biased_scores = {}
@@ -270,7 +270,7 @@ def run_demographic_fairness_audit(
         grp_preds = [y_pred_selection[i] for i, g in enumerate(sensitive_groups) if g == grp]
         group_rates[grp] = float(np.mean(grp_preds)) if grp_preds else 0.0
 
-    four_fifths_passed = bool(dp_ratio >= 0.80)
+    dpr_passed = bool(dp_ratio >= 0.80)
     dpd_passed = bool(dp_diff <= 0.10)
 
     return {
@@ -285,9 +285,9 @@ def run_demographic_fairness_audit(
         "fairlearn_demographic_parity_difference": round(dp_diff, 4),
         "fairlearn_demographic_parity_ratio": round(dp_ratio, 4),
         "group_selection_rates": {k: round(v, 4) for k, v in group_rates.items()},
-        "four_fifths_rule_passed": four_fifths_passed,
+        "dpr_threshold_passed": dpr_passed,
         "dpd_threshold_passed": dpd_passed,
-        "overall_fairness_passed": bool(four_fifths_passed and dpd_passed and np.mean(all_taus) >= 0.90),
+        "overall_fairness_passed": bool(dpr_passed and dpd_passed and np.mean(all_taus) >= 0.90),
     }
 
 
@@ -362,7 +362,7 @@ def run_institution_tier_audit(
         "selection_rates_by_tier": selection_rates,
         "tier_demographic_parity_difference": round(dp_diff, 4),
         "tier_demographic_parity_ratio": round(dp_ratio, 4),
-        "four_fifths_passed": bool(dp_ratio >= 0.80),
+        "tier_dpr_threshold_passed": bool(dp_ratio >= 0.80),
         "tier_score_gap_t1_minus_t3": round(mean_scores["tier_1_elite"] - mean_scores["tier_3_regional_community"], 4),
     }
 
@@ -478,14 +478,14 @@ def main():
     print(f"  Control A Overall Passed: {biased_demo_audit['overall_fairness_passed']}")
 
     # Positive control MUST fail
-    assert not biased_demo_audit["four_fifths_rule_passed"], "Test harness error: Biased Control A passed 4/5ths rule!"
+    assert not biased_demo_audit["dpr_threshold_passed"], "Test harness error: Biased Control A passed DPR threshold!"
     assert biased_demo_audit["fairlearn_demographic_parity_difference"] > 0.10, "Test harness error: Biased Control A passed DPD threshold!"
     print("  -> Positive Control A successfully FAILED as required (proving harness sensitivity to bias).")
 
     results["positive_controls"]["demographic_biased_ranker"] = {
         "audit": biased_demo_audit,
         "failed_as_expected": True,
-        "failure_reason": "DPR below 0.80 four-fifths rule and DPD above 0.10 threshold.",
+        "failure_reason": "DPR below 0.80 threshold and DPD above 0.10 threshold.",
     }
 
     # -------------------------------------------------------------
@@ -497,7 +497,7 @@ def main():
     print(f"  Control B Tier DPR: {biased_inst_audit['tier_demographic_parity_ratio']} (Expected < 0.80)")
     print(f"  Control B Tier Gap (T1 - T3): {biased_inst_audit['tier_score_gap_t1_minus_t3']} (Expected > 0.05)")
 
-    assert not biased_inst_audit["four_fifths_passed"], "Test harness error: Prestige Biased Control B passed 4/5ths rule!"
+    assert not biased_inst_audit["tier_dpr_threshold_passed"], "Test harness error: Prestige Biased Control B passed DPR threshold!"
     assert biased_inst_audit["tier_score_gap_t1_minus_t3"] > 0.05, "Test harness error: Prestige Biased Control B did not exhibit score gap!"
     print("  -> Positive Control B successfully FAILED as required (proving harness sensitivity to prestige bias).")
 

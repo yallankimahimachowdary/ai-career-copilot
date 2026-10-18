@@ -2,13 +2,14 @@ import React, { useState, useRef, useEffect } from "react"
 import {
   X,
   Send,
-  Sparkles,
   Bot,
   Loader2,
   Compass,
   ArrowRight,
   AlertCircle,
   RotateCcw,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -35,10 +36,13 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
   ])
   const [inputQuery, setInputQuery] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [expandedTraces, setExpandedTraces] = useState({})
   const messagesEndRef = useRef(null)
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    if (typeof messagesEndRef.current?.scrollIntoView === "function") {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+    }
   }
 
   useEffect(() => {
@@ -65,6 +69,23 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
           .map((m) => ({ role: m.role, content: m.content })),
       })
 
+      const trace = (response.sources || []).find((s) => s.type === "orchestrator_trace")
+      const isDegraded = !!(
+        response.degraded ||
+        (trace && (trace.status?.startsWith("degraded") || (trace.errors && trace.errors.some((e) => !e.recovered))))
+      )
+      const degradedStatus = response.degraded || (trace ? trace.status : null) || (isDegraded ? "degraded" : null)
+
+      const isMatchUnavailable = !!(
+        response.match_unavailable ||
+        (response.response && response.response.includes("Job matching is currently unavailable"))
+      )
+
+      const isNoMatchingJobs = !!(
+        response.no_matching_jobs ||
+        (response.response && response.response.includes("no matching jobs qualify"))
+      )
+
       setMessages((prev) => [
         ...prev,
         {
@@ -74,6 +95,10 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
           sources: response.sources,
           actionable_recommendations: response.actionable_recommendations,
           suggested_followups: response.suggested_followups,
+          execution_trace: response.execution_trace || trace,
+          degraded: isDegraded ? degradedStatus : null,
+          match_unavailable: isMatchUnavailable,
+          no_matching_jobs: isNoMatchingJobs,
         },
       ])
     } catch (err) {
@@ -150,18 +175,64 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
               m.role === "user" ? "items-end" : "items-start"
             }`}
           >
-            {/* Intent Router Strategy Badge */}
+            {/* Intent Router Strategy & Decision Badges */}
             {m.role === "assistant" && m.router_decision && (
-              <div className="flex items-center gap-1.5 text-[10px] text-[#5C5C7A] bg-[#EDE7F6] px-2 py-0.5 rounded-full border border-[#DDD6E7]">
-                <Compass className="h-3 w-3 text-[#7A2D4A]" />
-                <span className="font-semibold text-[#7A2D4A]">
-                  {m.router_decision.strategy_selected || m.router_decision.intent}
-                </span>
-                {m.router_decision.confidence && (
-                  <span className="font-mono text-[#5C5C7A]">
-                    ({Math.round(m.router_decision.confidence * 100)}% conf)
+              <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-[#5C5C7A]">
+                <div className="flex items-center gap-1.5 bg-[#EDE7F6] px-2 py-0.5 rounded-full border border-[#DDD6E7]">
+                  <Compass className="h-3 w-3 text-[#7A2D4A]" />
+                  <span className="font-semibold text-[#7A2D4A]">
+                    {m.router_decision.strategy_selected || m.router_decision.intent}
+                  </span>
+                  {m.router_decision.confidence != null && (
+                    <span className="font-mono text-[#5C5C7A]">
+                      ({Math.round(m.router_decision.confidence * 100)}% conf)
+                    </span>
+                  )}
+                </div>
+
+                {m.router_decision.backend && (
+                  <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full border border-slate-200 capitalize font-medium">
+                    Backend: {m.router_decision.backend}
                   </span>
                 )}
+
+                {m.router_decision.low_confidence && (
+                  <span className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full border border-amber-300 font-semibold">
+                    Low Confidence
+                  </span>
+                )}
+
+                {m.router_decision.fallback_used && (
+                  <span className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full border border-amber-300 font-semibold">
+                    Fallback Used
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Degraded Execution Banner */}
+            {m.role === "assistant" && (m.degraded || (m.execution_trace?.status?.startsWith("degraded"))) && (
+              <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-300 text-xs text-amber-900 flex items-start gap-2 max-w-[88%] shadow-xs">
+                <AlertCircle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="font-semibold">Degraded Execution: </strong>
+                  <span>{m.degraded || m.execution_trace?.status || "One or more agent nodes experienced a failure; fallback output provided."}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Distinct Match Availability Notices */}
+            {m.role === "assistant" && m.match_unavailable && (
+              <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800 flex items-start gap-2 max-w-[88%] shadow-xs">
+                <AlertCircle className="h-4 w-4 text-rose-600 shrink-0 mt-0.5" />
+                <span><strong>Notice:</strong> Job matching is currently unavailable in this session.</span>
+              </div>
+            )}
+
+            {m.role === "assistant" && m.no_matching_jobs && !m.match_unavailable && (
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 flex items-start gap-2 max-w-[88%] shadow-xs">
+                <Compass className="h-4 w-4 text-slate-500 shrink-0 mt-0.5" />
+                <span>No matching job postings found meeting current requirements.</span>
               </div>
             )}
 
@@ -274,6 +345,92 @@ export function CopilotChatDrawer({ activeResume, isOpen, onToggle }) {
                 </div>
               </div>
             )}
+
+            {/* Collapsible Execution Trace Panel */}
+            {m.role === "assistant" && (m.execution_trace || (m.sources && m.sources.some((s) => s.type === "orchestrator_trace"))) && (() => {
+              const trace = m.execution_trace || m.sources.find((s) => s.type === "orchestrator_trace")
+              const isExpanded = !!expandedTraces[idx]
+              return (
+                <div className="max-w-[88%] w-full space-y-1">
+                  <button
+                    type="button"
+                    onClick={() => setExpandedTraces((prev) => ({ ...prev, [idx]: !prev[idx] }))}
+                    className="flex items-center gap-1.5 text-[11px] font-mono text-[#5C5C7A] hover:text-[#7A2D4A] cursor-pointer"
+                  >
+                    <span>{isExpanded ? "Hide Execution Trace" : "View Execution Trace"}</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#EDE7F6] text-[#7A2D4A] font-semibold">
+                      {trace.status || "completed"}
+                    </span>
+                    {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                  </button>
+
+                  {isExpanded && (
+                    <div className="p-3 rounded-xl bg-[#FAF7F3] border border-[#DDD6E7] text-[11px] space-y-2 font-mono">
+                      <div className="flex items-center justify-between text-[#3A3A52]">
+                        <span>Backend: <strong>{trace.backend || "langgraph"}</strong></span>
+                        <span>Status: <strong>{trace.status || "success"}</strong></span>
+                      </div>
+
+                      {trace.completed_nodes && trace.completed_nodes.length > 0 && (
+                        <div>
+                          <span className="text-[#5C5C7A] block text-[10px] uppercase font-semibold">Node Sequence:</span>
+                          <div className="flex flex-wrap items-center gap-1 pt-0.5">
+                            {trace.completed_nodes.map((node, nIdx) => (
+                              <React.Fragment key={nIdx}>
+                                <span className="px-1.5 py-0.5 rounded bg-white border border-[#DDD6E7] text-[#3A3A52]">
+                                  {node}
+                                </span>
+                                {nIdx < trace.completed_nodes.length - 1 && <span className="text-[#5C5C7A]">➔</span>}
+                              </React.Fragment>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {trace.node_timings_ms && Object.keys(trace.node_timings_ms).length > 0 && (
+                        <div>
+                          <span className="text-[#5C5C7A] block text-[10px] uppercase font-semibold">Latency Timings:</span>
+                          <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 pt-0.5">
+                            {Object.entries(trace.node_timings_ms).map(([node, ms]) => (
+                              <div key={node} className="flex justify-between text-[#5C5C7A]">
+                                <span>{node}:</span>
+                                <span className="text-[#3A3A52] font-semibold">{ms}ms</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {trace.retries && Object.keys(trace.retries).length > 0 && (
+                        <div>
+                          <span className="text-[#5C5C7A] block text-[10px] uppercase font-semibold">Retries:</span>
+                          <div className="flex flex-wrap gap-2 pt-0.5">
+                            {Object.entries(trace.retries).map(([node, cnt]) => (
+                              <span key={node} className="text-[#3A3A52]">
+                                {node}: {cnt}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {trace.errors && trace.errors.length > 0 && (
+                        <div className="space-y-1 pt-1 border-t border-[#DDD6E7]">
+                          <span className="text-red-700 block text-[10px] uppercase font-semibold">Recorded Node Errors:</span>
+                          {trace.errors.map((err, eIdx) => (
+                            <div key={eIdx} className="text-[10px] text-red-700 bg-red-50 p-1.5 rounded border border-red-200">
+                              <div><strong>{err.node || "agent"}:</strong> {err.message || err.error}</div>
+                              {err.host_port && <div className="text-[9px] text-red-600">Endpoint: {err.host_port}</div>}
+                              <div className="text-[9px]">Recovered: {err.recovered ? "Yes" : "No"}</div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )
+            })()}
 
             {/* Actionable Recommendations */}
             {m.actionable_recommendations && m.actionable_recommendations.length > 0 && (

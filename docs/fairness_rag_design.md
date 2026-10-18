@@ -85,9 +85,9 @@ Let $Y \in \{0, 1\}$ denote the binary hiring decision (top-$k$ selection where 
 2. **Demographic Parity Difference (DPD)**:
    $$\text{DPD} = \max_{a, b} |\text{SR}(A = a) - \text{SR}(A = b)|$$
    *Threshold*: A fair system maintains $\text{DPD} < 0.10$ across all demographic groups.
-3. **Demographic Parity Ratio (DPR)** (The Four-Fifths Rule):
+3. **Demographic Parity Ratio (DPR)**:
    $$\text{DPR} = \frac{\min_{a} \text{SR}(A = a)}{\max_{a} \text{SR}(A = a)}$$
-   *Threshold*: In accordance with the EEOC Uniform Guidelines on Employee Selection Procedures (29 C.F.R. § 1607.4(D)), $\text{DPR} \ge 0.80$ satisfies the four-fifths rule. Values below $0.80$ indicate disparate impact.
+   *Threshold*: $\text{DPR} \ge 0.80$. Values below $0.80$ indicate significant disparity in selection rates across demographic groups.
 4. **Equalized Odds Difference (EOD)**:
    Given ground-truth qualification $Y^*$:
    $$\text{EOD} = \max \left( |\text{FPR}_a - \text{FPR}_b|, |\text{TPR}_a - \text{TPR}_b| \right)$$
@@ -102,7 +102,7 @@ Let $Y \in \{0, 1\}$ denote the binary hiring decision (top-$k$ selection where 
 
 | Metric | Fair / Passing Threshold | Warning Level | Failing / Biased |
 |:---|:---|:---|:---|
-| **Demographic Parity Ratio (DPR)** | $\ge 0.80$ (EEOC 4/5ths) | $0.70 \le \text{DPR} < 0.80$ | $< 0.70$ |
+| **Demographic Parity Ratio (DPR)** | $\ge 0.80$ | $0.70 \le \text{DPR} < 0.80$ | $< 0.70$ |
 | **Demographic Parity Difference (DPD)** | $\le 0.10$ | $0.10 < \text{DPD} \le 0.15$ | $> 0.15$ |
 | **Counterfactual Kendall $\tau$** | $\ge 0.95$ | $0.85 \le \tau < 0.95$ | $< 0.85$ |
 | **Top-5 Jaccard Stability** | $\ge 0.90$ | $0.75 \le J < 0.90$ | $< 0.75$ |
@@ -117,7 +117,7 @@ To prevent "vacuous passes" where a broken evaluation pipeline reports 100% fair
 ### 3.1 Control A: Biased Ranker Simulation
 A synthetic scoring function artificially penalizes candidates with specific demographic name tokens (e.g. subtracting 0.35 from match scores for African American or Hispanic names, or boosting White names):
 - **Expected Outcome**:
-  - $\text{DPR} < 0.60$ (violating the 0.80 EEOC threshold).
+  - $\text{DPR} < 0.60$ (violating the 0.80 threshold).
   - $\text{DPD} > 0.25$ (violating the 0.10 threshold).
   - Kendall $\tau < 0.70$.
 - **Verification Rule**: The test harness asserts that Control A fails fairness checks. If Control A passes, the test harness is defective and the suite halts.

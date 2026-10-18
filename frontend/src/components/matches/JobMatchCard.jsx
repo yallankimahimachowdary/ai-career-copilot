@@ -105,7 +105,7 @@ export function JobMatchCard({ match, onSelect }) {
                 </span>
                 <span className="flex items-center gap-1">
                   <MapPin className="h-3.5 w-3.5 text-[#5C5C7A]" />
-                  {match.location || "Location not specified"}
+                  {match.location || "Not specified"}
                 </span>
               </div>
             </div>

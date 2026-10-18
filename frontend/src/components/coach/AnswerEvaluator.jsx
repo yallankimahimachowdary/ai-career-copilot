@@ -10,6 +10,7 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import { InterviewRubricRadar } from "./InterviewRubricRadar"
 
 export function AnswerEvaluator({ evaluation }) {
   if (!evaluation) return null
@@ -54,23 +55,28 @@ export function AnswerEvaluator({ evaluation }) {
       </CardHeader>
 
       <CardContent className="space-y-6 pt-2">
-        {/* Rubric Breakdown Progress Bars */}
+        {/* Rubric Breakdown & Radar Visualisation */}
         {Object.keys(rubric_breakdown).length > 0 && (
-          <div className="p-4 rounded-xl bg-[#FAF7F3] border border-[#DDD6E7] space-y-3">
+          <div className="p-4 rounded-xl bg-[#FAF7F3] border border-[#DDD6E7] space-y-4">
             <h4 className="text-xs font-semibold text-[#3A3A52] flex items-center gap-2">
               <BarChart className="h-3.5 w-3.5 text-[#7A2D4A]" />
-              Rubric Dimension Breakdown
+              Rubric Dimension Breakdown & Radar Visualisation
             </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-              {Object.entries(rubric_breakdown).map(([dim, val]) => (
-                <div key={dim} className="space-y-1">
-                  <div className="flex justify-between text-xs font-medium">
-                    <span className="text-[#5C5C7A] capitalize">{dim.replace(/_/g, " ")}</span>
-                    <span className="font-mono text-[#7A2D4A] font-bold">{val.toFixed(1)} / 10</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+              <div>
+                <InterviewRubricRadar rubric={rubric_breakdown} height={240} />
+              </div>
+              <div className="space-y-3">
+                {Object.entries(rubric_breakdown).map(([dim, val]) => (
+                  <div key={dim} className="space-y-1">
+                    <div className="flex justify-between text-xs font-medium">
+                      <span className="text-[#5C5C7A] capitalize">{dim.replace(/_/g, " ")}</span>
+                      <span className="font-mono text-[#7A2D4A] font-bold">{val.toFixed(1)} / 10</span>
+                    </div>
+                    <Progress value={val} max={10} indicatorClassName="bg-[#7A2D4A]" />
                   </div>
-                  <Progress value={val} max={10} indicatorClassName="bg-[#7A2D4A]" />
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         )}

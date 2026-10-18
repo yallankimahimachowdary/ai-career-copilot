@@ -101,7 +101,7 @@ This document provides a transparent, technically precise accounting of known sy
 - **Status & Scope:**
   - In earlier project iterations, demographic invariance audits evaluated candidate name substitutions exclusively on candidate name fields. Because no production ranker reads candidate personal names, reported invariance was $1.0$ by construction and could not fail.
   - In Remediation R6, the fairness evaluation harness was redesigned to include verified positive controls that **must fail** when ranking bias is present:
-    - **Demographic Disparity**: Evaluated using the official `fairlearn` package (`fairlearn==0.15.0`). Computes Demographic Parity Difference (DPD) and Demographic Parity Ratio (DPR, 4/5ths rule threshold $\ge 0.80$). Production rankers with anonymization enabled achieve $\text{DPD} = 0.0$ and $\text{DPR} = 1.0$.
+    - **Demographic Disparity**: Evaluated using the official `fairlearn` package (`fairlearn==0.15.0`). Computes Demographic Parity Difference (DPD) and Demographic Parity Ratio (DPR, threshold $\ge 0.80$). Production rankers with anonymization enabled achieve $\text{DPD} = 0.0$ and $\text{DPR} = 1.0$.
     - **Positive Control A (`DemographicBiasedRanker`)**: Injects deliberate scoring penalties and boosts across demographic groups. Verified to fail the audit ($\text{DPD} = 0.8333 > 0.10$, $\text{DPR} = 0.0 < 0.80$).
     - **Institution-Tier Fairness**: Evaluates 24 universities across 3 tiers (Tier 1 Elite, Tier 2 Public Flagship, Tier 3 Regional/Community). While production anonymization strips educational institutions to eliminate prestige bias ($\text{Tier Gap} = 0.0$), **Positive Control B (`InstitutionPrestigeBiasedRanker`)** intentionally penalizes non-elite schools and fails the prestige fairness threshold ($\text{Tier Gap} = 0.3725 > 0.05$, $\text{Tier DPR} = 0.0 < 0.80$).
   - **Sequential Orchestrator Heuristic Ranking Disclaimer**: In `app/services/orchestrator.py`, the sequential pipeline computes a local skill-overlap heuristic rather than invoking the full ML-based `matcher_service`. This is maintained for minimal-dependency sequential pipelines, while the primary production path in `app/services/graph_orchestrator.py` uses the full feature-extracted XGBoost ranker.
@@ -166,21 +166,23 @@ This document provides a transparent, technically precise accounting of known sy
   - [`tests/test_migrations.py`](../tests/test_migrations.py)
   - [`frontend/test/`](../frontend/test/)
 - **Status & Scope:**
-  - Backend integration tests use mocked database sessions; the migration test checks the chain only; no browser automation exists; frontend tests re-implement logic.
+  - Backend integration tests use mocked database sessions; migration tests check chain consistency; no browser automation (e.g. Playwright/Cypress) is used.
   - End-to-end tests exercise FastAPI endpoints with dependency injection overrides rather than live external PostgreSQL and Neo4j instances.
-  - Frontend test suites execute with Node's native test runner (`node --test`) against unit assertions, without end-to-end browser drivers (e.g., Playwright or Cypress).
+  - In Remediation R7, frontend testing was completely overhauled: the legacy `frontend_workflows.test.mjs` (which simulated interceptors internally without importing app source) was replaced with 47 real component tests using Vitest, `@testing-library/react`, and JSDOM. Tests import real production modules (`client.js`, `CopilotChatDrawer.jsx`, `MatchDashboard.jsx`, `InterviewRubricRadar.jsx`, `RolePathwayViewer.jsx`, etc.) and verify DOM rendering, user interactions, error handling, and session expiration directly.
 
 ---
 
-## 11. Visualization Components: Production vs. Prototypes
+## 11. Visualization Components & Radar Rubrics
 - **Relevant Files:**
   - [`frontend/src/components/analytics/ShapWaterfall.jsx`](../frontend/src/components/analytics/ShapWaterfall.jsx)
   - [`frontend/src/components/analytics/SalaryDistribution.jsx`](../frontend/src/components/analytics/SalaryDistribution.jsx)
-  - [`frontend/src/demo/demoData.js`](../frontend/src/demo/demoData.js)
+  - [`frontend/src/components/coach/InterviewRubricRadar.jsx`](../frontend/src/components/coach/InterviewRubricRadar.jsx)
+  - [`frontend/src/components/market/RolePathwayViewer.jsx`](../frontend/src/components/market/RolePathwayViewer.jsx)
   - [`README.md`](../README.md)
 - **Status & Scope:**
   - The web frontend visualizes TreeSHAP feature attributions (diverging horizontal bars) and market compensation distributions (histograms) using Recharts.
-  - Mentions of "radar rubrics" in historical documentation represent conceptual prototypes for multi-dimensional interview skill scoring. Interactive practice interview results are rendered via structured rubric progress bars and scorecards rather than polygonal radar plots.
+  - In Remediation R7, the missing interview rubric radar chart was implemented in `InterviewRubricRadar.jsx`. Built using Recharts `RadarChart` (with `PolarGrid`, `PolarAngleAxis`, `PolarRadiusAxis`, and `Radar`), it plots candidate performance across Technical Accuracy, Depth, Structure, and Specificity. It complies with WCAG accessibility standards by providing `role="img"`, an explicit `aria-label`, and an accessible HTML table fallback for screen readers and test runners.
+  - Graph-based career progression is visualized in `RolePathwayViewer.jsx`, rendering interactive sequence nodes, transition types (`lateral` vs `promotion`), and bridge skills queried from the Neo4j knowledge graph (`GET /api/v1/graph/role-pathway`).
 
 ---
 
@@ -214,3 +216,26 @@ This document provides a transparent, technically precise accounting of known sy
 - **Status & Scope:**
   - When configured with Google Gemini (`GEMINI_API_KEY`) or OpenAI (`OPENAI_API_KEY`), the application makes external API calls that consume API credits subject to vendor rate limits and pricing.
   - Zero-Cost Operation: For fully local or cost-free deployments, the system natively supports local Ollama models (`llama3.2:3b`) or rule-based heuristic fallbacks. All automated unit and regression tests run without external network access or LLM credentials.
+
+---
+
+## 14. Frontend State Transparency & Honest Degradation
+- **Relevant Files:**
+  - [`frontend/src/App.jsx`](../frontend/src/App.jsx)
+  - [`frontend/src/components/chat/CopilotChatDrawer.jsx`](../frontend/src/components/chat/CopilotChatDrawer.jsx)
+  - [`frontend/src/components/matches/MatchDashboard.jsx`](../frontend/src/components/matches/MatchDashboard.jsx)
+  - [`frontend/src/components/matches/JobMatchCard.jsx`](../frontend/src/components/matches/JobMatchCard.jsx)
+  - [`frontend/src/components/coach/SkillGapReport.jsx`](../frontend/src/components/coach/SkillGapReport.jsx)
+  - [`frontend/src/components/coach/QuestionBank.jsx`](../frontend/src/components/coach/QuestionBank.jsx)
+  - [`frontend/src/components/market/TrendingSkills.jsx`](../frontend/src/components/market/TrendingSkills.jsx)
+  - [`frontend/src/demo/demoData.js`](../frontend/src/demo/demoData.js)
+- **Status & Scope:**
+  - Prior to Remediation R7, frontend components contained catch handlers that silently substituted fake demo matches and mock market positioning data on network or backend service failures, obscuring outages and degraded states.
+  - In R7, silent demo fallback was completely eliminated:
+    - `frontend/src/demo/demoData.js` is isolated and only accessible when the user explicitly configures `VITE_DEMO_MODE=true`. When active, a persistent, prominent warning banner indicates simulated demo mode.
+    - Matcher states are strictly differentiated: service outages display an honest error banner (`match_unavailable`), while empty result sets display an explicit `no_matching_jobs` notice rather than invented vacancies.
+    - Missing job metadata (`company_name`, `location`) renders explicitly as `"Not specified"` rather than substituting synthetic defaults like `"Tech Employer"` or `"Remote"`.
+    - Chat interactions render real backend execution traces, intent router badges (`backend`, `confidence`, `fallback_used`), and degraded execution warning banners naming failed pipeline nodes.
+    - Market trends display dynamic demand share percentages and velocity deltas, explicitly displaying `N/A (single baseline period)` when velocity is undefined.
+    - Interview coaching explicitly tags question provenance (`"Corpus Retrieved"` vs `"Rule-Based Fallback"`) and distinguishes verified external learning resources from unlinked skills (`"Self-study / Documentation"`).
+

@@ -10,6 +10,7 @@ import {
   Loader2,
   AlertCircle,
   ShieldCheck,
+  GitFork,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -21,6 +22,7 @@ import { TrendingSkills } from "./TrendingSkills"
 import { DemandHeatmap } from "./DemandHeatmap"
 import { ResumePositioning } from "./ResumePositioning"
 import { JobFreshnessTracker } from "./JobFreshnessTracker"
+import { RolePathwayViewer } from "./RolePathwayViewer"
 import { getCandidateDomainRole } from "@/pages/MarketPage"
 
 export function MarketDashboard({
@@ -118,7 +120,7 @@ export function MarketDashboard({
 
       {/* Sub-tabs Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 w-full">
+        <TabsList className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 w-full">
           <TabsTrigger value="overview" className="text-xs">
             <PieChart className="h-3.5 w-3.5 mr-1.5 text-[#7A2D4A]" />
             Role Overview
@@ -130,6 +132,10 @@ export function MarketDashboard({
           <TabsTrigger value="skills" className="text-xs">
             <Flame className="h-3.5 w-3.5 mr-1.5 text-[#7A2D4A]" />
             Skill Demand
+          </TabsTrigger>
+          <TabsTrigger value="pathways" className="text-xs">
+            <GitFork className="h-3.5 w-3.5 mr-1.5 text-[#7A2D4A]" />
+            Role Pathways
           </TabsTrigger>
           <TabsTrigger value="heatmap" className="text-xs">
             <MapPin className="h-3.5 w-3.5 mr-1.5 text-[#7A2D4A]" />
@@ -194,6 +200,15 @@ export function MarketDashboard({
               skills={skillsData?.skills || overviewData?.top_skills}
               totalPostings={skillsData?.total_postings_analysed || overviewData?.total_postings}
               narrative={skillsData?.narrative || overviewData?.narrative}
+            />
+          </TabsContent>
+        )}
+
+        {!isLoading && (
+          <TabsContent value="pathways" className="pt-2">
+            <RolePathwayViewer
+              activeResume={activeResume}
+              defaultRole={roleQuery}
             />
           </TabsContent>
         )}

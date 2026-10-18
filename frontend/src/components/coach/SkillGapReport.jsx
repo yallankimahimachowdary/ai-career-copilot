@@ -134,6 +134,35 @@ export function SkillGapReport({ report, activeResume }) {
                   <BookOpen className="h-3.5 w-3.5 text-red-600 shrink-0 mt-0.5" />
                   <span>{gap.recommendation}</span>
                 </p>
+
+                {gap.learning_resources && gap.learning_resources.length > 0 && (
+                  <div className="pt-2 border-t border-red-200/60 space-y-1">
+                    <span className="text-[11px] font-semibold text-red-900 block">Curated Learning Resources:</span>
+                    <ul className="space-y-1 text-xs">
+                      {gap.learning_resources.map((res, rIdx) => (
+                        <li key={rIdx} className="flex items-center gap-1.5 text-red-900">
+                          <span className="text-red-500 font-bold">•</span>
+                          {res.url ? (
+                            <a
+                              href={res.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[#7A2D4A] hover:underline font-medium inline-flex items-center gap-1"
+                            >
+                              <span>{res.title || res.name || "Resource"}</span>
+                              {res.provider && <span className="text-[10px] text-[#5C5C7A]">({res.provider})</span>}
+                            </a>
+                          ) : (
+                            <span className="text-[#3A3A52]">
+                              {res.title || res.name || "Resource"}
+                              {res.provider && <span className="text-[10px] text-[#5C5C7A] ml-1">({res.provider})</span>}
+                            </span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             ))}
           </CardContent>

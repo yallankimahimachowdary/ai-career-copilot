@@ -3,6 +3,7 @@ import { PageContainer } from "@/components/layout/PageContainer"
 import { MarketDashboard } from "@/components/market/MarketDashboard"
 import { marketApi } from "@/api/marketApi"
 import { jobApi } from "@/api/jobApi"
+import { IS_DEMO_MODE } from "@/App"
 
 export function getCandidateDomainRole(resume) {
   if (!resume) return "Software Engineer"
@@ -104,7 +105,11 @@ export function MarketPage({ activeResume }) {
 
   const fetchPositioningData = async (resume) => {
     if (!resume?.id) {
-      generateMockPositioning(resume)
+      if (IS_DEMO_MODE) {
+        generateMockPositioning(resume)
+      } else {
+        setPositioningData(null)
+      }
       return
     }
 
@@ -112,12 +117,18 @@ export function MarketPage({ activeResume }) {
       const positioning = await marketApi.getResumePositioning(resume.id)
       if (positioning) {
         setPositioningData(positioning)
-      } else {
+      } else if (IS_DEMO_MODE) {
         generateMockPositioning(resume)
+      } else {
+        setPositioningData(null)
       }
     } catch (e) {
-      console.warn("Resume positioning API failed, falling back to heuristic:", e.message)
-      generateMockPositioning(resume)
+      console.warn("Resume positioning API failed:", e.message)
+      if (IS_DEMO_MODE) {
+        generateMockPositioning(resume)
+      } else {
+        setPositioningData(null)
+      }
     }
   }
 

@@ -4,6 +4,7 @@ import { PageContainer } from "@/components/layout/PageContainer"
 import { MatchDashboard } from "@/components/matches/MatchDashboard"
 import { matchApi } from "@/api/matchApi"
 import { demoMatches } from "@/demo/demoData"
+import { IS_DEMO_MODE } from "@/App"
 
 export function MatchesPage({ activeResume, onSelectJobForCoach }) {
   const [matches, setMatches] = useState([])
@@ -25,8 +26,8 @@ export function MatchesPage({ activeResume, onSelectJobForCoach }) {
       const data = await matchApi.matchJobsForResume(activeResume.id, params)
       if (data && data.matches && data.matches.length > 0) {
         setMatches(data.matches)
-      } else if (activeResume?.isDemo) {
-        // Explicit demo profile uses illustrative demo matches
+      } else if (IS_DEMO_MODE && activeResume?.isDemo) {
+        // Explicit demo profile uses illustrative demo matches ONLY when IS_DEMO_MODE is active
         setMatches(demoMatches)
         setIsDemoMatches(true)
       } else {
@@ -35,7 +36,7 @@ export function MatchesPage({ activeResume, onSelectJobForCoach }) {
       }
     } catch (err) {
       console.warn("Match API call failed:", err.message)
-      if (activeResume?.isDemo) {
+      if (IS_DEMO_MODE && activeResume?.isDemo) {
         setMatches(demoMatches)
         setIsDemoMatches(true)
       } else {

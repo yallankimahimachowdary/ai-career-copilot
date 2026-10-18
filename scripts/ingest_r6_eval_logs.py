@@ -4,10 +4,15 @@ into PostgreSQL evaluation_logs table with strict schema validation and SHA-256 
 
 import asyncio
 import json
+import os
+from pathlib import Path
+import sys
 import uuid
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Any, Dict, List
+
+# Ensure project root is in sys.path
+sys.path.insert(0, os.path.abspath("."))
 
 from sqlalchemy import text
 from app.db.session import AsyncSessionLocal

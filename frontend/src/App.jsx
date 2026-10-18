@@ -16,12 +16,17 @@ import { apiClient } from "@/api/client"
 import { resumeApi } from "@/api/resumeApi"
 import { demoResume } from "@/demo/demoData"
 
+export const IS_DEMO_MODE =
+  typeof import.meta !== "undefined" &&
+  (import.meta.env?.VITE_DEMO_MODE === "true" || import.meta.env?.VITE_DEMO_MODE === true)
+
 function AuthenticatedApp() {
   const [activeResume, setActiveResume] = useState(null)
   const [targetJobForCoach, setTargetJobForCoach] = useState(null)
   const [isConnected, setIsConnected] = useState(false)
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [demoError, setDemoError] = useState(null)
 
   // Check backend health on initial mount and interval
   useEffect(() => {
@@ -42,20 +47,63 @@ function AuthenticatedApp() {
   }, [])
 
   const handleSelectDemo = async () => {
-    try {
-      const full = await resumeApi.getResume(demoResume.id)
-      if (full) {
-        setActiveResume({ ...full, isDemo: true })
+    setDemoError(null)
+    if (!IS_DEMO_MODE) {
+      try {
+        const full = await resumeApi.getResume(demoResume.id)
+        if (full) {
+          setActiveResume({ ...full, isDemo: true })
+          return
+        }
+      } catch (err) {
+        console.error("Failed to load demo profile from backend API:", err)
+        setDemoError(
+          "Unable to load demo profile from backend: " +
+            (err.message || "API request failed") +
+            ". Real API mode is active; silent demo fallback is disabled."
+        )
         return
       }
-    } catch {
-      // fallback to local demo data
+    } else {
+      // Explicit demo mode enabled via VITE_DEMO_MODE=true
+      setActiveResume(demoResume)
     }
-    setActiveResume(demoResume)
   }
 
   return (
-    <div className="flex h-screen bg-[#FAF7F3] text-[#3A3A52] overflow-hidden font-sans">
+    <div className="flex flex-col h-screen bg-[#FAF7F3] text-[#3A3A52] overflow-hidden font-sans">
+      {/* Persistent Demo Mode Banner */}
+      {IS_DEMO_MODE && (
+        <div
+          role="status"
+          aria-label="Demo Mode Alert"
+          className="bg-amber-500 text-stone-900 font-bold px-4 py-1.5 text-xs text-center border-b border-amber-600 shadow-xs flex items-center justify-center gap-2 shrink-0 z-50"
+        >
+          <span className="uppercase tracking-wider px-1.5 py-0.5 bg-stone-900 text-amber-300 rounded text-[10px]">
+            DEMO MODE ACTIVE
+          </span>
+          <span>DEMO MODE: Using synthetic client-side data. Backend API calls are bypassed or simulated.</span>
+        </div>
+      )}
+
+      {/* Honest Error Notification for Demo Profile Request */}
+      {demoError && (
+        <div
+          role="alert"
+          aria-label="Demo Load Error"
+          className="bg-rose-100 text-rose-900 border-b border-rose-300 px-4 py-2 text-xs flex items-center justify-between shrink-0 z-50"
+        >
+          <span>{demoError}</span>
+          <button
+            onClick={() => setDemoError(null)}
+            className="text-xs font-bold underline hover:text-rose-950 ml-4 cursor-pointer"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
+      <div className="flex flex-1 min-h-0 overflow-hidden">
       {/* Left Navigation Sidebar */}
       <Sidebar
         isConnected={isConnected}
@@ -129,6 +177,7 @@ function AuthenticatedApp() {
         isOpen={isChatOpen}
         onToggle={() => setIsChatOpen(!isChatOpen)}
       />
+      </div>
     </div>
   )
 }

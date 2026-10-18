@@ -57,6 +57,20 @@ export function QuestionBank({ questionBank, onPracticeQuestion }) {
                   {q.target_skill}
                 </Badge>
               )}
+              {(q.source || q.origin) && (
+                <Badge
+                  variant="outline"
+                  className={`text-[10px] ${
+                    q.source === "retrieved" || q.origin === "retrieved"
+                      ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                      : "bg-amber-50 text-amber-800 border-amber-300"
+                  }`}
+                >
+                  {q.source === "retrieved" || q.origin === "retrieved"
+                    ? "Corpus Retrieved"
+                    : "Rule-Based Fallback"}
+                </Badge>
+              )}
             </div>
 
             <Button
