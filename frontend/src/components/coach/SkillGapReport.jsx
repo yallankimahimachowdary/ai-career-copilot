@@ -153,9 +153,10 @@ export function SkillGapReport({ report, activeResume }) {
                               {res.provider && <span className="text-[10px] text-[#5C5C7A]">({res.provider})</span>}
                             </a>
                           ) : (
-                            <span className="text-[#3A3A52]">
-                              {res.title || res.name || "Resource"}
-                              {res.provider && <span className="text-[10px] text-[#5C5C7A] ml-1">({res.provider})</span>}
+                            <span className="text-[#3A3A52] inline-flex items-center gap-1.5">
+                              <span>{res.title || res.name || "Resource"}</span>
+                              {res.provider && <span className="text-[10px] text-[#5C5C7A]">({res.provider})</span>}
+                              <span className="text-[10px] text-[#8C8CA1] italic">(No link available)</span>
                             </span>
                           )}
                         </li>

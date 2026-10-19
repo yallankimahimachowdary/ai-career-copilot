@@ -1,11 +1,8 @@
 import React from "react"
 import {
-  Briefcase,
   MapPin,
   Sparkles,
   ChevronRight,
-  TrendingUp,
-  AlertCircle,
   Building,
   Clock,
 } from "lucide-react"
@@ -13,7 +10,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { CircularProgress } from "@/components/ui/progress"
-import { formatPercent } from "@/lib/utils"
 
 export function JobMatchCard({ match, onSelect }) {
   const fitScore = Math.round((match.final_score || match.composite_score || 0) * 100)
