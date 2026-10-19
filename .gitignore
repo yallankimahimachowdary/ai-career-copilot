@@ -39,6 +39,9 @@ uploads/
 !/data/interview_corpus/
 !/data/fairness/
 !/data/rag_eval/
+!/data/ingest/
+data/ingest/adzuna_call_counter.json
+data/snapshots/*.jsonl
 backups/
 
 # IDE & OS

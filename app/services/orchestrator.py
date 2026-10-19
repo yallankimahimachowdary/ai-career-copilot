@@ -17,6 +17,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.logging import logger
+from app.core.redaction import redact_credentials
 from app.models.job_posting import JobPosting
 from app.models.resume import Resume
 from app.schemas.coach import CoachQuestionBankRequest
@@ -146,7 +147,7 @@ class MultiAgentOrchestrator:
                 AgentFailureRecord(
                     agent_name="parser",
                     step=WorkflowStep.PARSER,
-                    error_message=str(exc),
+                    error_message=redact_credentials(str(exc)),
                     recovered=False,
                     timestamp=datetime.now(timezone.utc).isoformat(),
                 )
@@ -223,7 +224,7 @@ class MultiAgentOrchestrator:
                 AgentFailureRecord(
                     agent_name="matcher",
                     step=WorkflowStep.MATCHER,
-                    error_message=str(exc),
+                    error_message=redact_credentials(str(exc)),
                     recovered=False,
                     timestamp=datetime.now(timezone.utc).isoformat(),
                 )
@@ -265,7 +266,7 @@ class MultiAgentOrchestrator:
                 AgentFailureRecord(
                     agent_name="market",
                     step=WorkflowStep.MARKET,
-                    error_message=str(exc),
+                    error_message=redact_credentials(str(exc)),
                     recovered=False,
                     timestamp=datetime.now(timezone.utc).isoformat(),
                 )
@@ -337,7 +338,7 @@ class MultiAgentOrchestrator:
                 AgentFailureRecord(
                     agent_name="coach",
                     step=WorkflowStep.COACH,
-                    error_message=str(exc),
+                    error_message=redact_credentials(str(exc)),
                     recovered=False,
                     timestamp=datetime.now(timezone.utc).isoformat(),
                 )

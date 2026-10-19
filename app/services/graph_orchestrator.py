@@ -25,6 +25,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.logging import logger
+from app.core.redaction import redact_credentials
 from app.models.job_posting import JobPosting
 from app.models.resume import Resume
 from app.schemas.chat import (
@@ -208,7 +209,7 @@ def _build_error_record(
     recovered: bool = False,
 ) -> Dict[str, Any]:
     """Builds a standardized error record with dynamic target host:port attribution on failure."""
-    msg = str(exc)
+    msg = redact_credentials(str(exc))
     record: Dict[str, Any] = {
         "agent_name": agent_name,
         "step": step,
@@ -218,6 +219,7 @@ def _build_error_record(
     }
     target = extract_error_target(exc, default_fallback=default_host_port)
     if target:
+        target = redact_credentials(target)
         record["target_host_port"] = target
         if target not in msg:
             record["error_message"] = f"{msg} (target: {target})"

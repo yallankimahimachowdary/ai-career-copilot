@@ -94,6 +94,14 @@ class Settings(BaseSettings):
     # Multi-Agent Orchestrator Configuration (Phase R4)
     ORCHESTRATOR_BACKEND: str = "langgraph"  # "langgraph" | "sequential"
 
+    # Adzuna Live Market Provider & Quota Guard (Remediation R8)
+    ADZUNA_APP_ID: str | None = None
+    ADZUNA_APP_KEY: str | None = None
+    ADZUNA_CALL_BUDGET: int = 20
+
+    # Job Scraper Gating (Remediation R8)
+    SCRAPER_ENABLED: bool = False
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

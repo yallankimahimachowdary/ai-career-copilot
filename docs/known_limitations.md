@@ -239,3 +239,23 @@ This document provides a transparent, technically precise accounting of known sy
     - Market trends display dynamic demand share percentages and velocity deltas, explicitly displaying `N/A (single baseline period)` when velocity is undefined.
     - Interview coaching explicitly tags question provenance (`"Corpus Retrieved"` vs `"Rule-Based Fallback"`) and distinguishes verified external learning resources from unlinked skills (`"Self-study / Documentation"`).
 
+---
+
+## 15. Job Ingestion Gating & Adzuna Live Provider Quota
+- **Relevant Files:**
+  - [`app/services/adzuna_quota_guard.py`](../app/services/adzuna_quota_guard.py)
+  - [`scripts/ingest/adzuna_ingest.py`](../scripts/ingest/adzuna_ingest.py)
+  - [`scripts/scraper/job_scraper.py`](../scripts/scraper/job_scraper.py)
+  - [`scripts/take_snapshot.py`](../scripts/take_snapshot.py)
+  - [`scripts/verify_snapshot.py`](../scripts/verify_snapshot.py)
+  - [`data/ingest/adzuna_queries_v1.json`](../data/ingest/adzuna_queries_v1.json)
+  - [`docs/snapshot_format.md`](../docs/snapshot_format.md)
+  - [`docs/snapshot_runbook.md`](../docs/snapshot_runbook.md)
+- **Status & Scope:**
+  - **Live Scraper Gating**: Real-time multi-platform web scraping (`jobspy`) carries inherent anti-bot fragility, IP throttling risks, and unversioned HTML drift. To preserve experimental reproducibility and prevent pipeline instability, web scraping is gated behind `SCRAPER_ENABLED=false` by default. Existing historical scraped rows (`indeed`, `linkedin`, `glassdoor`) are preserved in PostgreSQL for backward compatibility but are strictly segregated by `source != 'adzuna_api'` and excluded from frozen evaluation benchmarks.
+  - **Live Adzuna API Quota Guard**: Live job ingestion is transitioned to the official Adzuna REST API under a strict quota controller (`ADZUNA_CALL_BUDGET=20` default). Outgoing HTTP requests increment a persistent atomic counter file (`data/ingest/adzuna_call_counter.json`) *before* sending.
+  - **Single Retry & Rate-Limit Halt**: Retries are constrained to at most 1 attempt on transient network failures; 4xx client errors trigger zero retries; HTTP 429 or HTTP 401/403 triggers an immediate full-run termination.
+  - **Description Truncation**: Free-tier Adzuna job descriptions are truncated upstream by Adzuna to 500 characters. Downstream skill extractors and embedding models operate within this 500-character window.
+  - **Salary Flagging**: When Adzuna's `salary_is_predicted` flag is set to `"1"`, numeric salary columns in the database are cleared to `NULL` to avoid propagating unverified machine-generated estimations as factual recruiter salary bands.
+
+

@@ -232,7 +232,8 @@ class JobRefreshCoordinator:
 
         for query in queries:
             try:
-                records = await adzuna_ingest_service.ingest_jobs(query=query, save_to_live=True)
+                res = await adzuna_ingest_service.ingest_jobs(query=query, save_to_live=True)
+                records = res.get("records", []) if isinstance(res, dict) else res
                 combined_result.total_received += len(records)
                 combined_result.updated += len(records)
             except Exception as exc:

@@ -519,6 +519,18 @@ class JobScraperPipeline:
 
     async def run_batch(self, purge_kaggle: bool = False, purge_all: bool = False) -> Dict[str, int]:
         """Execute complete scraping run across all configured search terms and platforms."""
+        if not getattr(settings, "SCRAPER_ENABLED", False):
+            logger.warning(
+                "Job scraping pipeline invoked but SCRAPER_ENABLED is False in config. "
+                "Scraper execution is gated off by default for reproducibility and stability. "
+                "Set SCRAPER_ENABLED=true in .env to enable."
+            )
+            print(
+                "\n[GATED] Scraper is disabled by default (SCRAPER_ENABLED=false). "
+                "No live scraping requests will be sent.\n"
+            )
+            return {"total_scraped": 0, "new_inserted": 0, "purged_legacy": 0, "gated": 1}
+
         logger.info("Starting Real-time Job Scraper Batch Run...")
         stats = {
             "total_scraped": 0,

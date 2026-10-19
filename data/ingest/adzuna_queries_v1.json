@@ -1,0 +1,202 @@
+{
+  "version": "1.0",
+  "created_at": "2026-10-19",
+  "country": "in",
+  "results_per_page": 50,
+  "sort_by": "date",
+  "max_days_old": 30,
+  "candidate_cities": [
+    "Bengaluru",
+    "Hyderabad",
+    "Pune",
+    "Mumbai",
+    "Chennai",
+    "Delhi NCR"
+  ],
+  "role_families": {
+    "data_ai": {
+      "display_name": "Data Science & Artificial Intelligence",
+      "queries": [
+        "Data Scientist",
+        "Machine Learning Engineer",
+        "AI Engineer Fresher",
+        "Data Analyst Intern",
+        "Python Data Engineer",
+        "NLP Engineer",
+        "Computer Vision Engineer",
+        "Business Intelligence Analyst Fresher"
+      ]
+    },
+    "web_software": {
+      "display_name": "Web & Software Engineering",
+      "queries": [
+        "Full Stack Developer",
+        "Software Engineer Fresher",
+        "Frontend React Developer",
+        "Java Backend Developer",
+        "Python Django Developer",
+        "Web Developer Intern",
+        "Junior Software Engineer",
+        "Node.js Developer"
+      ]
+    },
+    "cloud_devops": {
+      "display_name": "Cloud Architecture & DevOps",
+      "queries": [
+        "DevOps Engineer",
+        "Cloud Engineer Fresher",
+        "AWS Solutions Architect",
+        "Site Reliability Engineer",
+        "Kubernetes Engineer",
+        "Azure Cloud Administrator",
+        "DevOps Intern",
+        "Infrastructure Engineer"
+      ]
+    },
+    "core_engineering": {
+      "display_name": "Core Engineering (Mechanical, Civil, Electrical, Electronics)",
+      "queries": [
+        "Mechanical Design Engineer",
+        "Civil Engineer Fresher",
+        "Electrical Engineer",
+        "Electronics Engineer Intern",
+        "Embedded Systems Engineer",
+        "VLSI Design Engineer",
+        "Structural Engineer",
+        "Junior Robotics Engineer"
+      ]
+    },
+    "business_non_tech": {
+      "display_name": "Product & Business Operations",
+      "queries": [
+        "Product Manager",
+        "Project Manager Fresher",
+        "Business Analyst",
+        "Marketing Associate Intern",
+        "HR Executive Fresher",
+        "Operations Associate",
+        "Technical Content Writer",
+        "Junior Business Consultant"
+      ]
+    }
+  },
+  "allocation_rule": {
+    "description": "Allocates snapshot API calls under tight budget constraints by spreading calls evenly across all 5 role families (3 calls each = 15 calls) and rotating geographically across the 6 candidate cities, leaving spare headroom below the quota budget.",
+    "target_calls": 16,
+    "calls_per_family": 3,
+    "planned_calls": [
+      {
+        "index": 1,
+        "family": "data_ai",
+        "query": "Data Scientist",
+        "city": "Bengaluru",
+        "page": 1
+      },
+      {
+        "index": 2,
+        "family": "data_ai",
+        "query": "Machine Learning Engineer",
+        "city": "Hyderabad",
+        "page": 1
+      },
+      {
+        "index": 3,
+        "family": "data_ai",
+        "query": "AI Engineer Fresher",
+        "city": "Pune",
+        "page": 1
+      },
+      {
+        "index": 4,
+        "family": "web_software",
+        "query": "Full Stack Developer",
+        "city": "Bengaluru",
+        "page": 1
+      },
+      {
+        "index": 5,
+        "family": "web_software",
+        "query": "Software Engineer Fresher",
+        "city": "Chennai",
+        "page": 1
+      },
+      {
+        "index": 6,
+        "family": "web_software",
+        "query": "Frontend React Developer",
+        "city": "Delhi NCR",
+        "page": 1
+      },
+      {
+        "index": 7,
+        "family": "cloud_devops",
+        "query": "DevOps Engineer",
+        "city": "Hyderabad",
+        "page": 1
+      },
+      {
+        "index": 8,
+        "family": "cloud_devops",
+        "query": "Cloud Engineer Fresher",
+        "city": "Pune",
+        "page": 1
+      },
+      {
+        "index": 9,
+        "family": "cloud_devops",
+        "query": "AWS Solutions Architect",
+        "city": "Mumbai",
+        "page": 1
+      },
+      {
+        "index": 10,
+        "family": "core_engineering",
+        "query": "Mechanical Design Engineer",
+        "city": "Pune",
+        "page": 1
+      },
+      {
+        "index": 11,
+        "family": "core_engineering",
+        "query": "Civil Engineer Fresher",
+        "city": "Chennai",
+        "page": 1
+      },
+      {
+        "index": 12,
+        "family": "core_engineering",
+        "query": "Embedded Systems Engineer",
+        "city": "Bengaluru",
+        "page": 1
+      },
+      {
+        "index": 13,
+        "family": "business_non_tech",
+        "query": "Product Manager",
+        "city": "Bengaluru",
+        "page": 1
+      },
+      {
+        "index": 14,
+        "family": "business_non_tech",
+        "query": "Business Analyst",
+        "city": "Mumbai",
+        "page": 1
+      },
+      {
+        "index": 15,
+        "family": "business_non_tech",
+        "query": "Operations Associate",
+        "city": "Delhi NCR",
+        "page": 1
+      },
+      {
+        "index": 16,
+        "family": "data_ai",
+        "query": "Python Data Engineer",
+        "city": "Chennai",
+        "page": 1
+      }
+    ]
+  }
+}
