@@ -50,6 +50,7 @@ IGNORED_ENV_VALUES: Set[str] = {
     "your_anthropic_api_key_here",
     "temporary-dev-secret-key-change-in-production",
     "dev-secret-key-change-in-production-ai-career-copilot-2025",
+    "change-me-to-a-secure-random-secret-key-min-32-chars",
     "postgres",
     "career_neo4j_2025",
     "development",
