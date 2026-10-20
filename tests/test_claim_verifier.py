@@ -277,3 +277,53 @@ def test_claim_verifier_seniority_senior_check(verifier):
     assert res_invalid.non_skill_claims["seniority_checked"] is True
     assert res_invalid.non_skill_claims["seniority_valid"] is False
     assert res_invalid.faithfulness_score < 1.0
+
+
+def test_claim_verifier_alias_matching(verifier):
+    """Verify that alias matching resolves canonical taxonomy variants (e.g. k8s -> Kubernetes)."""
+    resume = {
+        "skills": ["k8s", "Postgres"],
+        "summary": "Container and relational database engineer.",
+    }
+    job = {
+        "title": "DevOps Engineer",
+        "description": "Looking for Kubernetes and SQL/PostgreSQL experience.",
+        "skills": ["Kubernetes", "SQL"],
+    }
+    explanation = {
+        "job_id": "j_alias",
+        "rank": 1,
+        "matched_skills": ["Kubernetes", "SQL"],
+        "missing_skills": [],
+        "reason": "Strong match with Kubernetes and SQL database background.",
+    }
+    res = verifier.verify_explanation(explanation, resume, job)
+    assert "Kubernetes" in res.valid_matched
+    assert "SQL" in res.valid_matched
+    assert len(res.invalid_matched) == 0
+    assert res.faithfulness_score == 1.0
+
+
+def test_claim_verifier_negation_in_job_description(verifier):
+    """Verify that explicitly negated skills in job descriptions are not flagged as valid missing requirements."""
+    resume = {
+        "skills": ["Python"],
+        "summary": "Python backend developer.",
+    }
+    job = {
+        "title": "Junior Python Developer",
+        "description": "Seeking Python developers. No Java required for this position.",
+        "skills": ["Python"],
+    }
+    # Explanation falsely claims Java is missing
+    explanation = {
+        "job_id": "j_negated",
+        "rank": 1,
+        "matched_skills": ["Python"],
+        "missing_skills": ["Java"],
+        "reason": "Good Python engineer but lacks Java experience.",
+    }
+    res = verifier.verify_explanation(explanation, resume, job)
+    assert "Java" in res.invalid_missing
+    assert len(res.valid_missing) == 0
+    assert res.faithfulness_score < 1.0

@@ -50,6 +50,7 @@ DEFAULT_SYNTHETIC_NAMES = [
     # Middle Eastern
     "Fatima Al-Mansoor",
     "Tariq Haddad",
+    "Zainab Khan",
 ]
 
 

@@ -13,6 +13,7 @@ LLM-based re-ranker for Phase B:
 
 import asyncio
 from datetime import datetime, timezone
+import hashlib
 import json
 import re
 import time
@@ -187,6 +188,7 @@ class LLMReranker(BaseRanker):
             resume_summary=resume_summary,
             jobs_listing=jobs_listing,
         )
+        prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
 
         max_attempts = 2
         total_repairs = 0
@@ -213,7 +215,7 @@ class LLMReranker(BaseRanker):
                         temperature=0.0,
                         max_tokens=2048,
                         seed=self.seed,
-                        timeout=60.0,
+                        timeout=90.0,
                         experiment_mode=True,
                     )
                 data = response.data
@@ -231,6 +233,7 @@ class LLMReranker(BaseRanker):
                 total_hallucinations += hall_cnt
                 total_repairs += rep_cnt
                 latency_ms = round((time.perf_counter() - t0) * 1000, 2)
+                output_hash = hashlib.sha256(json.dumps(raw_ranked, sort_keys=True).encode("utf-8")).hexdigest()
 
                 metadata = {
                     "provider": response.provider,
@@ -239,6 +242,8 @@ class LLMReranker(BaseRanker):
                     "answered_model": getattr(response, "answered_model", response.model),
                     "quantization": getattr(response, "quantization", "n/a"),
                     "prompt_version": self.prompt_version,
+                    "prompt_hash": prompt_hash,
+                    "output_hash": output_hash,
                     "temperature": response.temperature,
                     "max_tokens": response.max_tokens,
                     "seed": self.seed,
@@ -270,6 +275,7 @@ class LLMReranker(BaseRanker):
             "model": self.model_name,
             "quantization": "n/a",
             "prompt_version": self.prompt_version,
+            "prompt_hash": prompt_hash,
             "temperature": 0.0,
             "max_tokens": 1500 if self.provider_name == "ollama" else 2048,
             "seed": self.seed,

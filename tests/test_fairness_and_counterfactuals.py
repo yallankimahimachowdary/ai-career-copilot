@@ -290,3 +290,46 @@ def test_frozen_ranking_weights_unaltered():
     assert weights.get("bm25") == 0.10
     assert weights.get("sbert") == 0.10
     assert weights.get("overlap") == 0.80
+
+
+def test_counterfactual_required_skill_raises_overlap_while_random_does_not():
+    """Verify that adding a required missing skill increases overlap score on target job, while random unrelated skill does not."""
+    import copy
+    from app.ranking.baselines import SkillOverlapRanker
+
+    overlap_ranker = SkillOverlapRanker()
+    target_job = {
+        "id": "job_cf_1",
+        "title": "Cloud Backend Engineer",
+        "skills": ["Python", "Docker", "Kubernetes"],
+        "description": "Requires Python, Docker, and Kubernetes.",
+    }
+    job_pool = [target_job]
+
+    base_resume = {
+        "candidate_id": "cand_cf",
+        "candidate_name": "Test Candidate",
+        "skills": ["Python"],
+        "summary": "Python engineer.",
+    }
+
+    # Baseline scoring
+    base_res = overlap_ranker.rank(base_resume, job_pool, k=1)
+    base_score = base_res.scores.get("job_cf_1", 0.0)
+
+    # Condition (a): Add required missing skill "Docker"
+    resume_a = copy.deepcopy(base_resume)
+    resume_a["skills"] = ["Python", "Docker"]
+    res_a = overlap_ranker.rank(resume_a, job_pool, k=1)
+    score_a = res_a.scores.get("job_cf_1", 0.0)
+
+    # Condition (b): Add random unrelated within-taxonomy skill "Microbiology"
+    resume_b = copy.deepcopy(base_resume)
+    resume_b["skills"] = ["Python", "Microbiology"]
+    res_b = overlap_ranker.rank(resume_b, job_pool, k=1)
+    score_b = res_b.scores.get("job_cf_1", 0.0)
+
+    # Required skill must raise overlap score
+    assert score_a > base_score, f"Expected score_a ({score_a}) > base_score ({base_score})"
+    # Random unrelated skill must NOT raise overlap score for this target job
+    assert score_b == base_score, f"Expected score_b ({score_b}) == base_score ({base_score})"

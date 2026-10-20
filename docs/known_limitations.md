@@ -286,6 +286,24 @@ This document provides a transparent, technically precise accounting of known sy
   - **Taxonomy Tuning & Freeze**: The canonical skill patterns in `app/core/taxonomy.py` were expanded to 92 skills to capture common technical tools observed in resume corpora (`MongoDB`, `Power BI`, `Excel`, `Firebase`, `Redux`, `Bash`, `Splunk`, `Nmap`, `Wireshark`, `Terraform`, `Seaborn`, `Matplotlib`, `Tableau`, `STAAD Pro`, `PCB Design`). Soft skills (`Leadership`, `Teamwork`) were deliberately excluded from the taxonomy. This taxonomy is FROZEN as `TAXONOMY_VERSION = "v2.1"` (SHA-256 `34203073A38633314606663838D536C09F77E8C9C2507F1CEE98096DD98F2A1C`) for all real experimental runs. Provenance logging strictly tracks this version and hash; runs mixing taxonomy versions will fail validation.
   - **Evaluation Scope Restriction**: Real ranking evaluation is strictly restricted to resumes within the three viable role families defined in `docs/eval_scope.json`: `Data/AI`, `Web/Software`, and `Cybersecurity/Cloud`. Resumes from the remaining six deficit families (`Electrical`, `Mechanical`, `Civil`, `Commerce/Finance`, `Arts/Media`, `Mobile/UI-UX`) are flagged `out_of_scope_for_ranking_eval` and served with the honest `insufficient_matching_postings` response, rather than producing distorted ranking evaluations on truncated pools.
 
+---
+
+## 20. Human Annotation Protocol & Rater Workload Allocation
+- **Relevant Files:**
+  - [`scripts/make_annotation_sheets.py`](../scripts/make_annotation_sheets.py)
+  - [`scripts/ingest_annotations.py`](../scripts/ingest_annotations.py)
+  - [`docs/RUNBOOK.md`](../docs/RUNBOOK.md)
+- **Status & Scope:**
+  - **Candidate Universe Stratification**: For each evaluated candidate, a 60-job universe is constructed consisting of stratified buckets (high match, mid match, hard negative).
+  - **Workload Partitioning**: Across the 41 in-scope resumes, tasks are divided between two human annotators (Rater A and Rater B).
+    - **Rater A**: Evaluates 25 candidates $\times$ 60 jobs = 1,500 pairs.
+    - **Rater B**: Evaluates 24 candidates $\times$ 60 jobs = 1,440 pairs.
+    - **Total Pairs**: 2,940 pairwise ratings.
+  - **Inter-Rater Agreement Sample**: 8 candidates (480 pairs) are systematically double-rated across both Rater A and Rater B to assess Quadratic Weighted Cohen's Kappa and Fleiss' Kappa with 1,000 bootstrap resamples. The 8 double-rated candidate resumes are:
+    `SYN_004`, `SYN_010`, `SYN_011`, `SYN_012`, `SYN_025`, `SYN_026`, `SYN_031`, and `SYN_074`.
+
+
+
 
 
 

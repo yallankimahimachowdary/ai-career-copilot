@@ -69,6 +69,17 @@ class ClaimVerifier:
                 skills_set.add(rs.strip().lower())
         return skills_set
 
+    def _is_negated_in_text(self, skill: str, text: str) -> bool:
+        """Check if skill is explicitly negated in text (e.g. 'no Python required', 'Java is not required')."""
+        s = re.escape(skill.strip().lower())
+        patterns = [
+            rf"\b(?:no|not|without|never)\s+(?:prior\s+|previous\s+)?{s}\b",
+            rf"\b{s}\s+(?:is\s+)?(?:not\s+required|not\s+needed|not\s+mandatory|optional)\b",
+            rf"\b(?:does\s+not\s+require|do\s+not\s+need|no\s+need\s+for)\s+{s}\b",
+        ]
+        text_lower = text.lower()
+        return any(bool(re.search(p, text_lower)) for p in patterns)
+
     def _get_job_skills(self, job: Dict[str, Any]) -> Set[str]:
         """Extract canonical lower-case skill names present in job posting."""
         title = job.get("title") or ""
@@ -157,10 +168,12 @@ class ClaimVerifier:
                 invalid_matched.append(s)
 
         # 2. Missing skills check: job MUST require it and candidate MUST NOT have it
+        desc_text = f"{job.get('title', '')} {job.get('description', '')}"
         for s in missing:
             s_clean = s.strip().lower()
             canonical_job = {js.lower() for js in extract_canonical_skills(s)}
-            is_in_job = s_clean in job_skills or any(js in job_skills for js in canonical_job)
+            is_negated = self._is_negated_in_text(s, desc_text) or any(self._is_negated_in_text(cjs, desc_text) for cjs in canonical_job)
+            is_in_job = (s_clean in job_skills or any(js in job_skills for js in canonical_job)) and not is_negated
             is_in_cand = s_clean in cand_skills or any(cs in cand_skills for cs in canonical_job)
 
             if is_in_job and not is_in_cand:
