@@ -37,6 +37,11 @@ Last Updated: October 19, 2026.
 | **L25** | **Statistical Significance Suite** | **VERIFIED** | Wilcoxon signed-rank + Holm correction + paired bootstrap CI (10k); warning on n < 20 verified | Local R12 |
 | **L26** | **LLM Arm Controls & Stability** | **VERIFIED** | ETA estimation + 2-hour confirm guard; K=2 repeat stability (Kendall tau 1.0000 on SYN_001) | Local R12 |
 | **L27** | **Standardized Table Generator** | **VERIFIED** | `scripts/make_results_tables.py` exports CSV + Markdown; strict dryrun refusal guard tested | Local R12 |
+| **L28** | **Real-Resume Intake & Contamination Guard** | **VERIFIED** | `scripts/intake_resumes.py`: text extraction, anonymization, zero-PII regex audit, SYN_ rejection | Local R14 |
+| **L29** | **Staged One-Command Runner** | **VERIFIED** | `scripts/run_all.py` with `--stage prep`, `--stage eval`, `--stage all-dryrun`, stage manifests | Local R14 |
+| **L30** | **Clean-Clone Reproducibility Test** | **VERIFIED** | 100% end-to-end pass in clean clone outside repo, `stage_all_dryrun_manifest.json` generated | Local R14 |
+| **L31** | **Checkpoints A & B** | **VERIFIED** | Annotated git tags `Checkpoint-A` & `Checkpoint-B` created with 7 frozen hashes & taxonomy hash | Local R14 |
+| **L32** | **Operational Runbook** | **VERIFIED** | `docs/RUNBOOK.md` authored with exact commands for real resumes and ground-truth labels | Local R14 |
 
 ---
 
@@ -264,6 +269,39 @@ An audit evaluating `app/services/anonymizer.py` against 15 representative India
 ### L27: Standardized Table Generator
 - Implemented `scripts/make_results_tables.py` producing standardized CSV and GitHub Flavored Markdown publication tables tagged with provenance hashes.
 - Built-in dryrun rejection guard: strictly refuses to process `run_type=dryrun` logs unless explicitly passed `--allow-dryrun` for testing.
+
+### L28: Real-Resume Intake & Contamination Guard (R14-1)
+- Implemented `scripts/intake_resumes.py` processing PDF resumes through PyMuPDF text extraction, strict entity anonymization, institutional identifier removal, deterministic skill parsing (Frozen Taxonomy v2.1), and role family classification.
+- Output report: counts per family, in-scope (`Data/AI`, `Web/Software`, `Cybersecurity/Cloud`) vs out-of-scope screening, parse failure diagnosis, average skills per resume, and zero-PII regex audit.
+- Zero-PII Regex Audit: verifies stored text contains zero unmasked emails, phone numbers, or candidate name strings (tested with planted fixtures).
+- Contamination Guard: strictly detects and refuses to process directories containing synthetic test resumes (`SYN_*` filenames or synthetic footer tokens) when `run_type=real`.
+- Destination directory gating: strictly writes real runs to `results/real/` and dry runs to `results/dryrun/`.
+- Automated test coverage: `tests/test_r14_real_run_readiness.py` (8/8 passed).
+
+### L29: Staged One-Command Pipeline Runner (R14-2)
+- Implemented `scripts/run_all.py` supporting three distinct execution stages:
+  - `--stage prep`: Pre-flight verification (7 frozen hashes, repository secret scanner, service health for PostgreSQL/Neo4j/Ollama/Gemini), job snapshot loading, resume intake, stratified universe building, and blinded annotation sheet generation. Concludes with explicit status: `*** STATUS: AWAITING ANNOTATIONS ***`.
+  - `--stage eval`: Ingests human annotations from `results/real/labels.jsonl`, computes Quadratic Weighted Kappa with 1,000-sample bootstrap CI, evaluates all ranking arms with repeats, computes paired Wilcoxon tests with Holm correction, runs ablations, and exports publication tables.
+  - `--stage all-dryrun`: Full end-to-end pipeline on synthetic resumes (`data/resumes_dryrun`), strictly tagging all outputs with `run_type=dryrun` and withholding quality metrics under label gating.
+- Resumable stage execution manifests written per stage (`stage_prep_manifest.json`, `stage_eval_manifest.json`, `stage_all_dryrun_manifest.json`) recording SHA-256 hashes of all inputs, outputs, models, taxonomy, and config.
+
+### L30: Clean-Clone Reproducibility Test (R14-3)
+- Tested in an external temporary directory (`$env:TEMP/ai-career-copilot-clean-clone`) by cloning the local repository and executing `python scripts/run_all.py --stage all-dryrun --max-resumes 3`.
+- Verified 100% end-to-end execution without manual intervention:
+  - Bit-for-bit SHA-256 match on all 7 frozen benchmark files.
+  - Repository secret scanner passed with zero exposed credentials.
+  - Resume intake, stratified universes, annotation sheets, and ranking diagnostics completed successfully.
+  - Verified `results/dryrun/stage_all_dryrun_manifest.json` and diagnostic publication tables were generated cleanly.
+
+### L31: Checkpoints A & B (R14-4)
+- Annotated local Git tags created via `scripts/create_checkpoint.py`:
+  - `Checkpoint-A`: Code/configuration freeze before real runs, annotating commit `20bb172c`, all 7 frozen file SHA-256 hashes, and Taxonomy v2.1 SHA-256 hash.
+  - `Checkpoint-B`: Post-clean-clone pipeline verification, annotating commit `dcd8ba0d`, all 7 frozen file SHA-256 hashes, and Taxonomy v2.1 SHA-256 hash.
+
+### L32: Operational Runbook (R14-4)
+- Authored `docs/RUNBOOK.md` detailing the complete, step-by-step operational instructions for teammates when real resumes and human annotations arrive.
+- Covers environment verification, resume intake, annotation sheet distribution, ground-truth label formatting, Stage EVAL execution, and compliance safeguards (zero live Adzuna calls rule, PII protection, frozen benchmark preservation).
+
 
 
 
