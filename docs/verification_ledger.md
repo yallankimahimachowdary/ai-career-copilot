@@ -33,6 +33,10 @@ Last Updated: October 19, 2026.
 | **L21** | **Blinded Annotation Tooling & Agreement** | **VERIFIED** | `make_annotation_sheets.py` & `ingest_annotations.py`; QWK & bootstrap CI; 8 double-rated resumes | Local R11 |
 | **L22** | **Parser Precision/Recall Evaluation Tooling** | **VERIFIED** | `scripts/eval_parser.py` (micro/macro P/R/F1, 95% bootstrap CI, 25-resume gold template CSV) | Local R11 |
 | **L23** | **Taxonomy v2.1 Recall Enhancement** | **VERIFIED** | Expanded taxonomy to 92 canonical skills (+15 technical tools); mean skills/resume 6.84 -> 9.70 | Local R11 |
+| **L24** | **Label Gating on Quality Metrics** | **VERIFIED** | nDCG@5/10, MAP, MRR gated behind `results/real/labels.jsonl` & `run_type=real`; diagnostics on dryrun | Local R12 |
+| **L25** | **Statistical Significance Suite** | **VERIFIED** | Wilcoxon signed-rank + Holm correction + paired bootstrap CI (10k); warning on n < 20 verified | Local R12 |
+| **L26** | **LLM Arm Controls & Stability** | **VERIFIED** | ETA estimation + 2-hour confirm guard; K=2 repeat stability (Kendall tau 1.0000 on SYN_001) | Local R12 |
+| **L27** | **Standardized Table Generator** | **VERIFIED** | `scripts/make_results_tables.py` exports CSV + Markdown; strict dryrun refusal guard tested | Local R12 |
 
 ---
 
@@ -240,7 +244,27 @@ An audit evaluating `app/services/anonymizer.py` against 15 representative India
 - Audited 95 synthetic resumes for unmapped skill tokens. Excluded soft skills (`Leadership`, `Teamwork`) per protocol.
 - Added 15 genuine technical skills and tools to `app/core/taxonomy.py`: `MongoDB`, `Power BI`, `Excel`, `Firebase`, `Redux`, `Bash`, `Splunk`, `Nmap`, `Wireshark`, `Terraform`, `Seaborn`, `Matplotlib`, `Tableau`, `STAAD Pro`, `PCB Design`.
 - Upgraded `TAXONOMY_VERSION = "v2.1"` with canonical SHA-256 `34203073A38633314606663838D536C09F77E8C9C2507F1CEE98096DD98F2A1C` tracked in run provenance metadata.
-- Mean canonical skills per resume improved from 6.842 to 9.695 (+41.7% recall improvement).
+- Mean canonical skills per resume improved from 6.842 to 9.695 (+41.7% mean extracted skills (recall not measured; needs gold)).
+
+### L24: Label Gating on Quality Metrics
+- Enhanced `scripts/evaluate_ranking.py` and `app/ranking/evaluation.py`.
+- Enforces strict gating: nDCG@5/10, MAP, MRR, Precision@5, and Recall@10 are computed ONLY when `results/real/labels.jsonl` exists and `run_type=real`.
+- In dry-run mode or when labels are absent, the harness strictly refuses to fabricate quality metrics and outputs rank diagnostics (pairwise Kendall's tau, top-10 Jaccard overlap, wall-clock latency).
+
+### L25: Statistical Significance Suite
+- Implemented paired bootstrap confidence intervals (10,000 resamples), paired Wilcoxon signed-rank significance tests, and Holm-Bonferroni multi-comparison step-down corrections in `app/ranking/evaluation.py`.
+- Formatted metrics report sample size $n$, effect size $r = Z / \sqrt{n}$, raw $p$-values, adjusted $p$-values, and an explicit warning whenever $n < 20$.
+- Verified against known hand-calculated toy distributions in `tests/test_ranking_runner_r12.py`.
+
+### L26: LLM Arm Controls & Stability
+- Added `--repeats K`, `--confirm`, and dynamic wall-clock ETA calculations to `scripts/run_ranking_experiment.py`.
+- Raises `RuntimeError` requiring explicit `--confirm` if total estimated CPU runtime exceeds 2 hours.
+- Verified LLM re-ranker stability between repeat passes on Ollama `llama3.2:3b`: Kendall tau = 1.0000, Top-10 Jaccard overlap = 1.0000 on `SYN_001`.
+
+### L27: Standardized Table Generator
+- Implemented `scripts/make_results_tables.py` producing standardized CSV and GitHub Flavored Markdown publication tables tagged with provenance hashes.
+- Built-in dryrun rejection guard: strictly refuses to process `run_type=dryrun` logs unless explicitly passed `--allow-dryrun` for testing.
+
 
 
 
