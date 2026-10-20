@@ -51,12 +51,31 @@ class ParserAgent:
         self.openai_key = settings.OPENAI_API_KEY
         self.openai_model = getattr(settings, "OPENAI_MODEL", "gpt-4o-mini")
 
-    async def parse(self, raw_text: str, metadata: Optional[dict] = None) -> ParsedResume:
-        """Parse raw resume text into a structured ParsedResume object."""
+    async def parse(
+        self,
+        raw_text: str,
+        metadata: Optional[dict] = None,
+        mode: Optional[str] = None,
+    ) -> ParsedResume:
+        """Parse raw resume text into a structured ParsedResume object.
+        
+        Supports deterministic rule-based mode (bypasses LLM, outputs canonical skills only),
+        LLM mode, or hybrid fallback mode.
+        """
+        effective_mode = mode or getattr(settings, "PARSER_MODE", "hybrid")
+        logger.info(f"[ParserAgent] Executing parser in mode: '{effective_mode}'")
+
+        if effective_mode == "rule_based":
+            parsed = self._parse_with_rules(raw_text)
+            # Enforce canonical skills only
+            parsed.skills = sorted(list(extract_canonical_skills(raw_text)))
+            self._apply_metadata(parsed, raw_text, metadata, engine="rules", mode="rule_based")
+            return parsed
+
         # 1. Primary extraction via local Ollama LLM
         try:
             parsed = await self._parse_with_ollama(raw_text)
-            self._apply_metadata(parsed, raw_text, metadata, engine="ollama")
+            self._apply_metadata(parsed, raw_text, metadata, engine="ollama", mode=effective_mode)
             return parsed
         except Exception as e:
             logger.warning(f"Ollama parsing failed: {e}. Falling back to secondary/rule-based parser.")
@@ -65,14 +84,15 @@ class ParserAgent:
         if self.openai_key:
             try:
                 parsed = await self._parse_with_openai(raw_text)
-                self._apply_metadata(parsed, raw_text, metadata, engine="openai")
+                self._apply_metadata(parsed, raw_text, metadata, engine="openai", mode=effective_mode)
                 return parsed
             except Exception as e:
                 logger.warning(f"OpenAI parsing failed: {e}. Falling back to rule-based parser.")
 
         # 3. Default fallback to heuristic rule-based extraction
         parsed = self._parse_with_rules(raw_text)
-        self._apply_metadata(parsed, raw_text, metadata, engine="rules")
+        parsed.skills = sorted(list(extract_canonical_skills(raw_text)))
+        self._apply_metadata(parsed, raw_text, metadata, engine="rules", mode=effective_mode)
         return parsed
 
     def _apply_metadata(
@@ -81,10 +101,12 @@ class ParserAgent:
         raw_text: str,
         metadata: Optional[dict] = None,
         engine: str = "rules",
+        mode: str = "hybrid",
     ) -> None:
         """Attach parsing provenance and extractor metadata to the parsed resume."""
         meta = dict(metadata or {})
         meta["parser_engine"] = engine
+        meta["parser_mode"] = mode
         meta["extractor"] = meta.get("extractor", "unknown")
         meta["spacy_ner_available"] = get_spacy_ner() is not None
         parsed.parse_metadata = meta

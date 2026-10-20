@@ -98,8 +98,8 @@ def anonymize_resume(
     if strip_institutions:
         institution_patterns = [
             r"\b(?:[A-Z][A-Za-z0-9&.',\s]{1,40}\s+)?(?:University|College|Polytechnic|Academy|Institute of Technology|Institute of Science|Institute of Engineering)\b",
-            r"\b(?:IIT|NIT|IIIT|BITS)\s+[A-Z][a-z]+\b",
-            r"\b(?:Indian|National|Birla)\s+Institute\s+of\s+[A-Za-z\s]+(?:,\s*[A-Za-z]+)?\b",
+            r"\b(?:IIT|NIT|IIIT|BITS)(?:\s+[A-Z][a-z]+)?\b",
+            r"\b(?:Indian|National|Birla|International)\s+Institute\s+of\s+[A-Za-z\s]+(?:,\s*[A-Za-z]+)?\b",
             r"\b(?:Stanford|Harvard|MIT|Oxford|Cambridge|Carnegie Mellon|Berkeley|Caltech|Princeton|Yale|Columbia|Cornell)\b",
         ]
         for pat in institution_patterns:

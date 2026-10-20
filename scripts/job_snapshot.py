@@ -78,6 +78,22 @@ def load_snapshot(snapshot_path: Path | str) -> Tuple[List[Dict[str, Any]], Dict
     if not path.exists():
         raise FileNotFoundError(f"Snapshot not found at {path}")
 
+    if path.suffix == ".jsonl":
+        with open(path, "r", encoding="utf-8") as f:
+            records = [json.loads(line) for line in f if line.strip()]
+        import hashlib
+        h = hashlib.sha256()
+        with open(path, "rb") as f:
+            while chunk := f.read(65536):
+                h.update(chunk)
+        meta = {
+            "format": "jsonl",
+            "file_name": path.name,
+            "sha256_hash": h.hexdigest().upper(),
+            "count": len(records),
+        }
+        return records, meta
+
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
@@ -97,13 +113,27 @@ def run_matching_on_snapshot(
     resume_parsed_data: Dict[str, Any],
     resume_embedding: List[float],
     top_k: int = 10,
+    seniority_gate: bool | None = None,
 ) -> List[Dict[str, Any]]:
     """
     Run deterministic Matcher ranking pipeline directly on frozen snapshot records.
     Computes cosine distance, feature extraction, and composite/XGBoost scores without DB access.
+    When seniority_gate is enabled (default True via settings.SENIORITY_GATE), incompatible
+    seniority roles are strictly excluded from ranking.
     """
     import numpy as np
+    from app.core.config import settings
+    from app.core.logging import logger
+    from app.core.seniority import (
+        classify_candidate_seniority,
+        classify_job_seniority,
+        is_seniority_compatible,
+    )
     from app.services.matcher_service import FeatureExtractor, CompositeScorer, matcher_agent
+
+    gate_enabled = settings.SENIORITY_GATE if seniority_gate is None else seniority_gate
+    cand_seniority = classify_candidate_seniority(resume_parsed_data) if gate_enabled else None
+    logger.info(f"[Ranking Snapshot] Seniority gate: {gate_enabled} | Candidate Seniority: {cand_seniority}")
 
     cand_emb = np.array(resume_embedding, dtype=np.float32)
     norm_cand = np.linalg.norm(cand_emb)
@@ -116,6 +146,13 @@ def run_matching_on_snapshot(
         job_id = rec.get("id") or rec.get("external_id")
         title = rec.get("title") or ""
         desc = rec.get("description") or ""
+
+        # Seniority gating check
+        if gate_enabled and cand_seniority:
+            job_sen = classify_job_seniority(title, desc)
+            if not is_seniority_compatible(cand_seniority, job_sen):
+                continue
+
         skills = rec.get("skills") or []
         if isinstance(skills, str):
             try:

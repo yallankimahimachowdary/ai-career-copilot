@@ -305,6 +305,8 @@ def run_experiment(
     repeat_idx: int = 0,
     universe_seed: int = 42,
     max_snapshot_records: Optional[int] = 100,
+    max_resumes: Optional[int] = None,
+    run_type: str = "dryrun",
 ) -> None:
     """Run full Phase B ranking experiment with resumable batch logger."""
     hardware_info = get_system_hardware_info()
@@ -322,12 +324,15 @@ def run_experiment(
         manifest_path=manifest_path,
         strict_manifest=strict_manifest,
     )
-    print(f"Loaded {len(candidates)} anonymized test resumes.")
+    if max_resumes is not None:
+        candidates = candidates[:max_resumes]
+    print(f"Loaded {len(candidates)} anonymized test resumes (max_resumes={max_resumes}, run_type={run_type}).")
 
     rankers = instantiate_rankers(methods)
     print(f"Initialized {len(rankers)} rankers: {list(rankers.keys())}")
 
-    logger = ExperimentLogger(experiment_name="phase_b_ranking")
+    base_dir = Path("results/dryrun") if run_type == "dryrun" else Path("artifacts/experiments/runs")
+    logger = ExperimentLogger(experiment_name="phase_b_ranking", base_dir=base_dir, run_type=run_type)
 
     for cand in candidates:
         cand_id = cand["candidate_id"]
@@ -372,14 +377,18 @@ def run_experiment(
                 "run_metadata": run_meta,
             }
 
+            req_m = run_meta.get("requested_model") or run_meta.get("model") or method_name
+            ret_m = run_meta.get("answered_model") or run_meta.get("model") or method_name
             saved_path = logger.log_run(
                 item_id=run_key,
-                model=run_meta.get("model", "n/a"),
-                prompt_version=run_meta.get("prompt_version", "n/a"),
+                requested_model=str(req_m),
+                returned_model=str(ret_m),
                 seed=universe_seed,
                 inputs={"candidate_id": cand_id, "snapshot": snapshot_path, "k": k, "repeat_idx": repeat_idx},
                 outputs=output_payload,
                 provider=run_meta.get("provider", method_name),
+                snapshot_hash=snapshot_meta.get("sha256_hash"),
+                gate_flags={"seniority_gate": getattr(settings, "SENIORITY_GATE", True)},
             )
 
             print(f"[{run_key}] Done in {elapsed_ms}ms -> Saved to {saved_path.name}")
@@ -412,6 +421,8 @@ def main():
     parser.add_argument("--repeat", type=int, default=0, help="Repeat index for experiment replication (default 0)")
     parser.add_argument("--seed", type=int, default=42, help="Universe seed for experiment (default 42)")
     parser.add_argument("--max_jobs", type=int, default=100, help="Max jobs to test from snapshot (default 100)")
+    parser.add_argument("--max-resumes", "--max_resumes", dest="max_resumes", type=int, default=None, help="Max resumes to evaluate (for dry-run mode)")
+    parser.add_argument("--run-type", "--run_type", dest="run_type", type=str, default="dryrun", choices=["dryrun", "real"], help="Run type tag ('dryrun' or 'real')")
     args = parser.parse_args()
 
     method_list = [m.strip() for m in args.methods.split(",") if m.strip()]
@@ -425,6 +436,8 @@ def main():
         repeat_idx=args.repeat,
         universe_seed=args.seed,
         max_snapshot_records=args.max_jobs,
+        max_resumes=args.max_resumes,
+        run_type=args.run_type,
     )
 
 

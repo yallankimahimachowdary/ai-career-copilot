@@ -94,6 +94,12 @@ class Settings(BaseSettings):
     # Multi-Agent Orchestrator Configuration (Phase R4)
     ORCHESTRATOR_BACKEND: str = "langgraph"  # "langgraph" | "sequential"
 
+    # Seniority Gate Configuration (Phase R9)
+    SENIORITY_GATE: bool = True
+
+    # Parser Mode Configuration (Remediation R9-6: "hybrid" | "rule_based" | "llm")
+    PARSER_MODE: str = "hybrid"
+
     # Adzuna Live Market Provider & Quota Guard (Remediation R8)
     ADZUNA_APP_ID: str | None = None
     ADZUNA_APP_KEY: str | None = None

@@ -4,7 +4,14 @@ import subprocess
 import sys
 import pytest
 
-from scripts.check_dataset_overlap import compute_content_hash, load_test_resumes, verify_no_overlap
+from scripts.check_dataset_overlap import (
+    compute_content_hash,
+    load_test_resumes,
+    verify_no_overlap,
+    classify_job_family,
+    audit_role_family_coverage,
+    audit_60_job_universe_overlap_and_leakage,
+)
 from scripts.tune_hybrid_weights import prepare_dev_resumes
 
 
@@ -74,4 +81,85 @@ def test_check_dataset_overlap_cli_exit_code():
         env=env,
     )
     assert result.returncode == 0
-    assert "Zero dataset overlap confirmed" in result.stdout
+    assert "Zero content-hash overlap confirmed" in result.stdout
+
+
+def test_classify_job_family_mapping():
+    assert classify_job_family("Senior Data Scientist") == "Data/AI"
+    assert classify_job_family("Machine Learning Engineer") == "Data/AI"
+    assert classify_job_family("Full Stack Software Developer") == "Web/Software"
+    assert classify_job_family("Android Mobile App Developer") == "Mobile/UI-UX"
+    assert classify_job_family("Cloud Security Architect") == "Cybersecurity/Cloud"
+    assert classify_job_family("VLSI Embedded Hardware Engineer") == "Electrical"
+    assert classify_job_family("Mechanical Design CAD Engineer") == "Mechanical"
+    assert classify_job_family("Civil Site Engineer") == "Civil"
+    assert classify_job_family("Senior Accountant / Auditor") == "Commerce/Finance"
+    assert classify_job_family("Technical Content Writer") == "Arts/Media"
+
+
+def test_audit_role_family_coverage():
+    mock_jobs = [
+        {"id": f"j_data_{i}", "title": "Data Analyst", "description": "SQL and Python"}
+        for i in range(65)
+    ] + [
+        {"id": f"j_mech_{i}", "title": "Mechanical Engineer", "description": "CAD design"}
+        for i in range(15)
+    ]
+
+    cov = audit_role_family_coverage(mock_jobs)
+    assert "Data/AI" in cov["can_fill_families"]
+    assert cov["breakdown"]["Data/AI"]["can_fill_60_universe"] is True
+    assert cov["breakdown"]["Data/AI"]["count"] == 65
+
+    assert "Mechanical" in cov["cannot_fill_families"]
+    assert cov["breakdown"]["Mechanical"]["can_fill_60_universe"] is False
+    assert cov["breakdown"]["Mechanical"]["count"] == 15
+    assert cov["breakdown"]["Mechanical"]["deficit"] == 45
+
+
+def test_universe_overlap_and_leakage_detection():
+    jobs_pool = [
+        {"id": f"job_py_{i}", "title": f"Python Developer {i}", "description": "Python, FastAPI", "skills": ["Python"]}
+        for i in range(5)
+    ] + [
+        {"id": f"job_java_{i}", "title": f"Java Architect {i}", "description": "Java, Spring", "skills": ["Java"]}
+        for i in range(5)
+    ] + [
+        {"id": f"job_react_{i}", "title": f"React Frontend {i}", "description": "React, JavaScript", "skills": ["React"]}
+        for i in range(5)
+    ] + [
+        {"id": f"job_data_{i}", "title": f"Data Analyst {i}", "description": "SQL, Tableau", "skills": ["SQL"]}
+        for i in range(5)
+    ]
+
+    test_resumes = [
+        {"candidate_id": "test_1", "skills": ["Python"], "summary": "Python Developer"},
+        {"candidate_id": "test_2", "skills": ["Python"], "summary": "Python Developer"},
+    ]
+
+    # Dev resume identical to test_1 to test leakage detection
+    dev_resumes_leak = [
+        {"candidate_id": "dev_leak", "skills": ["Python"], "summary": "Python Developer"}
+    ]
+
+    leak_audit = audit_60_job_universe_overlap_and_leakage(
+        test_resumes=test_resumes,
+        dev_resumes=dev_resumes_leak,
+        jobs_pool=jobs_pool,
+        universe_size=5,
+    )
+    assert leak_audit["leakage_detected"] is True
+
+    # Dev resume distinct in different domain (Java Architect)
+    dev_resumes_clean = [
+        {"candidate_id": "dev_clean", "skills": ["Java"], "summary": "Java Architect"}
+    ]
+    clean_audit = audit_60_job_universe_overlap_and_leakage(
+        test_resumes=test_resumes,
+        dev_resumes=dev_resumes_clean,
+        jobs_pool=jobs_pool,
+        universe_size=5,
+    )
+    assert clean_audit["dev_set_leakage_checks"][0]["leakage_flag"] is False
+    assert clean_audit["leakage_detected"] is False
+

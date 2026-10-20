@@ -15,8 +15,13 @@ Last Updated: October 19, 2026.
 | **L3** | **Live Sanity Match** | **VERIFIED** | `syn_swe_01` matched to Python Data Engineer (40.8%), 7.00ms/job latency, honest null company display | `aa5eae9` |
 | **L4** | **Scraper Gating & Source Exclusions** | **VERIFIED** | `SCRAPER_ENABLED=false` by default, scraper gated, 1,555 legacy jobs preserved & segregated | `aa5eae9` |
 | **L5** | **Zero Secret Leaks** | **VERIFIED** | 0 occurrences of literal `ADZUNA_APP_ID` or `ADZUNA_APP_KEY`, regex redaction filter active | `aa5eae9` |
-| **L6** | **Frontend Honesty & Radar Charts** | **VERIFIED** | 47/47 vitest tests passed, 82 lint warnings (down from 86), SVG Radar with table fallback, `(No link available)` tag | Pending Commit 2 |
-| **L7** | **Indian Academic Anonymizer Audit** | **VERIFIED** | 14/15 lines (93.3%) masked directly by regex; 1 unmasked line documented with mitigation plan | Pending Commit 2 |
+| **L6** | **Frontend Honesty & Radar Charts** | **VERIFIED** | 47/47 vitest tests passed, 82 lint warnings (down from 86), SVG Radar with table fallback, `(No link available)` tag | `aa5eae9` |
+| **L7** | **Indian Academic Anonymizer Audit** | **VERIFIED** | 15/15 lines (100.0%) masked directly by regex after adding IIIT / International Institute | Local R9 |
+| **L8** | **Seniority Gating & Boundary Rules** | **VERIFIED** | Deterministic classifier (intern/junior/mid/senior/lead), boundary rule (Engineer II is mid), gate ON/OFF tested | Local R9 |
+| **L9** | **Provenance & Resumable Runner** | **VERIFIED** | Full provenance records, strict alias mismatch rejection, byte-identical resume after kill, explicit FAILURE rows | Local R9 |
+| **L10** | **Dataset Overlap & 9-Family Coverage** | **VERIFIED** | 0 leakage to dev set, 496 pairwise test comparisons, snapshot 1 coverage audited (3 fill, 6 deficit) | Local R9 |
+| **L11** | **Deterministic Rule-Based Parser** | **VERIFIED** | Non-LLM rule-based parser mode, canonical skills only, verified on 3 real PDFs | Local R9 |
+| **L12** | **Checkpoint Tooling** | **VERIFIED** | Git dirty-tree refusal, SHA-256 asset freezing, automated manifest writing and git tag creation | Local R9 |
 
 ---
 
@@ -86,5 +91,56 @@ An audit evaluating `app/services/anonymizer.py` against 15 representative India
 - **14 of 15 (93.3%)** institutions were stripped and replaced with `[INSTITUTION]`.
 - **1 Unmasked Line**: `International Institute of Information Technology, Hyderabad` (IIIT Hyderabad).
 - **Analysis & Production Impact**:
-  - In synthetic benchmark evaluations (`data/fairness/synthetic_resumes_v1.jsonl`), all candidate institutions are drawn from the 24 canonical universities in `data/fairness/perturbations_v1.json` (which are 100% masked).
-  - For free-form Indian resumes containing "International Institute of Information Technology", adding `International Institute of Information Technology` to `institution_patterns` in `app/services/anonymizer.py` completes 100% coverage.
+  - Remediated in R9: `app/services/anonymizer.py` updated with `\b(?:IIT|NIT|IIIT|BITS)(?:\s+[A-Z][a-z]+)?\b` and `International Institute of Information Technology`.
+  - Re-run of 15-line coverage audit achieved **15 of 15 (100.0%)** institutions masked.
+  - Fairness tests passed (24/24).
+
+---
+
+## 3. Remediation R9 Evidence & Artifacts
+
+### L8: Seniority Gate & Boundary Rule Validation
+- Deterministic 5-level classifier in `app/core/seniority.py`: `intern`, `junior`, `mid`, `senior`, `lead`.
+- Config flag `SENIORITY_GATE=true` in `app/core/config.py` and `.env.example`.
+- Gate behavior: Junior candidates strictly cannot match Senior or Lead roles; Senior candidates cannot match Junior or Intern roles. Mid-level roles bridge across levels.
+- Boundary rule documented in code: "Engineer II" / "Level II" represents ~2-4 years experience and is strictly classified as `mid`.
+- Tests in `tests/test_seniority_gate.py` (4/4 passed):
+  - Junior candidate vs "Senior Software Engineer" excluded when gate is ON.
+  - Boundary case "Software Engineer II" included for junior candidate.
+  - Gate OFF (`seniority_gate=False`) restores ranking of all roles.
+
+### L9: Provenance Logging & Resumable Runner
+- Provenance module: `app/core/provenance.py` enforces all required fields: `git_commit_hash`, `config_hash`, `snapshot_hash`, `seed`, `requested_model`, `returned_model`, `gate_flags`, `run_type`, `timestamp`.
+- Model alias mismatch detection: in strict mode, requested vs returned model mismatch (e.g. `gemini-3.5-flash` vs `gemini-3.6-flash`) raises `ModelAliasMismatchError` and fails the run.
+- Missing field rejection: missing or empty provenance fields raise `ProvenanceValidationError`.
+- Resumable runner in `scripts/experiment_runner.py`:
+  - Mid-run kill test verified: resuming produces byte-identical output to uninterrupted run.
+  - No silent fallback: LLM/worker failures record an explicit `FAILURE` row (`status="FAILURE"`, `error=...`), never a silent mock/fallback result.
+
+### L10: Overlap & Role Family Coverage Check
+- Audit script: `scripts/check_dataset_overlap.py`.
+- Role family coverage across 432 jobs in `jobs_snapshot_1_20261019_adzuna.jsonl`:
+  - Families that CAN fill a 60-job universe: Cybersecurity/Cloud (62 jobs), Data/AI (117 jobs), Web/Software (117 jobs).
+  - Families that CANNOT fill a 60-job universe: Mobile/UI-UX (7 jobs, deficit 53), Electrical (16 jobs, deficit 44), Mechanical (20 jobs, deficit 40), Civil (0 jobs, deficit 60), Commerce/Finance (14 jobs, deficit 46), Arts/Media (2 jobs, deficit 58).
+- 60-job universe overlap & dev leakage:
+  - 496 pairwise test universe comparisons across 32 candidates.
+  - 64 dev set universe checks against gold resumes (Mahi, Deepika).
+  - Dev set leakage detected: **False** (zero contamination).
+
+### L11: Deterministic Rule-Based Parser Mode
+- Added `PARSER_MODE=hybrid` in `app/core/config.py` with support for `rule_based`.
+- `ParserAgent.parse(raw_text, mode="rule_based")` bypasses all LLMs, runs deterministic regex parser, outputs canonical skills only, and logs mode.
+- Verified on 3 real PDF resumes:
+  - Candidate A (Mahima): 21 canonical skills (`['Blender', 'C', 'Canva', 'Communication', 'DBMS', 'Data Science', 'Eclipse IDE', 'Figma', 'Git/GitHub', 'HTML/CSS', 'Java', 'JavaScript', 'MySQL', 'Problem Solving', 'Python', 'SQL', 'Software Engineering', 'Team Collaboration', 'Time Management', 'VS Code', 'Web Technologies']`)
+  - Candidate B (Deepika): 9 canonical skills (`['Agricultural Practices', 'Cell Culture', 'Formulation', 'Gel Electrophoresis', 'MATLAB', 'Microbiology', 'Molecular Biology', 'PCR', 'Python']`)
+  - Deepika FlowCV: 9 canonical skills (`['Agricultural Practices', 'Cell Culture', 'Formulation', 'Gel Electrophoresis', 'MATLAB', 'Microbiology', 'Molecular Biology', 'PCR', 'Python']`)
+- Unit test `tests/test_parser_rule_based_mode.py` passed.
+
+### L12: Checkpoint Tooling
+- Tool: `scripts/create_checkpoint.py`.
+- Enforces clean working tree (`git status --porcelain`); raises `RuntimeError` if uncommitted changes exist.
+- Freezes documents and computes SHA-256 asset hashes.
+- Writes manifest JSON file in `artifacts/checkpoints/<tag>_manifest.json`.
+- Creates local annotated git tag (`git tag -a <tag> -m ...`).
+- Unit tests in `tests/test_checkpoint_tooling.py` passed on an isolated scratch repository.
+

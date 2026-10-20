@@ -22,6 +22,11 @@ from app.schemas.matcher import (
 )
 from app.services.embedding_service import embedding_service
 from app.services.deduplication_service import deduplication_service
+from app.core.seniority import (
+    classify_candidate_seniority,
+    classify_job_seniority,
+    is_seniority_compatible,
+)
 
 
 from app.core.taxonomy import CANONICAL_SKILL_PATTERNS, LINKEDIN_CATEGORY_CODES
@@ -983,9 +988,18 @@ class MatcherAgent:
 
         match_items: List[JobMatchItem] = []
 
+        gate_enabled = getattr(settings, "SENIORITY_GATE", True)
+        cand_seniority = classify_candidate_seniority(resume.parsed_data or {}) if gate_enabled else None
+        logger.info(f"[Matcher Seniority Gate] gate_enabled={gate_enabled} | Candidate Seniority: {cand_seniority}")
+
         # 3. Score & re-rank each candidate job
         for row in candidate_rows:
             job: JobPosting = row[0]
+            if gate_enabled and cand_seniority:
+                job_sen = classify_job_seniority(job.title or "", job.description or "")
+                if not is_seniority_compatible(cand_seniority, job_sen):
+                    continue
+
             raw_dist = getattr(row, "distance", None)
             distance: float = float(raw_dist) if raw_dist is not None else 0.40
 
@@ -1092,8 +1106,17 @@ class MatcherAgent:
         candidate_items: List[CandidateMatchItem] = []
         skills_list = job.skills if isinstance(job.skills, list) else []
 
+        gate_enabled = getattr(settings, "SENIORITY_GATE", True)
+        job_sen = classify_job_seniority(job.title or "", job.description or "") if gate_enabled else None
+        logger.info(f"[Matcher Candidates Seniority Gate] gate_enabled={gate_enabled} | Job Seniority: {job_sen}")
+
         for row in candidates:
             resume: Resume = row[0]
+            if gate_enabled and job_sen:
+                cand_sen = classify_candidate_seniority(resume.parsed_data or {})
+                if not is_seniority_compatible(cand_sen, job_sen):
+                    continue
+
             raw_dist = getattr(row, "distance", None)
             distance: float = float(raw_dist) if raw_dist is not None else 0.40
 

@@ -1,0 +1,3510 @@
+{
+  "content_hash_overlap": {
+    "dev_count": 2,
+    "test_count": 2,
+    "dev_unique_hashes": 2,
+    "test_unique_hashes": 2,
+    "has_overlap": false,
+    "overlapping_count": 0,
+    "overlapping_details": []
+  },
+  "role_family_coverage": {
+    "total_jobs": 432,
+    "breakdown": {
+      "Mobile/UI-UX": {
+        "count": 7,
+        "can_fill_60_universe": false,
+        "deficit": 53
+      },
+      "Cybersecurity/Cloud": {
+        "count": 62,
+        "can_fill_60_universe": true,
+        "deficit": 0
+      },
+      "Electrical": {
+        "count": 16,
+        "can_fill_60_universe": false,
+        "deficit": 44
+      },
+      "Mechanical": {
+        "count": 20,
+        "can_fill_60_universe": false,
+        "deficit": 40
+      },
+      "Civil": {
+        "count": 0,
+        "can_fill_60_universe": false,
+        "deficit": 60
+      },
+      "Commerce/Finance": {
+        "count": 14,
+        "can_fill_60_universe": false,
+        "deficit": 46
+      },
+      "Arts/Media": {
+        "count": 2,
+        "can_fill_60_universe": false,
+        "deficit": 58
+      },
+      "Data/AI": {
+        "count": 117,
+        "can_fill_60_universe": true,
+        "deficit": 0
+      },
+      "Web/Software": {
+        "count": 117,
+        "can_fill_60_universe": true,
+        "deficit": 0
+      },
+      "Other/Unclassified": {
+        "count": 77,
+        "can_fill_60_universe": true,
+        "deficit": 0
+      }
+    },
+    "can_fill_families": [
+      "Cybersecurity/Cloud",
+      "Data/AI",
+      "Web/Software"
+    ],
+    "cannot_fill_families": [
+      "Mobile/UI-UX",
+      "Electrical",
+      "Mechanical",
+      "Civil",
+      "Commerce/Finance",
+      "Arts/Media"
+    ]
+  },
+  "universe_audit": {
+    "pairwise_overlaps": [
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "Deepika",
+        "shared_job_count": 27,
+        "jaccard": 0.2903
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_2",
+        "shared_job_count": 26,
+        "jaccard": 0.2766
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_3",
+        "shared_job_count": 25,
+        "jaccard": 0.2632
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_4",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_5",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_6",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_7",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_8",
+        "shared_job_count": 31,
+        "jaccard": 0.3483
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_9",
+        "shared_job_count": 21,
+        "jaccard": 0.2121
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_10",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_11",
+        "shared_job_count": 21,
+        "jaccard": 0.2121
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_12",
+        "shared_job_count": 25,
+        "jaccard": 0.2632
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_13",
+        "shared_job_count": 17,
+        "jaccard": 0.165
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_14",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_15",
+        "shared_job_count": 22,
+        "jaccard": 0.2245
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_16",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_17",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_18",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_19",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_20",
+        "shared_job_count": 17,
+        "jaccard": 0.165
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_21",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_22",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_23",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_24",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_25",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_26",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_27",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_28",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_29",
+        "shared_job_count": 9,
+        "jaccard": 0.0811
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_30",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "Mahima",
+        "candidate_b": "test_31",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_2",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_3",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_4",
+        "shared_job_count": 17,
+        "jaccard": 0.165
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_5",
+        "shared_job_count": 23,
+        "jaccard": 0.2371
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_6",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_7",
+        "shared_job_count": 4,
+        "jaccard": 0.0345
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_8",
+        "shared_job_count": 26,
+        "jaccard": 0.2766
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_9",
+        "shared_job_count": 40,
+        "jaccard": 0.5
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_10",
+        "shared_job_count": 35,
+        "jaccard": 0.4118
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_11",
+        "shared_job_count": 44,
+        "jaccard": 0.5789
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_12",
+        "shared_job_count": 39,
+        "jaccard": 0.4815
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_13",
+        "shared_job_count": 37,
+        "jaccard": 0.4458
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_14",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_15",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_16",
+        "shared_job_count": 4,
+        "jaccard": 0.0345
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_17",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_18",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_19",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_20",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_21",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_22",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_23",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_24",
+        "shared_job_count": 39,
+        "jaccard": 0.4815
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_25",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_26",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_27",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_28",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_29",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_30",
+        "shared_job_count": 9,
+        "jaccard": 0.0811
+      },
+      {
+        "candidate_a": "Deepika",
+        "candidate_b": "test_31",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_3",
+        "shared_job_count": 34,
+        "jaccard": 0.3953
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_4",
+        "shared_job_count": 26,
+        "jaccard": 0.2766
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_5",
+        "shared_job_count": 26,
+        "jaccard": 0.2766
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_6",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_7",
+        "shared_job_count": 27,
+        "jaccard": 0.2903
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_8",
+        "shared_job_count": 28,
+        "jaccard": 0.3043
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_9",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_10",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_11",
+        "shared_job_count": 24,
+        "jaccard": 0.25
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_12",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_13",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_14",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_15",
+        "shared_job_count": 31,
+        "jaccard": 0.3483
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_16",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_17",
+        "shared_job_count": 26,
+        "jaccard": 0.2766
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_18",
+        "shared_job_count": 24,
+        "jaccard": 0.25
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_19",
+        "shared_job_count": 17,
+        "jaccard": 0.165
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_20",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_21",
+        "shared_job_count": 23,
+        "jaccard": 0.2371
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_22",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_23",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_24",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_25",
+        "shared_job_count": 5,
+        "jaccard": 0.0435
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_26",
+        "shared_job_count": 22,
+        "jaccard": 0.2245
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_27",
+        "shared_job_count": 31,
+        "jaccard": 0.3483
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_28",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_29",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_30",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_2",
+        "candidate_b": "test_31",
+        "shared_job_count": 8,
+        "jaccard": 0.0714
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_4",
+        "shared_job_count": 26,
+        "jaccard": 0.2766
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_5",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_6",
+        "shared_job_count": 27,
+        "jaccard": 0.2903
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_7",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_8",
+        "shared_job_count": 23,
+        "jaccard": 0.2371
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_9",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_10",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_11",
+        "shared_job_count": 29,
+        "jaccard": 0.3187
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_12",
+        "shared_job_count": 24,
+        "jaccard": 0.25
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_13",
+        "shared_job_count": 27,
+        "jaccard": 0.2903
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_14",
+        "shared_job_count": 22,
+        "jaccard": 0.2245
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_15",
+        "shared_job_count": 28,
+        "jaccard": 0.3043
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_16",
+        "shared_job_count": 24,
+        "jaccard": 0.25
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_17",
+        "shared_job_count": 25,
+        "jaccard": 0.2632
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_18",
+        "shared_job_count": 25,
+        "jaccard": 0.2632
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_19",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_20",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_21",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_22",
+        "shared_job_count": 9,
+        "jaccard": 0.0811
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_23",
+        "shared_job_count": 5,
+        "jaccard": 0.0435
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_24",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_25",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_26",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_27",
+        "shared_job_count": 25,
+        "jaccard": 0.2632
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_28",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_29",
+        "shared_job_count": 18,
+        "jaccard": 0.1765
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_30",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_3",
+        "candidate_b": "test_31",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_5",
+        "shared_job_count": 32,
+        "jaccard": 0.3636
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_6",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_7",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_8",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_9",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_10",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_11",
+        "shared_job_count": 22,
+        "jaccard": 0.2245
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_12",
+        "shared_job_count": 17,
+        "jaccard": 0.165
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_13",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_14",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_15",
+        "shared_job_count": 29,
+        "jaccard": 0.3187
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_16",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_17",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_18",
+        "shared_job_count": 22,
+        "jaccard": 0.2245
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_19",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_20",
+        "shared_job_count": 9,
+        "jaccard": 0.0811
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_21",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_22",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_23",
+        "shared_job_count": 8,
+        "jaccard": 0.0714
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_24",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_25",
+        "shared_job_count": 8,
+        "jaccard": 0.0714
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_26",
+        "shared_job_count": 17,
+        "jaccard": 0.165
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_27",
+        "shared_job_count": 18,
+        "jaccard": 0.1765
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_28",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_29",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_30",
+        "shared_job_count": 9,
+        "jaccard": 0.0811
+      },
+      {
+        "candidate_a": "test_4",
+        "candidate_b": "test_31",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_6",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_7",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_8",
+        "shared_job_count": 17,
+        "jaccard": 0.165
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_9",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_10",
+        "shared_job_count": 17,
+        "jaccard": 0.165
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_11",
+        "shared_job_count": 22,
+        "jaccard": 0.2245
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_12",
+        "shared_job_count": 18,
+        "jaccard": 0.1765
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_13",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_14",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_15",
+        "shared_job_count": 28,
+        "jaccard": 0.3043
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_16",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_17",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_18",
+        "shared_job_count": 25,
+        "jaccard": 0.2632
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_19",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_20",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_21",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_22",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_23",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_24",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_25",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_26",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_27",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_28",
+        "shared_job_count": 18,
+        "jaccard": 0.1765
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_29",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_30",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_5",
+        "candidate_b": "test_31",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_7",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_8",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_9",
+        "shared_job_count": 5,
+        "jaccard": 0.0435
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_10",
+        "shared_job_count": 5,
+        "jaccard": 0.0435
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_11",
+        "shared_job_count": 9,
+        "jaccard": 0.0811
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_12",
+        "shared_job_count": 8,
+        "jaccard": 0.0714
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_13",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_14",
+        "shared_job_count": 9,
+        "jaccard": 0.0811
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_15",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_16",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_17",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_18",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_19",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_20",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_21",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_22",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_23",
+        "shared_job_count": 9,
+        "jaccard": 0.0811
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_24",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_25",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_26",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_27",
+        "shared_job_count": 22,
+        "jaccard": 0.2245
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_28",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_29",
+        "shared_job_count": 8,
+        "jaccard": 0.0714
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_30",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_6",
+        "candidate_b": "test_31",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_8",
+        "shared_job_count": 8,
+        "jaccard": 0.0714
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_9",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_10",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_11",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_12",
+        "shared_job_count": 5,
+        "jaccard": 0.0435
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_13",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_14",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_15",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_16",
+        "shared_job_count": 22,
+        "jaccard": 0.2245
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_17",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_18",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_19",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_20",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_21",
+        "shared_job_count": 25,
+        "jaccard": 0.2632
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_22",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_23",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_24",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_25",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_26",
+        "shared_job_count": 24,
+        "jaccard": 0.25
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_27",
+        "shared_job_count": 24,
+        "jaccard": 0.25
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_28",
+        "shared_job_count": 21,
+        "jaccard": 0.2121
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_29",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_30",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_7",
+        "candidate_b": "test_31",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_9",
+        "shared_job_count": 27,
+        "jaccard": 0.2903
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_10",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_11",
+        "shared_job_count": 27,
+        "jaccard": 0.2903
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_12",
+        "shared_job_count": 35,
+        "jaccard": 0.4118
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_13",
+        "shared_job_count": 22,
+        "jaccard": 0.2245
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_14",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_15",
+        "shared_job_count": 22,
+        "jaccard": 0.2245
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_16",
+        "shared_job_count": 4,
+        "jaccard": 0.0345
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_17",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_18",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_19",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_20",
+        "shared_job_count": 22,
+        "jaccard": 0.2245
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_21",
+        "shared_job_count": 9,
+        "jaccard": 0.0811
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_22",
+        "shared_job_count": 22,
+        "jaccard": 0.2245
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_23",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_24",
+        "shared_job_count": 18,
+        "jaccard": 0.1765
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_25",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_26",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_27",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_28",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_29",
+        "shared_job_count": 4,
+        "jaccard": 0.0345
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_30",
+        "shared_job_count": 2,
+        "jaccard": 0.0169
+      },
+      {
+        "candidate_a": "test_8",
+        "candidate_b": "test_31",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_10",
+        "shared_job_count": 38,
+        "jaccard": 0.4634
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_11",
+        "shared_job_count": 46,
+        "jaccard": 0.6216
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_12",
+        "shared_job_count": 39,
+        "jaccard": 0.4815
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_13",
+        "shared_job_count": 35,
+        "jaccard": 0.4118
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_14",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_15",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_16",
+        "shared_job_count": 3,
+        "jaccard": 0.0256
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_17",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_18",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_19",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_20",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_21",
+        "shared_job_count": 5,
+        "jaccard": 0.0435
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_22",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_23",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_24",
+        "shared_job_count": 38,
+        "jaccard": 0.4634
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_25",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_26",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_27",
+        "shared_job_count": 8,
+        "jaccard": 0.0714
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_28",
+        "shared_job_count": 8,
+        "jaccard": 0.0714
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_29",
+        "shared_job_count": 8,
+        "jaccard": 0.0714
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_30",
+        "shared_job_count": 9,
+        "jaccard": 0.0811
+      },
+      {
+        "candidate_a": "test_9",
+        "candidate_b": "test_31",
+        "shared_job_count": 5,
+        "jaccard": 0.0435
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_11",
+        "shared_job_count": 39,
+        "jaccard": 0.4815
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_12",
+        "shared_job_count": 32,
+        "jaccard": 0.3636
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_13",
+        "shared_job_count": 33,
+        "jaccard": 0.3793
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_14",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_15",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_16",
+        "shared_job_count": 8,
+        "jaccard": 0.0714
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_17",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_18",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_19",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_20",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_21",
+        "shared_job_count": 8,
+        "jaccard": 0.0714
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_22",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_23",
+        "shared_job_count": 9,
+        "jaccard": 0.0811
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_24",
+        "shared_job_count": 39,
+        "jaccard": 0.4815
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_25",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_26",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_27",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_28",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_29",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_30",
+        "shared_job_count": 5,
+        "jaccard": 0.0435
+      },
+      {
+        "candidate_a": "test_10",
+        "candidate_b": "test_31",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_12",
+        "shared_job_count": 42,
+        "jaccard": 0.5385
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_13",
+        "shared_job_count": 42,
+        "jaccard": 0.5385
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_14",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_15",
+        "shared_job_count": 23,
+        "jaccard": 0.2371
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_16",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_17",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_18",
+        "shared_job_count": 18,
+        "jaccard": 0.1765
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_19",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_20",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_21",
+        "shared_job_count": 9,
+        "jaccard": 0.0811
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_22",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_23",
+        "shared_job_count": 8,
+        "jaccard": 0.0714
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_24",
+        "shared_job_count": 41,
+        "jaccard": 0.519
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_25",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_26",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_27",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_28",
+        "shared_job_count": 9,
+        "jaccard": 0.0811
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_29",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_30",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_11",
+        "candidate_b": "test_31",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_12",
+        "candidate_b": "test_13",
+        "shared_job_count": 34,
+        "jaccard": 0.3953
+      },
+      {
+        "candidate_a": "test_12",
+        "candidate_b": "test_14",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_12",
+        "candidate_b": "test_15",
+        "shared_job_count": 24,
+        "jaccard": 0.25
+      },
+      {
+        "candidate_a": "test_12",
+        "candidate_b": "test_16",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "test_12",
+        "candidate_b": "test_17",
+        "shared_job_count": 17,
+        "jaccard": 0.165
+      },
+      {
+        "candidate_a": "test_12",
+        "candidate_b": "test_18",
+        "shared_job_count": 17,
+        "jaccard": 0.165
+      },
+      {
+        "candidate_a": "test_12",
+        "candidate_b": "test_19",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "test_12",
+        "candidate_b": "test_20",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "test_12",
+        "candidate_b": "test_21",
+        "shared_job_count": 3,
+        "jaccard": 0.0256
+      },
+      {
+        "candidate_a": "test_12",
+        "candidate_b": "test_22",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "test_12",
+        "candidate_b": "test_23",
+        "shared_job_count": 8,
+        "jaccard": 0.0714
+      },
+      {
+        "candidate_a": "test_12",
+        "candidate_b": "test_24",
+        "shared_job_count": 33,
+        "jaccard": 0.3793
+      },
+      {
+        "candidate_a": "test_12",
+        "candidate_b": "test_25",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_12",
+        "candidate_b": "test_26",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_12",
+        "candidate_b": "test_27",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_12",
+        "candidate_b": "test_28",
+        "shared_job_count": 5,
+        "jaccard": 0.0435
+      },
+      {
+        "candidate_a": "test_12",
+        "candidate_b": "test_29",
+        "shared_job_count": 8,
+        "jaccard": 0.0714
+      },
+      {
+        "candidate_a": "test_12",
+        "candidate_b": "test_30",
+        "shared_job_count": 3,
+        "jaccard": 0.0256
+      },
+      {
+        "candidate_a": "test_12",
+        "candidate_b": "test_31",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_13",
+        "candidate_b": "test_14",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "test_13",
+        "candidate_b": "test_15",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "test_13",
+        "candidate_b": "test_16",
+        "shared_job_count": 18,
+        "jaccard": 0.1765
+      },
+      {
+        "candidate_a": "test_13",
+        "candidate_b": "test_17",
+        "shared_job_count": 23,
+        "jaccard": 0.2371
+      },
+      {
+        "candidate_a": "test_13",
+        "candidate_b": "test_18",
+        "shared_job_count": 21,
+        "jaccard": 0.2121
+      },
+      {
+        "candidate_a": "test_13",
+        "candidate_b": "test_19",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_13",
+        "candidate_b": "test_20",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "test_13",
+        "candidate_b": "test_21",
+        "shared_job_count": 9,
+        "jaccard": 0.0811
+      },
+      {
+        "candidate_a": "test_13",
+        "candidate_b": "test_22",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_13",
+        "candidate_b": "test_23",
+        "shared_job_count": 5,
+        "jaccard": 0.0435
+      },
+      {
+        "candidate_a": "test_13",
+        "candidate_b": "test_24",
+        "shared_job_count": 31,
+        "jaccard": 0.3483
+      },
+      {
+        "candidate_a": "test_13",
+        "candidate_b": "test_25",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_13",
+        "candidate_b": "test_26",
+        "shared_job_count": 8,
+        "jaccard": 0.0714
+      },
+      {
+        "candidate_a": "test_13",
+        "candidate_b": "test_27",
+        "shared_job_count": 18,
+        "jaccard": 0.1765
+      },
+      {
+        "candidate_a": "test_13",
+        "candidate_b": "test_28",
+        "shared_job_count": 8,
+        "jaccard": 0.0714
+      },
+      {
+        "candidate_a": "test_13",
+        "candidate_b": "test_29",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_13",
+        "candidate_b": "test_30",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_13",
+        "candidate_b": "test_31",
+        "shared_job_count": 3,
+        "jaccard": 0.0256
+      },
+      {
+        "candidate_a": "test_14",
+        "candidate_b": "test_15",
+        "shared_job_count": 21,
+        "jaccard": 0.2121
+      },
+      {
+        "candidate_a": "test_14",
+        "candidate_b": "test_16",
+        "shared_job_count": 28,
+        "jaccard": 0.3043
+      },
+      {
+        "candidate_a": "test_14",
+        "candidate_b": "test_17",
+        "shared_job_count": 37,
+        "jaccard": 0.4458
+      },
+      {
+        "candidate_a": "test_14",
+        "candidate_b": "test_18",
+        "shared_job_count": 31,
+        "jaccard": 0.3483
+      },
+      {
+        "candidate_a": "test_14",
+        "candidate_b": "test_19",
+        "shared_job_count": 42,
+        "jaccard": 0.5385
+      },
+      {
+        "candidate_a": "test_14",
+        "candidate_b": "test_20",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_14",
+        "candidate_b": "test_21",
+        "shared_job_count": 9,
+        "jaccard": 0.0811
+      },
+      {
+        "candidate_a": "test_14",
+        "candidate_b": "test_22",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "test_14",
+        "candidate_b": "test_23",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "test_14",
+        "candidate_b": "test_24",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "test_14",
+        "candidate_b": "test_25",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_14",
+        "candidate_b": "test_26",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "test_14",
+        "candidate_b": "test_27",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_14",
+        "candidate_b": "test_28",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "test_14",
+        "candidate_b": "test_29",
+        "shared_job_count": 32,
+        "jaccard": 0.3636
+      },
+      {
+        "candidate_a": "test_14",
+        "candidate_b": "test_30",
+        "shared_job_count": 4,
+        "jaccard": 0.0345
+      },
+      {
+        "candidate_a": "test_14",
+        "candidate_b": "test_31",
+        "shared_job_count": 4,
+        "jaccard": 0.0345
+      },
+      {
+        "candidate_a": "test_15",
+        "candidate_b": "test_16",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "test_15",
+        "candidate_b": "test_17",
+        "shared_job_count": 27,
+        "jaccard": 0.2903
+      },
+      {
+        "candidate_a": "test_15",
+        "candidate_b": "test_18",
+        "shared_job_count": 30,
+        "jaccard": 0.3333
+      },
+      {
+        "candidate_a": "test_15",
+        "candidate_b": "test_19",
+        "shared_job_count": 17,
+        "jaccard": 0.165
+      },
+      {
+        "candidate_a": "test_15",
+        "candidate_b": "test_20",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_15",
+        "candidate_b": "test_21",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "test_15",
+        "candidate_b": "test_22",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_15",
+        "candidate_b": "test_23",
+        "shared_job_count": 8,
+        "jaccard": 0.0714
+      },
+      {
+        "candidate_a": "test_15",
+        "candidate_b": "test_24",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_15",
+        "candidate_b": "test_25",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_15",
+        "candidate_b": "test_26",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "test_15",
+        "candidate_b": "test_27",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "test_15",
+        "candidate_b": "test_28",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_15",
+        "candidate_b": "test_29",
+        "shared_job_count": 18,
+        "jaccard": 0.1765
+      },
+      {
+        "candidate_a": "test_15",
+        "candidate_b": "test_30",
+        "shared_job_count": 9,
+        "jaccard": 0.0811
+      },
+      {
+        "candidate_a": "test_15",
+        "candidate_b": "test_31",
+        "shared_job_count": 5,
+        "jaccard": 0.0435
+      },
+      {
+        "candidate_a": "test_16",
+        "candidate_b": "test_17",
+        "shared_job_count": 22,
+        "jaccard": 0.2245
+      },
+      {
+        "candidate_a": "test_16",
+        "candidate_b": "test_18",
+        "shared_job_count": 21,
+        "jaccard": 0.2121
+      },
+      {
+        "candidate_a": "test_16",
+        "candidate_b": "test_19",
+        "shared_job_count": 25,
+        "jaccard": 0.2632
+      },
+      {
+        "candidate_a": "test_16",
+        "candidate_b": "test_20",
+        "shared_job_count": 4,
+        "jaccard": 0.0345
+      },
+      {
+        "candidate_a": "test_16",
+        "candidate_b": "test_21",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_16",
+        "candidate_b": "test_22",
+        "shared_job_count": 4,
+        "jaccard": 0.0345
+      },
+      {
+        "candidate_a": "test_16",
+        "candidate_b": "test_23",
+        "shared_job_count": 5,
+        "jaccard": 0.0435
+      },
+      {
+        "candidate_a": "test_16",
+        "candidate_b": "test_24",
+        "shared_job_count": 3,
+        "jaccard": 0.0256
+      },
+      {
+        "candidate_a": "test_16",
+        "candidate_b": "test_25",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_16",
+        "candidate_b": "test_26",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "test_16",
+        "candidate_b": "test_27",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_16",
+        "candidate_b": "test_28",
+        "shared_job_count": 9,
+        "jaccard": 0.0811
+      },
+      {
+        "candidate_a": "test_16",
+        "candidate_b": "test_29",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "test_16",
+        "candidate_b": "test_30",
+        "shared_job_count": 2,
+        "jaccard": 0.0169
+      },
+      {
+        "candidate_a": "test_16",
+        "candidate_b": "test_31",
+        "shared_job_count": 2,
+        "jaccard": 0.0169
+      },
+      {
+        "candidate_a": "test_17",
+        "candidate_b": "test_18",
+        "shared_job_count": 37,
+        "jaccard": 0.4458
+      },
+      {
+        "candidate_a": "test_17",
+        "candidate_b": "test_19",
+        "shared_job_count": 28,
+        "jaccard": 0.3043
+      },
+      {
+        "candidate_a": "test_17",
+        "candidate_b": "test_20",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_17",
+        "candidate_b": "test_21",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "test_17",
+        "candidate_b": "test_22",
+        "shared_job_count": 5,
+        "jaccard": 0.0435
+      },
+      {
+        "candidate_a": "test_17",
+        "candidate_b": "test_23",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_17",
+        "candidate_b": "test_24",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "test_17",
+        "candidate_b": "test_25",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_17",
+        "candidate_b": "test_26",
+        "shared_job_count": 8,
+        "jaccard": 0.0714
+      },
+      {
+        "candidate_a": "test_17",
+        "candidate_b": "test_27",
+        "shared_job_count": 21,
+        "jaccard": 0.2121
+      },
+      {
+        "candidate_a": "test_17",
+        "candidate_b": "test_28",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_17",
+        "candidate_b": "test_29",
+        "shared_job_count": 24,
+        "jaccard": 0.25
+      },
+      {
+        "candidate_a": "test_17",
+        "candidate_b": "test_30",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "test_17",
+        "candidate_b": "test_31",
+        "shared_job_count": 7,
+        "jaccard": 0.0619
+      },
+      {
+        "candidate_a": "test_18",
+        "candidate_b": "test_19",
+        "shared_job_count": 25,
+        "jaccard": 0.2632
+      },
+      {
+        "candidate_a": "test_18",
+        "candidate_b": "test_20",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_18",
+        "candidate_b": "test_21",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_18",
+        "candidate_b": "test_22",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_18",
+        "candidate_b": "test_23",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_18",
+        "candidate_b": "test_24",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_18",
+        "candidate_b": "test_25",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_18",
+        "candidate_b": "test_26",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_18",
+        "candidate_b": "test_27",
+        "shared_job_count": 21,
+        "jaccard": 0.2121
+      },
+      {
+        "candidate_a": "test_18",
+        "candidate_b": "test_28",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_18",
+        "candidate_b": "test_29",
+        "shared_job_count": 29,
+        "jaccard": 0.3187
+      },
+      {
+        "candidate_a": "test_18",
+        "candidate_b": "test_30",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_18",
+        "candidate_b": "test_31",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_19",
+        "candidate_b": "test_20",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_19",
+        "candidate_b": "test_21",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_19",
+        "candidate_b": "test_22",
+        "shared_job_count": 4,
+        "jaccard": 0.0345
+      },
+      {
+        "candidate_a": "test_19",
+        "candidate_b": "test_23",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_19",
+        "candidate_b": "test_24",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_19",
+        "candidate_b": "test_25",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_19",
+        "candidate_b": "test_26",
+        "shared_job_count": 8,
+        "jaccard": 0.0714
+      },
+      {
+        "candidate_a": "test_19",
+        "candidate_b": "test_27",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_19",
+        "candidate_b": "test_28",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_19",
+        "candidate_b": "test_29",
+        "shared_job_count": 36,
+        "jaccard": 0.4286
+      },
+      {
+        "candidate_a": "test_19",
+        "candidate_b": "test_30",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_19",
+        "candidate_b": "test_31",
+        "shared_job_count": 6,
+        "jaccard": 0.0526
+      },
+      {
+        "candidate_a": "test_20",
+        "candidate_b": "test_21",
+        "shared_job_count": 22,
+        "jaccard": 0.2245
+      },
+      {
+        "candidate_a": "test_20",
+        "candidate_b": "test_22",
+        "shared_job_count": 37,
+        "jaccard": 0.4458
+      },
+      {
+        "candidate_a": "test_20",
+        "candidate_b": "test_23",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "test_20",
+        "candidate_b": "test_24",
+        "shared_job_count": 25,
+        "jaccard": 0.2632
+      },
+      {
+        "candidate_a": "test_20",
+        "candidate_b": "test_25",
+        "shared_job_count": 24,
+        "jaccard": 0.25
+      },
+      {
+        "candidate_a": "test_20",
+        "candidate_b": "test_26",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_20",
+        "candidate_b": "test_27",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_20",
+        "candidate_b": "test_28",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_20",
+        "candidate_b": "test_29",
+        "shared_job_count": 9,
+        "jaccard": 0.0811
+      },
+      {
+        "candidate_a": "test_20",
+        "candidate_b": "test_30",
+        "shared_job_count": 23,
+        "jaccard": 0.2371
+      },
+      {
+        "candidate_a": "test_20",
+        "candidate_b": "test_31",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_21",
+        "candidate_b": "test_22",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "test_21",
+        "candidate_b": "test_23",
+        "shared_job_count": 24,
+        "jaccard": 0.25
+      },
+      {
+        "candidate_a": "test_21",
+        "candidate_b": "test_24",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_21",
+        "candidate_b": "test_25",
+        "shared_job_count": 22,
+        "jaccard": 0.2245
+      },
+      {
+        "candidate_a": "test_21",
+        "candidate_b": "test_26",
+        "shared_job_count": 32,
+        "jaccard": 0.3636
+      },
+      {
+        "candidate_a": "test_21",
+        "candidate_b": "test_27",
+        "shared_job_count": 30,
+        "jaccard": 0.3333
+      },
+      {
+        "candidate_a": "test_21",
+        "candidate_b": "test_28",
+        "shared_job_count": 22,
+        "jaccard": 0.2245
+      },
+      {
+        "candidate_a": "test_21",
+        "candidate_b": "test_29",
+        "shared_job_count": 22,
+        "jaccard": 0.2245
+      },
+      {
+        "candidate_a": "test_21",
+        "candidate_b": "test_30",
+        "shared_job_count": 27,
+        "jaccard": 0.2903
+      },
+      {
+        "candidate_a": "test_21",
+        "candidate_b": "test_31",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "test_22",
+        "candidate_b": "test_23",
+        "shared_job_count": 25,
+        "jaccard": 0.2632
+      },
+      {
+        "candidate_a": "test_22",
+        "candidate_b": "test_24",
+        "shared_job_count": 21,
+        "jaccard": 0.2121
+      },
+      {
+        "candidate_a": "test_22",
+        "candidate_b": "test_25",
+        "shared_job_count": 30,
+        "jaccard": 0.3333
+      },
+      {
+        "candidate_a": "test_22",
+        "candidate_b": "test_26",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_22",
+        "candidate_b": "test_27",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_22",
+        "candidate_b": "test_28",
+        "shared_job_count": 15,
+        "jaccard": 0.1429
+      },
+      {
+        "candidate_a": "test_22",
+        "candidate_b": "test_29",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_22",
+        "candidate_b": "test_30",
+        "shared_job_count": 21,
+        "jaccard": 0.2121
+      },
+      {
+        "candidate_a": "test_22",
+        "candidate_b": "test_31",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "test_23",
+        "candidate_b": "test_24",
+        "shared_job_count": 18,
+        "jaccard": 0.1765
+      },
+      {
+        "candidate_a": "test_23",
+        "candidate_b": "test_25",
+        "shared_job_count": 31,
+        "jaccard": 0.3483
+      },
+      {
+        "candidate_a": "test_23",
+        "candidate_b": "test_26",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_23",
+        "candidate_b": "test_27",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_23",
+        "candidate_b": "test_28",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "test_23",
+        "candidate_b": "test_29",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_23",
+        "candidate_b": "test_30",
+        "shared_job_count": 25,
+        "jaccard": 0.2632
+      },
+      {
+        "candidate_a": "test_23",
+        "candidate_b": "test_31",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "test_24",
+        "candidate_b": "test_25",
+        "shared_job_count": 24,
+        "jaccard": 0.25
+      },
+      {
+        "candidate_a": "test_24",
+        "candidate_b": "test_26",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_24",
+        "candidate_b": "test_27",
+        "shared_job_count": 10,
+        "jaccard": 0.0909
+      },
+      {
+        "candidate_a": "test_24",
+        "candidate_b": "test_28",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_24",
+        "candidate_b": "test_29",
+        "shared_job_count": 12,
+        "jaccard": 0.1111
+      },
+      {
+        "candidate_a": "test_24",
+        "candidate_b": "test_30",
+        "shared_job_count": 16,
+        "jaccard": 0.1538
+      },
+      {
+        "candidate_a": "test_24",
+        "candidate_b": "test_31",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_25",
+        "candidate_b": "test_26",
+        "shared_job_count": 11,
+        "jaccard": 0.1009
+      },
+      {
+        "candidate_a": "test_25",
+        "candidate_b": "test_27",
+        "shared_job_count": 13,
+        "jaccard": 0.1215
+      },
+      {
+        "candidate_a": "test_25",
+        "candidate_b": "test_28",
+        "shared_job_count": 23,
+        "jaccard": 0.2371
+      },
+      {
+        "candidate_a": "test_25",
+        "candidate_b": "test_29",
+        "shared_job_count": 14,
+        "jaccard": 0.1321
+      },
+      {
+        "candidate_a": "test_25",
+        "candidate_b": "test_30",
+        "shared_job_count": 27,
+        "jaccard": 0.2903
+      },
+      {
+        "candidate_a": "test_25",
+        "candidate_b": "test_31",
+        "shared_job_count": 17,
+        "jaccard": 0.165
+      },
+      {
+        "candidate_a": "test_26",
+        "candidate_b": "test_27",
+        "shared_job_count": 34,
+        "jaccard": 0.3953
+      },
+      {
+        "candidate_a": "test_26",
+        "candidate_b": "test_28",
+        "shared_job_count": 23,
+        "jaccard": 0.2371
+      },
+      {
+        "candidate_a": "test_26",
+        "candidate_b": "test_29",
+        "shared_job_count": 26,
+        "jaccard": 0.2766
+      },
+      {
+        "candidate_a": "test_26",
+        "candidate_b": "test_30",
+        "shared_job_count": 18,
+        "jaccard": 0.1765
+      },
+      {
+        "candidate_a": "test_26",
+        "candidate_b": "test_31",
+        "shared_job_count": 31,
+        "jaccard": 0.3483
+      },
+      {
+        "candidate_a": "test_27",
+        "candidate_b": "test_28",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "test_27",
+        "candidate_b": "test_29",
+        "shared_job_count": 19,
+        "jaccard": 0.1881
+      },
+      {
+        "candidate_a": "test_27",
+        "candidate_b": "test_30",
+        "shared_job_count": 20,
+        "jaccard": 0.2
+      },
+      {
+        "candidate_a": "test_27",
+        "candidate_b": "test_31",
+        "shared_job_count": 18,
+        "jaccard": 0.1765
+      },
+      {
+        "candidate_a": "test_28",
+        "candidate_b": "test_29",
+        "shared_job_count": 23,
+        "jaccard": 0.2371
+      },
+      {
+        "candidate_a": "test_28",
+        "candidate_b": "test_30",
+        "shared_job_count": 18,
+        "jaccard": 0.1765
+      },
+      {
+        "candidate_a": "test_28",
+        "candidate_b": "test_31",
+        "shared_job_count": 28,
+        "jaccard": 0.3043
+      },
+      {
+        "candidate_a": "test_29",
+        "candidate_b": "test_30",
+        "shared_job_count": 18,
+        "jaccard": 0.1765
+      },
+      {
+        "candidate_a": "test_29",
+        "candidate_b": "test_31",
+        "shared_job_count": 21,
+        "jaccard": 0.2121
+      },
+      {
+        "candidate_a": "test_30",
+        "candidate_b": "test_31",
+        "shared_job_count": 17,
+        "jaccard": 0.165
+      }
+    ],
+    "dev_set_leakage_checks": [
+      {
+        "test_candidate": "Mahima",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 26,
+        "jaccard": 0.2766,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "Mahima",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 18,
+        "jaccard": 0.1765,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "Deepika",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 17,
+        "jaccard": 0.165,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "Deepika",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 22,
+        "jaccard": 0.2245,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_2",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 37,
+        "jaccard": 0.4458,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_2",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 18,
+        "jaccard": 0.1765,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_3",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 37,
+        "jaccard": 0.4458,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_3",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 22,
+        "jaccard": 0.2245,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_4",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 26,
+        "jaccard": 0.2766,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_4",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 19,
+        "jaccard": 0.1881,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_5",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 20,
+        "jaccard": 0.2,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_5",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 21,
+        "jaccard": 0.2121,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_6",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 18,
+        "jaccard": 0.1765,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_6",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 10,
+        "jaccard": 0.0909,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_7",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 26,
+        "jaccard": 0.2766,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_7",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 5,
+        "jaccard": 0.0435,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_8",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 25,
+        "jaccard": 0.2632,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_8",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 23,
+        "jaccard": 0.2371,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_9",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 17,
+        "jaccard": 0.165,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_9",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 16,
+        "jaccard": 0.1538,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_10",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 14,
+        "jaccard": 0.1321,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_10",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 9,
+        "jaccard": 0.0811,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_11",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 26,
+        "jaccard": 0.2766,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_11",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 20,
+        "jaccard": 0.2,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_12",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 19,
+        "jaccard": 0.1881,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_12",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 20,
+        "jaccard": 0.2,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_13",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 22,
+        "jaccard": 0.2245,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_13",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 14,
+        "jaccard": 0.1321,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_14",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 18,
+        "jaccard": 0.1765,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_14",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 11,
+        "jaccard": 0.1009,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_15",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 27,
+        "jaccard": 0.2903,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_15",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 20,
+        "jaccard": 0.2,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_16",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 16,
+        "jaccard": 0.1538,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_16",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 4,
+        "jaccard": 0.0345,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_17",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 20,
+        "jaccard": 0.2,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_17",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 16,
+        "jaccard": 0.1538,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_18",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 22,
+        "jaccard": 0.2245,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_18",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 17,
+        "jaccard": 0.165,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_19",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 14,
+        "jaccard": 0.1321,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_19",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 5,
+        "jaccard": 0.0435,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_20",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 12,
+        "jaccard": 0.1111,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_20",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 8,
+        "jaccard": 0.0714,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_21",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 22,
+        "jaccard": 0.2245,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_21",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 7,
+        "jaccard": 0.0619,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_22",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 8,
+        "jaccard": 0.0714,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_22",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 8,
+        "jaccard": 0.0714,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_23",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 7,
+        "jaccard": 0.0619,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_23",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 7,
+        "jaccard": 0.0619,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_24",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 13,
+        "jaccard": 0.1215,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_24",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 13,
+        "jaccard": 0.1215,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_25",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 7,
+        "jaccard": 0.0619,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_25",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 6,
+        "jaccard": 0.0526,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_26",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 18,
+        "jaccard": 0.1765,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_26",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 6,
+        "jaccard": 0.0526,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_27",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 27,
+        "jaccard": 0.2903,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_27",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 11,
+        "jaccard": 0.1009,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_28",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 12,
+        "jaccard": 0.1111,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_28",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 7,
+        "jaccard": 0.0619,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_29",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 13,
+        "jaccard": 0.1215,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_29",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 5,
+        "jaccard": 0.0435,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_30",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 5,
+        "jaccard": 0.0435,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_30",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 6,
+        "jaccard": 0.0526,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_31",
+        "dev_candidate": "Dev_Backend_Engineer",
+        "shared_job_count": 5,
+        "jaccard": 0.0435,
+        "leakage_flag": false
+      },
+      {
+        "test_candidate": "test_31",
+        "dev_candidate": "Dev_Bioinformatics_Researcher",
+        "shared_job_count": 8,
+        "jaccard": 0.0714,
+        "leakage_flag": false
+      }
+    ],
+    "leakage_detected": false
+  }
+}

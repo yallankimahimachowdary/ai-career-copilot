@@ -258,4 +258,20 @@ This document provides a transparent, technically precise accounting of known sy
   - **Description Truncation**: Free-tier Adzuna job descriptions are truncated upstream by Adzuna to 500 characters. Downstream skill extractors and embedding models operate within this 500-character window.
   - **Salary Flagging**: When Adzuna's `salary_is_predicted` flag is set to `"1"`, numeric salary columns in the database are cleared to `NULL` to avoid propagating unverified machine-generated estimations as factual recruiter salary bands.
 
+---
+
+## 16. Seniority Gating, Role-Family Coverage & Strict Provenance
+- **Relevant Files:**
+  - [`app/core/seniority.py`](../app/core/seniority.py)
+  - [`app/core/provenance.py`](../app/core/provenance.py)
+  - [`scripts/check_dataset_overlap.py`](../scripts/check_dataset_overlap.py)
+  - [`scripts/experiment_runner.py`](../scripts/experiment_runner.py)
+  - [`scripts/create_checkpoint.py`](../scripts/create_checkpoint.py)
+- **Status & Scope:**
+  - **Role Family Imbalance in Snapshot 1**: Auditing the 432 frozen jobs in `jobs_snapshot_1_20261019_adzuna.jsonl` reveals that only three role families possess $\ge 60$ jobs to form a complete 60-job universe: Data/AI (117 jobs), Web/Software (117 jobs), and Cybersecurity/Cloud (62 jobs). The remaining six role families (Mechanical with 20 jobs, Electrical with 16, Commerce/Finance with 14, Mobile/UI-UX with 7, Arts/Media with 2, and Civil with 0) have deficits and cannot fill an isolated 60-job universe without cross-family padding or supplemental ingestion.
+  - **Snapshot 1 Company Naming Convention**: In `jobs_snapshot_1_20261019_adzuna.jsonl`, company display names are exported under the standardized key `"company"` (with 0.0% missing across all 432 records). If inspecting under the legacy internal ORM column name `"company_name"`, the key is null on export. Downstream consumers must read `rec.get("company") or rec.get("company_name")`.
+  - **Seniority Boundary Rule ("Engineer II")**: Standalone Roman numeral classification categorizes Level I / Engineer I as entry/junior, while Level III+ / Senior is senior. "Engineer II" / "Level II" represents an intermediate stage (~2-4 years experience) and is strictly categorized as `mid`. It acts as a bridge role: compatible with junior candidates seeking upward progression and senior candidates, but junior candidates are strictly excluded from `senior` and `lead` roles.
+  - **Model Alias Mismatch in Strict Mode**: Public cloud LLMs (such as Google Gemini) frequently alias model family identifiers (e.g. `gemini-3.5-flash` dynamically resolving to `gemini-3.6-flash` or newer). In non-strict mode, this mismatch is flagged in run provenance. In strict provenance mode, any alias mismatch raises `ModelAliasMismatchError` and terminates the run to avoid unversioned evaluation drift.
+
+
 
