@@ -420,6 +420,8 @@ def main():
     )
     parser.add_argument("--k", type=int, default=10, help="Top k to rank")
     parser.add_argument("--repeat", type=int, default=0, help="Repeat index for experiment replication (default 0)")
+    parser.add_argument("--repeats", type=int, default=1, help="Total repeat runs K (default 1, recommended K=3 for LLM stability)")
+    parser.add_argument("--confirm", action="store_true", help="Confirm execution when ETA exceeds 2 hours")
     parser.add_argument("--seed", type=int, default=42, help="Universe seed for experiment (default 42)")
     parser.add_argument("--max_jobs", type=int, default=100, help="Max jobs to test from snapshot (default 100)")
     parser.add_argument("--max-resumes", "--max_resumes", dest="max_resumes", type=int, default=None, help="Max resumes to evaluate (for dry-run mode)")
@@ -427,19 +429,36 @@ def main():
     args = parser.parse_args()
 
     method_list = [m.strip() for m in args.methods.split(",") if m.strip()]
-    run_experiment(
-        snapshot_path=args.snapshot,
-        resumes_dir=args.resumes,
-        manifest_path=args.manifest,
-        strict_manifest=args.strict_manifest,
-        methods=method_list,
-        k=args.k,
-        repeat_idx=args.repeat,
-        universe_seed=args.seed,
-        max_snapshot_records=args.max_jobs,
-        max_resumes=args.max_resumes,
-        run_type=args.run_type,
-    )
+    # Compute ETA if LLM arm is present
+    has_llm = any("llm" in m.lower() for m in method_list)
+    k_repeats = args.repeats if args.repeats > 1 else 1
+    if has_llm:
+        est_cand = args.max_resumes if args.max_resumes else 10
+        # Measured ~2.2 - 2.7 min per resume per pass on llama3.2:3b CPU
+        est_minutes = est_cand * k_repeats * 2.45
+        est_hours = est_minutes / 60.0
+        print(f"\n[ETA ESTIMATE] LLM re-ranking detected for ~{est_cand} candidates x {k_repeats} repeat(s).")
+        print(f"[ETA ESTIMATE] Estimated duration: {est_minutes:.1f} minutes ({est_hours:.2f} hours).")
+        if est_hours > 2.0 and not args.confirm:
+            raise RuntimeError(
+                f"Execution estimate ({est_hours:.2f} hours) exceeds 2 hours. Pass --confirm to proceed."
+            )
+
+    for rep in range(k_repeats):
+        current_rep = rep if k_repeats > 1 else args.repeat
+        run_experiment(
+            snapshot_path=args.snapshot,
+            resumes_dir=args.resumes,
+            manifest_path=args.manifest,
+            strict_manifest=args.strict_manifest,
+            methods=method_list,
+            k=args.k,
+            repeat_idx=current_rep,
+            universe_seed=args.seed,
+            max_snapshot_records=args.max_jobs,
+            max_resumes=args.max_resumes,
+            run_type=args.run_type,
+        )
 
 
 if __name__ == "__main__":
