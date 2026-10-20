@@ -50,6 +50,8 @@ REQUIRED_PROVENANCE_FIELDS = [
     "gate_flags",
     "run_type",
     "timestamp",
+    "taxonomy_version",
+    "taxonomy_hash",
 ]
 
 
@@ -74,6 +76,8 @@ class ProvenanceRecord(BaseModel):
         "requested_model",
         "returned_model",
         "timestamp",
+        "taxonomy_version",
+        "taxonomy_hash",
     )
     @classmethod
     def cannot_be_empty(cls, v: str, info) -> str:
