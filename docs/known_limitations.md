@@ -275,16 +275,17 @@ This document provides a transparent, technically precise accounting of known sy
 
 ---
 
-## 17. Snapshot Data Freshness, Thin Role Pools & Local LLM Latency
+## 18. Taxonomy v2.1 Freeze & Evaluation Scope Demarcation
 - **Relevant Files:**
-  - [`app/core/config.py`](../app/core/config.py)
-  - [`app/services/matcher_service.py`](../app/services/matcher_service.py)
-  - [`frontend/src/components/matches/MatchDashboard.jsx`](../frontend/src/components/matches/MatchDashboard.jsx)
-  - [`tests/test_live_data_hygiene.py`](../tests/test_live_data_hygiene.py)
+  - [`app/core/taxonomy.py`](../app/core/taxonomy.py)
+  - [`app/core/provenance.py`](../app/core/provenance.py)
+  - [`docs/eval_scope.json`](../docs/eval_scope.json)
+  - [`scripts/build_universes.py`](../scripts/build_universes.py)
+  - [`scripts/eval_parser.py`](../scripts/eval_parser.py)
 - **Status & Scope:**
-  - **Static Snapshot As-Of Date**: In order to avoid silent data obsolescence, `SNAPSHOT_DATA_AS_OF = "2026-10-19"` is explicitly declared in configuration and exposed via API responses (`JobPostingResponse`, `ResumeMatchResponse`) and a persistent `"Data as of 2026-10-19"` badge in the Match Dashboard.
-  - **Honest Handling of Deficit Role Pools**: When non-tech or underrepresented discipline profiles (e.g. Commerce, Arts, Civil Engineering) are matched against Snapshot 1, the matcher checks role family compatibility and refuses to return irrelevant software development roles. If no domain-compatible postings meet the threshold, `ResumeMatchResponse` honestly reports `total_matches: 0` with `status: "insufficient_matching_postings"` and `message: "insufficient matching postings available in snapshot for this role profile"`, rather than hallucinating or cross-contaminating matches.
-  - **Local LLM Re-Ranking Latency**: When executing LLM re-ranking using local Ollama (`llama3.2:3b`) on CPU without dedicated GPU acceleration, structured inference over 20 candidate jobs takes ~130–160 seconds per candidate. This baseline is appropriate for offline batch evaluation and smoke testing, but high-throughput real-time production serving requires GPU acceleration or hosted inference endpoints.
+  - **Taxonomy Tuning & Freeze**: The canonical skill patterns in `app/core/taxonomy.py` were expanded to 92 skills to capture common technical tools observed in resume corpora (`MongoDB`, `Power BI`, `Excel`, `Firebase`, `Redux`, `Bash`, `Splunk`, `Nmap`, `Wireshark`, `Terraform`, `Seaborn`, `Matplotlib`, `Tableau`, `STAAD Pro`, `PCB Design`). Soft skills (`Leadership`, `Teamwork`) were deliberately excluded from the taxonomy. This taxonomy is FROZEN as `TAXONOMY_VERSION = "v2.1"` (SHA-256 `34203073A38633314606663838D536C09F77E8C9C2507F1CEE98096DD98F2A1C`) for all real experimental runs. Provenance logging strictly tracks this version and hash; runs mixing taxonomy versions will fail validation.
+  - **Evaluation Scope Restriction**: Real ranking evaluation is strictly restricted to resumes within the three viable role families defined in `docs/eval_scope.json`: `Data/AI`, `Web/Software`, and `Cybersecurity/Cloud`. Resumes from the remaining six deficit families (`Electrical`, `Mechanical`, `Civil`, `Commerce/Finance`, `Arts/Media`, `Mobile/UI-UX`) are flagged `out_of_scope_for_ranking_eval` and served with the honest `insufficient_matching_postings` response, rather than producing distorted ranking evaluations on truncated pools.
+
 
 
 
