@@ -64,6 +64,7 @@ artifacts/experiments/
 artifacts/experiments/runs/
 artifacts/evaluation/
 artifacts/audit/
+artifacts/checkpoints/
 artifacts/*.json
 results/dryrun/
 results/real/
