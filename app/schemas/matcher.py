@@ -62,6 +62,9 @@ class ResumeMatchResponse(BaseModel):
     candidate_name: Optional[str] = None
     total_matches: int
     matches: List[JobMatchItem]
+    status: str = "success"
+    message: Optional[str] = None
+    data_as_of: str = "2026-10-19"
 
 
 class CandidateMatchItem(BaseModel):

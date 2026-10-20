@@ -5,6 +5,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_active_superuser, get_current_user
+from app.core.config import settings
 from app.core.logging import logger
 from app.db.session import get_db
 from app.models.job_posting import JobPosting
@@ -35,7 +36,10 @@ async def get_job_stats(
 ):
     result = await db.execute(select(func.count(JobPosting.id)))
     total_count = result.scalar() or 0
-    return {"total": total_count}
+    return {
+        "total": total_count,
+        "data_as_of": getattr(settings, "SNAPSHOT_DATA_AS_OF", "2026-10-19"),
+    }
 
 
 @router.get(

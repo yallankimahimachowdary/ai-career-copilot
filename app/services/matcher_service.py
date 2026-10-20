@@ -882,6 +882,16 @@ class MatcherAgent:
             any(any(k in t for k in ["electronics", "electrical", "vlsi", "embedded"]) for t in edu_texts)
             or any(k in skills_lower for k in ["vlsi", "verilog", "embedded systems", "plc / scada", "microcontroller"])
         )
+        is_commerce = (
+            any(any(k in t for k in ["b.com", "m.com", "bba", "mba", "commerce", "finance", "accounting", "marketing"]) for t in edu_texts)
+            or any(k in summary_text for k in ["commerce", "finance", "accounting", "financial", "auditing", "taxation", "budgeting", "marketing"])
+            or any(k in skills_lower for k in ["accounting", "financial analysis", "budgeting", "taxation", "auditing", "bookkeeping", "corporate finance"])
+        )
+        is_arts = (
+            any(any(k in t for k in ["b.a.", "m.a.", "arts", "journalism", "mass communication", "psychology", "english literature"]) for t in edu_texts)
+            or any(k in summary_text for k in ["journalism", "mass communication", "content writing", "editorial", "creative writing", "psychology", "arts"])
+            or any(k in skills_lower for k in ["journalism", "copywriting", "content writing", "editorial", "reporting", "counseling", "creative writing"])
+        )
 
         # 2. Hybrid Retrieval:
         # A. Vector similarity search pool
@@ -931,6 +941,25 @@ class MatcherAgent:
                 JobPosting.title.ilike("%hardw%"),
                 JobPosting.title.ilike("%firmw%"),
             ))
+        elif is_commerce:
+            vector_stmt = vector_stmt.where(or_(
+                JobPosting.title.ilike("%financ%"),
+                JobPosting.title.ilike("%account%"),
+                JobPosting.title.ilike("%commerc%"),
+                JobPosting.title.ilike("%audit%"),
+                JobPosting.title.ilike("%tax%"),
+                JobPosting.title.ilike("%market%"),
+                JobPosting.title.ilike("%analyst%"),
+            ))
+        elif is_arts:
+            vector_stmt = vector_stmt.where(or_(
+                JobPosting.title.ilike("%content%"),
+                JobPosting.title.ilike("%writ%"),
+                JobPosting.title.ilike("%edit%"),
+                JobPosting.title.ilike("%journal%"),
+                JobPosting.title.ilike("%media%"),
+                JobPosting.title.ilike("%art%"),
+            ))
 
         if location:
             vector_stmt = vector_stmt.where(JobPosting.location.ilike(f"%{location}%"))
@@ -953,6 +982,10 @@ class MatcherAgent:
             query_keywords.extend(["civil", "structural", "construction", "site engineer"])
         elif is_electronics:
             query_keywords.extend(["electronics", "embedded", "vlsi", "hardware"])
+        elif is_commerce:
+            query_keywords.extend(["finance", "accounting", "financial analyst", "taxation", "budgeting", "marketing"])
+        elif is_arts:
+            query_keywords.extend(["content writer", "copywriter", "editor", "journalist", "media", "creative"])
         else:
             query_keywords.extend(["software", "developer", "engineer", "data", "web"])
 
@@ -1057,11 +1090,19 @@ class MatcherAgent:
         except Exception as ge:
             logger.warning(f"Neo4j match recording notice: {ge}")
 
+        match_status = "success"
+        match_msg = None
+        if len(top_matches) == 0:
+            match_status = "insufficient_matching_postings"
+            match_msg = "insufficient matching postings available in snapshot for this role profile"
+
         return ResumeMatchResponse(
             resume_id=resume.id,
             candidate_name=resume.candidate_name,
             total_matches=len(top_matches),
             matches=top_matches,
+            status=match_status,
+            message=match_msg,
         )
 
     async def match_candidates_for_job(

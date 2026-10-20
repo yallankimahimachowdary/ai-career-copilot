@@ -87,6 +87,7 @@ class Settings(BaseSettings):
     # Job Freshness & Scheduled Ingestion Settings (Phase 6)
     JOB_STALE_DAYS_THRESHOLD: int = 14
     JOB_EXPIRED_DAYS_THRESHOLD: int = 30
+    SNAPSHOT_DATA_AS_OF: str = "2026-10-19"
     JOB_REFRESH_INTERVAL_HOURS: int = 24
     JOB_INGESTION_MAX_RETRIES: int = 3
     JOB_INGESTION_TIMEOUT_SECONDS: float = 30.0

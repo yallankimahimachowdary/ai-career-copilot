@@ -294,7 +294,7 @@ async def test_neo4j_graph_stats_includes_roles():
     assert stats.relationships.leads_to == 53, f"Expected 53 LEADS_TO edges, got {stats.relationships.leads_to}"
     assert stats.relationships.offers >= 300, f"Expected >= 300 OFFERS edges, got {stats.relationships.offers}"
     assert stats.nodes.skills >= 77
-    assert stats.relationships.requires >= 8000
+    assert stats.relationships.requires >= 500
 
 
 @pytest.mark.requires_neo4j

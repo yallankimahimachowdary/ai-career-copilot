@@ -230,7 +230,8 @@ def load_and_anonymize_resumes(
         # Directory scan without manifest (non-strict mode only)
         pdf_files = sorted(list(dir_path.glob("*.pdf")))
         for fpath in pdf_files:
-            cand_id = fpath.stem.split("_")[0]
+            parts = fpath.stem.split("_")
+            cand_id = f"{parts[0]}_{parts[1]}" if len(parts) > 1 and parts[0] == "SYN" else parts[0]
             try:
                 reader = pypdf.PdfReader(fpath)
                 raw = "\n".join([p.extract_text() or "" for p in reader.pages])

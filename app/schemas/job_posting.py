@@ -52,6 +52,7 @@ class JobPostingListResponse(BaseModel):
     skills_count: int = 0
     is_active: bool = True
     freshness_status: str = "fresh"
+    data_as_of: Optional[str] = "2026-10-19"
     published_at: Optional[datetime] = None
     last_seen_at: Optional[datetime] = None
     created_at: datetime
@@ -100,3 +101,4 @@ class JobRefreshStatusResponse(BaseModel):
     """Current status of the refresh coordinator."""
     is_running: bool
     last_run: Optional[JobRefreshRunResponse] = None
+    data_as_of: str = "2026-10-19"

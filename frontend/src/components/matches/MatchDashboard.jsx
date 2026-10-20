@@ -22,6 +22,7 @@ export function MatchDashboard({
   matchUnavailable = false,
   noMatchingJobs = false,
   isDemoMatches = false,
+  dataAsOf = "2026-10-19",
   activeResume,
   onRunMatch,
   onStartCoaching,
@@ -133,6 +134,16 @@ export function MatchDashboard({
           </div>
         </CardContent>
       </Card>
+
+      {/* Snapshot Date Badge */}
+      <div className="flex items-center justify-between text-xs text-[#5C5C7A] px-1">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#EDE7F6] text-[#7A2D4A] border border-[#DDD6E7]" data-testid="data-as-of-badge">
+          Data as of {dataAsOf || "2026-10-19"}
+        </span>
+        {filteredMatches.length > 0 && (
+          <span>Showing {filteredMatches.length} position{filteredMatches.length === 1 ? "" : "s"}</span>
+        )}
+      </div>
 
       {/* Demo Data Notice */}
       {isDemoMatches && !error && (
