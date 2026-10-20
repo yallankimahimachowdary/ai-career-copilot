@@ -1,0 +1,8 @@
+# Enforce exact line endings for benchmark files to ensure SHA-256 byte-hash consistency across all platforms and clones
+app/ranking/config.json text eol=crlf
+data/evaluation/query_intent_benchmark_v1.json text eol=lf
+data/evaluation/rag_coach_eval_v1.json text eol=lf
+data/router/test.jsonl text eol=crlf
+data/snapshots/jobs_snapshot_1_20261019_adzuna.jsonl text eol=lf
+docs/role_families_frozen.json text eol=crlf
+docs/eval_scope.json text eol=lf
