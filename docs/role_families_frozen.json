@@ -1,0 +1,161 @@
+{
+  "metadata": {
+    "description": "Frozen role family distribution across 95 synthetic resumes",
+    "created_at": "2026-10-20T09:00:17.673978+00:00",
+    "total_resumes": 95,
+    "distribution_summary": {
+      "Data/AI": 14,
+      "Web/Software": 12,
+      "Cybersecurity/Cloud": 8,
+      "Mobile/UI-UX": 6,
+      "Mechanical": 8,
+      "Civil": 8,
+      "Electrical": 21,
+      "Commerce/Finance": 13,
+      "Arts/Media": 5
+    },
+    "sha256_hash": "1AC84A2EAA19DF2917D22E382C70DC46A410FED79282B081835FA91052EFF151"
+  },
+  "families": {
+    "Data/AI": {
+      "count": 14,
+      "resumes": [
+        "SYN_001_Tanvi_Naidu",
+        "SYN_002_Sowmya_Yadav",
+        "SYN_003_Jayanth_Bose",
+        "SYN_004_Aditya_Nair",
+        "SYN_005_Ananya_Hegde",
+        "SYN_006_Bhavana_Joshi",
+        "SYN_007_Saranya_Iyer",
+        "SYN_008_Vivaan_Banerjee",
+        "SYN_009_Deepak_Rao",
+        "SYN_010_Sneha_Naidu",
+        "SYN_011_Gokul_Menon",
+        "SYN_012_Aarav_Kumar",
+        "SYN_013_Deepak_Yadav",
+        "SYN_014_Anjali_Gupta"
+      ]
+    },
+    "Web/Software": {
+      "count": 12,
+      "resumes": [
+        "SYN_015_Naveen_Balaji",
+        "SYN_016_Varun_Pillai",
+        "SYN_017_Nandini_Kulkarni",
+        "SYN_018_Mohan_Chatterjee",
+        "SYN_019_Ananya_Fernandes",
+        "SYN_020_Nisha_Iyer",
+        "SYN_021_Ananya_Shetty",
+        "SYN_022_Sanjay_Balaji",
+        "SYN_023_Varun_Thomas",
+        "SYN_024_Anjali_Kumar",
+        "SYN_025_Mohan_Kumar",
+        "SYN_026_Sneha_Thomas"
+      ]
+    },
+    "Cybersecurity/Cloud": {
+      "count": 8,
+      "resumes": [
+        "SYN_027_Bharath_Jain",
+        "SYN_028_Arjun_Patel",
+        "SYN_029_Lakshmi_Gowda",
+        "SYN_030_Harini_Iyer",
+        "SYN_031_Yash_Kulkarni",
+        "SYN_032_Tanvi_Mishra",
+        "SYN_033_Divya_Gupta",
+        "SYN_034_Ananya_Patel"
+      ]
+    },
+    "Mobile/UI-UX": {
+      "count": 6,
+      "resumes": [
+        "SYN_035_Sowmya_Thomas",
+        "SYN_036_Vivaan_Raman",
+        "SYN_037_Rahul_Jain",
+        "SYN_038_Bharath_Rao",
+        "SYN_039_Ishita_Naidu",
+        "SYN_040_Divya_Gowda"
+      ]
+    },
+    "Mechanical": {
+      "count": 8,
+      "resumes": [
+        "SYN_041_Lakshmi_Thomas",
+        "SYN_042_Naveen_Thomas",
+        "SYN_043_Siddharth_Subramanian",
+        "SYN_044_Saranya_Raman",
+        "SYN_045_Vivaan_Thomas",
+        "SYN_046_Harini_Mishra",
+        "SYN_047_Varun_Shetty",
+        "SYN_048_Lakshmi_Raman"
+      ]
+    },
+    "Civil": {
+      "count": 8,
+      "resumes": [
+        "SYN_049_Rahul_Naidu",
+        "SYN_050_Suresh_Banerjee",
+        "SYN_051_Priya_Gowda",
+        "SYN_052_Shreya_Singh",
+        "SYN_053_Aditya_Iyer",
+        "SYN_054_Lakshmi_Menon",
+        "SYN_055_Suresh_Mishra",
+        "SYN_056_Bhavana_Balaji"
+      ]
+    },
+    "Electrical": {
+      "count": 21,
+      "resumes": [
+        "SYN_057_Aishwarya_Iyer",
+        "SYN_058_Naveen_Banerjee",
+        "SYN_059_Nisha_Das",
+        "SYN_060_Ritika_Banerjee",
+        "SYN_061_Karthik_Hegde",
+        "SYN_062_Pooja_Gowda",
+        "SYN_063_Gokul_Das",
+        "SYN_064_Ritika_Kapoor",
+        "SYN_065_Neha_Singh",
+        "SYN_066_Jayanth_Mehta",
+        "SYN_067_Yash_Agarwal",
+        "SYN_068_Ritika_Yadav",
+        "SYN_069_Nisha_Raman",
+        "SYN_070_Meera_Kulkarni",
+        "SYN_071_Diya_Fernandes",
+        "SYN_072_Sowmya_Hegde",
+        "SYN_073_Neha_Pillai",
+        "SYN_074_Arjun_Iyer",
+        "SYN_075_Rahul_Agarwal",
+        "SYN_076_Pranav_Chatterjee",
+        "SYN_077_Revathi_Raman"
+      ]
+    },
+    "Commerce/Finance": {
+      "count": 13,
+      "resumes": [
+        "SYN_078_Aishwarya_Pillai",
+        "SYN_079_Siddharth_Agarwal",
+        "SYN_080_Arjun_Bose",
+        "SYN_081_Vivaan_Patel",
+        "SYN_082_Meera_Mehta",
+        "SYN_083_Meera_Agarwal",
+        "SYN_084_Diya_Jain",
+        "SYN_085_Neha_Kulkarni",
+        "SYN_086_Ananya_Desai",
+        "SYN_087_Sanjay_Pillai",
+        "SYN_088_Saranya_Rao",
+        "SYN_089_Vivaan_Agarwal",
+        "SYN_090_Rahul_Iyer"
+      ]
+    },
+    "Arts/Media": {
+      "count": 5,
+      "resumes": [
+        "SYN_091_Mohan_Raman",
+        "SYN_092_Gokul_Subramanian",
+        "SYN_093_Harish_Sharma",
+        "SYN_094_Nisha_Rao",
+        "SYN_095_Manish_Verma"
+      ]
+    }
+  }
+}
