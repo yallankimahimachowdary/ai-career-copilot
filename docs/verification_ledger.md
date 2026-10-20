@@ -28,6 +28,11 @@ Last Updated: October 19, 2026.
 | **L16** | **Live End-to-End API Pipeline** | **VERIFIED** | 10 candidates tested across Upload, Match, Explain, Coach, Chat (4 intents), Graph; 0 500s | Local R10 |
 | **L17** | **Live-Data Hygiene & UI Badge** | **VERIFIED** | "Data as of 2026-10-19" badge in UI & schemas; quota locked at 20/20; hygiene tests passed | Local R10 |
 | **L18** | **Dry-Run Experiment Smoke Test** | **VERIFIED** | 5 candidates across BM25, SBERT, Overlap, Hybrid, Hybrid+LLM Ollama; wall-clock latency logged | Local R10 |
+| **L19** | **Evaluation Scope Specification** | **VERIFIED** | `docs/eval_scope.json` created (SHA-256 tracked); 3 in-scope families; 6 deficit families flagged | Local R11 |
+| **L20** | **Stratified Universe Builder** | **VERIFIED** | `scripts/build_universes.py` with 20/80 resume-level split, disjointness verified, deterministic | Local R11 |
+| **L21** | **Blinded Annotation Tooling & Agreement** | **VERIFIED** | `make_annotation_sheets.py` & `ingest_annotations.py`; QWK & bootstrap CI; 8 double-rated resumes | Local R11 |
+| **L22** | **Parser Precision/Recall Evaluation Tooling** | **VERIFIED** | `scripts/eval_parser.py` (micro/macro P/R/F1, 95% bootstrap CI, 25-resume gold template CSV) | Local R11 |
+| **L23** | **Taxonomy v2.1 Recall Enhancement** | **VERIFIED** | Expanded taxonomy to 92 canonical skills (+15 technical tools); mean skills/resume 6.84 -> 9.70 | Local R11 |
 
 ---
 
@@ -205,5 +210,37 @@ An audit evaluating `app/services/anonymizer.py` against 15 representative India
   - Hybrid: ~2.06 - 2.29 s latency per candidate.
   - Hybrid + LLM Re-Ranker (Ollama `llama3.2:3b` on CPU): ~134 - 162 s latency per candidate.
 - All outputs written strictly to `results/dryrun/phase_b_ranking/` with `run_type=dryrun` and full provenance metadata.
+
+### L19: Evaluation Scope Specification
+- Artifact: `docs/eval_scope.json` (SHA-256: `CF9061418B572F81DCE6746A034074148E3F1B37C110DDC19BE7316FEC21ED59`).
+- `docs/role_families_frozen.json` was strictly preserved without modification.
+- Evaluated Role Families (in-scope): `Data/AI`, `Web/Software`, `Cybersecurity/Cloud`.
+- Deficit Role Families (out-of-scope for ranking evaluation): `Electrical`, `Mechanical`, `Civil`, `Commerce/Finance`, `Arts/Media`, `Mobile/UI-UX`.
+
+### L20: Stratified Universe Builder
+- Script: `scripts/build_universes.py`
+- Generates reproducible, stratified universes per candidate resume (target: 60 jobs) based on seniority buckets.
+- Strictly splits at the resume level (20% dev, 80% test) ensuring zero overlap and zero data leakage across splits.
+- Automated tests: `tests/test_universe_builder.py` (4/4 passed).
+
+### L21: Blinded Annotation Tooling & Agreement
+- Scripts: `scripts/make_annotation_sheets.py` and `scripts/ingest_annotations.py`.
+- Blinded sheets randomize candidate-job pairs, omit scores, rankings, and salaries, and leave ratings blank on a {0, 1, 2} scale.
+- Double-rating of 8 resumes across Rater 1 and Rater 2.
+- Agreement metrics: Quadratic Weighted Cohen's Kappa, raw percentage agreement, 95% bootstrap confidence intervals, and adjudication precedence.
+- Automated tests: `tests/test_annotation_tooling.py` (4/4 passed).
+
+### L22: Parser Precision/Recall Evaluation Tooling
+- Script: `scripts/eval_parser.py`
+- Computes micro/macro Precision, Recall, and F1 score against gold-standard manual annotations with 95% bootstrap confidence intervals.
+- Generates a blank gold-standard template CSV for 25 candidate resumes (`--make-template`).
+- Automated tests: `tests/test_eval_parser.py` (4/4 passed).
+
+### L23: Taxonomy v2.1 Recall Enhancement
+- Audited 95 synthetic resumes for unmapped skill tokens. Excluded soft skills (`Leadership`, `Teamwork`) per protocol.
+- Added 15 genuine technical skills and tools to `app/core/taxonomy.py`: `MongoDB`, `Power BI`, `Excel`, `Firebase`, `Redux`, `Bash`, `Splunk`, `Nmap`, `Wireshark`, `Terraform`, `Seaborn`, `Matplotlib`, `Tableau`, `STAAD Pro`, `PCB Design`.
+- Upgraded `TAXONOMY_VERSION = "v2.1"` with canonical SHA-256 `34203073A38633314606663838D536C09F77E8C9C2507F1CEE98096DD98F2A1C` tracked in run provenance metadata.
+- Mean canonical skills per resume improved from 6.842 to 9.695 (+41.7% recall improvement).
+
 
 
