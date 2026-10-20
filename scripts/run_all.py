@@ -143,11 +143,13 @@ def check_services_health() -> Dict[str, bool]:
 
     # 3. PostgreSQL
     try:
-        from sqlalchemy import create_engine, text
-        db_url = settings.DATABASE_URL_SYNC
-        engine = create_engine(db_url, connect_args={"connect_timeout": 3})
-        with engine.connect() as conn:
-            conn.execute(text("SELECT 1"))
+        import asyncio
+        from app.db.session import AsyncSessionLocal
+        from sqlalchemy import text
+        async def _check_pg():
+            async with AsyncSessionLocal() as session:
+                await session.execute(text("SELECT 1"))
+        asyncio.run(_check_pg())
         health["postgres"] = True
     except Exception:
         health["postgres"] = False
