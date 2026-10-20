@@ -208,6 +208,7 @@ class LLMReranker(BaseRanker):
                         max_tokens=1500,
                         seed=self.seed,
                         timeout=180.0,
+                        num_thread=4,
                     )
                 else:
                     response = await self.provider.generate_json(

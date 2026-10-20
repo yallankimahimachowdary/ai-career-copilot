@@ -65,21 +65,63 @@ def run_evaluation_pipeline(
     judgments_path: Optional[str] = None,
     export_template_path: Optional[str] = None,
     output_report_path: Optional[str] = None,
+    universes_path: Optional[str] = None,
     methods: Optional[List[str]] = None,
     k: int = 10,
     universe_seed: int = 42,
     run_ablations: bool = True,
-    max_jobs: int = 100,
+    dryrun_max_jobs_slice: Optional[int] = None,
+    max_jobs: Optional[int] = None,
     run_type: str = "dryrun",
     max_resumes: Optional[int] = None,
 ) -> Dict[str, Any]:
-    """Execute complete ranking evaluation pipeline with provenance tracking."""
+    """Execute complete ranking evaluation pipeline with provenance tracking.
+    
+    In stage eval or real runs, each candidate resume is ranked ONLY within its own
+    60-job universe loaded from candidate_universes.json. Slicing snapshot records is
+    strictly prohibited in eval/real mode and allowed only under dryrun_max_jobs_slice.
+    """
     if methods is None:
         methods = ["bm25", "sbert", "overlap", "hybrid", "composite_xgb"]
 
+    # Support backwards compatibility for max_jobs argument
+    if dryrun_max_jobs_slice is None and max_jobs is not None:
+        dryrun_max_jobs_slice = max_jobs
+
+    # Gating rule: In eval or real runs, slicing snapshot jobs is strictly forbidden
+    if (run_type == "real" or judgments_path) and dryrun_max_jobs_slice is not None:
+        raise ValueError(
+            f"Evaluation error: Slicing snapshot jobs via dryrun_max_jobs_slice={dryrun_max_jobs_slice} "
+            f"is strictly forbidden in stage eval / real runs (run_type='{run_type}'). "
+            f"Each candidate must be evaluated ONLY within its own 60-job universe."
+        )
+
     snapshot_records, snapshot_meta = load_snapshot(snapshot_path)
-    if max_jobs:
-        snapshot_records = snapshot_records[:max_jobs]
+    if dryrun_max_jobs_slice is not None:
+        snapshot_records = snapshot_records[:dryrun_max_jobs_slice]
+
+    # Resolve candidate universes mapping
+    candidate_universes_map: Dict[str, Set[str]] = {}
+    resolved_univ_path = universes_path
+    if not resolved_univ_path and output_report_path:
+        candidate_univ_file = Path(output_report_path).parent / "candidate_universes.json"
+        if candidate_univ_file.exists():
+            resolved_univ_path = str(candidate_univ_file)
+
+    if resolved_univ_path and Path(resolved_univ_path).exists():
+        with open(resolved_univ_path, "r", encoding="utf-8") as f:
+            u_data = json.load(f)
+            for cid, cinfo in u_data.get("candidate_universes", {}).items():
+                job_ids = cinfo.get("job_ids") or []
+                if job_ids:
+                    candidate_universes_map[cid] = set(str(jid) for jid in job_ids)
+
+    # In stage eval or real runs, candidate universes are strictly mandatory
+    if (run_type == "real" or judgments_path) and not candidate_universes_map:
+        raise RuntimeError(
+            f"Evaluation error: candidate_universes.json is required for stage eval / real runs, "
+            f"but could not be found or loaded from '{resolved_univ_path}'."
+        )
 
     if run_type == "dryrun" or resumes_dir != "uploads/resumes":
         manifest_to_use = manifest_path if (manifest_path and manifest_path != "data/gold/gold_resumes_skills.json" and Path(manifest_path).exists()) else None
@@ -100,6 +142,8 @@ def run_evaluation_pipeline(
     if max_resumes is not None and max_resumes > 0:
         candidates = candidates[:max_resumes]
     print(f"Loaded {len(candidates)} candidates and {len(snapshot_records)} jobs from snapshot.")
+    if candidate_universes_map:
+        print(f"[UNIVERSE] Loaded universe constraints for {len(candidate_universes_map)} candidates from {resolved_univ_path}.")
 
     rankers = instantiate_rankers(methods)
 
@@ -109,8 +153,23 @@ def run_evaluation_pipeline(
 
     for cand in candidates:
         cand_id = cand["candidate_id"]
+        # Enforce candidate's own universe if available
+        if cand_id in candidate_universes_map:
+            univ_ids = candidate_universes_map[cand_id]
+            cand_job_pool = [
+                j for j in snapshot_records
+                if str(j.get("id") or j.get("external_id") or j.get("job_id") or "") in univ_ids
+            ]
+        elif (run_type == "real" or judgments_path):
+            raise RuntimeError(
+                f"Candidate '{cand_id}' has no 60-job universe defined in '{resolved_univ_path}'! "
+                f"Ranking outside a candidate's universe is strictly forbidden in eval."
+            )
+        else:
+            cand_job_pool = snapshot_records
+
         for m_name, ranker in rankers.items():
-            res = ranker.rank(cand, snapshot_records, k=k)
+            res = ranker.rank(cand, cand_job_pool, k=k)
             method_rankings[m_name][cand_id] = res.ranked_job_ids
 
         # Save for template export
@@ -345,7 +404,9 @@ def main():
     parser.add_argument("--k", type=int, default=10, help="Top k evaluation depth")
     parser.add_argument("--seed", type=int, default=42, help="Universe seed")
     parser.add_argument("--no-ablations", action="store_true", help="Skip ablation experiments")
-    parser.add_argument("--max-jobs", type=int, default=100, help="Max jobs from snapshot to evaluate")
+    parser.add_argument("--universes", type=str, default=None, help="Path to candidate_universes.json")
+    parser.add_argument("--dryrun-max-jobs-slice", type=int, default=None, help="[DRY-RUN ONLY] Slices snapshot records for quick smoke tests")
+    parser.add_argument("--max-jobs", type=int, default=None, help="Deprecated alias for --dryrun-max-jobs-slice")
     parser.add_argument("--run-type", "--run_type", dest="run_type", type=str, default="dryrun", choices=["dryrun", "real"], help="Run type tag ('dryrun' or 'real')")
     args = parser.parse_args()
 
@@ -358,11 +419,12 @@ def main():
         judgments_path=args.judgments,
         export_template_path=args.export_template,
         output_report_path=args.output,
+        universes_path=args.universes,
         methods=methods_list,
         k=args.k,
         universe_seed=args.seed,
         run_ablations=not args.no_ablations,
-        max_jobs=args.max_jobs,
+        dryrun_max_jobs_slice=args.dryrun_max_jobs_slice or args.max_jobs,
         run_type=args.run_type,
     )
     print("\n================ Evaluation Summary ================")

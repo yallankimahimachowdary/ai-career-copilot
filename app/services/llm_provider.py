@@ -174,6 +174,7 @@ class OllamaProvider(BaseLLMProvider):
         options: Dict[str, Any] = {
             "temperature": temperature,
             "num_predict": max_tokens,
+            "num_thread": int(kwargs.get("num_thread", 4)),
         }
         if seed is not None:
             options["seed"] = int(seed)
@@ -383,7 +384,7 @@ class GeminiProvider(BaseLLMProvider):
         response_tokens = usage.get("candidatesTokenCount", 0)
         # Honest provider metadata: check if remote API explicitly returned/verified seed
         seed_applied = res_json.get("seed") or res_json.get("usageMetadata", {}).get("seed") or None
-        quantization = "cloud_fp16"
+        quantization = kwargs.get("quantization", None)
 
         # Pinned model enforcement in experiment mode (supports Google API canonical aliases)
         if experiment_mode and requested_model:

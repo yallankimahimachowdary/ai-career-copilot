@@ -306,10 +306,12 @@ def run_stage_eval(
         resumes_dir=resumes_dir,
         judgments_path=str(lbl_path),
         output_report_path=str(eval_output),
+        universes_path=str(dest_dir / "candidate_universes.json"),
         methods=["bm25", "sbert", "overlap", "hybrid"],
         k=10,
         universe_seed=seed,
         run_ablations=True,
+        dryrun_max_jobs_slice=None,
         run_type=run_type,
     )
 
@@ -374,10 +376,12 @@ def run_stage_all_dryrun(
         resumes_dir=resumes_dir,
         judgments_path=None,
         output_report_path=str(eval_output),
+        universes_path=str(dest_dir / "candidate_universes.json"),
         methods=["bm25", "sbert", "overlap", "hybrid"],
         k=10,
         universe_seed=seed,
         run_ablations=True,
+        dryrun_max_jobs_slice=None,
         run_type="dryrun",
         max_resumes=max_resumes,
     )

@@ -302,6 +302,18 @@ This document provides a transparent, technically precise accounting of known sy
   - **Inter-Rater Agreement Sample**: 8 candidates (480 pairs) are systematically double-rated across both Rater A and Rater B to assess Quadratic Weighted Cohen's Kappa and Fleiss' Kappa with 1,000 bootstrap resamples. The 8 double-rated candidate resumes are:
     `SYN_004`, `SYN_010`, `SYN_011`, `SYN_012`, `SYN_025`, `SYN_026`, `SYN_031`, and `SYN_074`.
 
+## 21. RQ3 Job-Side Unsupported Claims Confounded by Truncated Descriptions
+- **Relevant Files:**
+  - [`app/ranking/claim_verifier.py`](../app/ranking/claim_verifier.py)
+  - [`app/ranking/llm_reranker.py`](../app/ranking/llm_reranker.py)
+  - [`scripts/run_r13_suite.py`](../scripts/run_r13_suite.py)
+- **Status & Scope:**
+  - In RQ3 (Explanation Faithfulness), automated claim verification evaluates whether missing skills cited in model re-ranking explanations are explicitly required by the job posting description.
+  - Both in model prompt construction (where descriptions are truncated to 100–500 characters to fit context windows and maintain response latency) and in raw job snapshot feeds, job descriptions are frequently concise or truncated.
+  - Consequently, when an LLM re-ranker reasons that a role requires foundational domain tools (e.g., inferring that a Machine Learning Engineer requires Git, SQL, or Docker, or that a Cloud Engineer requires Linux), the automated regex verifier flags these assertions as "job-side unsupported" if the brief truncated snippet does not literally contain those tokens.
+  - This introduces an unavoidable confounding factor in RQ3: a substantial proportion of "job-side unsupported" claims reflect common domain expectations rather than pure model hallucinations, directly induced by prompt-length description truncation.
+
+
 
 
 
