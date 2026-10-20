@@ -273,5 +273,19 @@ This document provides a transparent, technically precise accounting of known sy
   - **Seniority Boundary Rule ("Engineer II")**: Standalone Roman numeral classification categorizes Level I / Engineer I as entry/junior, while Level III+ / Senior is senior. "Engineer II" / "Level II" represents an intermediate stage (~2-4 years experience) and is strictly categorized as `mid`. It acts as a bridge role: compatible with junior candidates seeking upward progression and senior candidates, but junior candidates are strictly excluded from `senior` and `lead` roles.
   - **Model Alias Mismatch in Strict Mode**: Public cloud LLMs (such as Google Gemini) frequently alias model family identifiers (e.g. `gemini-3.5-flash` dynamically resolving to `gemini-3.6-flash` or newer). In non-strict mode, this mismatch is flagged in run provenance. In strict provenance mode, any alias mismatch raises `ModelAliasMismatchError` and terminates the run to avoid unversioned evaluation drift.
 
+---
+
+## 17. Snapshot Data Freshness, Thin Role Pools & Local LLM Latency
+- **Relevant Files:**
+  - [`app/core/config.py`](../app/core/config.py)
+  - [`app/services/matcher_service.py`](../app/services/matcher_service.py)
+  - [`frontend/src/components/matches/MatchDashboard.jsx`](../frontend/src/components/matches/MatchDashboard.jsx)
+  - [`tests/test_live_data_hygiene.py`](../tests/test_live_data_hygiene.py)
+- **Status & Scope:**
+  - **Static Snapshot As-Of Date**: In order to avoid silent data obsolescence, `SNAPSHOT_DATA_AS_OF = "2026-10-19"` is explicitly declared in configuration and exposed via API responses (`JobPostingResponse`, `ResumeMatchResponse`) and a persistent `"Data as of 2026-10-19"` badge in the Match Dashboard.
+  - **Honest Handling of Deficit Role Pools**: When non-tech or underrepresented discipline profiles (e.g. Commerce, Arts, Civil Engineering) are matched against Snapshot 1, the matcher checks role family compatibility and refuses to return irrelevant software development roles. If no domain-compatible postings meet the threshold, `ResumeMatchResponse` honestly reports `total_matches: 0` with `status: "insufficient_matching_postings"` and `message: "insufficient matching postings available in snapshot for this role profile"`, rather than hallucinating or cross-contaminating matches.
+  - **Local LLM Re-Ranking Latency**: When executing LLM re-ranking using local Ollama (`llama3.2:3b`) on CPU without dedicated GPU acceleration, structured inference over 20 candidate jobs takes ~130–160 seconds per candidate. This baseline is appropriate for offline batch evaluation and smoke testing, but high-throughput real-time production serving requires GPU acceleration or hosted inference endpoints.
+
+
 
 

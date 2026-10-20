@@ -22,6 +22,12 @@ Last Updated: October 19, 2026.
 | **L10** | **Dataset Overlap & 9-Family Coverage** | **VERIFIED** | 0 leakage to dev set, 496 pairwise test comparisons, snapshot 1 coverage audited (3 fill, 6 deficit) | Local R9 |
 | **L11** | **Deterministic Rule-Based Parser** | **VERIFIED** | Non-LLM rule-based parser mode, canonical skills only, verified on 3 real PDFs | Local R9 |
 | **L12** | **Checkpoint Tooling** | **VERIFIED** | Git dirty-tree refusal, SHA-256 asset freezing, automated manifest writing and git tag creation | Local R9 |
+| **L13** | **Store Ingestion (Snapshot 1)** | **VERIFIED** | Exact 432 count across Postgres, ChromaDB (MiniLM 384-d), Neo4j; all source="adzuna_api" | Local R10 |
+| **L14** | **Synthetic Resume Ingestion** | **VERIFIED** | 95/95 resumes anonymized & rule-parsed (0 leaks, 0 failures, 6.84 avg skills); Ollama parity verified | Local R10 |
+| **L15** | **Role-Family Freeze** | **VERIFIED** | `docs/role_families_frozen.json` hashed & locked; git tag `role-families-frozen` created | Local R10 |
+| **L16** | **Live End-to-End API Pipeline** | **VERIFIED** | 10 candidates tested across Upload, Match, Explain, Coach, Chat (4 intents), Graph; 0 500s | Local R10 |
+| **L17** | **Live-Data Hygiene & UI Badge** | **VERIFIED** | "Data as of 2026-10-19" badge in UI & schemas; quota locked at 20/20; hygiene tests passed | Local R10 |
+| **L18** | **Dry-Run Experiment Smoke Test** | **VERIFIED** | 5 candidates across BM25, SBERT, Overlap, Hybrid, Hybrid+LLM Ollama; wall-clock latency logged | Local R10 |
 
 ---
 
@@ -143,4 +149,61 @@ An audit evaluating `app/services/anonymizer.py` against 15 representative India
 - Writes manifest JSON file in `artifacts/checkpoints/<tag>_manifest.json`.
 - Creates local annotated git tag (`git tag -a <tag> -m ...`).
 - Unit tests in `tests/test_checkpoint_tooling.py` passed on an isolated scratch repository.
+
+---
+
+## 4. Remediation R10 Evidence & Artifacts
+
+### L13: Store Bring-up & Snapshot 1 Ingestion
+- Database migration ran cleanly to head (`add_seniority_gate_and_provenance`).
+- Store counts loaded via `scripts/load_snapshot_to_stores.py`:
+  - PostgreSQL `job_postings` table: **432**
+  - ChromaDB `job_postings_embeddings` (384-d MiniLM): **432**
+  - Neo4j `JobPosting` nodes: **432**
+- All 432 records tagged `source="adzuna_api"`, zero mock or duplicate rows.
+
+### L14: Synthetic Resume Ingestion (95 Resumes)
+- Source: 95 synthetic resumes extracted to `data/resumes_dryrun/`.
+- Academic Anonymization: executed across all 95 files prior to parsing.
+- Rule-based parser mode: 95/95 parsed successfully (0 errors, 100% success rate).
+- Skill extraction metrics: 650 total skill assignments (average 6.84 canonical skills per candidate).
+- Ollama parser parity check: 10/10 parsed successfully with comparable canonical skill sets.
+- Non-skill token audit: 0 institutions, degrees, or contact identifiers leaked as skills.
+
+### L15: Role-Family Freeze
+- Document: `docs/role_families_frozen.json`
+- Frozen SHA-256 Hash: `1AC84A2EAA19DF2917D22E382C70DC46A410FED79282B081835FA91052EFF151`
+- Git Tag: `role-families-frozen` created and anchored to commit `f69893b`.
+- Family boundaries and 60-job universe feasibility explicitly documented:
+  - 3 families fillable: Data/AI (117), Web/Software (117), Cybersecurity/Cloud (62).
+  - 6 families with deficits: Mechanical (20), Electrical (16), Commerce/Finance (14), Mobile/UI-UX (7), Arts/Media (2), Civil (0).
+
+### L16: Live End-to-End API Pipeline Verification
+- Executed via `scripts/e2e_live_check.py` across 10 candidates spanning technical and non-technical disciplines.
+- Steps verified:
+  1. Resume Upload (`POST /api/v1/resumes/upload`) -> HTTP 201 Created.
+  2. Matching (`GET /api/v1/resumes/{id}/matches`) -> HTTP 200 OK. Honest handling of thin pools for non-tech roles (`insufficient_matching_postings`).
+  3. Explanation (`GET /api/v1/matches/explain`) -> HTTP 200 OK. Full SHAP and feature attributions returned.
+  4. Coaching Skill-Gap (`POST /api/v1/coach/skill-gap`) -> HTTP 200 OK. Readiness score and learning roadmap.
+  5. Multi-Turn Copilot Chat (`POST /api/v1/chat/message`) -> HTTP 200 OK across 4 distinct router intents: `job_search`, `skill_gap`, `interview_prep`, `market_trends`. Zero placeholder text.
+  6. Graph Insights (`GET /api/v1/knowledge-graph/bridge-skills`, `/role-pathway`, `/career-pathway`) -> HTTP 200 OK.
+- Full execution dumps recorded in `results/dryrun/e2e/`.
+
+### L17: Live-Data Hygiene & Expiry Transparency
+- Configuration setting `SNAPSHOT_DATA_AS_OF = "2026-10-19"` added to `app/core/config.py`, `.env.example`, and exposed via API schemas (`JobPostingResponse`, `ResumeMatchResponse`).
+- Frontend Transparency: `MatchDashboard.jsx` displays a persistent `"Data as of 2026-10-19"` badge in the header.
+- Automated tests in `tests/test_live_data_hygiene.py` (3/3 passed):
+  - Adzuna call counter remains locked at 20/20 with zero live calls during testing.
+  - Snapshot date is exposed on job posting responses.
+  - Data freshness validator flags records exceeding configurable expiry thresholds.
+
+### L18: Dry-Run Experiment Smoke Test
+- Executed via `scripts/run_ranking_experiment.py` across 5 candidate resumes (`SYN_001` through `SYN_005`) and 5 ranking arms:
+  - BM25: ~9 - 15 ms latency per candidate.
+  - Skill Overlap: ~144 - 218 ms latency per candidate.
+  - SBERT: ~1.87 - 1.95 s latency per candidate.
+  - Hybrid: ~2.06 - 2.29 s latency per candidate.
+  - Hybrid + LLM Re-Ranker (Ollama `llama3.2:3b` on CPU): ~134 - 162 s latency per candidate.
+- All outputs written strictly to `results/dryrun/phase_b_ranking/` with `run_type=dryrun` and full provenance metadata.
+
 

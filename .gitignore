@@ -62,5 +62,6 @@ artifacts/experiments/runs/
 artifacts/evaluation/
 artifacts/audit/
 artifacts/*.json
+results/dryrun/
 frontend/dist/
 dist/
