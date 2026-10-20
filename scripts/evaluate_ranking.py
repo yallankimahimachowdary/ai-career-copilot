@@ -26,15 +26,24 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from app.ranking.evaluation import (
-    confidence_interval,
+    average_precision,
+    calculate_kendall_tau,
+    calculate_topk_overlap,
     cohen_kappa,
+    compute_unlabeled_diagnostics,
+    confidence_interval,
     export_annotation_template,
     fleiss_kappa,
     generate_evaluation_report,
+    holm_bonferroni_correction,
     import_relevance_judgments,
+    mean_average_precision,
+    mean_reciprocal_rank,
     ndcg_at_5,
     ndcg_at_10,
+    paired_bootstrap_ci,
     precision_at_5,
+    recall_at_k,
     reciprocal_rank,
     run_ablation_study,
     wilcoxon_signed_rank_test,
@@ -59,6 +68,7 @@ def run_evaluation_pipeline(
     universe_seed: int = 42,
     run_ablations: bool = True,
     max_jobs: int = 100,
+    run_type: str = "dryrun",
 ) -> Dict[str, Any]:
     """Execute complete ranking evaluation pipeline with provenance tracking."""
     if methods is None:
@@ -105,24 +115,44 @@ def run_evaluation_pipeline(
         )
         print(f"[EXPORT] Annotation template exported to: {out_tpl}")
 
-    # Load judgments if provided
-    judgments: Dict[str, Dict[str, float]] = {}
-    if judgments_path and Path(judgments_path).exists():
-        judgments = import_relevance_judgments(judgments_path)
-        print(f"[JUDGMENTS] Loaded explicit human relevance judgments for {len(judgments)} candidates.")
-    else:
-        print("[JUDGMENTS] No human relevance judgments file provided; empirical IR metrics await labels.")
+    # Label Gating Check (R12-2)
+    # Quality metrics (nDCG@5/10, MAP, MRR, P@k, Recall@k) computed ONLY when
+    # results/real/labels.jsonl exists and run_type=real.
+    real_labels_file = Path("results/real/labels.jsonl")
+    can_compute_quality_metrics = False
+    if run_type == "real" and real_labels_file.exists():
+        can_compute_quality_metrics = True
+    elif judgments_path:
+        # If user explicitly passed judgments_path, verify if run_type == 'real'
+        if run_type != "real":
+            print(f"[LABEL GATE] run_type='{run_type}' is not 'real'. Refusing to compute empirical quality metrics on non-real labels.")
+        else:
+            can_compute_quality_metrics = True
 
-    # Compute IR metrics if judgments are available
+    # Load judgments if permitted
+    judgments: Dict[str, Dict[str, float]] = {}
+    if can_compute_quality_metrics:
+        load_path = judgments_path if (judgments_path and Path(judgments_path).exists()) else str(real_labels_file)
+        if Path(load_path).exists():
+            judgments = import_relevance_judgments(load_path)
+            print(f"[JUDGMENTS] Loaded explicit human relevance judgments for {len(judgments)} candidates.")
+    else:
+        print("[LABEL GATE] Quality metrics gated: rankings + diagnostics only (Kendall tau, top-k overlap, latency).")
+
+    # Compute IR metrics if judgments are available and permitted
     evaluation_metrics: Dict[str, Any] = {}
+    per_candidate_vectors: Dict[str, Dict[str, List[float]]] = {m: {"ndcg@5": [], "ndcg@10": [], "p@5": [], "mrr": [], "map": []} for m in rankers.keys()}
+    
     for m_name, cand_map in method_rankings.items():
-        if not judgments:
+        if not can_compute_quality_metrics or not judgments:
             evaluation_metrics[m_name] = {
-                "status": "awaiting_annotations",
+                "status": "awaiting_real_annotations",
                 "ndcg@5": None,
                 "ndcg@10": None,
                 "precision@5": None,
                 "mrr": None,
+                "map": None,
+                "recall@10": None,
                 "evaluated_candidates": 0,
             }
             continue
@@ -131,14 +161,31 @@ def run_evaluation_pipeline(
         ndcg10_list = []
         p5_list = []
         rr_list = []
+        ap_list = []
+        rec10_list = []
 
         for cand_id, ranked_ids in cand_map.items():
             if cand_id in judgments:
                 q_judgments = judgments[cand_id]
-                ndcg5_list.append(ndcg_at_5(ranked_ids, q_judgments))
-                ndcg10_list.append(ndcg_at_10(ranked_ids, q_judgments))
-                p5_list.append(precision_at_5(ranked_ids, q_judgments))
-                rr_list.append(reciprocal_rank(ranked_ids, q_judgments))
+                n5 = ndcg_at_5(ranked_ids, q_judgments)
+                n10 = ndcg_at_10(ranked_ids, q_judgments)
+                p5 = precision_at_5(ranked_ids, q_judgments)
+                rr = reciprocal_rank(ranked_ids, q_judgments)
+                ap = average_precision(ranked_ids, q_judgments)
+                r10 = recall_at_k(ranked_ids, q_judgments, k=10)
+
+                ndcg5_list.append(n5)
+                ndcg10_list.append(n10)
+                p5_list.append(p5)
+                rr_list.append(rr)
+                ap_list.append(ap)
+                rec10_list.append(r10)
+
+                per_candidate_vectors[m_name]["ndcg@5"].append(n5)
+                per_candidate_vectors[m_name]["ndcg@10"].append(n10)
+                per_candidate_vectors[m_name]["p@5"].append(p5)
+                per_candidate_vectors[m_name]["mrr"].append(rr)
+                per_candidate_vectors[m_name]["map"].append(ap)
 
         if ndcg5_list:
             evaluation_metrics[m_name] = {
@@ -147,19 +194,92 @@ def run_evaluation_pipeline(
                 "ndcg@10": round(float(np.mean(ndcg10_list)), 4),
                 "precision@5": round(float(np.mean(p5_list)), 4),
                 "mrr": round(float(np.mean(rr_list)), 4),
+                "map": round(float(np.mean(ap_list)), 4),
+                "recall@10": round(float(np.mean(rec10_list)), 4),
                 "ci_ndcg@5": confidence_interval(ndcg5_list),
                 "ci_ndcg@10": confidence_interval(ndcg10_list),
+                "ci_map": confidence_interval(ap_list),
                 "evaluated_candidates": len(ndcg5_list),
             }
         else:
             evaluation_metrics[m_name] = {
-                "status": "awaiting_annotations",
+                "status": "awaiting_real_annotations",
                 "ndcg@5": None,
                 "ndcg@10": None,
                 "precision@5": None,
                 "mrr": None,
+                "map": None,
+                "recall@10": None,
                 "evaluated_candidates": 0,
             }
+
+    # Diagnostics when labels are absent or run_type != 'real' (Kendall tau, top-k overlap)
+    diagnostics = {}
+    if not can_compute_quality_metrics:
+        # Flatten top-k ranked job IDs per candidate
+        # Compute diagnostics across all candidates
+        all_cands = [c["candidate_id"] for c in candidates]
+        tau_by_cand = []
+        overlap_by_cand = []
+        for cid in all_cands:
+            cand_ranks = {m: method_rankings[m].get(cid, []) for m in rankers.keys()}
+            diag_cand = compute_unlabeled_diagnostics(cand_ranks, k=k)
+            tau_by_cand.append(diag_cand["pairwise_kendall_tau"])
+            overlap_by_cand.append(diag_cand["pairwise_topk_overlap"])
+
+        # Average pairwise diagnostics across candidates
+        m_keys = list(rankers.keys())
+        avg_kendall = {m1: {m2: round(float(np.mean([t[m1][m2] for t in tau_by_cand])), 4) for m2 in m_keys} for m1 in m_keys}
+        avg_overlap = {m1: {m2: round(float(np.mean([o[m1][m2] for o in overlap_by_cand])), 4) for m2 in m_keys} for m1 in m_keys}
+
+        diagnostics = {
+            "evaluated_candidates_count": len(all_cands),
+            "k": k,
+            "pairwise_mean_kendall_tau": avg_kendall,
+            "pairwise_mean_topk_overlap": avg_overlap,
+        }
+
+    # Statistical Significance Comparisons (R12-3):
+    # Wilcoxon signed-rank: hybrid vs bm25, hybrid vs sbert, LLM re-rank vs hybrid; Holm correction; effect size & n
+    statistical_comparisons: Dict[str, Any] = {}
+    if can_compute_quality_metrics and "hybrid" in per_candidate_vectors:
+        primary_metric = "ndcg@10"
+        pairs_to_test = [("hybrid", "bm25"), ("hybrid", "sbert")]
+        if "hybrid_llm_ollama" in per_candidate_vectors:
+            pairs_to_test.append(("hybrid_llm_ollama", "hybrid"))
+        if "hybrid_llm_gemini" in per_candidate_vectors:
+            pairs_to_test.append(("hybrid_llm_gemini", "hybrid"))
+
+        raw_p_values = []
+        test_details = []
+        for m_a, m_b in pairs_to_test:
+            if m_a in per_candidate_vectors and m_b in per_candidate_vectors:
+                vec_a = per_candidate_vectors[m_a][primary_metric]
+                vec_b = per_candidate_vectors[m_b][primary_metric]
+                if len(vec_a) > 0 and len(vec_a) == len(vec_b):
+                    w_res = wilcoxon_signed_rank_test(vec_a, vec_b)
+                    boot_ci = paired_bootstrap_ci(vec_a, vec_b, n_resamples=10000, seed=universe_seed)
+                    p_val = w_res.get("p_value") if w_res.get("p_value") is not None else 1.0
+                    raw_p_values.append(p_val)
+                    test_details.append({
+                        "comparison": f"{m_a}_vs_{m_b}",
+                        "metric": primary_metric,
+                        "n": len(vec_a),
+                        "wilcoxon_statistic": w_res.get("statistic"),
+                        "raw_p_value": p_val,
+                        "effect_size_r": w_res.get("effect_size_r"),
+                        "mean_difference": boot_ci.get("mean_difference"),
+                        "bootstrap_ci_95": [boot_ci.get("lower_bound"), boot_ci.get("upper_bound")],
+                        "warning": w_res.get("warning"),
+                    })
+
+        # Apply Holm-Bonferroni correction
+        if raw_p_values:
+            holm_corrections = holm_bonferroni_correction(raw_p_values, alpha=0.05)
+            for idx, item in enumerate(test_details):
+                item["adjusted_p_value"] = holm_corrections[idx]["adjusted_p"]
+                item["significant_after_holm"] = holm_corrections[idx]["rejected"]
+                statistical_comparisons[item["comparison"]] = item
 
     # Run ablations if requested
     ablation_results: Dict[str, Any] = {}
@@ -179,9 +299,13 @@ def run_evaluation_pipeline(
         method_name="composite_benchmark",
         seed=universe_seed,
         metrics=evaluation_metrics,
+        statistical_comparisons=statistical_comparisons,
         ablations=ablation_results,
         notes="Evaluated via formal Phase B evaluation suite.",
     )
+    if diagnostics:
+        report["diagnostics"] = diagnostics
+    report["run_type"] = run_type
 
     if output_report_path:
         out_rpt = Path(output_report_path)
@@ -206,6 +330,7 @@ def main():
     parser.add_argument("--seed", type=int, default=42, help="Universe seed")
     parser.add_argument("--no-ablations", action="store_true", help="Skip ablation experiments")
     parser.add_argument("--max-jobs", type=int, default=100, help="Max jobs from snapshot to evaluate")
+    parser.add_argument("--run-type", "--run_type", dest="run_type", type=str, default="dryrun", choices=["dryrun", "real"], help="Run type tag ('dryrun' or 'real')")
     args = parser.parse_args()
 
     methods_list = [m.strip() for m in args.methods.split(",") if m.strip()]
@@ -222,6 +347,7 @@ def main():
         universe_seed=args.seed,
         run_ablations=not args.no_ablations,
         max_jobs=args.max_jobs,
+        run_type=args.run_type,
     )
     print("\n================ Evaluation Summary ================")
     print(json.dumps(report["metrics"], indent=2))

@@ -172,6 +172,85 @@ def precision_at_5(
     return precision_at_k(ranked_ids, relevance_judgments, k=5, relevance_threshold=relevance_threshold)
 
 
+def recall_at_k(
+    ranked_ids: Sequence[str],
+    relevance_judgments: Dict[str, float | int],
+    k: int = 10,
+    relevance_threshold: float = 1.0,
+) -> float:
+    """Compute Recall@k.
+
+    Fraction of all relevant items in relevance_judgments that appear in top-k.
+    """
+    if k <= 0 or not ranked_ids or not relevance_judgments:
+        return 0.0
+
+    total_relevant = sum(
+        1 for rel in relevance_judgments.values()
+        if float(rel) >= relevance_threshold
+    )
+    if total_relevant == 0:
+        return 0.0
+
+    eval_items = ranked_ids[:k]
+    retrieved_relevant = sum(
+        1 for item_id in eval_items
+        if float(relevance_judgments.get(str(item_id), 0.0)) >= relevance_threshold
+    )
+    return float(retrieved_relevant / total_relevant)
+
+
+def average_precision(
+    ranked_ids: Sequence[str],
+    relevance_judgments: Dict[str, float | int],
+    k: Optional[int] = None,
+    relevance_threshold: float = 1.0,
+) -> float:
+    """Compute Average Precision (AP) for a single query.
+
+    Args:
+        ranked_ids: Ordered sequence of retrieved item IDs.
+        relevance_judgments: Mapping of item ID to numeric relevance score.
+        k: Optional cutoff depth. If None, evaluates across all ranked_ids.
+        relevance_threshold: Score needed to consider an item relevant.
+    """
+    if not ranked_ids or not relevance_judgments:
+        return 0.0
+
+    eval_items = ranked_ids[:k] if k is not None else ranked_ids
+    total_relevant = sum(
+        1 for rel in relevance_judgments.values()
+        if float(rel) >= relevance_threshold
+    )
+    if total_relevant == 0:
+        return 0.0
+
+    hits = 0
+    sum_precisions = 0.0
+    for idx, item_id in enumerate(eval_items, start=1):
+        if float(relevance_judgments.get(str(item_id), 0.0)) >= relevance_threshold:
+            hits += 1
+            sum_precisions += hits / idx
+
+    return float(sum_precisions / total_relevant)
+
+
+def mean_average_precision(
+    query_rankings: Sequence[Tuple[Sequence[str], Dict[str, float | int]]],
+    k: Optional[int] = None,
+    relevance_threshold: float = 1.0,
+) -> float:
+    """Compute Mean Average Precision (MAP) across multiple queries."""
+    if not query_rankings:
+        return 0.0
+
+    ap_scores = [
+        average_precision(ranked_ids, judgments, k=k, relevance_threshold=relevance_threshold)
+        for ranked_ids, judgments in query_rankings
+    ]
+    return float(sum(ap_scores) / len(ap_scores))
+
+
 def reciprocal_rank(
     ranked_ids: Sequence[str],
     relevance_judgments: Dict[str, float | int],
@@ -329,6 +408,111 @@ def fleiss_kappa(ratings_matrix: Sequence[Sequence[int]]) -> float:
 # 3. Statistical Comparison & Confidence Intervals
 # ==============================================================================
 
+def holm_bonferroni_correction(
+    p_values: Sequence[float],
+    alpha: float = 0.05,
+) -> List[Dict[str, Any]]:
+    """Apply Holm-Bonferroni step-down procedure to adjust multiple p-values.
+
+    Args:
+        p_values: Sequence of unadjusted raw p-values.
+        alpha: Target overall family-wise error rate (default 0.05).
+
+    Returns:
+        List of dicts containing original_index, raw_p, adjusted_p, and rejected (significant).
+    """
+    m = len(p_values)
+    if m == 0:
+        return []
+
+    # Sort p-values with original indices
+    indexed = sorted(enumerate(p_values), key=lambda x: x[1])
+    adjusted_results: List[Dict[str, Any]] = [{} for _ in range(m)]
+
+    running_max = 0.0
+    for rank, (orig_idx, p_val) in enumerate(indexed):
+        # Holm multiplier: (m - rank)
+        multiplier = m - rank
+        adj_p = min(1.0, p_val * multiplier)
+        # Ensure monotonicity of adjusted p-values
+        running_max = max(running_max, adj_p)
+        adj_p_monotonic = min(1.0, running_max)
+
+        adjusted_results[orig_idx] = {
+            "original_index": orig_idx,
+            "raw_p": float(p_val),
+            "adjusted_p": round(float(adj_p_monotonic), 6),
+            "rejected": bool(adj_p_monotonic < alpha),
+        }
+
+    return adjusted_results
+
+
+def paired_bootstrap_ci(
+    scores_a: Sequence[float],
+    scores_b: Sequence[float],
+    n_resamples: int = 10000,
+    confidence: float = 0.95,
+    seed: int = 42,
+) -> Dict[str, Any]:
+    """Compute paired bootstrap confidence interval for difference in means (A - B).
+
+    Args:
+        scores_a: Paired metric scores for method A.
+        scores_b: Paired metric scores for method B.
+        n_resamples: Number of bootstrap iterations (default 10,000).
+        confidence: Confidence level (default 0.95).
+        seed: Random seed for reproducibility.
+
+    Returns:
+        Dict with mean_difference, lower_bound, upper_bound, and sample_size.
+    """
+    if len(scores_a) != len(scores_b):
+        raise ValueError("scores_a and scores_b must have the same length")
+
+    arr_a = np.array(scores_a, dtype=np.float64)
+    arr_b = np.array(scores_b, dtype=np.float64)
+    diffs = arr_a - arr_b
+    n = len(diffs)
+
+    if n == 0:
+        return {
+            "mean_difference": 0.0,
+            "lower_bound": 0.0,
+            "upper_bound": 0.0,
+            "confidence": confidence,
+            "sample_size": 0,
+        }
+
+    mean_diff = float(np.mean(diffs))
+    if n == 1 or np.allclose(diffs, mean_diff):
+        return {
+            "mean_difference": round(mean_diff, 4),
+            "lower_bound": round(mean_diff, 4),
+            "upper_bound": round(mean_diff, 4),
+            "confidence": confidence,
+            "sample_size": n,
+        }
+
+    rng = np.random.default_rng(seed)
+    boot_diff_means = np.zeros(n_resamples, dtype=np.float64)
+    for i in range(n_resamples):
+        sample = rng.choice(diffs, size=n, replace=True)
+        boot_diff_means[i] = np.mean(sample)
+
+    alpha = (1.0 - confidence) / 2.0
+    lower = float(np.percentile(boot_diff_means, alpha * 100))
+    upper = float(np.percentile(boot_diff_means, (1.0 - alpha) * 100))
+
+    return {
+        "mean_difference": round(mean_diff, 4),
+        "lower_bound": round(lower, 4),
+        "upper_bound": round(upper, 4),
+        "confidence": confidence,
+        "sample_size": n,
+    }
+
+
 def wilcoxon_signed_rank_test(
     scores_a: Sequence[float],
     scores_b: Sequence[float],
@@ -338,15 +522,7 @@ def wilcoxon_signed_rank_test(
     """Perform a paired Wilcoxon signed-rank test comparing two ranking methods.
 
     Guards against small sample sizes and identical distributions without fabricating p-values.
-
-    Args:
-        scores_a: Paired metric scores for method A.
-        scores_b: Paired metric scores for method B.
-        zero_method: Method for handling zero differences ('wilcox', 'pratt', 'zsplit').
-        alternative: 'two-sided', 'greater', or 'less'.
-
-    Returns:
-        Dictionary with statistic, p_value, sample_size, and interpretation flags.
+    Issues an explicit warning when sample size n < 20.
     """
     if len(scores_a) != len(scores_b):
         raise ValueError(
@@ -356,6 +532,10 @@ def wilcoxon_signed_rank_test(
     diffs = np.array(scores_a, dtype=np.float64) - np.array(scores_b, dtype=np.float64)
     n = len(diffs)
     non_zeros = diffs[diffs != 0.0]
+
+    warning_msg = None
+    if n < 20:
+        warning_msg = f"Warning: Sample size (n={n}) < 20. Statistical power for Wilcoxon test is limited."
 
     # Handle insufficient observations
     if n < 5:
@@ -368,6 +548,8 @@ def wilcoxon_signed_rank_test(
             "significant_0_05": False,
             "significant_0_01": False,
             "mean_difference": float(np.mean(diffs)) if n > 0 else 0.0,
+            "effect_size_r": 0.0,
+            "warning": warning_msg,
             "note": "Sample size (n < 5) is too small to calculate reliable Wilcoxon p-value without valid observations.",
         }
 
@@ -382,9 +564,13 @@ def wilcoxon_signed_rank_test(
             "significant_0_05": False,
             "significant_0_01": False,
             "mean_difference": 0.0,
+            "effect_size_r": 0.0,
+            "warning": warning_msg,
             "note": "All paired differences are exactly zero (identical performance).",
         }
 
+    stat = 0.0
+    pval = 1.0
     if scipy_stats is not None:
         try:
             res = scipy_stats.wilcoxon(
@@ -405,15 +591,23 @@ def wilcoxon_signed_rank_test(
                 "significant_0_05": False,
                 "significant_0_01": False,
                 "mean_difference": float(np.mean(diffs)),
+                "effect_size_r": 0.0,
+                "warning": warning_msg,
             }
     else:
-        # Fallback pure python calculation
         abs_diffs = np.abs(non_zeros)
-        ranks = scipy_stats.rankdata(abs_diffs) if scipy_stats else np.argsort(np.argsort(abs_diffs)) + 1.0
+        ranks = np.argsort(np.argsort(abs_diffs)) + 1.0
         w_plus = float(np.sum(ranks[non_zeros > 0]))
         w_minus = float(np.sum(ranks[non_zeros < 0]))
         stat = min(w_plus, w_minus)
-        pval = 1.0  # conservative without scipy
+        pval = 1.0
+
+    # Calculate effect size r = Z / sqrt(N)
+    # Approximation of Z from p-value if scipy_stats available
+    effect_size_r = 0.0
+    if scipy_stats is not None and pval > 0 and pval < 1.0:
+        z = abs(float(scipy_stats.norm.ppf(pval / 2.0)))
+        effect_size_r = round(float(z / math.sqrt(n)), 4)
 
     return {
         "statistic": stat,
@@ -424,6 +618,8 @@ def wilcoxon_signed_rank_test(
         "significant_0_05": bool(pval < 0.05),
         "significant_0_01": bool(pval < 0.01),
         "mean_difference": float(np.mean(diffs)),
+        "effect_size_r": effect_size_r,
+        "warning": warning_msg,
         "note": "Computed via standard Wilcoxon signed-rank test.",
     }
 
@@ -712,6 +908,77 @@ def run_ablation_study(
 # ==============================================================================
 # 6. Machine-Readable Provenance & Complete Evaluation Runner
 # ==============================================================================
+
+def calculate_kendall_tau(ranked_a: Sequence[str], ranked_b: Sequence[str], k: int = 10) -> float:
+    """Calculate Kendall's tau rank correlation between two rankings up to rank k."""
+    items = list(dict.fromkeys(list(ranked_a[:k]) + list(ranked_b[:k])))
+    if len(items) <= 1:
+        return 1.0
+
+    rank_map_a = {jid: idx for idx, jid in enumerate(ranked_a)}
+    rank_map_b = {jid: idx for idx, jid in enumerate(ranked_b)}
+
+    orders_a = [rank_map_a.get(jid, k + 1) for jid in items]
+    orders_b = [rank_map_b.get(jid, k + 1) for jid in items]
+
+    if scipy_stats is not None:
+        tau, _ = scipy_stats.kendalltau(orders_a, orders_b)
+        if np.isnan(tau):
+            return 1.0
+        return float(tau)
+
+    # Pure Python fallback for Kendall tau-b
+    n = len(orders_a)
+    concordant = 0
+    discordant = 0
+    for i in range(n):
+        for j in range(i + 1, n):
+            sign_a = (orders_a[i] > orders_a[j]) - (orders_a[i] < orders_a[j])
+            sign_b = (orders_b[i] > orders_b[j]) - (orders_b[i] < orders_b[j])
+            prod = sign_a * sign_b
+            if prod > 0:
+                concordant += 1
+            elif prod < 0:
+                discordant += 1
+    total = concordant + discordant
+    return float((concordant - discordant) / total) if total > 0 else 1.0
+
+
+def calculate_topk_overlap(ranked_a: Sequence[str], ranked_b: Sequence[str], k: int = 10) -> float:
+    """Compute top-k Jaccard overlap between two rankings."""
+    set_a = set(ranked_a[:k])
+    set_b = set(ranked_b[:k])
+    if not set_a and not set_b:
+        return 1.0
+    return float(len(set_a & set_b) / len(set_a | set_b))
+
+
+def compute_unlabeled_diagnostics(
+    method_rankings: Dict[str, Sequence[str]],
+    k: int = 10,
+) -> Dict[str, Any]:
+    """Compute pairwise Kendall's tau and top-k Jaccard overlap diagnostics without ground truth labels."""
+    methods = list(method_rankings.keys())
+    pairwise_kendall: Dict[str, Dict[str, float]] = {m: {} for m in methods}
+    pairwise_overlap: Dict[str, Dict[str, float]] = {m: {} for m in methods}
+
+    for i, m1 in enumerate(methods):
+        for j, m2 in enumerate(methods):
+            if i == j:
+                pairwise_kendall[m1][m2] = 1.0
+                pairwise_overlap[m1][m2] = 1.0
+            else:
+                tau = calculate_kendall_tau(method_rankings[m1], method_rankings[m2], k=k)
+                overlap = calculate_topk_overlap(method_rankings[m1], method_rankings[m2], k=k)
+                pairwise_kendall[m1][m2] = round(tau, 4)
+                pairwise_overlap[m1][m2] = round(overlap, 4)
+
+    return {
+        "k": k,
+        "pairwise_kendall_tau": pairwise_kendall,
+        "pairwise_topk_overlap": pairwise_overlap,
+    }
+
 
 def generate_evaluation_report(
     dataset_path: Path | str,
