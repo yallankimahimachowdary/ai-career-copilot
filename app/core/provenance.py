@@ -64,6 +64,8 @@ class ProvenanceRecord(BaseModel):
     gate_flags: Dict[str, Any] = Field(default_factory=dict)
     run_type: str = Field(pattern=r"^(dryrun|real)$")
     timestamp: str
+    taxonomy_version: str = "v2.1"
+    taxonomy_hash: Optional[str] = None
 
     @field_validator(
         "git_commit_hash",
@@ -151,6 +153,8 @@ def build_provenance_record(
     git_hash = get_git_commit_hash()
     ts = datetime.now(timezone.utc).isoformat()
 
+    from app.core.taxonomy import TAXONOMY_VERSION, get_taxonomy_sha256
+    tax_hash = get_taxonomy_sha256()
     flags = {
         "seniority_gate": getattr(settings, "SENIORITY_GATE", True),
     }
@@ -178,6 +182,8 @@ def build_provenance_record(
         "gate_flags": flags,
         "run_type": run_type,
         "timestamp": ts,
+        "taxonomy_version": "v2.1",
+        "taxonomy_hash": tax_hash,
     }
 
     # Validate with Pydantic

@@ -152,7 +152,35 @@ CANONICAL_SKILL_PATTERNS: Dict[str, str] = {
     "VLSI": r"\b(vlsi|verilog|vhdl|fpga)\b",
     "Revit / BIM": r"\b(revit|bim|civil\s*3d)\b",
     "CNC Machining": r"\b(cnc|machining|cam)\b",
+    "STAAD Pro": r"\bstaad(?:\s*pro)?\b",
+    "PCB Design": r"\b(pcb\s*design|altium|kicad|eagle\s*pcb)\b",
+
+    # --- Modern Web, Cloud, Security & Data Tools (Taxonomy v2.1) ---
+    "MongoDB": r"\b(mongodb|mongo)\b",
+    "Power BI": r"\bpower\s*bi\b",
+    "Excel": r"\b(excel|ms\s*excel|microsoft\s*excel)\b",
+    "Firebase": r"\bfirebase\b",
+    "Redux": r"\bredux\b",
+    "Bash": r"\b(bash|shell\s*scripting)\b",
+    "Splunk": r"\bsplunk\b",
+    "Nmap": r"\bnmap\b",
+    "Wireshark": r"\bwireshark\b",
+    "Terraform": r"\bterraform\b",
+    "Seaborn": r"\bseaborn\b",
+    "Matplotlib": r"\bmatplotlib\b",
+    "Tableau": r"\btableau\b",
 }
+
+TAXONOMY_VERSION: str = "v2.1"
+
+
+def get_taxonomy_sha256() -> str:
+    """Compute a deterministic SHA-256 hash of canonical skill taxonomy patterns."""
+    import hashlib
+    items = sorted(CANONICAL_SKILL_PATTERNS.items())
+    raw = ";".join(f"{k}:{v}" for k, v in items).encode("utf-8")
+    return hashlib.sha256(raw).hexdigest().upper()
+
 
 
 # ---------------------------------------------------------------------------
