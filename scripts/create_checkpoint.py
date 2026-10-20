@@ -14,12 +14,16 @@ import subprocess
 import sys
 from typing import Any, Dict, List, Optional, Tuple
 
+from app.core.taxonomy import TAXONOMY_VERSION, get_taxonomy_sha256
+
 DEFAULT_ASSET_PATHS = [
     "app/ranking/config.json",
     "data/evaluation/query_intent_benchmark_v1.json",
     "data/evaluation/rag_coach_eval_v1.json",
     "data/router/test.jsonl",
     "data/snapshots/jobs_snapshot_1_20261019_adzuna.jsonl",
+    "docs/role_families_frozen.json",
+    "docs/eval_scope.json",
     "artifacts/models/intent_router_v1.joblib",
     "artifacts/models/matcher_xgboost.json",
 ]
@@ -106,10 +110,15 @@ def create_checkpoint(
     # 3. Build manifest
     from datetime import datetime, timezone
     ts = datetime.now(timezone.utc).isoformat()
+    tax_ver = TAXONOMY_VERSION
+    tax_hash = get_taxonomy_sha256()
+
     manifest = {
         "tag": tag_name,
         "commit_hash": commit_hash,
         "timestamp": ts,
+        "taxonomy_version": tax_ver,
+        "taxonomy_hash": tax_hash,
         "assets_sha256": asset_hashes,
         "status": "clean" if is_clean else "dirty_override",
     }
@@ -122,7 +131,13 @@ def create_checkpoint(
         json.dump(manifest, f, indent=2, sort_keys=True)
 
     # 4. Create annotated git tag
-    tag_msg = f"Checkpoint {tag_name} created at {ts} [commit: {commit_hash[:8]}]"
+    hashes_summary = "\n".join([f"  - {k}: {v}" for k, v in asset_hashes.items()])
+    tag_msg = (
+        f"Checkpoint {tag_name} created at {ts}\n"
+        f"Commit: {commit_hash}\n"
+        f"Taxonomy: {tax_ver} ({tax_hash})\n"
+        f"Frozen assets:\n{hashes_summary}"
+    )
     create_git_tag(tag_name, tag_msg, repo_dir=repo_path)
 
     return {

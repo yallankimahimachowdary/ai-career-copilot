@@ -40,8 +40,11 @@ uploads/
 !/data/fairness/
 !/data/rag_eval/
 !/data/ingest/
+!/data/snapshots/
+!/data/resumes_dryrun/
 data/ingest/adzuna_call_counter.json
-data/snapshots/*.jsonl
+data/snapshots/*
+!data/snapshots/jobs_snapshot_1_20261019_adzuna.jsonl
 backups/
 
 # IDE & OS
@@ -63,5 +66,8 @@ artifacts/evaluation/
 artifacts/audit/
 artifacts/*.json
 results/dryrun/
+results/real/
+data/resumes_real/
+data/real/
 frontend/dist/
 dist/

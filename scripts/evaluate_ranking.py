@@ -20,6 +20,7 @@ import os
 from pathlib import Path
 import sys
 from typing import Any, Dict, List, Optional
+import numpy as np
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
@@ -59,7 +60,8 @@ from scripts.run_ranking_experiment import (
 def run_evaluation_pipeline(
     snapshot_path: str = "data/snapshots/test_snap_1.json",
     resumes_dir: str = "uploads/resumes",
-    manifest_path: str = "data/gold/gold_resumes_skills.json",
+    manifest_path: Optional[str] = "data/gold/gold_resumes_skills.json",
+    strict_manifest: Optional[bool] = None,
     judgments_path: Optional[str] = None,
     export_template_path: Optional[str] = None,
     output_report_path: Optional[str] = None,
@@ -69,6 +71,7 @@ def run_evaluation_pipeline(
     run_ablations: bool = True,
     max_jobs: int = 100,
     run_type: str = "dryrun",
+    max_resumes: Optional[int] = None,
 ) -> Dict[str, Any]:
     """Execute complete ranking evaluation pipeline with provenance tracking."""
     if methods is None:
@@ -78,11 +81,24 @@ def run_evaluation_pipeline(
     if max_jobs:
         snapshot_records = snapshot_records[:max_jobs]
 
+    if run_type == "dryrun" or resumes_dir != "uploads/resumes":
+        manifest_to_use = manifest_path if (manifest_path and manifest_path != "data/gold/gold_resumes_skills.json" and Path(manifest_path).exists()) else None
+    else:
+        manifest_to_use = manifest_path if (manifest_path and Path(manifest_path).exists()) else None
+
+    if strict_manifest is None:
+        if manifest_to_use and run_type != "dryrun":
+            strict_manifest = True
+        else:
+            strict_manifest = False
+
     candidates = load_and_anonymize_resumes(
         resumes_dir=resumes_dir,
-        manifest_path=manifest_path,
-        strict_manifest=True,
+        manifest_path=manifest_to_use,
+        strict_manifest=strict_manifest,
     )
+    if max_resumes is not None and max_resumes > 0:
+        candidates = candidates[:max_resumes]
     print(f"Loaded {len(candidates)} candidates and {len(snapshot_records)} jobs from snapshot.")
 
     rankers = instantiate_rankers(methods)
