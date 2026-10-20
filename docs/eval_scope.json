@@ -1,0 +1,21 @@
+{
+  "version": "1.0",
+  "created_at": "2026-10-20T11:40:00Z",
+  "eval_role_families": [
+    "Data/AI",
+    "Web/Software",
+    "Cybersecurity/Cloud"
+  ],
+  "deficit_families_excluded_from_ranking_eval": [
+    "Mobile/UI-UX",
+    "Electrical",
+    "Mechanical",
+    "Civil",
+    "Commerce/Finance",
+    "Arts/Media"
+  ],
+  "policy": {
+    "in_scope_handling": "Candidate resumes belonging to eval_role_families are included in benchmark evaluation and annotation universes.",
+    "out_of_scope_handling": "Candidate resumes belonging to other families are parsed and served with the honest insufficient-postings state, but are flagged out_of_scope_for_ranking_eval=true in evaluation manifests and reports."
+  }
+}
