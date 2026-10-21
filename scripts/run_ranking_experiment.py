@@ -305,9 +305,10 @@ def run_experiment(
     k: int = 10,
     repeat_idx: int = 0,
     universe_seed: int = 42,
-    max_snapshot_records: Optional[int] = 100,
+    max_snapshot_records: Optional[int] = None,
     max_resumes: Optional[int] = None,
     run_type: str = "dryrun",
+    universes_path: Optional[str] = None,
 ) -> None:
     """Run full Phase B ranking experiment with resumable batch logger."""
     hardware_info = get_system_hardware_info()
@@ -315,10 +316,32 @@ def run_experiment(
     print("System Hardware:", json.dumps(hardware_info, indent=2))
     print(f"Universe Seed: {universe_seed} | Weight Hash: {weight_hash[:16]}... | Repeat Index: {repeat_idx}")
 
+    if run_type == "real" and max_snapshot_records is not None:
+        raise ValueError("Cannot slice snapshot records during real evaluation. max_snapshot_records must be None.")
+
     snapshot_records, snapshot_meta = load_snapshot(snapshot_path)
-    if max_snapshot_records:
+    if max_snapshot_records is not None:
         snapshot_records = snapshot_records[:max_snapshot_records]
     print(f"Loaded {len(snapshot_records)} jobs from snapshot (hash: {snapshot_meta.get('sha256_hash', 'N/A')[:12]}...)")
+
+    candidate_universes_map: Dict[str, Set[str]] = {}
+    resolved_univ_path = universes_path
+    if not resolved_univ_path:
+        default_univ = Path("results/real/candidate_universes.json") if run_type == "real" else Path("results/dryrun/candidate_universes.json")
+        if default_univ.exists():
+            resolved_univ_path = str(default_univ)
+
+    if resolved_univ_path and Path(resolved_univ_path).exists():
+        with open(resolved_univ_path, "r", encoding="utf-8") as f:
+            u_data = json.load(f)
+            for cid, cinfo in u_data.get("candidate_universes", {}).items():
+                job_ids = cinfo.get("job_ids") or []
+                if job_ids:
+                    candidate_universes_map[cid] = set(str(jid) for jid in job_ids)
+        print(f"[UNIVERSE] Loaded universe constraints for {len(candidate_universes_map)} candidates from {resolved_univ_path}.")
+
+    if run_type == "real" and not candidate_universes_map:
+        raise RuntimeError("Candidate universes are mandatory for real ranking experiments.")
 
     candidates = load_and_anonymize_resumes(
         resumes_dir,
@@ -350,7 +373,15 @@ def run_experiment(
             print(f"[{run_key}] Executing {method_name} (k={k}, seed={universe_seed})...")
             t0 = time.time()
 
-            result: RankingResult = ranker.rank(cand, snapshot_records, k=k)
+            if cand_id in candidate_universes_map:
+                cand_job_pool = [
+                    j for j in snapshot_records
+                    if str(j.get("id") or j.get("external_id") or j.get("job_id") or "") in candidate_universes_map[cand_id]
+                ]
+            else:
+                cand_job_pool = snapshot_records
+
+            result: RankingResult = ranker.rank(cand, cand_job_pool, k=k)
 
             elapsed_ms = round((time.time() - t0) * 1000, 2)
 
@@ -423,7 +454,8 @@ def main():
     parser.add_argument("--repeats", type=int, default=1, help="Total repeat runs K (default 1, recommended K=3 for LLM stability)")
     parser.add_argument("--confirm", action="store_true", help="Confirm execution when ETA exceeds 2 hours")
     parser.add_argument("--seed", type=int, default=42, help="Universe seed for experiment (default 42)")
-    parser.add_argument("--max_jobs", type=int, default=100, help="Max jobs to test from snapshot (default 100)")
+    parser.add_argument("--max_jobs", type=int, default=None, help="[DRY-RUN ONLY] Slices snapshot records for quick testing")
+    parser.add_argument("--universes", type=str, default=None, help="Path to candidate_universes.json")
     parser.add_argument("--max-resumes", "--max_resumes", dest="max_resumes", type=int, default=None, help="Max resumes to evaluate (for dry-run mode)")
     parser.add_argument("--run-type", "--run_type", dest="run_type", type=str, default="dryrun", choices=["dryrun", "real"], help="Run type tag ('dryrun' or 'real')")
     args = parser.parse_args()
@@ -434,8 +466,8 @@ def main():
     k_repeats = args.repeats if args.repeats > 1 else 1
     if has_llm:
         est_cand = args.max_resumes if args.max_resumes else 10
-        # Measured ~2.2 - 2.7 min per resume per pass on llama3.2:3b CPU
-        est_minutes = est_cand * k_repeats * 2.45
+        # Measured warm inference on llama3.2:3b CPU with num_thread=4 is ~11.8 - 15.3s (~0.22 min) per candidate
+        est_minutes = est_cand * k_repeats * 0.22
         est_hours = est_minutes / 60.0
         print(f"\n[ETA ESTIMATE] LLM re-ranking detected for ~{est_cand} candidates x {k_repeats} repeat(s).")
         print(f"[ETA ESTIMATE] Estimated duration: {est_minutes:.1f} minutes ({est_hours:.2f} hours).")
@@ -458,6 +490,7 @@ def main():
             max_snapshot_records=args.max_jobs,
             max_resumes=args.max_resumes,
             run_type=args.run_type,
+            universes_path=args.universes,
         )
 
 

@@ -302,21 +302,23 @@ This document provides a transparent, technically precise accounting of known sy
   - **Inter-Rater Agreement Sample**: 8 candidates (480 pairs) are systematically double-rated across both Rater A and Rater B to assess Quadratic Weighted Cohen's Kappa and Fleiss' Kappa with 1,000 bootstrap resamples. The 8 double-rated candidate resumes are:
     `SYN_004`, `SYN_010`, `SYN_011`, `SYN_012`, `SYN_025`, `SYN_026`, `SYN_031`, and `SYN_074`.
 
-## 21. RQ3 Job-Side Unsupported Claims Confounded by Truncated Descriptions
+## 19. Role-Family Frozen Job Counts and Candidate Universe Provenance
+- **Relevant Files:**
+  - [`docs/role_families_frozen.json`](../docs/role_families_frozen.json)
+  - [`docs/eval_scope.json`](../docs/eval_scope.json)
+  - [`scripts/build_universes.py`](../scripts/build_universes.py)
+  - [`scripts/check_dataset_overlap.py`](../scripts/check_dataset_overlap.py)
+- **Status & Scope:**
+  - **Job-Side Frozen Pool**: Classification of the 432 jobs in `jobs_snapshot_1_20261019_adzuna.jsonl` yields exactly 117 Data/AI, 117 Web/Software, and 62 Cybersecurity/Cloud postings (total 296 in-scope jobs). An earlier unpinned classifier report temporarily displayed 152/82/62 due to non-standardized regex routing; the deterministic classifier restores the canonical 117/117/62 distribution with zero run-to-run drift.
+  - **Resume-Side Frozen Distribution**: `docs/role_families_frozen.json` defines the frozen distribution of the 95 synthetic resumes: 14 Data/AI, 12 Web/Software, 8 Cybersecurity/Cloud (34 primary in-scope candidates), plus 7 borderline candidates recognized in `candidate_universes.json` (yielding 41 total candidates).
+
+## 21. RQ3 Job-Side Unsupported Claims Confounded by Upstream API and Prompt Truncation
 - **Relevant Files:**
   - [`app/ranking/claim_verifier.py`](../app/ranking/claim_verifier.py)
   - [`app/ranking/llm_reranker.py`](../app/ranking/llm_reranker.py)
   - [`scripts/run_r13_suite.py`](../scripts/run_r13_suite.py)
 - **Status & Scope:**
   - In RQ3 (Explanation Faithfulness), automated claim verification evaluates whether missing skills cited in model re-ranking explanations are explicitly required by the job posting description.
-  - Both in model prompt construction (where descriptions are truncated to 100–500 characters to fit context windows and maintain response latency) and in raw job snapshot feeds, job descriptions are frequently concise or truncated.
-  - Consequently, when an LLM re-ranker reasons that a role requires foundational domain tools (e.g., inferring that a Machine Learning Engineer requires Git, SQL, or Docker, or that a Cloud Engineer requires Linux), the automated regex verifier flags these assertions as "job-side unsupported" if the brief truncated snippet does not literally contain those tokens.
-  - This introduces an unavoidable confounding factor in RQ3: a substantial proportion of "job-side unsupported" claims reflect common domain expectations rather than pure model hallucinations, directly induced by prompt-length description truncation.
-
-
-
-
-
-
-
-
+  - **Upstream Adzuna API Truncation**: As recorded in `results/snapshots/manifest.jsonl`, the Adzuna Search API truncates job descriptions upstream to a hard cap of 500 characters (99.31% of snapshot jobs are at this 500-character boundary).
+  - **Downstream Prompt Truncation**: In [`app/ranking/llm_reranker.py`](../app/ranking/llm_reranker.py), description snippets in the prompt are truncated to 100 characters (`desc[:100]`) to ensure the 20-candidate prompt fits token limits and maintains predictable latency.
+  - **Confounding Effect**: When an LLM re-ranker infers that a role requires foundational domain tools (e.g. Git, SQL, or Docker for an ML Engineer), the automated regex verifier flags these assertions as "job-side unsupported" if the truncated 500-char snapshot text does not literally contain those tokens. This is a direct artifact of upstream API and downstream prompt truncation rather than pure hallucination.

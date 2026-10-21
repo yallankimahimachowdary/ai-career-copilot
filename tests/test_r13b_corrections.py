@@ -1,3 +1,4 @@
+from pathlib import Path
 """
 tests/test_r13b_corrections.py
 ------------------------------
@@ -158,3 +159,188 @@ def test_counterfactual_direction_rank_change():
     # Suggested required skill must produce equal or better gain than unrelated control
     assert gain_sugg >= gain_ctrl
     assert rank_sugg.scores["job_2"] > base_rank.scores["job_2"]
+
+
+def test_name_swap_inputs_hash_differently():
+    """Verify that when anonymizer is OFF, swapping candidate names changes the input text hashes.
+    
+    If swapped inputs hash identically, the candidate name never reaches the scorer and the test fails.
+    """
+    from app.ranking.baselines import BM25Ranker, SbertRanker
+    from app.ranking.llm_reranker import _format_resume_summary
+
+    sbert = SbertRanker()
+    bm25 = BM25Ranker()
+
+    base_cand = {
+        "candidate_id": "SYN_001",
+        "candidate_name": "Original Name",
+        "name": "Original Name",
+        "summary": "Full Stack Engineer with React, Node, and Python experience.",
+        "skills": ["React", "Node.js", "Python"],
+        "experience": [{"title": "Software Dev", "company": "Acme", "description": "Built web apps."}],
+        "raw_text": "Original Name\nSoftware Developer with React and Python.",
+    }
+
+    test_names = [
+        "Aisha Robinson",    # US Black Female
+        "Brad Schultz",      # US White Male
+        "Rahul Sharma",      # Indian North/West Male
+        "Lakshmi Sundaram",  # Indian South Female
+        "Mohammed Ansari",   # Indian Muslim Male
+    ]
+
+    sbert_hashes = set()
+    bm25_token_hashes = set()
+    llm_prompt_hashes = set()
+
+    for name in test_names:
+        c = copy.deepcopy(base_cand)
+        c["candidate_name"] = name
+        c["name"] = name
+        c["summary"] = f"Candidate: {name}. " + base_cand["summary"]
+        c["raw_text"] = f"Candidate: {name}\n" + base_cand["raw_text"]
+
+        # 1. SBERT resume text
+        sbert_text = sbert._get_resume_text(c)
+        assert name in sbert_text, f"Name '{name}' missing from SBERT input text!"
+        sbert_h = hashlib.sha256(sbert_text.encode("utf-8")).hexdigest()
+        sbert_hashes.add(sbert_h)
+
+        # 2. BM25 query tokens
+        query_parts = []
+        c_name = c.get("candidate_name") or c.get("name")
+        if c_name:
+            query_parts.append(f"Candidate: {c_name}")
+        if c.get("raw_text"):
+            query_parts.append(c["raw_text"])
+        if c.get("summary"):
+            query_parts.append(c["summary"])
+        bm25_text = " ".join(query_parts)
+        assert name in bm25_text, f"Name '{name}' missing from BM25 query text!"
+        bm25_h = hashlib.sha256(bm25_text.encode("utf-8")).hexdigest()
+        bm25_token_hashes.add(bm25_h)
+
+        # 3. LLM Prompt summary
+        llm_text = _format_resume_summary(c)
+        assert name in llm_text, f"Name '{name}' missing from LLM resume summary!"
+        llm_h = hashlib.sha256(llm_text.encode("utf-8")).hexdigest()
+        llm_prompt_hashes.add(llm_h)
+
+    # Every distinct swapped name MUST produce a distinct hash across all arms
+    assert len(sbert_hashes) == len(test_names), "SBERT input text hashed identically across swapped names!"
+    assert len(bm25_token_hashes) == len(test_names), "BM25 query text hashed identically across swapped names!"
+    assert len(llm_prompt_hashes) == len(test_names), "LLM prompt text hashed identically across swapped names!"
+
+
+def test_role_families_frozen_counts():
+    """Verify role family counts in docs/role_families_frozen.json and snapshot jobs match canonical counts."""
+    import json
+    from scripts.check_dataset_overlap import classify_job_family
+    from scripts.job_snapshot import load_snapshot
+    from collections import Counter
+
+    # 1. Resume distribution in docs/role_families_frozen.json
+    frozen_path = Path("docs/role_families_frozen.json")
+    with open(frozen_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    dist = data["metadata"]["distribution_summary"]
+    assert dist["Data/AI"] == 14
+    assert dist["Web/Software"] == 12
+    assert dist["Cybersecurity/Cloud"] == 8
+    assert dist["Mobile/UI-UX"] == 6
+    assert dist["Mechanical"] == 8
+    assert dist["Civil"] == 8
+    assert dist["Electrical"] == 21
+    assert dist["Commerce/Finance"] == 13
+    assert dist["Arts/Media"] == 5
+    assert sum(dist.values()) == 95
+
+    # 2. Snapshot job counts: 117 Data/AI, 117 Web/Software, 62 Cybersecurity/Cloud
+    jobs, _ = load_snapshot("data/snapshots/jobs_snapshot_1_20261019_adzuna.jsonl")
+    job_counts = Counter(classify_job_family(j.get("title", ""), j.get("description", "")) for j in jobs)
+    assert job_counts["Data/AI"] == 117
+    assert job_counts["Web/Software"] == 117
+    assert job_counts["Cybersecurity/Cloud"] == 62
+
+
+def test_eval_path_strictly_enforces_candidate_universe(tmp_path):
+    """Verify that evaluate_ranking and run_ranking_experiment rank each candidate ONLY within their own universe."""
+    import json
+    from scripts.run_ranking_experiment import run_experiment
+
+    # Create toy jobs
+    toy_jobs = [
+        {"id": "j1", "title": "Data Scientist", "description": "Python ML", "skills": ["Python", "ML"]},
+        {"id": "j2", "title": "AI Engineer", "description": "PyTorch NLP", "skills": ["PyTorch", "NLP"]},
+        {"id": "j3", "title": "Frontend Engineer", "description": "React CSS", "skills": ["React", "CSS"]},
+        {"id": "j4", "title": "Web Developer", "description": "TypeScript HTML", "skills": ["TypeScript"]},
+        {"id": "j5", "title": "Alien Job", "description": "Extraterrestrial", "skills": ["Alien"]},
+    ]
+    toy_snap_path = tmp_path / "toy_snapshot.jsonl"
+    with open(toy_snap_path, "w", encoding="utf-8") as f:
+        for j in toy_jobs:
+            f.write(json.dumps(j) + "\n")
+
+    # Create candidate universes fixture: cand_1 only has j1 and j2
+    toy_universes = {
+        "candidate_universes": {
+            "SYN_001": {
+                "candidate_id": "SYN_001",
+                "role_family": "Data/AI",
+                "job_ids": ["j1", "j2"],
+            }
+        }
+    }
+    toy_univ_path = tmp_path / "toy_universes.json"
+    with open(toy_univ_path, "w", encoding="utf-8") as f:
+        json.dump(toy_universes, f)
+
+    # Candidate fixture
+    resumes_dir = tmp_path / "resumes"
+    resumes_dir.mkdir()
+    (resumes_dir / "SYN_001_Test.pdf").write_text("Dummy PDF content", encoding="utf-8")
+
+    manifest_path = tmp_path / "gold.json"
+    manifest_data = {
+        "resumes": [
+            {
+                "candidate_id": "SYN_001",
+                "candidate_name": "Test Candidate",
+                "resume_file": "SYN_001_Test.pdf",
+                "skills": ["Python", "ML"],
+                "role_family": "Data/AI",
+            }
+        ]
+    }
+    with open(manifest_path, "w", encoding="utf-8") as f:
+        json.dump(manifest_data, f)
+
+    # Run experiment with candidate universe constraint
+    run_experiment(
+        snapshot_path=str(toy_snap_path),
+        resumes_dir=str(resumes_dir),
+        methods=["overlap"],
+        manifest_path=str(manifest_path),
+        strict_manifest=False,
+        k=5,
+        repeat_idx=99,
+        universe_seed=42,
+        run_type="dryrun",
+        universes_path=str(toy_univ_path),
+    )
+
+    # Read output run log
+    run_log_file = Path("results/dryrun/phase_b_ranking/SYN_001_rep99_overlap.json")
+    assert run_log_file.exists()
+    with open(run_log_file, "r", encoding="utf-8") as f:
+        run_data = json.load(f)
+
+    ranked_jobs = run_data["outputs"]["ranked_job_ids"]
+    # Every ranked job ID must strictly be in SYN_001's universe {"j1", "j2"}
+    for jid in ranked_jobs:
+        assert jid in ["j1", "j2"], f"Job {jid} was ranked but is outside SYN_001 universe!"
+    assert "j3" not in ranked_jobs
+    assert "j4" not in ranked_jobs
+    assert "j5" not in ranked_jobs

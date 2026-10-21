@@ -65,6 +65,9 @@ def _format_candidate_jobs(jobs: List[Dict[str, Any]]) -> Tuple[str, Dict[str, s
 
 def _format_resume_summary(anonymized_resume: Dict[str, Any]) -> str:
     parts: List[str] = []
+    name = anonymized_resume.get("candidate_name") or anonymized_resume.get("name")
+    if name:
+        parts.append(f"Candidate: {name}")
     skills = anonymized_resume.get("skills") or []
     if skills:
         parts.append(f"Skills: {', '.join(str(s) for s in skills[:20])}")

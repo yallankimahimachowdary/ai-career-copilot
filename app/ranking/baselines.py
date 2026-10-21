@@ -77,6 +77,9 @@ class BM25Ranker(BaseRanker):
 
         # Build query tokens from resume
         query_parts: List[str] = []
+        name = anonymized_resume.get("candidate_name") or anonymized_resume.get("name")
+        if name:
+            query_parts.append(f"Candidate: {name}")
         if anonymized_resume.get("raw_text"):
             query_parts.append(anonymized_resume["raw_text"])
         if anonymized_resume.get("summary"):
@@ -124,6 +127,9 @@ class SbertRanker(BaseRanker):
 
     def _get_resume_text(self, anonymized_resume: Dict[str, Any]) -> str:
         parts: List[str] = []
+        name = anonymized_resume.get("candidate_name") or anonymized_resume.get("name")
+        if name:
+            parts.append(f"Candidate Name: {name}")
         if anonymized_resume.get("summary"):
             parts.append(anonymized_resume["summary"])
         if anonymized_resume.get("skills"):
@@ -169,7 +175,7 @@ class SbertRanker(BaseRanker):
         st_model = get_sentence_transformer()
 
         # Compute or use pre-existing candidate embedding
-        if "embedding" in anonymized_resume and anonymized_resume["embedding"]:
+        if "embedding" in anonymized_resume and anonymized_resume["embedding"] is not None:
             cand_emb = np.array(anonymized_resume["embedding"], dtype=np.float32)
         else:
             resume_text = self._get_resume_text(anonymized_resume)
@@ -187,7 +193,7 @@ class SbertRanker(BaseRanker):
         for job in job_pool:
             jid = str(job.get("id") or job.get("external_id") or "")
             job_ids.append(jid)
-            if "embedding" in job and job["embedding"]:
+            if "embedding" in job and job["embedding"] is not None:
                 emb = np.array(job["embedding"], dtype=np.float32)
                 n = np.linalg.norm(emb)
                 precomputed_embs.append(emb / n if n > 0 else emb)
