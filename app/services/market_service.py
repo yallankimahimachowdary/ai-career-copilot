@@ -316,7 +316,7 @@ class MarketAgent:
         self.ollama_base_url: Optional[str] = getattr(settings, "OLLAMA_BASE_URL", "http://localhost:11434")
         self.ollama_model: str = getattr(settings, "OLLAMA_MODEL", "llama3.2:3b")
         self.gemini_key: Optional[str] = "ollama"  # Retained for fallback toggling and test compatibility
-        self.gemini_model: str = getattr(settings, "GEMINI_MODEL", "gemini-2.0-flash")
+        self.gemini_model: str = getattr(settings, "GEMINI_MODEL", "gemini-3.5-flash-lite")
 
     # -----------------------------------------------------------------------
     # Public API

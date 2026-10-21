@@ -411,6 +411,13 @@ def run_experiment(
 
             req_m = run_meta.get("requested_model") or run_meta.get("model") or method_name
             ret_m = run_meta.get("answered_model") or run_meta.get("model") or method_name
+            if "gemini" in method_name or run_meta.get("provider") == "gemini":
+                req_clean = str(req_m).removeprefix("models/").lower()
+                ret_clean = str(ret_m).removeprefix("models/").lower()
+                if req_clean != ret_clean and not ret_clean.startswith(req_clean) and not req_clean.startswith(ret_clean):
+                    raise RuntimeError(
+                        f"Strict model validation failed: requested '{req_m}' != returned '{ret_m}'"
+                    )
             saved_path = logger.log_run(
                 item_id=run_key,
                 requested_model=str(req_m),

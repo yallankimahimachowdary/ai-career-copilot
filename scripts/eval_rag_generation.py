@@ -85,7 +85,7 @@ async def generate_gemini(prompt: str, timeout: float = 45.0) -> str:
     if not settings.GEMINI_API_KEY:
         return "Gemini API key not configured; skipping cloud generation."
 
-    model_name = getattr(settings, "GEMINI_MODEL", "gemini-2.0-flash").removeprefix("models/")
+    model_name = getattr(settings, "GEMINI_MODEL", "gemini-3.5-flash-lite").removeprefix("models/")
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={settings.GEMINI_API_KEY}"
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],

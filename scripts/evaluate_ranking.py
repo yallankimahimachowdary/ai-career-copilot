@@ -170,6 +170,14 @@ def run_evaluation_pipeline(
 
         for m_name, ranker in rankers.items():
             res = ranker.rank(cand, cand_job_pool, k=k)
+            if cand_id in candidate_universes_map:
+                univ_ids = candidate_universes_map[cand_id]
+                outside_jobs = [jid for jid in res.ranked_job_ids if jid not in univ_ids]
+                if outside_jobs:
+                    raise ValueError(
+                        f"Integrity violation: {len(outside_jobs)} ranked jobs for candidate '{cand_id}' "
+                        f"in method '{m_name}' fall outside the candidate universe: {outside_jobs[:3]}"
+                    )
             method_rankings[m_name][cand_id] = res.ranked_job_ids
 
         # Save for template export

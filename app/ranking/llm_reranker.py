@@ -57,7 +57,8 @@ def _format_candidate_jobs(jobs: List[Dict[str, Any]]) -> Tuple[str, Dict[str, s
         title = job.get("title") or "Unknown Title"
         skills = job.get("skills") or []
         skills_str = ", ".join(str(s) for s in skills[:6]) if isinstance(skills, list) else str(skills)[:50]
-        desc = (job.get("description") or "")[:100].replace("\n", " ").strip()
+        # Pass full available job description up to Adzuna upstream limit (500 chars)
+        desc = (job.get("description") or "")[:500].replace("\n", " ").strip()
         lines.append(f"[{label}] Title:{title}|Skills:{skills_str}|Desc:{desc}")
 
     return "\n".join(lines), label_to_id, id_to_label
@@ -101,7 +102,7 @@ class LLMReranker(BaseRanker):
             self.model_name = model_name or "llama3.2:3b"
             self.provider = OllamaProvider(model=self.model_name)
         elif provider_name in ("gemini", "gemini-mock"):
-            self.model_name = model_name or getattr(settings, "GEMINI_MODEL", "gemini-2.0-flash")
+            self.model_name = model_name or getattr(settings, "GEMINI_MODEL", "gemini-3.5-flash-lite")
             self.provider = GeminiProvider(model=self.model_name)
         else:
             raise ValueError(f"Unsupported provider: {provider_name}")
