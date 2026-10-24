@@ -13,7 +13,7 @@ import copy
 import csv
 from pathlib import Path
 import random
-from typing import Any, Dict, List, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 from app.core.taxonomy import CANONICAL_SKILL_PATTERNS, extract_canonical_skills
 from app.ranking.baselines import SbertRanker
