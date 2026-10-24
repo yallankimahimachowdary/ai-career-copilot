@@ -54,15 +54,17 @@ class CounterfactualTester:
         job_skills: Set[str],
         resume_skills: Set[str],
         count: int,
+        rng: Optional[random.Random] = None,
     ) -> List[str]:
         """Sample skills that are strictly absent from candidate resume AND not required by target job."""
-        candidates = [
+        candidates = sorted([
             s for s in self.all_canonical_skills
             if s.lower() not in job_skills and s.lower() not in resume_skills
-        ]
+        ])
         if not candidates:
             return []
-        return random.sample(candidates, min(count, len(candidates)))
+        sampler = rng if rng is not None else random
+        return sampler.sample(candidates, min(count, len(candidates)))
 
     def run_multi_draw_test(
         self,
@@ -71,9 +73,12 @@ class CounterfactualTester:
         suggested_missing_skills: List[str],
         job_pool: List[Dict[str, Any]],
         n_draws: int = 20,
+        seed: Optional[int] = 42,
     ) -> Dict[str, Any]:
         """Run counterfactual evaluation with n_draws independent random draws for control skills."""
         import numpy as np
+
+        draw_rng = random.Random(seed) if seed is not None else random.Random(42)
 
         target_jid = str(target_job.get("id") or target_job.get("external_id") or "")
         job_skills = self._get_job_skills(target_job)
@@ -118,7 +123,7 @@ class CounterfactualTester:
         all_draw_skills: List[List[str]] = []
 
         for draw_idx in range(n_draws):
-            rnd_skills = self._sample_random_unrelated_skills(job_skills, resume_skills, n_missing)
+            rnd_skills = self._sample_random_unrelated_skills(job_skills, resume_skills, n_missing, rng=draw_rng)
             all_draw_skills.append(rnd_skills)
 
             resume_b = copy.deepcopy(resume)

@@ -35,6 +35,10 @@ class LLMResponse:
         prompt_tokens: int = 0,
         response_tokens: int = 0,
         quantization: str = "n/a",
+        done_reason: str = "stop",
+        num_ctx: int = 8192,
+        num_predict: int = 1500,
+        load_duration_ms: float = 0.0,
     ):
         self.raw_text = raw_text
         self.data = parsed_json
@@ -52,6 +56,10 @@ class LLMResponse:
         self.prompt_tokens = prompt_tokens
         self.response_tokens = response_tokens
         self.quantization = quantization
+        self.done_reason = done_reason
+        self.num_ctx = num_ctx
+        self.num_predict = num_predict
+        self.load_duration_ms = load_duration_ms
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -67,6 +75,10 @@ class LLMResponse:
             "seed_applied": self.seed_applied,
             "prompt_tokens": self.prompt_tokens,
             "response_tokens": self.response_tokens,
+            "done_reason": self.done_reason,
+            "num_ctx": self.num_ctx,
+            "num_predict": self.num_predict,
+            "load_duration_ms": self.load_duration_ms,
             "latency_ms": self.latency_ms,
             "timestamp": self.timestamp,
             "data": self.data,
@@ -205,6 +217,9 @@ class OllamaProvider(BaseLLMProvider):
         seed_applied = data.get("seed") or None
         prompt_tokens = data.get("prompt_eval_count", 0)
         response_tokens = data.get("eval_count", 0)
+        done_reason = data.get("done_reason") or "stop"
+        num_predict = max_tokens
+        load_duration_ms = round((data.get("load_duration") or 0) / 1e6, 2)
         quantization = "Q4_K_M" if "llama" in self.model.lower() else "n/a"
 
         # Explicit context truncation guard
@@ -213,12 +228,19 @@ class OllamaProvider(BaseLLMProvider):
                 f"Ollama prompt truncation detected! prompt_eval_count={prompt_tokens} reached num_ctx={num_ctx} limit."
             )
 
+        # Explicit generation truncation guard (done_reason == "length")
+        if done_reason == "length":
+            raise RuntimeError(
+                f"Ollama generation truncated! done_reason='length' reached num_predict={num_predict} limit."
+            )
+
         independent_tokens = len(prompt.split())
 
         logger.info(
-            f"[LLM Call] provider=ollama model={self.model} seed_requested={seed_requested} seed_sent={seed_sent} seed_applied={seed_applied} "
-            f"prompt_tokens={prompt_tokens} independent_tokens={independent_tokens} num_ctx={num_ctx} response_tokens={response_tokens} quantization={quantization} "
-            f"temp={temperature} max_tokens={max_tokens} latency_ms={latency_ms} timestamp={ts}"
+            f"[LLM Call] provider=ollama model={self.model} num_ctx={num_ctx} num_predict={num_predict} "
+            f"done_reason={done_reason} prompt_eval_count={prompt_tokens} eval_count={response_tokens} "
+            f"load_duration_ms={load_duration_ms} seed_requested={seed_requested} seed_sent={seed_sent} "
+            f"seed_applied={seed_applied} quantization={quantization} temp={temperature} latency_ms={latency_ms} timestamp={ts}"
         )
 
         return LLMResponse(
@@ -236,6 +258,10 @@ class OllamaProvider(BaseLLMProvider):
             prompt_tokens=prompt_tokens,
             response_tokens=response_tokens,
             quantization=quantization,
+            done_reason=done_reason,
+            num_ctx=num_ctx,
+            num_predict=num_predict,
+            load_duration_ms=load_duration_ms,
         )
 
 

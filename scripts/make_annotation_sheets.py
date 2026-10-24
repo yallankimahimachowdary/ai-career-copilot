@@ -48,6 +48,13 @@ ANNOTATION_SCALE_HEADER = [
 ]
 
 
+def stable_hash_int(s: str, max_val: int = 1000000) -> int:
+    """Deterministic integer hash independent of PYTHONHASHSEED."""
+    h_bytes = hashlib.sha256(s.encode("utf-8")).digest()
+    val = int.from_bytes(h_bytes[:4], byteorder="big")
+    return val % max_val
+
+
 def assign_raters(
     candidate_ids: List[str],
     seed: int = 42,
@@ -146,7 +153,7 @@ def make_annotation_sheets(
         for cid in cands_for_rater:
             job_ids = list(in_scope_map[cid]["job_ids"])
             # Shuffle jobs within resume deterministically using seed + candidate hash
-            job_rng = random.Random(seed + hash(cid) % 1000000)
+            job_rng = random.Random(seed + stable_hash_int(cid))
             job_rng.shuffle(job_ids)
 
             for jid in job_ids:

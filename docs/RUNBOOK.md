@@ -40,6 +40,15 @@ Run the staged prep runner:
 python scripts/run_all.py --stage prep --resumes-dir data/resumes_real --snapshot data/snapshots/jobs_snapshot_1_20261019_adzuna.jsonl
 ```
 
+### Critical Operational Rules for Stage PREP:
+1. **Build Universes ONCE and Freeze**:
+   - Run universe generation exactly ONCE for the real run (`results/real/candidate_universes.json`).
+   - Immediately compute and record its SHA-256 checksum in the run manifest and verification ledger.
+   - Treat the generated universe file as frozen and read-only. Never re-run universe generation during evaluation to avoid any universe drift or seed variation across subsequent analysis passes.
+2. **Manual Role Family Verification**:
+   - Inspect `results/real/intake_report.json` and manually verify the role family classification (`Data/AI`, `Web/Software`, `Cybersecurity/Cloud`) for EVERY real candidate resume prior to generating or distributing annotation sheets.
+   - Ensure borderline or interdisciplinary candidates are correctly assigned so raters evaluate candidates only against valid in-scope job universes.
+
 ### What Stage PREP Performs:
 1. **Frozen Asset Verification**: Checks bit-for-bit SHA-256 match on all 7 benchmark files.
 2. **Secret Scanner**: Ensures zero live credentials or API tokens are exposed in the repository.
@@ -88,8 +97,9 @@ python scripts/run_all.py --stage eval --resumes-dir data/resumes_real --snapsho
 1. **Annotation Ingestion & Agreement**:
    - Validates label schemas.
    - Computes Quadratic Weighted Cohen's Kappa & Fleiss' Kappa with 1,000-sample bootstrap confidence intervals.
-2. **Multi-Arm Ranking Pipeline**:
+2. **Multi-Arm Ranking Pipeline & Precision@5 Policy**:
    - Evaluates BM25, SBERT (`sentence-transformers/all-MiniLM-L6-v2`), Skill Overlap, and Hybrid rankers.
+   - **The P@5 Rule**: The primary `Precision@5` metric defines relevant items strictly as `rating = 2` (strong fit). Items with `rating >= 1` (partially relevant + strong fit) are computed and reported separately as a sensitivity column `P@5 (rel>=1, sens)`. Both columns appear in publication Table 1 and Table 2.
    - Computes nDCG@5, nDCG@10, MAP, MRR, Precision@5, and Recall@10 across 3 repeated runs for stability.
 3. **Statistical Significance Testing**:
    - Paired Wilcoxon signed-rank tests (Hybrid vs BM25, Hybrid vs SBERT) with Holm-Bonferroni correction and 95% bootstrap CIs.

@@ -161,6 +161,10 @@ class LLMReranker(BaseRanker):
             if len(sanitized) >= top_k:
                 break
 
+        # Fail if no valid ranking parses (zero parsed items from LLM response)
+        if len(sanitized) == 0:
+            raise ValueError("No valid ranking parses from LLM response: zero valid candidate job items were parsed.")
+
         # If LLM returned fewer than top_k, backfill deterministically from candidate pool
         if len(sanitized) < top_k:
             for label, real_id in label_to_id.items():
@@ -258,6 +262,12 @@ class LLMReranker(BaseRanker):
                     "seed_applied": getattr(response, "seed_applied", None),
                     "prompt_tokens": getattr(response, "prompt_tokens", 0),
                     "response_tokens": getattr(response, "response_tokens", 0),
+                    "num_ctx": getattr(response, "num_ctx", 8192),
+                    "num_predict": getattr(response, "num_predict", response.max_tokens),
+                    "done_reason": getattr(response, "done_reason", "stop"),
+                    "load_duration_ms": getattr(response, "load_duration_ms", 0.0),
+                    "prompt_eval_count": getattr(response, "prompt_tokens", 0),
+                    "eval_count": getattr(response, "response_tokens", 0),
                     "latency_ms": latency_ms,
                     "attempts": attempt + 1,
                     "hallucinated_ids_rejected": total_hallucinations,

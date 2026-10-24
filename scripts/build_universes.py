@@ -19,6 +19,7 @@ Policy:
 
 import argparse
 from collections import Counter, defaultdict
+import hashlib
 import json
 from pathlib import Path
 import random
@@ -74,6 +75,13 @@ def classify_resume_family(resume_text: str, parsed_skills: List[str]) -> str:
     return "Other/Unclassified"
 
 
+def stable_hash_int(s: str, max_val: int = 1000000) -> int:
+    """Deterministic integer hash independent of PYTHONHASHSEED."""
+    h_bytes = hashlib.sha256(s.encode("utf-8")).digest()
+    val = int.from_bytes(h_bytes[:4], byteorder="big")
+    return val % max_val
+
+
 def sample_stratified_universe(
     jobs_pool: List[Dict[str, Any]],
     universe_size: int,
@@ -83,22 +91,22 @@ def sample_stratified_universe(
     if len(jobs_pool) <= universe_size:
         # If pool <= size, use entire pool and mark truncated
         # Sort deterministically by id before returning
-        shuffled = list(jobs_pool)
+        shuffled = sorted(list(jobs_pool), key=lambda x: str(x.get("id") or ""))
         rng.shuffle(shuffled)
         return shuffled, True
 
     # Group jobs by seniority bucket
     by_bucket: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
-    for j in jobs_pool:
+    for j in sorted(jobs_pool, key=lambda x: str(x.get("id") or "")):
         sen = classify_job_seniority(j.get("title", ""), j.get("description", ""))
         by_bucket[sen].append(j)
 
+    bucket_names = sorted(by_bucket.keys())
     # Shuffle each bucket deterministically
-    for bucket in by_bucket.values():
-        rng.shuffle(bucket)
+    for b_name in bucket_names:
+        rng.shuffle(by_bucket[b_name])
 
     selected: List[Dict[str, Any]] = []
-    bucket_names = sorted(by_bucket.keys())
     
     # Proportional allocation across buckets
     total_pool = len(jobs_pool)
@@ -253,7 +261,7 @@ def build_universes(
             continue
 
         family_pool = jobs_by_family.get(fam, [])
-        cand_rng = random.Random(seed + hash(cid) % 1000000)
+        cand_rng = random.Random(seed + stable_hash_int(cid))
         selected_jobs, is_truncated = sample_stratified_universe(family_pool, universe_size, cand_rng)
         
         job_ids = [j["id"] for j in selected_jobs]
@@ -327,6 +335,7 @@ def main():
     parser.add_argument("--dev-ratio", type=float, default=0.20, help="Dev split proportion")
     parser.add_argument("--run-type", type=str, default="dryrun", choices=["dryrun", "real"], help="Execution run type")
     parser.add_argument("--max-resumes", type=int, default=None, help="Maximum resumes to load")
+    parser.add_argument("--timestamp", type=str, default=None, help="Fixed timestamp for deterministic test reproducibility")
     parser.add_argument("--output", type=str, default=None, help="Output JSON path")
 
     args = parser.parse_args()
@@ -345,6 +354,7 @@ def main():
         run_type=args.run_type,
         max_resumes=args.max_resumes,
         output_path=out,
+        timestamp=args.timestamp,
     )
 
     print("================ UNIVERSE BUILDER SUMMARY ================")

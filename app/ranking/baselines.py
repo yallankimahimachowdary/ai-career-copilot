@@ -371,3 +371,51 @@ class SkillOverlapRanker(BaseRanker):
                 "total_candidates": len(job_pool),
             },
         )
+
+
+# ---------------------------------------------------------------------------
+# 4. Random Reorder Baseline Ranker
+# ---------------------------------------------------------------------------
+class RandomReorderRanker(BaseRanker):
+    """Deterministic random reordering baseline on candidate universe."""
+
+    def __init__(self, name: str = "random_reorder", base_seed: int = 42):
+        super().__init__(name)
+        self.base_seed = base_seed
+
+    def rank(
+        self,
+        anonymized_resume: Dict[str, Any],
+        job_pool: List[Dict[str, Any]],
+        k: int = 10,
+    ) -> RankingResult:
+        import hashlib
+        import random
+
+        start_time = time.time()
+        cand_id = str(anonymized_resume.get("candidate_id") or anonymized_resume.get("id") or "default")
+        h_bytes = hashlib.sha256(cand_id.encode("utf-8")).digest()
+        cand_seed = (self.base_seed + int.from_bytes(h_bytes[:4], "big")) % 1000000
+
+        # Sort job pool first by id for stability before shuffling
+        sorted_jobs = sorted(job_pool, key=lambda j: str(j.get("id") or j.get("external_id") or ""))
+        rng = random.Random(cand_seed)
+        shuffled = list(sorted_jobs)
+        rng.shuffle(shuffled)
+
+        top_jobs = shuffled[:k]
+        ranked_ids = [str(j.get("id") or j.get("external_id") or "") for j in top_jobs]
+        scores = {jid: round(1.0 - (idx / max(1, len(ranked_ids))), 4) for idx, jid in enumerate(ranked_ids)}
+
+        elapsed_ms = round((time.time() - start_time) * 1000, 2)
+        return RankingResult(
+            ranked_job_ids=ranked_ids,
+            scores=scores,
+            method_name=self.name,
+            metadata={
+                "latency_ms": elapsed_ms,
+                "seed": cand_seed,
+                "candidate_id": cand_id,
+                "universe_size": len(job_pool),
+            },
+        )

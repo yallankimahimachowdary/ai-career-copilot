@@ -37,7 +37,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from app.core.config import settings
 from app.ranking.base import RankingResult
-from app.ranking.baselines import BM25Ranker, SbertRanker, SkillOverlapRanker
+from app.ranking.baselines import BM25Ranker, RandomReorderRanker, SbertRanker, SkillOverlapRanker
 from app.ranking.hybrid import CompositeXGBRanker, HybridRanker
 from app.ranking.llm_reranker import LLMReranker
 from app.services.anonymizer import anonymize_resume
@@ -274,6 +274,8 @@ def instantiate_rankers(method_names: List[str]) -> Dict[str, Any]:
             rankers["hybrid"] = hybrid
         elif m_clean == "composite_xgb":
             rankers["composite_xgb"] = CompositeXGBRanker()
+        elif m_clean in ("random_reorder", "random"):
+            rankers["random_reorder"] = RandomReorderRanker()
         elif m_clean == "hybrid_llm_ollama":
             rankers["hybrid_llm_ollama"] = LLMReranker(
                 name="hybrid_llm_ollama",
