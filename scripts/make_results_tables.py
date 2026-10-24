@@ -36,11 +36,14 @@ try:
 except ImportError:
     psutil = None
 
-try:
-    import torch
-    HAS_CUDA = torch.cuda.is_available()
-except ImportError:
-    HAS_CUDA = False
+def _check_cuda_available() -> bool:
+    try:
+        import importlib
+        mod = importlib.import_module("torch")
+        return bool(getattr(getattr(mod, "cuda", None), "is_available", lambda: False)())
+    except Exception:
+        return False
+
 
 from app.core.provenance import get_file_sha256, get_git_commit_hash, FROZEN_CONFIG_PATH
 from app.core.taxonomy import TAXONOMY_VERSION, get_taxonomy_sha256
@@ -53,7 +56,7 @@ def get_hardware_info() -> Dict[str, Any]:
         "cpu": platform.processor() or "AMD64 / x86_64",
         "cpu_count": os.cpu_count() or 8,
         "ram_gb": total_ram_gb,
-        "gpu": "Yes (NVIDIA CUDA)" if HAS_CUDA else "No (CPU only)",
+        "gpu": "Yes (NVIDIA CUDA)" if _check_cuda_available() else "No (CPU only)",
     }
 
 
