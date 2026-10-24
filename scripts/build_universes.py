@@ -293,6 +293,10 @@ def build_universes(
     if timestamp:
         provenance["timestamp"] = timestamp
 
+    in_scope_family_candidates = dict(Counter(c["role_family"] for c in in_scope_candidates))
+    in_scope_family_jobs = {fam: len(jobs_by_family.get(fam, [])) for fam in sorted(in_scope_families)}
+    total_in_scope_jobs = sum(in_scope_family_jobs.values())
+
     summary = {
         "metadata": {
             "seed": seed,
@@ -307,6 +311,9 @@ def build_universes(
             "total_candidates_processed": len(candidates),
             "in_scope_candidates": len(in_scope_candidates),
             "out_of_scope_candidates": len(out_of_scope_candidates),
+            "in_scope_family_candidates": in_scope_family_candidates,
+            "in_scope_jobs_count": total_in_scope_jobs,
+            "in_scope_family_jobs": in_scope_family_jobs,
             "dev_candidates_count": len(dev_candidates),
             "test_candidates_count": len(test_candidates),
             "total_pairs_to_annotate": total_pairs_to_annotate,
@@ -360,7 +367,12 @@ def main():
     print("================ UNIVERSE BUILDER SUMMARY ================")
     print(f"Total Candidates Loaded : {res['counts']['total_candidates_processed']}")
     print(f"In-Scope Candidates     : {res['counts']['in_scope_candidates']}")
+    for fam, cnt in sorted(res['counts']['in_scope_family_candidates'].items()):
+        print(f"  - {fam}: {cnt} candidates")
     print(f"Out-of-Scope Candidates : {res['counts']['out_of_scope_candidates']}")
+    print(f"In-Scope Job Postings   : {res['counts']['in_scope_jobs_count']}")
+    for fam, cnt in sorted(res['counts']['in_scope_family_jobs'].items()):
+        print(f"  - {fam}: {cnt} jobs")
     print(f"Dev Split Candidates    : {res['counts']['dev_candidates_count']}")
     print(f"Test Split Candidates   : {res['counts']['test_candidates_count']}")
     print(f"Total Pairs to Annotate : {res['counts']['total_pairs_to_annotate']}")

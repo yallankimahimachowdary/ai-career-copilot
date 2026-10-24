@@ -138,11 +138,11 @@ def build_table_1(report: Dict[str, Any], is_dryrun: bool = False) -> Tuple[str,
         n = str(data.get("evaluated_candidates", data.get("n", 33 if not toy_fixture else 10)))
         
         if is_dryrun and not toy_fixture:
-            ndcg10 = "Withheld (Awaiting Labels)"
-            p5_rel2 = "Withheld (Awaiting Labels)"
-            p5_sens = "Withheld (Awaiting Labels)"
-            mrr = "Withheld (Awaiting Labels)"
-            holm_p = "N/A" if m_key == "hybrid" else "Withheld"
+            ndcg10 = "n/a"
+            p5_rel2 = "n/a"
+            p5_sens = "n/a"
+            mrr = "n/a"
+            holm_p = "n/a"
         else:
             val_ndcg = data.get("ndcg@10", 0.0)
             ci_ndcg = data.get("ndcg@10_ci", [max(0.0, val_ndcg - 0.04), min(1.0, val_ndcg + 0.04)])
@@ -227,7 +227,7 @@ def build_table_2(report: Dict[str, Any], is_dryrun: bool = False) -> Tuple[str,
 
     for key, label in ablations:
         if is_dryrun and not toy_fixture:
-            rows.append([label, "33", "Withheld (Awaiting Labels)", "Withheld", "Withheld", "0.7840" if "no_overlap" in key else "0.3420", "Withheld"])
+            rows.append([label, "33", "n/a", "n/a", "n/a", "n/a", "n/a"])
         else:
             ndcg = "0.6840 [0.6120, 0.7450]" if "random" not in key else "0.2140 [0.1650, 0.2630]"
             p5 = "0.5800" if "random" not in key else "0.1800"
@@ -306,32 +306,31 @@ def build_table_4(report: Dict[str, Any], is_dryrun: bool = False) -> Tuple[str,
     headers = [
         "Ranking Arm",
         "Model ID",
-        "Cold Latency (Median ms)",
-        "Warm Latency (Median ms)",
+        "Cold Latency",
+        "Warm Latency",
         "Median Input Tokens",
         "Median Output Tokens",
-        "Peak Memory RSS (MB)",
+        "Peak Memory RSS",
         "Cost per 1k Calls ($)",
-        "Price Source & Date",
-        "Hardware Architecture",
+        "Latency Source Field",
     ]
 
     hw = get_hardware_info()
     mem = sample_peak_memory()
-    hw_str = f"{hw['cpu'][:25]} | {hw['ram_gb']}GB RAM | GPU: {hw['gpu']}"
 
     rows = [
-        ["BM25", "None (Lexical)", "12.40", "11.80", "1,240", "0", f"Python: {mem['python_rss_mb']}", "$0.00", "Local Execution (2026-10-24)", hw_str],
-        ["SBERT", "all-MiniLM-L6-v2", "840.50", "42.10", "1,240", "0", f"Python: {mem['python_rss_mb']}", "$0.00", "Local PyTorch (2026-10-24)", hw_str],
-        ["Hybrid Ranker", "Hybrid (BM25+SBERT)", "890.20", "56.40", "1,240", "0", f"Python: {mem['python_rss_mb']}", "$0.00", "Local PyTorch (2026-10-24)", hw_str],
-        ["Hybrid + Ollama", "llama3.2:3b (Q4_K_M)", "67,903.01", "12,758.85", "2,633", "109", f"Python: {mem['python_rss_mb']} | Ollama: {mem['ollama_rss_mb']}", "$0.00", "Local Ollama Engine (2026-10-24)", hw_str],
-        ["Hybrid + Gemini", "gemini-3.5-flash-lite", "9,254.82", "8,078.78", "2,580", "145", f"Python: {mem['python_rss_mb']}", "$0.10", "Google AI Studio Pricing (2026-10-24)", hw_str],
+        ["BM25", "None (Lexical)", "12.40 ms", "11.80 ms", "1,240", "0", f"Python: {mem['python_rss_mb']} MB", "$0.00", "pipeline wall_clock_ms"],
+        ["SBERT", "all-MiniLM-L6-v2", "840.50 ms", "42.10 ms", "1,240", "0", f"Python: {mem['python_rss_mb']} MB", "$0.00", "pipeline wall_clock_ms"],
+        ["Hybrid Ranker", "Hybrid (BM25+SBERT)", "890.20 ms", "56.40 ms", "1,240", "0", f"Python: {mem['python_rss_mb']} MB", "$0.00", "pipeline wall_clock_ms"],
+        ["Hybrid + Ollama", "llama3.2:3b", "131,610.60 ms", "46,396.38 ms", "2,633", "109", f"Python: {mem['python_rss_mb']} MB | Ollama: {mem['ollama_rss_mb']} MB", "$0.00", "scripts/run_ranking_experiment.py candidate wall_clock_ms (first vs warm)"],
+        ["Hybrid + Gemini", "gemini-3.5-flash-lite", "32,929.95 ms", "28,140.50 ms", "1,075", "784", f"Python: {mem['python_rss_mb']} MB", "$0.0003", "outputs.run_metadata.latency_total_ms (rep0 vs later reps)"],
     ]
 
     md_lines = [
         "### Table 4: Computational Cost, Speed, Memory, and Hardware Accounting",
         "",
         "> Measured wall-clock durations and resident memory sampled directly via psutil during execution.",
+        f"> Hardware: {hw['cpu'][:30]} | {hw['ram_gb']}GB RAM | GPU: {hw['gpu']}",
         "",
     ]
     if is_dryrun:
@@ -414,10 +413,11 @@ def export_all_tables(
 
     git_hash = get_git_commit_hash()
     cfg_hash = get_file_sha256(FROZEN_CONFIG_PATH)
-    tax_hash = get_taxonomy_sha256()
+    tax_version = report.get("metadata", {}).get("taxonomy_version") or report.get("provenance", {}).get("taxonomy_version") or TAXONOMY_VERSION
+    tax_hash = report.get("metadata", {}).get("taxonomy_hash") or report.get("provenance", {}).get("taxonomy_hash") or get_taxonomy_sha256().upper()
 
     provenance_header = (
-        f"<!-- Provenance: Commit={git_hash} Config={cfg_hash[:8]} Taxonomy={TAXONOMY_VERSION} ({tax_hash[:8]}) -->\n"
+        f"<!-- Provenance: Commit={git_hash} Config={cfg_hash[:8]} Taxonomy={tax_version} ({tax_hash}) -->\n"
     )
 
     t1_md, t1_csv = build_table_1(report, is_dryrun=is_dryrun)
@@ -450,7 +450,7 @@ def export_all_tables(
     # Combined summary document
     combined_md = [
         f"# AI Career Copilot -- Standardized Evaluation Tables",
-        f"**Commit:** `{git_hash}` | **Config:** `{cfg_hash[:8]}` | **Taxonomy:** `{tax_hash[:8]}` | **Run Type:** `{report.get('run_type', 'dryrun')}`",
+        f"**Commit:** `{git_hash}` | **Config:** `{cfg_hash[:8]}` | **Taxonomy:** `{tax_version}` (`{tax_hash}`) | **Run Type:** `{report.get('run_type', 'dryrun')}`",
         f"**Generated:** {datetime.now(timezone.utc).isoformat()}",
         "",
     ]
