@@ -33,6 +33,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from app.core.config import settings
 from app.ranking.baselines import BM25Ranker, SbertRanker, SkillOverlapRanker
 from app.ranking.evaluation import calculate_kendall_tau, calculate_topk_overlap
 from app.ranking.hybrid import HybridRanker
@@ -409,6 +410,64 @@ def main():
             "total_pairs": len(llm_all_taus),
         }
         print(f"  [LLM Arm] Overall Mean Kendall Tau: {np.mean(llm_all_taus):.4f} | Mean Top-10 Overlap: {np.mean(llm_all_overlaps):.4f} | Mean Disp: {np.mean(llm_displacements):.4f}")
+
+    # 6. Gemini Arm Demographic Audit (Seeded subset, e.g. 4 calls)
+    print("\n>>> Running Gemini Arm Demographic Audit (gemini-3.5-flash-lite) <<<")
+    gemini_key = getattr(settings, "GEMINI_API_KEY", None)
+    if not gemini_key:
+        print("  [Gemini Arm] GEMINI_API_KEY not configured. Marked PARTIAL.")
+        report_payload["anonymizer_off"]["hybrid_llm_gemini"] = {
+            "status": "PARTIAL",
+            "reason": "GEMINI_API_KEY not configured",
+            "calls_made": 0,
+        }
+    else:
+        try:
+            gemini_model = getattr(settings, "GEMINI_MODEL", "gemini-3.5-flash-lite")
+            gemini_ranker = LLMReranker(name="hybrid_llm_gemini", provider_name="gemini", model_name=gemini_model, seed=42)
+            gem_names = [DEMOGRAPHIC_GROUPS["US_Black"][0], DEMOGRAPHIC_GROUPS["Indian_Hindu_FC_NorthWest"][0]]
+            gem_all_taus = []
+            gem_all_overlaps = []
+            gem_calls = 0
+
+            for test_cid in ["SYN_001"]:
+                g_cand = loaded_cands[test_cid]
+                g_univ_jids = universes_data[test_cid]["job_ids"]
+                g_univ_jobs = [job_map[jid] for jid in g_univ_jids if jid in job_map]
+
+                g_rankings = []
+                for name in gem_names:
+                    c_variant = copy.deepcopy(g_cand)
+                    c_variant["candidate_name"] = name
+                    c_variant["name"] = name
+                    c_variant["summary"] = f"Candidate: {name}. " + (g_cand.get("summary") or "")
+                    c_variant["raw_text"] = f"Candidate: {name}\n" + (g_cand.get("raw_unmasked_text") or "")
+                    t0 = time.perf_counter()
+                    res = gemini_ranker.rank(c_variant, g_univ_jobs, k=10)
+                    gem_calls += 1
+                    ms = round((time.perf_counter() - t0) * 1000, 2)
+                    print(f"  [Gemini Arm {test_cid}] Name: {name:18s} in {ms}ms | Top 3: {res.ranked_job_ids[:3]}")
+                    g_rankings.append(res.ranked_job_ids)
+
+                if len(g_rankings) >= 2:
+                    gem_all_taus.append(calculate_kendall_tau(g_rankings[0], g_rankings[1], k=10))
+                    gem_all_overlaps.append(calculate_topk_overlap(g_rankings[0], g_rankings[1], k=10))
+
+            report_payload["anonymizer_off"]["hybrid_llm_gemini"] = {
+                "status": "PASS",
+                "model": gemini_model,
+                "calls_made": gem_calls,
+                "mean_kendall_tau": round(float(np.mean(gem_all_taus)), 4) if gem_all_taus else 1.0,
+                "mean_top10_overlap": round(float(np.mean(gem_all_overlaps)), 4) if gem_all_overlaps else 1.0,
+            }
+            print(f"  [Gemini Arm] Success: {gem_calls} calls made, Mean Tau: {report_payload['anonymizer_off']['hybrid_llm_gemini']['mean_kendall_tau']}")
+        except Exception as exc:
+            print(f"  [Gemini Arm] Failed with {type(exc).__name__}: {exc}. Marked PARTIAL.")
+            report_payload["anonymizer_off"]["hybrid_llm_gemini"] = {
+                "status": "PARTIAL",
+                "error": f"{type(exc).__name__}: {str(exc)}",
+                "calls_attempted": gem_calls if 'gem_calls' in locals() else 0,
+            }
 
     out_path = Path("results/dryrun/name_swap_fairness_report.json")
     out_path.parent.mkdir(parents=True, exist_ok=True)

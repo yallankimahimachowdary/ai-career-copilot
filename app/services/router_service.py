@@ -256,6 +256,7 @@ Respond with ONLY a raw JSON object with this exact structure:
             "format": "json",
             "options": {
                 "temperature": 0.0,
+                "num_ctx": 8192,
             },
         }
 

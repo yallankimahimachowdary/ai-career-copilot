@@ -280,6 +280,8 @@ def run_stage_eval(
     seed: int = 42,
     repeats: int = 3,
     max_resumes: Optional[int] = None,
+    dest_dir: Optional[Path | str] = None,
+    dryrun_max_jobs_slice: Optional[int] = None,
 ) -> Dict[str, Any]:
     """Execute Stage EVAL: ingest labels, compute kappa, evaluate rankings, output tables."""
     print(f"\n========================================================")
@@ -297,7 +299,10 @@ def run_stage_eval(
             "Stage EVAL requires human annotations (results/real/labels.jsonl)."
         )
 
-    dest_dir = Path("results/real") if run_type == "real" else Path("results/dryrun")
+    if dest_dir is None:
+        dest_dir = Path("results/real") if run_type == "real" else Path("results/dryrun")
+    else:
+        dest_dir = Path(dest_dir)
     eval_output = dest_dir / "evaluation_report.json"
 
     # 2. Run ranking evaluation pipeline
@@ -311,7 +316,7 @@ def run_stage_eval(
         k=10,
         universe_seed=seed,
         run_ablations=True,
-        dryrun_max_jobs_slice=None,
+        dryrun_max_jobs_slice=dryrun_max_jobs_slice,
         run_type=run_type,
     )
 
@@ -436,6 +441,8 @@ def main():
     parser.add_argument("--seed", type=int, default=42, help="Random universe seed")
     parser.add_argument("--max-resumes", type=int, default=None, help="Max resumes to evaluate (for dry-run mode)")
     parser.add_argument("--repeats", type=int, default=3, help="Repeat runs for ranking stability")
+    parser.add_argument("--dest-dir", type=str, default=None, help="Destination directory for evaluation results")
+    parser.add_argument("--slice-snapshot", type=int, default=None, help="Snapshot slicing parameter (prohibited in real/eval mode)")
     args = parser.parse_args()
 
     if args.stage == "prep":
@@ -455,6 +462,8 @@ def main():
             seed=args.seed,
             repeats=args.repeats,
             max_resumes=args.max_resumes,
+            dest_dir=args.dest_dir,
+            dryrun_max_jobs_slice=args.slice_snapshot,
         )
     elif args.stage == "all-dryrun":
         res_dir = args.resumes_dir if args.resumes_dir != "data/resumes_real" else "data/resumes_dryrun"

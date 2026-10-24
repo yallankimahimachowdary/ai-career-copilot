@@ -249,6 +249,7 @@ class LLMReranker(BaseRanker):
                     "prompt_version": self.prompt_version,
                     "prompt_hash": prompt_hash,
                     "output_hash": output_hash,
+                    "raw_ranked_items": raw_ranked,
                     "temperature": response.temperature,
                     "max_tokens": response.max_tokens,
                     "seed": self.seed,

@@ -171,10 +171,12 @@ class OllamaProvider(BaseLLMProvider):
     ) -> LLMResponse:
         t0 = time.perf_counter()
         url = f"{self.base_url}/api/generate"
+        num_ctx = int(kwargs.get("num_ctx", 8192))
         options: Dict[str, Any] = {
             "temperature": temperature,
             "num_predict": max_tokens,
             "num_thread": int(kwargs.get("num_thread", 4)),
+            "num_ctx": num_ctx,
         }
         if seed is not None:
             options["seed"] = int(seed)
@@ -205,9 +207,17 @@ class OllamaProvider(BaseLLMProvider):
         response_tokens = data.get("eval_count", 0)
         quantization = "Q4_K_M" if "llama" in self.model.lower() else "n/a"
 
+        # Explicit context truncation guard
+        if prompt_tokens >= num_ctx:
+            raise RuntimeError(
+                f"Ollama prompt truncation detected! prompt_eval_count={prompt_tokens} reached num_ctx={num_ctx} limit."
+            )
+
+        independent_tokens = len(prompt.split())
+
         logger.info(
             f"[LLM Call] provider=ollama model={self.model} seed_requested={seed_requested} seed_sent={seed_sent} seed_applied={seed_applied} "
-            f"prompt_tokens={prompt_tokens} response_tokens={response_tokens} quantization={quantization} "
+            f"prompt_tokens={prompt_tokens} independent_tokens={independent_tokens} num_ctx={num_ctx} response_tokens={response_tokens} quantization={quantization} "
             f"temp={temperature} max_tokens={max_tokens} latency_ms={latency_ms} timestamp={ts}"
         )
 

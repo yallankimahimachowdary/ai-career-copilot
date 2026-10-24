@@ -67,7 +67,7 @@ async def generate_ollama(prompt: str, timeout: float = 60.0) -> str:
         "model": OLLAMA_MODEL,
         "prompt": prompt,
         "stream": False,
-        "options": {"temperature": 0.1, "num_predict": 256},
+        "options": {"temperature": 0.1, "num_predict": 256, "num_ctx": 8192},
     }
     try:
         async with httpx.AsyncClient(timeout=timeout) as client:

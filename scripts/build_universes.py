@@ -250,16 +250,6 @@ def build_universes(
         split_assignment = "dev" if cid in dev_ids else ("test" if cid in test_ids else "out_of_scope")
 
         if not is_in_scope:
-            candidate_universes[cid] = {
-                "candidate_id": cid,
-                "role_family": fam,
-                "is_in_scope": False,
-                "out_of_scope_for_ranking_eval": True,
-                "split": split_assignment,
-                "universe_truncated": True,
-                "universe_size": 0,
-                "job_ids": [],
-            }
             continue
 
         family_pool = jobs_by_family.get(fam, [])

@@ -83,7 +83,7 @@ def test_dev_test_split_disjointness(tmp_path: Path):
 
 
 def test_out_of_scope_resumes_flagged(tmp_path: Path):
-    """Candidates from deficit families must be flagged out_of_scope_for_ranking_eval."""
+    """Universes must exist ONLY for in-scope resumes (out of scope excluded from candidate_universes)."""
     out = tmp_path / "scope_flag.json"
     res = build_universes(
         snapshot_path="data/snapshots/jobs_snapshot_1_20261019_adzuna.jsonl",
@@ -94,15 +94,10 @@ def test_out_of_scope_resumes_flagged(tmp_path: Path):
         run_type="dryrun",
     )
 
-    has_out_of_scope = False
+    assert res["counts"]["out_of_scope_candidates"] > 0, "Dataset should contain deficit-family resumes flagged out of scope"
+    assert len(res["candidate_universes"]) == res["counts"]["in_scope_candidates"]
     for cid, u in res["candidate_universes"].items():
-        if not u["is_in_scope"]:
-            has_out_of_scope = True
-            assert u["out_of_scope_for_ranking_eval"] is True
-            assert u["universe_size"] == 0
-            assert u["split"] == "out_of_scope"
-        else:
-            assert u["out_of_scope_for_ranking_eval"] is False
-            assert u["universe_size"] > 0
-
-    assert has_out_of_scope, "Dataset should contain deficit-family resumes flagged out of scope"
+        assert u["is_in_scope"] is True
+        assert u["out_of_scope_for_ranking_eval"] is False
+        assert u["universe_size"] > 0
+        assert u["split"] in ("dev", "test")

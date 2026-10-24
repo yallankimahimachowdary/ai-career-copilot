@@ -31,6 +31,7 @@ from app.ranking.llm_reranker import _format_candidate_jobs, _format_resume_summ
 from app.services.llm_provider import GeminiProvider
 from scripts.evaluate_ranking import run_evaluation_pipeline
 from scripts.intake_resumes import process_resume_intake
+from scripts.run_all import run_stage_eval
 
 
 def test_llm_prompt_uses_500_char_description():
@@ -97,60 +98,136 @@ async def test_gemini_strict_model_mismatch_fails(monkeypatch):
         await provider.generate_json(prompt="test", experiment_mode=True)
 
 
-def test_eval_stage_real_pipeline_universe_enforcement(tmp_path):
-    """Verify run_evaluation_pipeline strictly enforces candidate universes in stage eval."""
-    test_cand_id = "SYN_001"
-    resumes_dir = "data/resumes_dryrun"
-    snapshot_path = "data/snapshots/jobs_snapshot_1_20261019_adzuna.jsonl"
+def test_eval_stage_real_pipeline_universe_enforcement(tmp_path, monkeypatch):
+    """Invoke the actual scripts/run_all.py --stage eval code path on a toy fixture in a temp directory.
 
-    # 1. Missing candidate_universes.json must raise RuntimeError in real run
-    fake_labels_file = tmp_path / "toy_labels.jsonl"
-    fake_labels_file.write_text(json.dumps({
-        "candidate_id": test_cand_id,
-        "job_id": "job_xyz",
-        "relevance": 2.0,
-    }) + "\n", encoding="utf-8")
+    Verifies failure when:
+    (a) any job outside a resume's own universe is ranked (Integrity violation)
+    (b) candidate_universes.json is missing (RuntimeError)
+    (c) snapshot is sliced (e.g. dryrun_max_jobs_slice=100 in real mode -> ValueError)
+    """
+    from pypdf import PdfWriter
+    from app.ranking.baselines import RankingResult
 
-    missing_univ_path = str(tmp_path / "nonexistent_universes.json")
-    out_report = str(tmp_path / "report.json")
+    # Bypass expensive repo-wide secret scanner in unit test fixture
+    monkeypatch.setattr("scripts.run_all.run_secret_scanner", lambda: True)
 
+    toy_resumes_dir = tmp_path / "toy_resumes"
+    toy_resumes_dir.mkdir()
+    toy_cand_ids = ["SYN_901", "SYN_902", "SYN_903"]
+    for cid in toy_cand_ids:
+        writer = PdfWriter()
+        writer.add_blank_page(width=72, height=72)
+        pdf_path = toy_resumes_dir / f"{cid}_Test_User.pdf"
+        with open(pdf_path, "wb") as f:
+            writer.write(f)
+
+    toy_labels_file = tmp_path / "toy_labels.jsonl"
+    with open(toy_labels_file, "w", encoding="utf-8") as f:
+        for cid in toy_cand_ids:
+            f.write(json.dumps({"candidate_id": cid, "job_id": "job_toy_01", "relevance": 2.0}) + "\n")
+
+    toy_snapshot = "data/snapshots/jobs_snapshot_1_20261019_adzuna.jsonl"
+    dest_dir = tmp_path / "results_run"
+    dest_dir.mkdir()
+
+    # Case (b): candidate_universes.json is missing in dest_dir
     with pytest.raises(RuntimeError, match="candidate_universes.json is required"):
-        run_evaluation_pipeline(
-            snapshot_path=snapshot_path,
-            resumes_dir=resumes_dir,
-            judgments_path=str(fake_labels_file),
-            output_report_path=out_report,
-            universes_path=missing_univ_path,
-            methods=["overlap"],
+        run_stage_eval(
+            labels_path=str(toy_labels_file),
+            snapshot_path=toy_snapshot,
+            resumes_dir=str(toy_resumes_dir),
             run_type="real",
+            dest_dir=dest_dir,
         )
 
-    # 2. Ranking jobs outside the universe must raise ValueError (Integrity violation)
-    # Create universe containing only a dummy job ID that does not match snapshot jobs
-    toy_univ_file = tmp_path / "candidate_universes.json"
-    toy_univ_file.write_text(json.dumps({
+    # Case (c): Snapshot is sliced in real/eval mode
+    with pytest.raises(ValueError, match="Slicing snapshot jobs.*is strictly"):
+        run_stage_eval(
+            labels_path=str(toy_labels_file),
+            snapshot_path=toy_snapshot,
+            resumes_dir=str(toy_resumes_dir),
+            run_type="real",
+            dest_dir=dest_dir,
+            dryrun_max_jobs_slice=100,
+        )
+
+    # Setup universe containing dummy job IDs not matching outside job
+    univ_file = dest_dir / "candidate_universes.json"
+    univ_file.write_text(json.dumps({
         "candidate_universes": {
-            test_cand_id: {
-                "candidate_name": "Tanvi Naidu",
+            cid: {
+                "candidate_name": f"Test {cid}",
                 "role_family": "Data/AI",
-                "job_ids": ["dummy-job-not-in-snapshot-1111"],
-            }
+                "job_ids": ["job_toy_01"],
+            } for cid in toy_cand_ids
         }
     }), encoding="utf-8")
 
-    # We expect ValueError because the ranked job from pool won't be in the 1-element universe
-    # Or if cand_job_pool is empty because no job matched universe, ranker raises or returns empty
-    # If a ranker were to return any job outside universe, it raises ValueError
-    with pytest.raises((ValueError, RuntimeError)):
-        run_evaluation_pipeline(
-            snapshot_path=snapshot_path,
-            resumes_dir=resumes_dir,
-            judgments_path=str(fake_labels_file),
-            output_report_path=out_report,
-            universes_path=str(toy_univ_file),
-            methods=["overlap"],
+    # Case (a): Any job outside a resume's own universe is ranked
+    monkeypatch.setattr(
+        BM25Ranker,
+        "rank",
+        lambda self, cand, job_pool, k=10: RankingResult(
+            ranked_job_ids=["job_outside_universe_id_999"],
+            scores={"job_outside_universe_id_999": 1.0},
+            method_name="bm25",
+            metadata={},
+        ),
+    )
+
+    with pytest.raises(ValueError, match="Integrity violation.*outside the candidate universe"):
+        run_stage_eval(
+            labels_path=str(toy_labels_file),
+            snapshot_path=toy_snapshot,
+            resumes_dir=str(toy_resumes_dir),
             run_type="real",
+            dest_dir=dest_dir,
         )
+
+
+DOCUMENTED_FAMILY_DISAGREEMENTS = {
+    "SYN_016": ("Web/Software", "Data/AI"),
+    "SYN_017": ("Web/Software", "Data/AI"),
+    "SYN_072": ("Electrical", "Data/AI"),
+    "SYN_073": ("Electrical", "Data/AI"),
+    "SYN_074": ("Electrical", "Data/AI"),
+    "SYN_075": ("Electrical", "Data/AI"),
+    "SYN_076": ("Electrical", "Data/AI"),
+    "SYN_085": ("Commerce/Finance", "Data/AI"),
+    "SYN_087": ("Commerce/Finance", "Data/AI"),
+}
+
+
+def test_role_family_classifier_vs_frozen_documented_disagreements():
+    """Verify any disagreement between docs/role_families_frozen.json and live classifier is documented."""
+    frozen_p = Path("docs/role_families_frozen.json")
+    assert frozen_p.exists()
+    frozen_data = json.loads(frozen_p.read_text(encoding="utf-8"))
+    frozen_map = {}
+    for fam, f_info in frozen_data["families"].items():
+        for r in f_info["resumes"]:
+            cid = r.split("_")[0] + "_" + r.split("_")[1]
+            frozen_map[cid] = fam
+
+    univ_p = Path("results/dryrun/candidate_universes.json")
+    assert univ_p.exists()
+    live_data = json.loads(univ_p.read_text(encoding="utf-8"))
+    live_map = {cid: u["role_family"] for cid, u in live_data["candidate_universes"].items()}
+
+    in_scope_fams = {"Data/AI", "Web/Software", "Cybersecurity/Cloud"}
+    observed_disagreements = {}
+    all_cids = sorted(set(frozen_map.keys()).union(set(live_map.keys())))
+    for cid in all_cids:
+        f_fam = frozen_map.get(cid)
+        l_fam = live_map.get(cid)
+        if f_fam in in_scope_fams or l_fam in in_scope_fams:
+            if f_fam != l_fam:
+                observed_disagreements[cid] = (f_fam, l_fam)
+
+    assert observed_disagreements == DOCUMENTED_FAMILY_DISAGREEMENTS, (
+        f"Undocumented role family disagreements found! Observed: {observed_disagreements}"
+    )
 
 
 def test_intake_determinism_two_runs(tmp_path):
