@@ -1,12 +1,11 @@
 """
 scripts/check_dataset_overlap.py
 --------------------------------
-Dataset Overlap Verification & Role-Family Coverage Audit (R9-5):
+Dataset Overlap Verification & Role-Family Coverage Audit (R9-5, R15c):
 1. Detects content contamination between development and test resume sets by comparing SHA-256 hashes.
-2. For each resume's 60-job universe, reports overlap with other resumes' universes and with the dev set; flags leakage.
-3. Reports per role family (Data/AI, Web/Software, Mobile/UI-UX, Cybersecurity/Cloud,
-   Electrical, Mechanical, Civil, Commerce/Finance, Arts/Media) how many snapshot_1 jobs exist
-   and whether a 60-job universe can be filled. States plainly which families cannot.
+2. Reads fixed candidate universes from results/dryrun/candidate_universes.json (8 dev, 33 test, 528 test pairs).
+3. Evaluates 60-job universe pairwise overlaps and checks for dev set leakage across fixed partitions.
+4. Reports per role family how many snapshot_1 jobs exist and whether a 60-job universe can be filled.
 """
 
 import argparse
@@ -18,7 +17,6 @@ from pathlib import Path
 import sys
 from typing import Any, Dict, List, Optional, Set, Tuple
 
-# Ensure project root is in sys.path when executed directly
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
@@ -127,6 +125,67 @@ def load_test_resumes(
     return test_resumes
 
 
+def load_splits_from_candidate_universes(
+    candidate_universes_path: Path | str = "results/dryrun/candidate_universes.json",
+    intake_candidates_path: Optional[Path | str] = "results/dryrun/intake_candidates.json",
+) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    """
+    Load dev and test candidates directly from candidate_universes.json.
+    Attaches resume text from intake_candidates.json if available.
+    Expects 8 dev and 33 test candidates.
+    """
+    cu_p = Path(candidate_universes_path)
+    if not cu_p.exists():
+        raise FileNotFoundError(f"Candidate universes not found: {cu_p}")
+
+    with open(cu_p, "r", encoding="utf-8") as f:
+        cu_data = json.load(f)
+
+    # Support dict or list representation
+    cands_dict = cu_data.get("candidate_universes", cu_data.get("candidates", {}))
+    if isinstance(cands_dict, list):
+        cands_iter = {c.get("candidate_id", f"cand_{i}"): c for i, c in enumerate(cands_dict)}
+    else:
+        cands_iter = cands_dict
+
+    # Text mapping from intake_candidates.json
+    text_map: Dict[str, str] = {}
+    if intake_candidates_path and Path(intake_candidates_path).exists():
+        with open(intake_candidates_path, "r", encoding="utf-8") as f:
+            intake_list = json.load(f)
+        if isinstance(intake_list, list):
+            for item in intake_list:
+                cid = item.get("candidate_id")
+                if cid:
+                    text_map[cid] = item.get("anonymized_text") or " ".join(item.get("skills", []))
+
+    dev_candidates: List[Dict[str, Any]] = []
+    test_candidates: List[Dict[str, Any]] = []
+
+    for cid, cdata in cands_iter.items():
+        split = cdata.get("split", "test").lower()
+        jobs = cdata.get("job_ids") or cdata.get("universe_job_ids") or []
+        resume_record = {
+            "candidate_id": cid,
+            "candidate_name": cid,
+            "split": split,
+            "role_family": cdata.get("role_family", "unknown"),
+            "universe_job_ids": jobs,
+            "text": text_map.get(cid, f"{cid} candidate profile"),
+            "skills": cdata.get("skills", []),
+        }
+        if split == "dev":
+            dev_candidates.append(resume_record)
+        else:
+            test_candidates.append(resume_record)
+
+    # Sort deterministically
+    dev_candidates.sort(key=lambda x: x["candidate_id"])
+    test_candidates.sort(key=lambda x: x["candidate_id"])
+
+    return dev_candidates, test_candidates
+
+
 def verify_no_overlap(
     dev_resumes: List[Dict[str, Any]],
     test_resumes: List[Dict[str, Any]],
@@ -136,13 +195,13 @@ def verify_no_overlap(
     for d in dev_resumes:
         text = d.get("text") or (d.get("summary", "") + " " + " ".join(d.get("skills", [])))
         h = compute_content_hash(text)
-        dev_hashes.setdefault(h, []).append(d.get("candidate_name", "unknown_dev"))
+        dev_hashes.setdefault(h, []).append(d.get("candidate_name") or d.get("candidate_id", "unknown_dev"))
 
     test_hashes: Dict[str, List[str]] = {}
     for t in test_resumes:
         text = t.get("text") or (t.get("summary", "") + " " + " ".join(t.get("skills", [])))
         h = compute_content_hash(text)
-        test_hashes.setdefault(h, []).append(t.get("candidate_name", "unknown_test"))
+        test_hashes.setdefault(h, []).append(t.get("candidate_name") or t.get("candidate_id", "unknown_test"))
 
     overlapping_hashes = sorted(list(set(dev_hashes.keys()) & set(test_hashes.keys())))
 
@@ -171,7 +230,6 @@ def verify_no_overlap(
         raise ValueError(msg)
 
     return report
-
 
 
 def audit_role_family_coverage(jobs: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -207,31 +265,30 @@ def audit_role_family_coverage(jobs: List[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 
-def audit_60_job_universe_overlap_and_leakage(
+def audit_fixed_universe_overlap(
     test_resumes: List[Dict[str, Any]],
     dev_resumes: List[Dict[str, Any]],
-    jobs_pool: List[Dict[str, Any]],
-    universe_size: int = 60,
 ) -> Dict[str, Any]:
-    """For each resume's 60-job universe, report overlap with other resumes' universes and with dev set."""
-    ranker = BM25Ranker()
-
-    def get_universe(resume_dict: Dict[str, Any]) -> Set[str]:
-        # Formulate query from text or summary/skills
-        res = ranker.rank(resume_dict, jobs_pool, k=min(universe_size, len(jobs_pool)))
-        return set(res.ranked_job_ids)
-
+    """
+    Audit fixed candidate universes (from candidate_universes.json).
+    Evaluates:
+    - Pairwise test universe comparisons: N * (N - 1) / 2 combinations (528 pairs for 33 candidates).
+    - Dev set leakage checks: N_test * N_dev comparisons (264 checks for 33 test and 8 dev).
+    - Detects if any test candidate's universe is identical to or fully leaked from a dev candidate.
+    """
     test_universes: Dict[str, Set[str]] = {}
     for idx, tr in enumerate(test_resumes):
         cand_id = tr.get("candidate_id") or tr.get("candidate_name") or f"test_{idx}"
-        test_universes[cand_id] = get_universe(tr)
+        jobs = tr.get("universe_job_ids") or tr.get("job_ids") or []
+        test_universes[cand_id] = set(jobs)
 
     dev_universes: Dict[str, Set[str]] = {}
     for idx, dr in enumerate(dev_resumes):
         cand_id = dr.get("candidate_id") or dr.get("candidate_name") or f"dev_{idx}"
-        dev_universes[cand_id] = get_universe(dr)
+        jobs = dr.get("universe_job_ids") or dr.get("job_ids") or []
+        dev_universes[cand_id] = set(jobs)
 
-    # Test pairwise overlap
+    # 1. Pairwise test universe overlap
     pairwise = []
     t_ids = list(test_universes.keys())
     for i in range(len(t_ids)):
@@ -247,12 +304,13 @@ def audit_60_job_universe_overlap_and_leakage(
                 "jaccard": round(inter / union, 4) if union else 0.0,
             })
 
-    # Dev leakage check
+    # 2. Dev set leakage check
     dev_checks = []
     leakage_found = False
     for t_id, u_t in test_universes.items():
         for d_id, u_d in dev_universes.items():
             inter = len(u_t & u_d)
+            # Leakage: test universe is fully contained in or identical to dev universe
             is_leakage = (inter == len(u_t) and len(u_t) > 0)
             if is_leakage:
                 leakage_found = True
@@ -271,8 +329,36 @@ def audit_60_job_universe_overlap_and_leakage(
     }
 
 
+def audit_60_job_universe_overlap_and_leakage(
+    test_resumes: List[Dict[str, Any]],
+    dev_resumes: List[Dict[str, Any]],
+    jobs_pool: List[Dict[str, Any]],
+    universe_size: int = 60,
+) -> Dict[str, Any]:
+    """BM25 fallback generator for legacy test manifests lacking pre-built candidate_universes."""
+    ranker = BM25Ranker()
+
+    def get_universe(resume_dict: Dict[str, Any]) -> Set[str]:
+        res = ranker.rank(resume_dict, jobs_pool, k=min(universe_size, len(jobs_pool)))
+        return set(res.ranked_job_ids)
+
+    test_adapted = []
+    for idx, tr in enumerate(test_resumes):
+        u = tr.get("universe_job_ids") or list(get_universe(tr))
+        test_adapted.append({"candidate_id": tr.get("candidate_id", f"test_{idx}"), "universe_job_ids": u})
+
+    dev_adapted = []
+    for idx, dr in enumerate(dev_resumes):
+        u = dr.get("universe_job_ids") or list(get_universe(dr))
+        dev_adapted.append({"candidate_id": dr.get("candidate_id", f"dev_{idx}"), "universe_job_ids": u})
+
+    return audit_fixed_universe_overlap(test_adapted, dev_adapted)
+
+
 def main():
-    parser = argparse.ArgumentParser(description="Audit dataset overlap, role-family coverage, and 60-job universe leakage.")
+    parser = argparse.ArgumentParser(description="Audit dataset overlap, role-family coverage, and candidate universe leakage.")
+    parser.add_argument("--candidate-universes", type=str, default="results/dryrun/candidate_universes.json", help="Path to fixed candidate universes JSON")
+    parser.add_argument("--intake-candidates", type=str, default="results/dryrun/intake_candidates.json", help="Path to intake candidates JSON")
     parser.add_argument("--test-manifest", type=str, default="data/gold/gold_resumes_skills.json", help="Path to test manifest")
     parser.add_argument("--test-resumes", type=str, default="uploads/resumes", help="Path to test resumes dir")
     parser.add_argument("--dev-manifest", type=str, default=None, help="Optional dev manifest")
@@ -281,10 +367,19 @@ def main():
     parser.add_argument("--out", type=str, default="results/dataset_overlap_report.json", help="Output report JSON")
     args = parser.parse_args()
 
-    # 1. Content hash overlap check
-    dev_resumes = prepare_dev_resumes(resumes_dir=args.dev_resumes, manifest_path=args.dev_manifest)
-    test_resumes = load_test_resumes(manifest_path=args.test_manifest, resumes_dir=args.test_resumes)
+    cu_path = Path(args.candidate_universes)
+    if cu_path.exists():
+        print(f"[AUDIT] Loading fixed dev/test candidate universes from: {cu_path}")
+        dev_resumes, test_resumes = load_splits_from_candidate_universes(
+            candidate_universes_path=cu_path,
+            intake_candidates_path=args.intake_candidates,
+        )
+    else:
+        print("[AUDIT] Candidate universes file not found; falling back to legacy manifests.")
+        dev_resumes = prepare_dev_resumes(resumes_dir=args.dev_resumes, manifest_path=args.dev_manifest)
+        test_resumes = load_test_resumes(manifest_path=args.test_manifest, resumes_dir=args.test_resumes)
 
+    # 1. Content hash overlap check
     print("================ 1. CONTENT HASH OVERLAP CHECK ================")
     overlap_report = verify_no_overlap(dev_resumes, test_resumes)
     print(f"Dev resumes: {overlap_report['dev_count']} | Test resumes: {overlap_report['test_count']}")
@@ -308,23 +403,13 @@ def main():
     print(f"  Families that CAN fill a 60-job universe:   {', '.join(cov['can_fill_families'])}")
     print(f"  Families that CANNOT fill a 60-job universe: {', '.join(cov['cannot_fill_families'])}")
 
-    # 3. 60-job universe overlap and leakage audit
+    # 3. Candidate universe overlap and leakage audit
     print("\n================ 3. 60-JOB UNIVERSE OVERLAP & LEAKAGE AUDIT ================")
-    # Load synthetic/dryrun resumes if available as additional test pool
-    synth_path = Path("data/fairness/synthetic_resumes_v1.jsonl")
-    extra_test = []
-    if synth_path.exists():
-        with open(synth_path, "r", encoding="utf-8") as f:
-            extra_test = [json.loads(line) for line in f if line.strip()]
-
-    combined_test = test_resumes + extra_test
-    universe_audit = audit_60_job_universe_overlap_and_leakage(
-        test_resumes=combined_test,
+    universe_audit = audit_fixed_universe_overlap(
+        test_resumes=test_resumes,
         dev_resumes=dev_resumes,
-        jobs_pool=jobs,
-        universe_size=60,
     )
-    print(f"Total test candidate universes compared: {len(combined_test)}")
+    print(f"Total test candidate universes compared: {len(test_resumes)}")
     print(f"Pairwise test universe comparisons: {len(universe_audit['pairwise_overlaps'])}")
     print(f"Dev set universe checks: {len(universe_audit['dev_set_leakage_checks'])}")
     print(f"Dev set leakage detected: {universe_audit['leakage_detected']}")

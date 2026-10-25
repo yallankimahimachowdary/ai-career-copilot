@@ -62,37 +62,35 @@ class ParserAgent:
         Supports deterministic rule-based mode (bypasses LLM, outputs canonical skills only),
         LLM mode, or hybrid fallback mode.
         """
-        effective_mode = mode or getattr(settings, "PARSER_MODE", "hybrid")
+        effective_mode = (mode or getattr(settings, "PARSER_MODE", "rule_based")).lower()
         logger.info(f"[ParserAgent] Executing parser in mode: '{effective_mode}'")
 
-        if effective_mode == "rule_based":
+        # Deterministic rule-based parser is DEFAULT (taxonomy v2.1, no LLM invocation)
+        if effective_mode != "llm":
             parsed = self._parse_with_rules(raw_text)
-            # Enforce canonical skills only
             parsed.skills = sorted(list(extract_canonical_skills(raw_text)))
             self._apply_metadata(parsed, raw_text, metadata, engine="rules", mode="rule_based")
             return parsed
 
-        # 1. Primary extraction via local Ollama LLM
+        # LLM parser (explicit opt-in via PARSER_MODE=llm)
         try:
             parsed = await self._parse_with_ollama(raw_text)
-            self._apply_metadata(parsed, raw_text, metadata, engine="ollama", mode=effective_mode)
+            self._apply_metadata(parsed, raw_text, metadata, engine="ollama", mode="llm")
             return parsed
         except Exception as e:
             logger.warning(f"Ollama parsing failed: {e}. Falling back to secondary/rule-based parser.")
 
-        # 2. Secondary fallback via OpenAI if configured
         if self.openai_key:
             try:
                 parsed = await self._parse_with_openai(raw_text)
-                self._apply_metadata(parsed, raw_text, metadata, engine="openai", mode=effective_mode)
+                self._apply_metadata(parsed, raw_text, metadata, engine="openai", mode="llm")
                 return parsed
             except Exception as e:
                 logger.warning(f"OpenAI parsing failed: {e}. Falling back to rule-based parser.")
 
-        # 3. Default fallback to heuristic rule-based extraction
         parsed = self._parse_with_rules(raw_text)
         parsed.skills = sorted(list(extract_canonical_skills(raw_text)))
-        self._apply_metadata(parsed, raw_text, metadata, engine="rules", mode=effective_mode)
+        self._apply_metadata(parsed, raw_text, metadata, engine="rules", mode="llm_fallback_to_rules")
         return parsed
 
     def _apply_metadata(
@@ -318,7 +316,7 @@ class ParserAgent:
         }
 
         # Check top header lines
-        for line in lines[:10]:
+        for idx, line in enumerate(lines[:10]):
             line_lower = line.lower()
             if any(kw in line_lower for kw in disallowed_keywords):
                 continue
@@ -342,6 +340,9 @@ class ParserAgent:
                     # Filter out location words
                     if any(w.lower().rstrip(".") in location_keywords for w in words):
                         continue
+                    # On the very first line (idx == 0), if 2-3 words are capitalized, treat as candidate name
+                    if idx == 0 and 2 <= len(words) <= 3 and all(w[0].isupper() for w in words):
+                        return " ".join(words)
                     # Filter out job roles
                     if any(w.lower().rstrip(".") in role_keywords for w in words):
                         continue

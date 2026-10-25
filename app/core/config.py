@@ -98,8 +98,8 @@ class Settings(BaseSettings):
     # Seniority Gate Configuration (Phase R9)
     SENIORITY_GATE: bool = True
 
-    # Parser Mode Configuration (Remediation R9-6: "hybrid" | "rule_based" | "llm")
-    PARSER_MODE: str = "hybrid"
+    # Parser Mode Configuration (Default: "rule_based" deterministic; LLM explicit opt-in: "llm")
+    PARSER_MODE: str = "rule_based"
 
     # Adzuna Live Market Provider & Quota Guard (Remediation R8)
     ADZUNA_APP_ID: str | None = None

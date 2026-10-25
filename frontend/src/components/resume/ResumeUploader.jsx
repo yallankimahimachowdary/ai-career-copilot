@@ -67,7 +67,7 @@ export function ResumeUploader({ onUploadSuccess, isUploading, uploadProgress })
             <div>
               <p className="text-sm font-semibold text-[#3A3A52]">Extracting & Vectorizing Resume...</p>
               <p className="text-xs text-[#5C5C7A] mt-1">
-                Running Parser Agent (LLM + Entity NLP) & embedding generation
+                Running Parser Agent (Rule-Based + Entity NLP) & embedding generation
               </p>
             </div>
           </div>
