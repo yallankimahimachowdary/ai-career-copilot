@@ -109,7 +109,9 @@ def parse_phase_b_logs(log_dir: Path | str = "results/dryrun/phase_b_ranking") -
     """
     Parse phase_b_ranking execution logs to compute cold and warm latencies, token counts, and file provenance.
     Cold latency = first call in process (sorted by timestamp, then filename).
-    Warm latency = median of subsequent calls.
+    Warm latency = median of all subsequent calls.
+    Token counts = only from logs produced with current prompt (v1.1) (prompt_eval_count / usage_metadata).
+    n_resumes = number of distinct candidate resumes that have a result for that arm.
     """
     p = Path(log_dir)
     if not p.exists():
@@ -130,8 +132,17 @@ def parse_phase_b_logs(log_dir: Path | str = "results/dryrun/phase_b_ranking") -
             if lat is None:
                 lat = meta.get("latency_total_ms")
 
-            p_tok = meta.get("prompt_tokens") or meta.get("query_token_count")
-            r_tok = meta.get("response_tokens") or meta.get("completion_tokens")
+            cand_id = d.get("inputs", {}).get("candidate_id") or d.get("outputs", {}).get("candidate_id")
+
+            # Check prompt version: accept active prompt v1.1 or query tokenizer
+            prompt_ver = meta.get("prompt_version")
+            if prompt_ver is None or prompt_ver == "v1.1":
+                p_tok = meta.get("prompt_tokens") or meta.get("query_token_count")
+                r_tok = meta.get("response_tokens") or meta.get("completion_tokens")
+            else:
+                p_tok = None
+                r_tok = None
+
             ts = d.get("provenance", {}).get("timestamp", "")
 
             if method not in arm_runs:
@@ -139,6 +150,7 @@ def parse_phase_b_logs(log_dir: Path | str = "results/dryrun/phase_b_ranking") -
 
             arm_runs[method].append({
                 "file": f.name,
+                "candidate_id": cand_id,
                 "timestamp": ts,
                 "latency_ms": lat,
                 "prompt_tokens": p_tok,
@@ -153,15 +165,17 @@ def parse_phase_b_logs(log_dir: Path | str = "results/dryrun/phase_b_ranking") -
         latencies = [e["latency_ms"] for e in entries if e["latency_ms"] is not None]
         p_tokens = [e["prompt_tokens"] for e in entries if e["prompt_tokens"] is not None]
         r_tokens = [e["response_tokens"] for e in entries if e["response_tokens"] is not None]
+        cand_set = set(e["candidate_id"] for e in entries if e.get("candidate_id"))
 
         cold_lat = latencies[0] if latencies else None
-        warm_lat = statistics.median(latencies[1:]) if len(latencies) > 1 else (latencies[0] if latencies else None)
+        warm_lat = statistics.median(latencies[1:]) if len(latencies) > 1 else None
         med_p_tok = statistics.median(p_tokens) if p_tokens else None
         med_r_tok = statistics.median(r_tokens) if r_tokens else None
 
         summary[arm] = {
             "source_files": [e["file"] for e in entries],
             "count": len(entries),
+            "n_resumes": len(cand_set),
             "cold_latency_ms": cold_lat,
             "warm_latency_ms": warm_lat,
             "median_input_tokens": med_p_tok,
@@ -423,6 +437,7 @@ def build_table_4(
     headers = [
         "Ranking Arm",
         "Model ID",
+        "n",
         "Cold Latency",
         "Warm Latency",
         "Median Input Tokens",
@@ -453,20 +468,35 @@ def build_table_4(
         ("hybrid_llm_gemini", "Hybrid + Gemini", "gemini-3.5-flash-lite", "outputs.run_metadata.latency_total_ms", False),
     ]
 
+    toy_fixture = report.get("toy_fixture", False)
     rows = []
     for arm_key, arm_label, model_id, src_field, is_ollama in arms_config:
         arm_stats = log_summary.get(arm_key)
+        
+        # Determine n
+        raw_n = report.get("metrics", {}).get(arm_key, {}).get("evaluated_candidates")
+        if raw_n is None:
+            raw_n = report.get("evaluated_candidates")
+        if raw_n is not None:
+            n_str = str(raw_n)
+        elif arm_stats and arm_stats.get("n_resumes"):
+            n_str = str(arm_stats["n_resumes"])
+        else:
+            n_str = "n/a"
+
         if not arm_stats or arm_stats.get("cold_latency_ms") is None:
             cold_str = "n/a"
             warm_str = "n/a"
             p_tok_str = "n/a"
             r_tok_str = "n/a"
             cost_str = "n/a"
+            if raw_n is None and not toy_fixture:
+                n_str = "n/a"
         else:
             cold_ms = arm_stats["cold_latency_ms"]
             warm_ms = arm_stats["warm_latency_ms"]
             cold_str = f"{cold_ms:,.2f} ms"
-            warm_str = f"{warm_ms:,.2f} ms"
+            warm_str = f"{warm_ms:,.2f} ms" if warm_ms is not None else "n/a"
 
             p_tok = arm_stats["median_input_tokens"]
             r_tok = arm_stats["median_output_tokens"]
@@ -475,6 +505,7 @@ def build_table_4(
 
             if arm_key == "hybrid_llm_gemini":
                 # Arithmetic: $0.075 / 1M prompt + $0.30 / 1M completion
+                # Source: Google AI Studio schedule (pinned 2026-10-15) for gemini-3.5-flash-lite
                 p_cost = ((p_tok or 0) / 1_000_000.0) * 0.075
                 r_cost = ((r_tok or 0) / 1_000_000.0) * 0.30
                 cost_per_1k = (p_cost + r_cost) * 1000.0
@@ -486,7 +517,7 @@ def build_table_4(
         if is_ollama and mem.get("ollama_rss_mb", 0) > 0:
             mem_str += f" | Ollama: {mem['ollama_rss_mb']} MB"
 
-        rows.append([arm_label, model_id, cold_str, warm_str, p_tok_str, r_tok_str, mem_str, cost_str, src_field])
+        rows.append([arm_label, model_id, n_str, cold_str, warm_str, p_tok_str, r_tok_str, mem_str, cost_str, src_field])
 
     md_lines = []
     if is_dryrun and include_banner:
@@ -497,6 +528,17 @@ def build_table_4(
         "",
         "> Measured wall-clock durations and resident memory sampled directly via psutil during execution.",
         f"> Hardware: {hw['cpu'][:30]} | {hw['ram_gb']}GB RAM | GPU: {hw['gpu']}",
+        "> Latency & Cost Methodology:",
+        "> - Cold latency = initial call duration; Warm latency = MEDIAN of all subsequent calls.",
+        "> - Token counts: median prompt and completion tokens from runs matching active prompt v1.1.",
+        ">   * Ollama token source: prompt_eval_count (prompt) and eval_count (completion).",
+        ">   * Gemini token source: usage_metadata.prompt_token_count and candidates_token_count.",
+        ">   * BM25 / Lexical: prompt tokens from query tokenizer (0 completion tokens).",
+        "> - Pinned Model Pricing: gemini-3.5-flash-lite pinned from config (app/core/config.py) per Google AI Studio schedule (2026-10-15):",
+        ">   * Input tokens: $0.075 per 1M tokens ($0.000000075 / token).",
+        ">   * Output tokens: $0.30 per 1M tokens ($0.00000030 / token).",
+        ">   * Arithmetic: Cost/1k = 1000 * [(input_tokens * $0.075 / 1,000,000) + (output_tokens * $0.30 / 1,000,000)].",
+        "> - n = number of distinct candidate resumes that have a result for that arm.",
         "",
     ])
 
@@ -507,6 +549,8 @@ def build_table_4(
 
     csv_rows = [headers] + rows
     csv_out = "\n".join([",".join([f'"{c}"' for c in r]) for r in csv_rows]) + "\n"
+
+    return "\n".join(md_lines) + "\n", csv_out
 
     return "\n".join(md_lines) + "\n", csv_out
 
