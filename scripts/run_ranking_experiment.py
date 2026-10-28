@@ -27,9 +27,69 @@ from pathlib import Path
 import platform
 import re
 import sys
+import threading
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set, Tuple
+import psutil
 import pypdf
+
+class MemorySampler:
+    """Samples peak resident set size (RSS) in MB every interval seconds during execution."""
+    def __init__(self, interval: float = 0.5, track_ollama: bool = False):
+        self.interval = interval
+        self.track_ollama = track_ollama
+        self.peak_python_mb = 0.0
+        self.peak_ollama_mb = 0.0
+        self._stop_event = threading.Event()
+        self._thread = None
+
+    def _sample_iteration(self):
+        try:
+            py_proc = psutil.Process()
+            py_rss = py_proc.memory_info().rss
+            for child in py_proc.children(recursive=True):
+                try:
+                    py_rss += child.memory_info().rss
+                except Exception:
+                    pass
+            py_mb = py_rss / (1024 * 1024)
+            if py_mb > self.peak_python_mb:
+                self.peak_python_mb = py_mb
+        except Exception:
+            pass
+
+        if self.track_ollama:
+            try:
+                ol_rss = 0
+                for p in psutil.process_iter(["name", "memory_info"]):
+                    try:
+                        p_name = (p.info.get("name") or "").lower()
+                        if "ollama" in p_name or "llama" in p_name:
+                            ol_rss += p.info["memory_info"].rss
+                    except Exception:
+                        pass
+                ol_mb = ol_rss / (1024 * 1024)
+                if ol_mb > self.peak_ollama_mb:
+                    self.peak_ollama_mb = ol_mb
+            except Exception:
+                pass
+
+    def _run_loop(self):
+        while not self._stop_event.is_set():
+            self._sample_iteration()
+            self._stop_event.wait(self.interval)
+
+    def start(self):
+        self._sample_iteration()
+        self._thread = threading.Thread(target=self._run_loop, daemon=True)
+        self._thread.start()
+
+    def stop(self) -> Tuple[float, float]:
+        self._stop_event.set()
+        if self._thread:
+            self._thread.join(timeout=1.0)
+        self._sample_iteration()
+        return round(self.peak_python_mb, 2), round(self.peak_ollama_mb, 2)
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
@@ -105,6 +165,7 @@ def load_and_anonymize_resumes(
     resumes_dir: Path | str = "uploads/resumes",
     manifest_path: Optional[Path | str] = None,
     strict_manifest: bool = True,
+    max_resumes: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
     """Load resumes from directory and/or manifest into anonymized candidate records without hardcoded names.
     When strict_manifest is True:
@@ -229,6 +290,8 @@ def load_and_anonymize_resumes(
     else:
         # Directory scan without manifest (non-strict mode only)
         pdf_files = sorted(list(dir_path.glob("*.pdf")))
+        if max_resumes is not None:
+            pdf_files = pdf_files[:max_resumes]
         for fpath in pdf_files:
             parts = fpath.stem.split("_")
             cand_id = f"{parts[0]}_{parts[1]}" if len(parts) > 1 and parts[0] == "SYN" else parts[0]
@@ -349,6 +412,7 @@ def run_experiment(
         resumes_dir,
         manifest_path=manifest_path,
         strict_manifest=strict_manifest,
+        max_resumes=max_resumes,
     )
     if max_resumes is not None:
         candidates = candidates[:max_resumes]
@@ -383,7 +447,12 @@ def run_experiment(
             else:
                 cand_job_pool = snapshot_records
 
-            result: RankingResult = ranker.rank(cand, cand_job_pool, k=k)
+            sampler = MemorySampler(interval=0.5, track_ollama=("ollama" in method_name.lower()))
+            sampler.start()
+            try:
+                result: RankingResult = ranker.rank(cand, cand_job_pool, k=k)
+            finally:
+                peak_py_mb, peak_ol_mb = sampler.stop()
 
             elapsed_ms = round((time.time() - t0) * 1000, 2)
 
@@ -391,6 +460,8 @@ def run_experiment(
             run_meta = {
                 **sanitized_meta,
                 "latency_total_ms": elapsed_ms,
+                "peak_rss_python_mb": peak_py_mb,
+                "peak_rss_ollama_mb": peak_ol_mb,
                 "hardware": hardware_info,
                 "snapshot_sha256": snapshot_meta.get("sha256_hash"),
                 "weight_hash": weight_hash,
@@ -408,6 +479,8 @@ def run_experiment(
                 "repeat_idx": repeat_idx,
                 "ranked_job_ids": result.ranked_job_ids,
                 "scores": {jid: result.scores.get(jid, 0.0) for jid in result.ranked_job_ids},
+                "peak_rss_python_mb": peak_py_mb,
+                "peak_rss_ollama_mb": peak_ol_mb,
                 "run_metadata": run_meta,
             }
 

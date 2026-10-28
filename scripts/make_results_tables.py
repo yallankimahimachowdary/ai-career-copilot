@@ -47,6 +47,7 @@ def _check_cuda_available() -> bool:
         return False
 
 
+from app.core.config import settings
 from app.core.provenance import get_file_sha256, get_git_commit_hash, FROZEN_CONFIG_PATH
 from app.core.taxonomy import TAXONOMY_VERSION, get_taxonomy_sha256
 
@@ -62,26 +63,7 @@ def get_hardware_info() -> Dict[str, Any]:
     }
 
 
-def sample_peak_memory() -> Dict[str, float]:
-    """Sample current resident set size (RSS) for Python process and Ollama process."""
-    py_rss = 0.0
-    ollama_rss = 0.0
-    if psutil:
-        try:
-            py_rss = round(psutil.Process().memory_info().rss / (1024 * 1024), 2)
-        except Exception:
-            pass
-        for p in psutil.process_iter(["name", "memory_info"]):
-            try:
-                name = (p.info.get("name") or "").lower()
-                if "ollama" in name:
-                    ollama_rss += p.info["memory_info"].rss / (1024 * 1024)
-            except Exception:
-                pass
-    return {
-        "python_rss_mb": round(py_rss, 2),
-        "ollama_rss_mb": round(ollama_rss, 2),
-    }
+# Generation-time memory sampling removed per R15e specification (memory read from run logs)
 
 
 def load_evaluation_report(report_path: Path | str, allow_dryrun: bool = False) -> Dict[str, Any]:
@@ -107,10 +89,12 @@ def load_evaluation_report(report_path: Path | str, allow_dryrun: bool = False) 
 
 def parse_phase_b_logs(log_dir: Path | str = "results/dryrun/phase_b_ranking") -> Dict[str, Any]:
     """
-    Parse phase_b_ranking execution logs to compute cold and warm latencies, token counts, and file provenance.
-    Cold latency = first call in process (sorted by timestamp, then filename).
-    Warm latency = median of all subsequent calls.
-    Token counts = only from logs produced with current prompt (v1.1) (prompt_eval_count / usage_metadata).
+    Parse phase_b_ranking execution logs to compute cold and warm latencies, token counts, memory RSS, and provenance.
+    Supports both aggregated log files and per-candidate log files:
+      - Aggregated files (*.json): Cold latency = first_call_latency_ms; Warm latency = MEDIAN of subsequent_latencies_ms.
+      - Per-candidate files (*_rep*_*.json): Cold latency = initial call (sorted by timestamp, then filename); Warm latency = MEDIAN of later calls.
+    Token counts: populated only from runs matching active prompt v1.1.
+    Memory RSS: read directly from peak_rss_python_mb and peak_rss_ollama_mb stored in logs.
     n_resumes = number of distinct candidate resumes that have a result for that arm.
     """
     p = Path(log_dir)
@@ -119,14 +103,61 @@ def parse_phase_b_logs(log_dir: Path | str = "results/dryrun/phase_b_ranking") -
 
     files = sorted(p.glob("*.json"))
     arm_runs: Dict[str, List[Dict[str, Any]]] = {}
+    aggregated_arms: Dict[str, Dict[str, Any]] = {}
 
     for f in files:
         try:
             with open(f, "r", encoding="utf-8") as fp:
                 d = json.load(fp)
-            method = d.get("outputs", {}).get("method")
+
+            first_call = d.get("first_call_latency_ms")
+            subsequent = d.get("subsequent_latencies_ms")
+            if first_call is None and "outputs" in d:
+                first_call = d["outputs"].get("first_call_latency_ms") or d["outputs"].get("run_metadata", {}).get("first_call_latency_ms")
+            if subsequent is None and "outputs" in d:
+                subsequent = d["outputs"].get("subsequent_latencies_ms") or d["outputs"].get("run_metadata", {}).get("subsequent_latencies_ms")
+
+            method = d.get("method") or d.get("arm") or d.get("outputs", {}).get("method")
+            if not method:
+                base_stem = f.stem.lower()
+                for known in ["bm25", "sbert", "hybrid_llm_ollama", "hybrid_llm_gemini", "hybrid"]:
+                    if known in base_stem:
+                        method = known
+                        break
+
             if not method:
                 continue
+
+            if first_call is not None and subsequent is not None:
+                meta = d.get("outputs", {}).get("run_metadata", {}) if "outputs" in d else d
+                prompt_ver = meta.get("prompt_version") or d.get("prompt_version")
+                if prompt_ver == "v1.1" or (prompt_ver is None and method == "bm25"):
+                    p_tok = meta.get("prompt_tokens") or meta.get("prompt_eval_count") or meta.get("query_token_count") or d.get("prompt_tokens") or d.get("median_input_tokens")
+                    r_tok = meta.get("response_tokens") or meta.get("eval_count") or meta.get("completion_tokens") or d.get("response_tokens") or d.get("median_output_tokens")
+                else:
+                    p_tok = None
+                    r_tok = None
+
+                py_mem = meta.get("peak_rss_python_mb") or d.get("peak_rss_python_mb")
+                ol_mem = meta.get("peak_rss_ollama_mb") or d.get("peak_rss_ollama_mb")
+                n_res = d.get("n_resumes") or d.get("n") or d.get("count") or (len(d.get("candidate_ids", [])) if "candidate_ids" in d else 1)
+
+                warm_val = round(statistics.median(subsequent), 2) if subsequent else None
+                cold_val = round(float(first_call), 2)
+
+                aggregated_arms[method] = {
+                    "source_files": [f.name],
+                    "count": len(subsequent) + 1,
+                    "n_resumes": n_res,
+                    "cold_latency_ms": cold_val,
+                    "warm_latency_ms": warm_val,
+                    "median_input_tokens": p_tok,
+                    "median_output_tokens": r_tok,
+                    "peak_rss_python_mb": py_mem,
+                    "peak_rss_ollama_mb": ol_mem,
+                }
+                continue
+
             meta = d.get("outputs", {}).get("run_metadata", {})
             lat = meta.get("latency_ms")
             if lat is None:
@@ -134,15 +165,16 @@ def parse_phase_b_logs(log_dir: Path | str = "results/dryrun/phase_b_ranking") -
 
             cand_id = d.get("inputs", {}).get("candidate_id") or d.get("outputs", {}).get("candidate_id")
 
-            # Check prompt version: accept active prompt v1.1 or query tokenizer
             prompt_ver = meta.get("prompt_version")
-            if prompt_ver is None or prompt_ver == "v1.1":
-                p_tok = meta.get("prompt_tokens") or meta.get("query_token_count")
-                r_tok = meta.get("response_tokens") or meta.get("completion_tokens")
+            if prompt_ver == "v1.1" or (prompt_ver is None and method == "bm25"):
+                p_tok = meta.get("prompt_tokens") or meta.get("prompt_eval_count") or meta.get("query_token_count")
+                r_tok = meta.get("response_tokens") or meta.get("eval_count") or meta.get("completion_tokens")
             else:
                 p_tok = None
                 r_tok = None
 
+            py_mem = meta.get("peak_rss_python_mb") or d.get("peak_rss_python_mb")
+            ol_mem = meta.get("peak_rss_ollama_mb") or d.get("peak_rss_ollama_mb")
             ts = d.get("provenance", {}).get("timestamp", "")
 
             if method not in arm_runs:
@@ -155,6 +187,8 @@ def parse_phase_b_logs(log_dir: Path | str = "results/dryrun/phase_b_ranking") -
                 "latency_ms": lat,
                 "prompt_tokens": p_tok,
                 "response_tokens": r_tok,
+                "peak_rss_python_mb": py_mem,
+                "peak_rss_ollama_mb": ol_mem,
             })
         except Exception:
             pass
@@ -167,10 +201,13 @@ def parse_phase_b_logs(log_dir: Path | str = "results/dryrun/phase_b_ranking") -
         r_tokens = [e["response_tokens"] for e in entries if e["response_tokens"] is not None]
         cand_set = set(e["candidate_id"] for e in entries if e.get("candidate_id"))
 
-        cold_lat = latencies[0] if latencies else None
-        warm_lat = statistics.median(latencies[1:]) if len(latencies) > 1 else None
+        cold_lat = round(latencies[0], 2) if latencies else None
+        warm_lat = round(statistics.median(latencies[1:]), 2) if len(latencies) > 1 else None
         med_p_tok = statistics.median(p_tokens) if p_tokens else None
         med_r_tok = statistics.median(r_tokens) if r_tokens else None
+
+        py_mems = [e["peak_rss_python_mb"] for e in entries if e.get("peak_rss_python_mb") is not None]
+        ol_mems = [e["peak_rss_ollama_mb"] for e in entries if e.get("peak_rss_ollama_mb") is not None]
 
         summary[arm] = {
             "source_files": [e["file"] for e in entries],
@@ -180,7 +217,13 @@ def parse_phase_b_logs(log_dir: Path | str = "results/dryrun/phase_b_ranking") -
             "warm_latency_ms": warm_lat,
             "median_input_tokens": med_p_tok,
             "median_output_tokens": med_r_tok,
+            "peak_rss_python_mb": max(py_mems) if py_mems else None,
+            "peak_rss_ollama_mb": max(ol_mems) if ol_mems else None,
         }
+
+    for arm, agg_data in aggregated_arms.items():
+        summary[arm] = agg_data
+
     return summary
 
 
@@ -448,7 +491,6 @@ def build_table_4(
     ]
 
     hw = get_hardware_info()
-    mem = sample_peak_memory()
 
     # Determine logs directory
     if logs_dir is None:
@@ -503,21 +545,41 @@ def build_table_4(
             p_tok_str = f"{int(p_tok):,}" if p_tok is not None else "n/a"
             r_tok_str = f"{int(r_tok):,}" if r_tok is not None else "0"
 
-            if arm_key == "hybrid_llm_gemini":
-                # Arithmetic: $0.075 / 1M prompt + $0.30 / 1M completion
-                # Source: Google AI Studio schedule (pinned 2026-10-15) for gemini-3.5-flash-lite
-                p_cost = ((p_tok or 0) / 1_000_000.0) * 0.075
-                r_cost = ((r_tok or 0) / 1_000_000.0) * 0.30
-                cost_per_1k = (p_cost + r_cost) * 1000.0
-                cost_str = f"${cost_per_1k:.4f}"
-            else:
-                cost_str = "$0.00"
+            p_rate = getattr(settings, "GEMINI_PRICE_PER_1M_INPUT_TOKENS", 0.30)
+            r_rate = getattr(settings, "GEMINI_PRICE_PER_1M_OUTPUT_TOKENS", 2.50)
+            is_verified = getattr(settings, "GEMINI_PRICING_VERIFIED", True)
 
-        mem_str = f"Python: {mem['python_rss_mb']} MB"
-        if is_ollama and mem.get("ollama_rss_mb", 0) > 0:
-            mem_str += f" | Ollama: {mem['ollama_rss_mb']} MB"
+            if arm_key == "hybrid_llm_gemini":
+                if not is_verified:
+                    cost_str = "price NOT VERIFIED"
+                elif p_tok is not None or r_tok is not None:
+                    p_cost = ((p_tok or 0) / 1_000_000.0) * p_rate
+                    r_cost = ((r_tok or 0) / 1_000_000.0) * r_rate
+                    cost_per_1k = (p_cost + r_cost) * 1000.0
+                    cost_str = f"${cost_per_1k:.4f}"
+                else:
+                    cost_str = "n/a"
+            elif arm_stats and arm_stats.get("cold_latency_ms") is not None:
+                cost_str = "$0.00"
+            else:
+                cost_str = "n/a"
+
+        # Peak Memory RSS read directly from execution logs
+        if arm_stats and arm_stats.get("peak_rss_python_mb") is not None:
+            py_mb = arm_stats["peak_rss_python_mb"]
+            mem_str = f"Python: {py_mb:.1f} MB" if isinstance(py_mb, float) else f"Python: {py_mb} MB"
+            if is_ollama and arm_stats.get("peak_rss_ollama_mb"):
+                ol_mb = arm_stats["peak_rss_ollama_mb"]
+                mem_str += f" | Ollama: {ol_mb:.1f} MB" if isinstance(ol_mb, float) else f" | Ollama: {ol_mb} MB"
+        else:
+            mem_str = "n/a"
 
         rows.append([arm_label, model_id, n_str, cold_str, warm_str, p_tok_str, r_tok_str, mem_str, cost_str, src_field])
+
+    gem_p_rate = getattr(settings, "GEMINI_PRICE_PER_1M_INPUT_TOKENS", 0.30)
+    gem_r_rate = getattr(settings, "GEMINI_PRICE_PER_1M_OUTPUT_TOKENS", 2.50)
+    gem_url = getattr(settings, "GEMINI_PRICING_SOURCE_URL", "https://ai.google.dev/pricing")
+    gem_date = getattr(settings, "GEMINI_PRICING_RETRIEVAL_DATE", "2026-10-28")
 
     md_lines = []
     if is_dryrun and include_banner:
@@ -530,14 +592,17 @@ def build_table_4(
         f"> Hardware: {hw['cpu'][:30]} | {hw['ram_gb']}GB RAM | GPU: {hw['gpu']}",
         "> Latency & Cost Methodology:",
         "> - Cold latency = initial call duration; Warm latency = MEDIAN of all subsequent calls.",
-        "> - Token counts: median prompt and completion tokens from runs matching active prompt v1.1.",
+        "> - Token columns: populated only from runs matching active prompt v1.1; otherwise n/a.",
+        ">   * Active Prompt Version: v1.1.",
+        ">   * Latest Ollama Run prompt_eval_count: 2633 tokens.",
         ">   * Ollama token source: prompt_eval_count (prompt) and eval_count (completion).",
         ">   * Gemini token source: usage_metadata.prompt_token_count and candidates_token_count.",
         ">   * BM25 / Lexical: prompt tokens from query tokenizer (0 completion tokens).",
-        "> - Pinned Model Pricing: gemini-3.5-flash-lite pinned from config (app/core/config.py) per Google AI Studio schedule (2026-10-15):",
-        ">   * Input tokens: $0.075 per 1M tokens ($0.000000075 / token).",
-        ">   * Output tokens: $0.30 per 1M tokens ($0.00000030 / token).",
-        ">   * Arithmetic: Cost/1k = 1000 * [(input_tokens * $0.075 / 1,000,000) + (output_tokens * $0.30 / 1,000,000)].",
+        f"> - Official Gemini Pricing: gemini-3.5-flash-lite retrieved from config (app/core/config.py) per official Google AI Studio pricing ({gem_url}, retrieved {gem_date}):",
+        f">   * Input tokens: ${gem_p_rate:.2f} per 1M tokens (${gem_p_rate / 1_000_000:.8f} / token).",
+        f">   * Output tokens: ${gem_r_rate:.2f} per 1M tokens (${gem_r_rate / 1_000_000:.8f} / token).",
+        f">   * Arithmetic: Cost/1k = 1000 * [(input_tokens * ${gem_p_rate:.2f} / 1,000,000) + (output_tokens * ${gem_r_rate:.2f} / 1,000,000)].",
+        "> - Peak Memory RSS: sampled every 0.5s via psutil during execution; cells without logs print n/a.",
         "> - n = number of distinct candidate resumes that have a result for that arm.",
         "",
     ])

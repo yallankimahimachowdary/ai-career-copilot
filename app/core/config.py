@@ -64,6 +64,11 @@ class Settings(BaseSettings):
     OPENAI_MODEL: str = "gpt-4o-mini"
     GEMINI_API_KEY: str | None = None
     GEMINI_MODEL: str = "gemini-3.5-flash-lite"
+    GEMINI_PRICE_PER_1M_INPUT_TOKENS: float = 0.30
+    GEMINI_PRICE_PER_1M_OUTPUT_TOKENS: float = 2.50
+    GEMINI_PRICING_SOURCE_URL: str = "https://ai.google.dev/pricing"
+    GEMINI_PRICING_RETRIEVAL_DATE: str = "2026-10-28"
+    GEMINI_PRICING_VERIFIED: bool = True
     ANTHROPIC_API_KEY: str | None = None
 
     # LLM Provider Configuration

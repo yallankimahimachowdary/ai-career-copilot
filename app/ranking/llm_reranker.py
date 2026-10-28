@@ -208,14 +208,14 @@ class LLMReranker(BaseRanker):
 
         for attempt in range(max_attempts):
             try:
-                # Use generous timeout of 180.0s for CPU inference over 20 items
+                # Use generous timeout of 300.0s for CPU inference over 20 items
                 if self.provider_name == "ollama":
                     response = await self.provider.generate_json(
                         prompt=prompt,
                         temperature=0.0,
                         max_tokens=1500,
                         seed=self.seed,
-                        timeout=180.0,
+                        timeout=300.0,
                         num_thread=4,
                     )
                 else:
