@@ -77,7 +77,10 @@ def load_evaluation_report(report_path: Path | str, allow_dryrun: bool = False) 
 
     run_type = data.get("run_type", "")
     is_dryrun_path = "dryrun" in str(p).lower()
-    if (run_type == "dryrun" or is_dryrun_path) and not allow_dryrun:
+    # synthetic_eval reports are explicitly accepted without --allow-dryrun (R16-2)
+    if run_type == "synthetic_eval":
+        pass
+    elif (run_type == "dryrun" or is_dryrun_path) and not allow_dryrun:
         raise ValueError(
             f"REFUSAL: Table generator rejected dryrun report '{p}'. "
             "Tables for paper publication must be derived strictly from real runs (run_type='real'). "
@@ -231,6 +234,17 @@ def parse_phase_b_logs(log_dir: Path | str = "results/dryrun/phase_b_ranking") -
 # Table 1: Main Comparison
 # ==============================================================================
 
+
+def _get_table_banner(report: Dict[str, Any], is_dryrun: bool = False, include_banner: bool = True) -> Optional[str]:
+    if not include_banner:
+        return None
+    r_type = report.get("run_type", "")
+    if r_type == "synthetic_eval":
+        return "> **SYNTHETIC BENCHMARK -- template-generated resumes, not real candidates**\n"
+    if is_dryrun:
+        return "> **PIPELINE CHECK ONLY -- DRY-RUN DATA (NOT PUBLICATION RESULTS)**\n"
+    return None
+
 def build_table_1(report: Dict[str, Any], is_dryrun: bool = False, include_banner: bool = True) -> Tuple[str, str]:
     """Generate Table 1: Main Comparison across Ranking Architectures."""
     headers = [
@@ -318,8 +332,9 @@ def build_table_1(report: Dict[str, Any], is_dryrun: bool = False, include_banne
 
     # Build Markdown
     md_lines = []
-    if is_dryrun and include_banner:
-        md_lines.append("> **PIPELINE CHECK ONLY -- DRY-RUN DATA (NOT PUBLICATION RESULTS)**\n")
+    _banner = _get_table_banner(report, is_dryrun=is_dryrun, include_banner=include_banner)
+    if _banner:
+        md_lines.append(_banner)
 
     md_lines.extend([
         "### Table 1: Main Comparison Across Ranking Architectures",
@@ -389,8 +404,9 @@ def build_table_2(report: Dict[str, Any], is_dryrun: bool = False, include_banne
             rows.append([label, n_str, ndcg, p5, mrr, jacc, p_val])
 
     md_lines = []
-    if is_dryrun and include_banner:
-        md_lines.append("> **PIPELINE CHECK ONLY -- DRY-RUN DATA (NOT PUBLICATION RESULTS)**\n")
+    _banner = _get_table_banner(report, is_dryrun=is_dryrun, include_banner=include_banner)
+    if _banner:
+        md_lines.append(_banner)
 
     md_lines.extend([
         "### Table 2: Ablation and Component Control Analysis",
@@ -445,8 +461,9 @@ def build_table_3(report: Dict[str, Any], is_dryrun: bool = False, include_banne
             rows.append([m_label, tot, res_rate, job_rate, comb_rate, ""])
 
     md_lines = []
-    if is_dryrun and include_banner:
-        md_lines.append("> **PIPELINE CHECK ONLY -- DRY-RUN DATA (NOT PUBLICATION RESULTS)**\n")
+    _banner = _get_table_banner(report, is_dryrun=is_dryrun, include_banner=include_banner)
+    if _banner:
+        md_lines.append(_banner)
 
     md_lines.extend([
         "### Table 3: Explanation Honesty and Claim Verification Audit",
@@ -582,8 +599,9 @@ def build_table_4(
     gem_date = getattr(settings, "GEMINI_PRICING_RETRIEVAL_DATE", "2026-10-28")
 
     md_lines = []
-    if is_dryrun and include_banner:
-        md_lines.append("> **PIPELINE CHECK ONLY -- DRY-RUN DATA (NOT PUBLICATION RESULTS)**\n")
+    _banner = _get_table_banner(report, is_dryrun=is_dryrun, include_banner=include_banner)
+    if _banner:
+        md_lines.append(_banner)
 
     md_lines.extend([
         "### Table 4: Computational Cost, Speed, Memory, and Hardware Accounting",
@@ -649,8 +667,9 @@ def build_table_5(report: Dict[str, Any], is_dryrun: bool = False, include_banne
     ]
 
     md_lines = []
-    if is_dryrun and include_banner:
-        md_lines.append("> **PIPELINE CHECK ONLY -- DRY-RUN DATA (NOT PUBLICATION RESULTS)**\n")
+    _banner = _get_table_banner(report, is_dryrun=is_dryrun, include_banner=include_banner)
+    if _banner:
+        md_lines.append(_banner)
 
     md_lines.extend([
         "### Table 5: Dataset, Snapshot, and Annotation Corpus Statistics",
@@ -738,7 +757,9 @@ def export_all_tables(
         f"**Generated:** {datetime.now(timezone.utc).isoformat()}",
         "",
     ]
-    if is_dryrun:
+    if report.get("run_type") == "synthetic_eval":
+        combined_md.append("> **SYNTHETIC BENCHMARK -- template-generated resumes, not real candidates**\n")
+    elif is_dryrun:
         combined_md.append("> **PIPELINE CHECK ONLY -- DRY-RUN DATA (NOT PUBLICATION RESULTS)**\n")
 
     combined_md.extend([t1_md_clean, "---", t2_md_clean, "---", t3_md_clean, "---", t4_md_clean, "---", t5_md_clean])

@@ -427,7 +427,15 @@ class LangGraphOrchestrator:
         errors = list(state.get("errors", []))
 
         try:
-            decision = await router_service.classify_intent(query, use_llm=True)
+            # Fast trained router classification (< 0.05s); fall back to LLM only if low confidence
+            decision = await router_service.classify_intent(query, use_llm=False)
+            if getattr(decision, "low_confidence", False):
+                try:
+                    llm_decision = await router_service.classify_intent(query, use_llm=True)
+                    if llm_decision:
+                        decision = llm_decision
+                except Exception:
+                    pass
             if retries.get("route", 0) > 0:
                 _mark_recovered(errors, "route")
             elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)

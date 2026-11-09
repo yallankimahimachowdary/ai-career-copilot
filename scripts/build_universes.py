@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from datetime import datetime, timezone
 """
 scripts/build_universes.py
 ---------------------------
@@ -34,7 +35,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 import pypdf
 
-from app.core.provenance import build_provenance_record
+from app.core.provenance import build_provenance_record, get_file_sha256
 from app.core.seniority import classify_job_seniority
 from app.services.anonymizer import anonymize_resume
 from app.services.parser_agent import parser_agent
@@ -81,6 +82,44 @@ def stable_hash_int(s: str, max_val: int = 1000000) -> int:
     val = int.from_bytes(h_bytes[:4], byteorder="big")
     return val % max_val
 
+
+
+def stratified_sample_candidates(
+    candidates: List[Dict[str, Any]],
+    subset_size: Optional[int],
+    seed: int,
+) -> List[Dict[str, Any]]:
+    """Sample subset_size candidates stratified by role_family deterministically."""
+    if subset_size is None or subset_size >= len(candidates) or subset_size <= 0:
+        return list(candidates)
+
+    groups: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+    for c in candidates:
+        groups[c["role_family"]].append(c)
+
+    sorted_fams = sorted(groups.keys())
+    total_count = len(candidates)
+
+    # Largest Remainder (Hamilton method)
+    quotas = {f: subset_size * len(groups[f]) / total_count for f in sorted_fams}
+    floor_counts = {f: int(quotas[f]) for f in sorted_fams}
+    remainders = {f: quotas[f] - floor_counts[f] for f in sorted_fams}
+
+    unallocated = subset_size - sum(floor_counts.values())
+    ranked_fams = sorted(sorted_fams, key=lambda f: (-remainders[f], f))
+    for i in range(unallocated):
+        floor_counts[ranked_fams[i]] += 1
+
+    selected = []
+    for f in sorted_fams:
+        cands_in_f = sorted(groups[f], key=lambda x: x["candidate_id"])
+        k_f = floor_counts[f]
+        cand_rng = random.Random(seed + stable_hash_int(f))
+        shuffled = list(cands_in_f)
+        cand_rng.shuffle(shuffled)
+        selected.extend(sorted(shuffled[:k_f], key=lambda x: x["candidate_id"]))
+
+    return sorted(selected, key=lambda x: x["candidate_id"])
 
 def sample_stratified_universe(
     jobs_pool: List[Dict[str, Any]],
@@ -176,10 +215,39 @@ def build_universes(
     dev_ratio: float = 0.20,
     run_type: str = "dryrun",
     max_resumes: Optional[int] = None,
+    eval_subset: Optional[int] = None,
+    num_double_rated: int = 8,
+    force: bool = False,
     output_path: Optional[Path | str] = None,
     timestamp: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Build evaluation universes and dev/test resume split with full determinism."""
+    # Freeze Point check for synthetic_eval (R16-4)
+    if run_type == "synthetic_eval":
+        target_out = Path(output_path) if output_path else Path("results/synthetic_eval/candidate_universes.json")
+        manifest_p = target_out.parent / "universes_manifest.json"
+        if target_out.exists() and manifest_p.exists() and not force:
+            raise RuntimeError(
+                f"FREEZE POINT REFUSAL: synthetic_eval universes already exist at '{target_out}'. "
+                "Refusing to rebuild without --force."
+            )
+        if force and target_out.exists():
+            old_hash = get_file_sha256(target_out) if target_out.exists() else "none"
+            print(f"WARNING: Overwriting frozen synthetic_eval universes (--force passed). Previous sha256: {old_hash}")
+
+    # Freeze Point check for synthetic_eval (R16-4)
+    if run_type == "synthetic_eval":
+        target_out = Path(output_path) if output_path else Path("results/synthetic_eval/candidate_universes.json")
+        manifest_p = target_out.parent / "universes_manifest.json"
+        if target_out.exists() and manifest_p.exists() and not force:
+            raise RuntimeError(
+                f"FREEZE POINT REFUSAL: synthetic_eval universes already exist at '{target_out}'. "
+                "Refusing to rebuild without --force."
+            )
+        if force and target_out.exists():
+            old_hash = get_file_sha256(target_out) if target_out.exists() else "none"
+            print(f"WARNING: Overwriting frozen synthetic_eval universes (--force passed). Previous sha256: {old_hash}")
+
     rng = random.Random(seed)
     in_scope_families, deficit_families = load_eval_scope()
 
@@ -227,6 +295,10 @@ def build_universes(
 
     # 3. Partition in-scope candidates into dev and test (seeded by resume)
     in_scope_candidates = [c for c in candidates if c["is_in_scope"]]
+    if eval_subset is not None and eval_subset > 0:
+        in_scope_candidates = stratified_sample_candidates(in_scope_candidates, eval_subset, seed=seed)
+    if eval_subset is not None and eval_subset > 0:
+        in_scope_candidates = stratified_sample_candidates(in_scope_candidates, eval_subset, seed=seed)
     out_of_scope_candidates = [c for c in candidates if not c["is_in_scope"]]
 
     # Shuffle in-scope candidates deterministically before splitting
@@ -330,6 +402,40 @@ def build_universes(
         with open(out_p, "w", encoding="utf-8") as f:
             json.dump(summary, f, indent=2)
 
+        if run_type == "synthetic_eval":
+            manifest_p = out_p.parent / "universes_manifest.json"
+            manifest_p.parent.mkdir(parents=True, exist_ok=True)
+            cur_hash = get_file_sha256(out_p)
+            manifest_data = {
+                "file": str(out_p).replace("\\", "/"),
+                "sha256": cur_hash,
+                "timestamp": timestamp or datetime.now(timezone.utc).isoformat(),
+                "seed": seed,
+                "eval_subset": eval_subset,
+                "num_double_rated": num_double_rated,
+                "forced": bool(force),
+            }
+            with open(manifest_p, "w", encoding="utf-8") as mf:
+                json.dump(manifest_data, mf, indent=2)
+            print(f"[FREEZE POINT] Frozen synthetic_eval manifest written to: {manifest_p} (SHA256: {cur_hash})")
+
+        if run_type == "synthetic_eval":
+            manifest_p = out_p.parent / "universes_manifest.json"
+            manifest_p.parent.mkdir(parents=True, exist_ok=True)
+            cur_hash = get_file_sha256(out_p)
+            manifest_data = {
+                "file": str(out_p).replace("\\", "/"),
+                "sha256": cur_hash,
+                "timestamp": timestamp or datetime.now(timezone.utc).isoformat(),
+                "seed": seed,
+                "eval_subset": eval_subset,
+                "num_double_rated": num_double_rated,
+                "forced": bool(force),
+            }
+            with open(manifest_p, "w", encoding="utf-8") as mf:
+                json.dump(manifest_data, mf, indent=2)
+            print(f"[FREEZE POINT] Frozen synthetic_eval manifest written to: {manifest_p} (SHA256: {cur_hash})")
+
     return summary
 
 
@@ -340,7 +446,10 @@ def main():
     parser.add_argument("--seed", type=int, default=42, help="Deterministic random seed")
     parser.add_argument("--universe-size", type=int, default=60, help="Target universe size")
     parser.add_argument("--dev-ratio", type=float, default=0.20, help="Dev split proportion")
-    parser.add_argument("--run-type", type=str, default="dryrun", choices=["dryrun", "real"], help="Execution run type")
+    parser.add_argument("--run-type", type=str, default="dryrun", choices=["dryrun", "real", "synthetic_eval"], help="Execution run type")
+    parser.add_argument("--eval-subset", type=int, default=None, help="Subset size of in-scope candidates (stratified by family)")
+    parser.add_argument("--num-double-rated", type=int, default=8, help="Number of double-rated resumes")
+    parser.add_argument("--force", action="store_true", help="Force rebuild of frozen universes")
     parser.add_argument("--max-resumes", type=int, default=None, help="Maximum resumes to load")
     parser.add_argument("--timestamp", type=str, default=None, help="Fixed timestamp for deterministic test reproducibility")
     parser.add_argument("--output", type=str, default=None, help="Output JSON path")
@@ -349,8 +458,12 @@ def main():
 
     out = args.output
     if not out:
-        base = "results/dryrun" if args.run_type == "dryrun" else "results/real"
-        out = f"{base}/universes_{args.run_type}.json"
+        if args.run_type == "real":
+            out = "results/real/universes_real.json"
+        elif args.run_type == "synthetic_eval":
+            out = "results/synthetic_eval/candidate_universes.json"
+        else:
+            out = "results/dryrun/universes_dryrun.json"
 
     res = build_universes(
         snapshot_path=args.snapshot,
@@ -360,6 +473,9 @@ def main():
         dev_ratio=args.dev_ratio,
         run_type=args.run_type,
         max_resumes=args.max_resumes,
+        eval_subset=args.eval_subset,
+        num_double_rated=args.num_double_rated,
+        force=args.force,
         output_path=out,
         timestamp=args.timestamp,
     )

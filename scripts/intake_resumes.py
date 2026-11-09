@@ -88,9 +88,11 @@ def process_resume_intake(
     if not in_dir.exists():
         raise FileNotFoundError(f"Resumes directory not found: {in_dir}")
 
-    # Destination gating (R14-1)
+    # Destination gating (R14-1, R16-1)
     if run_type == "real":
         dest_dir = Path(output_dir) if output_dir else Path("results/real")
+    elif run_type == "synthetic_eval":
+        dest_dir = Path(output_dir) if output_dir else Path("results/synthetic_eval")
     else:
         dest_dir = Path(output_dir) if output_dir else Path("results/dryrun")
     dest_dir.mkdir(parents=True, exist_ok=True)
@@ -109,10 +111,13 @@ def process_resume_intake(
     total_skills_extracted = 0
 
     # Contamination check: count synthetic vs real
-    synthetic_detected: List[str] = []
+    synthetic_detected: Set[str] = set()
 
     for pdf_path in pdf_files:
         cand_id = pdf_path.stem
+        # Check filename contamination immediately
+        if pdf_path.name.startswith("SYN_"):
+            synthetic_detected.add(pdf_path.name)
         raw_bytes = pdf_path.read_bytes()
 
         # Step 1: Text extraction
@@ -150,7 +155,7 @@ def process_resume_intake(
         # Check contamination
         is_syn = detect_synthetic_contamination(pdf_path, raw_text)
         if is_syn:
-            synthetic_detected.append(pdf_path.name)
+            synthetic_detected.add(pdf_path.name)
 
         # Step 2: Anonymization
         anon_text = anonymize_resume(raw_text, candidate_name=None, strip_institutions=True)
@@ -188,12 +193,36 @@ def process_resume_intake(
             "anonymized_text": anon_text,
         })
 
-    # Strict contamination gate: If run_type == "real" and synthetic resumes are detected, refuse to proceed
-    if run_type == "real" and synthetic_detected and not allow_synthetic:
+    # Contamination & Run-Type Gates (R16-1)
+    n_total = len(pdf_files)
+    n_syn = len(synthetic_detected)
+
+    # 1. Refuse mixed real and synthetic folders across all run types
+    if 0 < n_syn < n_total:
         raise ResumeContaminationError(
-            f"CONTAMINATION ERROR: Synthetic resumes detected in real resume folder: {synthetic_detected[:5]}... "
-            "Mixing real and synthetic resumes is strictly prohibited."
+            f"CONTAMINATION ERROR: Mixed real and synthetic resumes detected in folder ({n_syn} synthetic, {n_total - n_syn} real). "
+            "Mixing real and synthetic resumes is strictly prohibited across all run types."
         )
+
+    # 2. run_type == 'real' strictly refuses synthetic resumes
+    if run_type == "real" and n_syn > 0 and not allow_synthetic:
+        raise ResumeContaminationError(
+            f"CONTAMINATION ERROR: Synthetic resumes detected in real resume folder: {list(synthetic_detected)[:5]}... "
+            "run_type='real' strictly prohibits synthetic resumes."
+        )
+
+    # 3. run_type == 'synthetic_eval' accepts SYN_ files ONLY
+    if run_type == "synthetic_eval":
+        if n_syn == 0:
+            raise ResumeContaminationError(
+                "REFUSAL: No synthetic resumes (SYN_) detected in folder for synthetic_eval run. "
+                "synthetic_eval accepts SYN_ files ONLY."
+            )
+        if n_syn != n_total:
+            raise ResumeContaminationError(
+                f"CONTAMINATION ERROR: Folder contains non-synthetic resumes ({n_total - n_syn} non-synthetic). "
+                "synthetic_eval accepts SYN_ files ONLY."
+            )
 
     # Compute statistics
     n_successful = len(processed_candidates)
@@ -255,7 +284,7 @@ def main():
     parser = argparse.ArgumentParser(description="Real-resume Intake and Anonymization Processor")
     parser.add_argument("--resumes-dir", type=str, required=True, help="Path to resume PDF directory")
     parser.add_argument("--output-dir", type=str, default=None, help="Directory to save report and anonymized profiles")
-    parser.add_argument("--run-type", type=str, default="real", choices=["real", "dryrun"], help="Run type guard")
+    parser.add_argument("--run-type", type=str, default="real", choices=["real", "synthetic_eval", "dryrun"], help="Run type guard")
     parser.add_argument("--allow-synthetic", action="store_true", help="Allow synthetic resumes (for test pipelines only)")
     args = parser.parse_args()
 

@@ -20,6 +20,13 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         await init_neo4j_schema()
     except Exception as exc:
         logger.warning(f"Neo4j schema initialization skipped: {exc}")
+
+    # Pre-warm SentenceTransformer embedding model to avoid 15-20s cold start on first resume upload
+    try:
+        from app.services.embedding_service import get_sentence_transformer
+        get_sentence_transformer()
+    except Exception as exc:
+        logger.warning(f"SentenceTransformer warmup skipped: {exc}")
     yield
     logger.info(f"Shutting down {settings.PROJECT_NAME}...")
     await close_neo4j_driver()

@@ -64,7 +64,7 @@ class ProvenanceRecord(BaseModel):
     returned_model: str
     model_alias_mismatch: bool = False
     gate_flags: Dict[str, Any] = Field(default_factory=dict)
-    run_type: str = Field(pattern=r"^(dryrun|real)$")
+    run_type: str = Field(pattern=r"^(dryrun|real|synthetic_eval)$")
     timestamp: str
     taxonomy_version: str = "v2.1"
     taxonomy_hash: Optional[str] = None
@@ -141,8 +141,8 @@ def build_provenance_record(
     Fails with ModelAliasMismatchError if strict_model_match is True and
     requested_model != returned_model.
     """
-    if run_type not in ("dryrun", "real"):
-        raise ProvenanceValidationError(f"Invalid run_type: '{run_type}'. Must be 'dryrun' or 'real'.")
+    if run_type not in ("dryrun", "real", "synthetic_eval"):
+        raise ProvenanceValidationError(f"Invalid run_type: '{run_type}'. Must be 'dryrun', 'real', or 'synthetic_eval'.")
 
     cfg_p = Path(config_path) if config_path else FROZEN_CONFIG_PATH
     cfg_hash = get_file_sha256(cfg_p)

@@ -198,24 +198,40 @@ def run_evaluation_pipeline(
         )
         print(f"[EXPORT] Annotation template exported to: {out_tpl}")
 
-    # Label Gating Check (R12-2)
-    # Quality metrics (nDCG@5/10, MAP, MRR, P@k, Recall@k) computed ONLY when
-    # results/real/labels.jsonl exists and run_type=real.
+    # Label Gating Check (R12-2, R16-1)
+    # Quality metrics (nDCG@5/10, MAP, MRR, P@k, Recall@k) computed ONLY when:
+    # 1. results/real/labels.jsonl exists and run_type=real, OR
+    # 2. results/synthetic_eval/labels.jsonl exists (or judgments_path exists) and run_type=synthetic_eval.
     real_labels_file = Path("results/real/labels.jsonl")
+    syn_labels_file = Path("results/synthetic_eval/labels.jsonl")
     can_compute_quality_metrics = False
-    if run_type == "real" and real_labels_file.exists():
-        can_compute_quality_metrics = True
-    elif judgments_path:
-        # If user explicitly passed judgments_path, verify if run_type == 'real'
-        if run_type != "real":
-            print(f"[LABEL GATE] run_type='{run_type}' is not 'real'. Refusing to compute empirical quality metrics on non-real labels.")
-        else:
+
+    if run_type == "real":
+        if real_labels_file.exists():
             can_compute_quality_metrics = True
+        elif judgments_path and Path(judgments_path).exists():
+            can_compute_quality_metrics = True
+    elif run_type == "synthetic_eval":
+        if syn_labels_file.exists():
+            can_compute_quality_metrics = True
+        elif judgments_path and Path(judgments_path).exists():
+            can_compute_quality_metrics = True
+        else:
+            print("[LABEL GATE] synthetic_eval run: labels.jsonl not found. Withholding quality metrics.")
+    else:
+        # dryrun mode: quality metrics are strictly withheld
+        print(f"[LABEL GATE] run_type='{run_type}' is dryrun. Quality metrics are strictly withheld.")
 
     # Load judgments if permitted
     judgments: Dict[str, Dict[str, float]] = {}
     if can_compute_quality_metrics:
-        load_path = judgments_path if (judgments_path and Path(judgments_path).exists()) else str(real_labels_file)
+        if judgments_path and Path(judgments_path).exists():
+            load_path = judgments_path
+        elif run_type == "synthetic_eval" and syn_labels_file.exists():
+            load_path = str(syn_labels_file)
+        else:
+            load_path = str(real_labels_file)
+
         if Path(load_path).exists():
             judgments = import_relevance_judgments(load_path)
             print(f"[JUDGMENTS] Loaded explicit human relevance judgments for {len(judgments)} candidates.")
@@ -415,7 +431,7 @@ def main():
     parser.add_argument("--universes", type=str, default=None, help="Path to candidate_universes.json")
     parser.add_argument("--dryrun-max-jobs-slice", type=int, default=None, help="[DRY-RUN ONLY] Slices snapshot records for quick smoke tests")
     parser.add_argument("--max-jobs", type=int, default=None, help="Deprecated alias for --dryrun-max-jobs-slice")
-    parser.add_argument("--run-type", "--run_type", dest="run_type", type=str, default="dryrun", choices=["dryrun", "real"], help="Run type tag ('dryrun' or 'real')")
+    parser.add_argument("--run-type", "--run_type", dest="run_type", type=str, default="dryrun", choices=["dryrun", "real", "synthetic_eval"], help="Run type tag ('dryrun' or 'real')")
     args = parser.parse_args()
 
     methods_list = [m.strip() for m in args.methods.split(",") if m.strip()]

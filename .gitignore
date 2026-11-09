@@ -72,3 +72,27 @@ data/resumes_real/
 data/real/
 frontend/dist/
 dist/
+
+# Evaluation results
+results/synthetic_eval/
+
+# Assignment and simulation artifacts
+vtu27922*
+*.docx
+*.pdf
+template*.html
+*assignments*
+*learning*
+*project5*
+*pbl4*
+*pl1*
+*el2*
+*usecase*
+*weather*
+benchmark_assets/
+adjust_breaks.py
+generate_*.py
+build_*.py
+run_*_simulations.py
+run_all_usecases_benchmarks.py
+assignment7_assets/

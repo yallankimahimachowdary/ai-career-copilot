@@ -9,6 +9,7 @@ export const resumeApi = {
       headers: {
         "Content-Type": "multipart/form-data",
       },
+      timeout: 120000, // 120s for PDF extraction, NLP parsing, and dense vector embedding
     })
     return response.data
   },

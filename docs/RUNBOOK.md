@@ -133,3 +133,39 @@ python scripts/run_all.py --stage all-dryrun --max-resumes 3
 - **Zero Live API Calls**: Adzuna call counter (`data/ingest/adzuna_call_counter.json`) must remain locked at 20/20. No live network requests to Adzuna are permitted.
 - **PII Protection**: Real PDFs and `results/real/` are gitignored. Never print, log, or commit candidate identities.
 - **Frozen Benchmark Preservation**: Never edit `app/ranking/config.json`, `data/evaluation/*`, `data/router/test.jsonl`, `data/snapshots/jobs_snapshot_1_*.jsonl`, `docs/role_families_frozen.json`, or `docs/eval_scope.json`.
+
+---
+
+## 4. Synthetic Benchmark Evaluation (synthetic_eval)
+
+The synthetic benchmark evaluates ranking models on the 95 synthetic resumes (data/resumes_dryrun, SYN_001..SYN_095; 41 in-scope across Data/AI, Web/Software, and Cybersecurity/Cloud).
+
+### Command Sequence (in order):
+
+`powershell
+# Step 1: Pre-flight Verification & Preparation
+.\venv\Scripts\python.exe run_all.py --stage prep --run-type synthetic_eval
+
+# Optional: Stratified subset (e.g. 25 resumes) and double-rated count (e.g. 6 doubles):
+# .\venv\Scripts\python.exe run_all.py --stage prep --run-type synthetic_eval --eval-subset 25 --num-double-rated 6
+
+# Step 2: Distribute blinded annotation sheets
+# Sheets generated at:
+#   results/synthetic_eval/annotation_sheets/annotation_sheet_rater_a_synthetic_eval.csv
+#   results/synthetic_eval/annotation_sheets/annotation_sheet_rater_b_synthetic_eval.csv
+
+# Step 3: Ingest annotations to create labels.jsonl
+.\venv\Scripts\python.exe scripts/ingest_annotations.py 
+  --rater-a results/synthetic_eval/annotation_sheets/annotation_sheet_rater_a_synthetic_eval.csv 
+  --rater-b results/synthetic_eval/annotation_sheets/annotation_sheet_rater_b_synthetic_eval.csv 
+  --output results/synthetic_eval/labels.jsonl 
+  --run-type synthetic_eval
+
+# Step 4: Run ranking evaluation
+.\venv\Scripts\python.exe run_all.py --stage eval --run-type synthetic_eval
+
+# Step 5: Generate publication tables (stamped with SYNTHETIC BENCHMARK banner)
+.\venv\Scripts\python.exe scripts/make_results_tables.py 
+  --report results/synthetic_eval/evaluation_report.json 
+  --output-dir results/synthetic_eval/tables/
+`

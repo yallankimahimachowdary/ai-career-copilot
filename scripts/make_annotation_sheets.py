@@ -37,6 +37,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from scripts.job_snapshot import load_snapshot
+from scripts.build_universes import stratified_sample_candidates
 
 ANNOTATION_SCALE_HEADER = [
     "# ANNOTATION GUIDELINES & RATING SCALE:",
@@ -101,6 +102,7 @@ def make_annotation_sheets(
     output_dir: Path | str,
     seed: int = 42,
     num_double_rated: int = 8,
+    eval_subset: Optional[int] = None,
     run_type: str = "dryrun",
 ) -> Dict[str, Any]:
     """Generate blinded per-rater CSV sheets and assignment manifest."""
@@ -120,6 +122,15 @@ def make_annotation_sheets(
 
     if not in_scope_map:
         raise ValueError(f"No in-scope candidate universes found in {univ_p}")
+
+    if eval_subset is not None and eval_subset > 0 and eval_subset < len(in_scope_map):
+        cand_list = [
+            {"candidate_id": cid, "role_family": u.get("role_family", "Data/AI")}
+            for cid, u in in_scope_map.items()
+        ]
+        sampled_cands = stratified_sample_candidates(cand_list, eval_subset, seed=seed)
+        sampled_ids = {c["candidate_id"] for c in sampled_cands}
+        in_scope_map = {cid: u for cid, u in in_scope_map.items() if cid in sampled_ids}
 
     # Load job snapshot details
     jobs, snap_meta = load_snapshot(str(snapshot_path))
@@ -214,8 +225,9 @@ def main():
     parser.add_argument("--snapshot", type=str, default="data/snapshots/jobs_snapshot_1_20261019_adzuna.jsonl", help="Snapshot JSONL path")
     parser.add_argument("--output-dir", type=str, default="results/dryrun/annotations", help="Directory to save sheets")
     parser.add_argument("--seed", type=int, default=42, help="Deterministic random seed")
-    parser.add_argument("--double-rated", type=int, default=8, help="Number of double-rated resumes")
-    parser.add_argument("--run-type", type=str, default="dryrun", choices=["dryrun", "real"], help="Execution run type")
+    parser.add_argument("--num-double-rated", "--double-rated", dest="num_double_rated", type=int, default=8, help="Number of double-rated resumes")
+    parser.add_argument("--eval-subset", type=int, default=None, help="Subset size of in-scope candidates")
+    parser.add_argument("--run-type", type=str, default="dryrun", choices=["dryrun", "real", "synthetic_eval"], help="Execution run type")
 
     args = parser.parse_args()
 
@@ -224,7 +236,8 @@ def main():
         snapshot_path=args.snapshot,
         output_dir=args.output_dir,
         seed=args.seed,
-        num_double_rated=args.double_rated,
+        num_double_rated=args.num_double_rated,
+        eval_subset=args.eval_subset,
         run_type=args.run_type,
     )
 

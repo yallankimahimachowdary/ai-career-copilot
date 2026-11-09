@@ -59,7 +59,11 @@ export function ResumePage({ activeResume, setActiveResume, isConnected }) {
       setActiveResume(fullDetail)
       setResumes((prev) => [fullDetail, ...prev.filter((r) => r.id !== fullDetail.id)])
     } catch (err) {
-      setUploadError(err.message || "Failed to upload and parse resume.")
+      if (err.code === "ECONNABORTED" || (err.message && err.message.toLowerCase().includes("timeout"))) {
+        setUploadError("Upload timed out during deep entity parsing and embedding vectorization. Please try again.")
+      } else {
+        setUploadError(err.message || "Failed to upload and parse resume.")
+      }
     } finally {
       setIsUploading(false)
     }

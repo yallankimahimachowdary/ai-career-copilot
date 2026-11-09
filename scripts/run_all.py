@@ -201,6 +201,8 @@ def run_stage_prep(
     universe_size: int = 60,
     double_rated: int = 8,
     max_resumes: Optional[int] = None,
+    eval_subset: Optional[int] = None,
+    force: bool = False,
 ) -> Dict[str, Any]:
     """Execute Stage PREP: verification, intake, universes, and annotation sheets."""
     print(f"\n========================================================")
@@ -212,7 +214,12 @@ def run_stage_prep(
     run_secret_scanner()
     health = check_services_health()
 
-    dest_dir = Path("results/real") if run_type == "real" else Path("results/dryrun")
+    if run_type == "real":
+        dest_dir = Path("results/real")
+    elif run_type == "synthetic_eval":
+        dest_dir = Path("results/synthetic_eval")
+    else:
+        dest_dir = Path("results/dryrun")
     dest_dir.mkdir(parents=True, exist_ok=True)
 
     # 2. Intake resumes
@@ -234,6 +241,9 @@ def run_stage_prep(
         run_type=run_type,
         output_path=universes_output,
         max_resumes=max_resumes,
+        eval_subset=eval_subset,
+        num_double_rated=double_rated,
+        force=force,
     )
 
     # 4. Generate annotation sheets
@@ -244,6 +254,7 @@ def run_stage_prep(
         output_dir=sheets_dir,
         seed=seed,
         num_double_rated=double_rated,
+        eval_subset=eval_subset,
         run_type=run_type,
     )
 
@@ -300,7 +311,12 @@ def run_stage_eval(
         )
 
     if dest_dir is None:
-        dest_dir = Path("results/real") if run_type == "real" else Path("results/dryrun")
+        if run_type == "real":
+            dest_dir = Path("results/real")
+        elif run_type == "synthetic_eval":
+            dest_dir = Path("results/synthetic_eval")
+        else:
+            dest_dir = Path("results/dryrun")
     else:
         dest_dir = Path(dest_dir)
     eval_output = dest_dir / "evaluation_report.json"
@@ -430,7 +446,11 @@ def main():
         choices=["prep", "eval", "all-dryrun"],
         help="Pipeline stage to execute: 'prep', 'eval', or 'all-dryrun'",
     )
-    parser.add_argument("--resumes-dir", type=str, default="data/resumes_real", help="Path to resume directory")
+    parser.add_argument("--run-type", type=str, default="real", choices=["real", "synthetic_eval", "dryrun"], help="Execution run type guard")
+    parser.add_argument("--eval-subset", type=int, default=None, help="Subset size of in-scope candidates (stratified by family)")
+    parser.add_argument("--num-double-rated", "--double-rated", dest="num_double_rated", type=int, default=8, help="Number of double-rated resumes")
+    parser.add_argument("--force", action="store_true", help="Force rebuild of frozen universes")
+    parser.add_argument("--resumes-dir", type=str, default=None, help="Path to resume directory")
     parser.add_argument(
         "--snapshot",
         type=str,
@@ -446,19 +466,31 @@ def main():
     args = parser.parse_args()
 
     if args.stage == "prep":
+        res_dir = args.resumes_dir
+        if res_dir is None:
+            res_dir = "data/resumes_dryrun" if args.run_type == "synthetic_eval" else "data/resumes_real"
         run_stage_prep(
-            resumes_dir=args.resumes_dir,
+            resumes_dir=res_dir,
             snapshot_path=args.snapshot,
-            run_type="real",
+            run_type=args.run_type,
             seed=args.seed,
             max_resumes=args.max_resumes,
+            eval_subset=args.eval_subset,
+            double_rated=args.num_double_rated,
+            force=args.force,
         )
     elif args.stage == "eval":
+        res_dir = args.resumes_dir
+        if res_dir is None:
+            res_dir = "data/resumes_dryrun" if args.run_type == "synthetic_eval" else "data/resumes_real"
+        lbl_path = args.labels
+        if lbl_path == "results/real/labels.jsonl" and args.run_type == "synthetic_eval":
+            lbl_path = "results/synthetic_eval/labels.jsonl"
         run_stage_eval(
-            labels_path=args.labels,
+            labels_path=lbl_path,
             snapshot_path=args.snapshot,
-            resumes_dir=args.resumes_dir,
-            run_type="real",
+            resumes_dir=res_dir,
+            run_type=args.run_type,
             seed=args.seed,
             repeats=args.repeats,
             max_resumes=args.max_resumes,

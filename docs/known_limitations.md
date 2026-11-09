@@ -339,3 +339,12 @@ Audit of `results/dryrun/item3_ollama_stability.json` conducted on-disk in this 
 
 R13e printed a different content, model (`deepseek-r1:8b`) and timestamp for this hash; the reports are inconsistent; all R13b and R13e Ollama stability numbers are UNVERIFIED and must not be cited.
 
+
+---
+
+## 8. Synthetic Benchmark Limitations & Demarcation
+
+- **Template-Generated Resumes:** All synthetic candidate resumes (data/resumes_dryrun/SYN_001.pdf through SYN_095.pdf) were generated from template layouts sharing a single common typographical and structural format. Real candidate resumes exhibit high layout diversity, non-standard headings, graphics, and multi-column formats not captured by these templates.
+- **Taxonomy Tuning Optimism:** The skill extraction taxonomy (Taxonomy v2.1) was tuned with visibility into vocabulary patterns from these template-generated resumes. Consequently, entity extraction precision and recall metrics on this synthetic dataset are optimistic relative to unseen real-world documents.
+- **Empirical Generalizability:** Ranking metrics, ablation results, and quality benchmarks computed under 
+un_type=synthetic_eval reflect system consistency and relative architectural differences under controlled synthetic conditions; they do not show or guarantee performance on real human candidates.
