@@ -7,7 +7,7 @@ export const apiClient = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 30000, // 30s default; LLM-heavy calls override per-request
+  timeout: 120000, // 120s default: allows sufficient time for LLM synthesis, dense embeddings, and PDF extraction
 })
 
 // Request interceptor: attach bearer token safely
