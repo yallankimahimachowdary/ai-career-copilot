@@ -67,4 +67,4 @@ nest-asyncio==1.6.0
 # Multi-Agent Orchestration
 langgraph==0.2.76
 psutil==7.2.2
-matplotlib==X.Y.Z
+matplotlib==3.11.2
