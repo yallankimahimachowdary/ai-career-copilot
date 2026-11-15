@@ -74,3 +74,5 @@ frontend/dist/
 dist/
 
 results/synthetic_eval/
+
+!/data/college_demo/
