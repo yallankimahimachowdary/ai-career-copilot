@@ -1,0 +1,21 @@
+Candidate ID,Candidate Name,Candidate Family,Top-1 Job ID,Top-1 Job Title,Top-1 Job Family,In Candidate Family,Relevant Under Generator Rule,Matched Skills Count,Required Skills Count,Raw Overlap Fraction,Min-Max Normalised Score
+SYN_DEMO_001,Aarav Sharma,Data/AI,JOB_DEMO_002,Associate Machine Learning Engineer,Data/AI,Yes,Yes,3,5,0.6000,0.9623
+SYN_DEMO_002,Aditi Patel,Web/Software,JOB_DEMO_005,Backend Python Engineer,Web/Software,Yes,Yes,4,5,0.8000,0.9872
+SYN_DEMO_003,Vikram Reddy,Cybersecurity/Cloud,JOB_DEMO_007,Cloud Security Architect,Cybersecurity/Cloud,Yes,Yes,5,6,0.8333,1.0000
+SYN_DEMO_004,Ananya Deshmukh,Mobile/UI-UX,JOB_DEMO_009,Senior Android Engineer,Mobile/UI-UX,Yes,Yes,3,5,0.6000,0.9517
+SYN_DEMO_005,Rohan Mehta,Data/AI,JOB_DEMO_001,Senior Data Scientist,Data/AI,Yes,Yes,6,6,1.0000,1.0000
+SYN_DEMO_006,Pooja Nair,Web/Software,JOB_DEMO_004,Full Stack Developer,Web/Software,Yes,Yes,5,6,0.8333,1.0000
+SYN_DEMO_007,Siddharth Verma,Cybersecurity/Cloud,JOB_DEMO_006,DevOps & Cloud Engineer,Web/Software,No,No,1,6,0.1667,0.8845
+SYN_DEMO_008,Neha Kulkarni,Mobile/UI-UX,JOB_DEMO_009,Senior Android Engineer,Mobile/UI-UX,Yes,Yes,5,5,1.0000,1.0000
+SYN_DEMO_009,Kavya Iyer,Data/AI,JOB_DEMO_002,Associate Machine Learning Engineer,Data/AI,Yes,Yes,3,5,0.6000,0.9376
+SYN_DEMO_010,Arjun Menon,Web/Software,JOB_DEMO_004,Full Stack Developer,Web/Software,Yes,Yes,4,6,0.6667,1.0000
+SYN_DEMO_011,Priya Chopra,Cybersecurity/Cloud,JOB_DEMO_007,Cloud Security Architect,Cybersecurity/Cloud,Yes,Yes,5,6,0.8333,1.0000
+SYN_DEMO_012,Rahul Sen,Mobile/UI-UX,JOB_DEMO_009,Senior Android Engineer,Mobile/UI-UX,Yes,Yes,5,5,1.0000,1.0000
+SYN_DEMO_013,Tanvi Naidu,Data/AI,JOB_DEMO_002,Associate Machine Learning Engineer,Data/AI,Yes,Yes,2,5,0.4000,0.9414
+SYN_DEMO_014,Kunal Bose,Web/Software,JOB_DEMO_004,Full Stack Developer,Web/Software,Yes,Yes,5,6,0.8333,0.9936
+SYN_DEMO_015,Divya Hegde,Cybersecurity/Cloud,JOB_DEMO_007,Cloud Security Architect,Cybersecurity/Cloud,Yes,Yes,5,6,0.8333,1.0000
+SYN_DEMO_016,Akash Rao,Mobile/UI-UX,JOB_DEMO_009,Senior Android Engineer,Mobile/UI-UX,Yes,Yes,2,5,0.4000,0.9782
+SYN_DEMO_017,Sneha Joshi,Data/AI,JOB_DEMO_002,Associate Machine Learning Engineer,Data/AI,Yes,Yes,3,5,0.6000,0.9489
+SYN_DEMO_018,Varun Bhat,Web/Software,JOB_DEMO_004,Full Stack Developer,Web/Software,Yes,Yes,6,6,1.0000,1.0000
+SYN_DEMO_019,Meera Pillai,Cybersecurity/Cloud,JOB_DEMO_007,Cloud Security Architect,Cybersecurity/Cloud,Yes,Yes,4,6,0.6667,1.0000
+SYN_DEMO_020,Tarun Gupta,Mobile/UI-UX,JOB_DEMO_009,Senior Android Engineer,Mobile/UI-UX,Yes,Yes,5,5,1.0000,1.0000

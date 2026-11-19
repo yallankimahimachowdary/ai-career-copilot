@@ -1,0 +1,4698 @@
+{
+  "metadata": {
+    "dataset_label": "SYNTHETIC_COLLEGE_DEMO",
+    "seed": 42,
+    "note": "Relevance is defined by the generator's rule and the matcher also uses skills, so the scores show consistent behaviour on synthetic data, not accuracy on real candidates.",
+    "total_candidates": 20,
+    "total_jobs": 10,
+    "total_pairs": 200
+  },
+  "candidates": [
+    {
+      "candidate_id": "SYN_DEMO_001",
+      "candidate_name": "Aarav Sharma",
+      "role_family": "Data/AI",
+      "seniority_level": "junior",
+      "target_role": "Data Scientist",
+      "expected_skills": [
+        "Machine Learning",
+        "NLP",
+        "PyTorch",
+        "Python",
+        "Scikit-Learn",
+        "TensorFlow"
+      ],
+      "expected_education": {
+        "degree": "B.Tech in Computer Science",
+        "institution": "Indian Institute of Technology Madras",
+        "graduation_year": 2024
+      },
+      "expected_experience": [
+        {
+          "company": "TechCorp Solutions",
+          "role": "Junior Data Scientist",
+          "years": 1
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_001.txt"
+    },
+    {
+      "candidate_id": "SYN_DEMO_002",
+      "candidate_name": "Aditi Patel",
+      "role_family": "Web/Software",
+      "seniority_level": "mid",
+      "target_role": "Frontend Developer",
+      "expected_skills": [
+        "Docker",
+        "FastAPI",
+        "Git",
+        "JavaScript",
+        "Node.js",
+        "Python",
+        "REST APIs",
+        "TypeScript"
+      ],
+      "expected_education": {
+        "degree": "M.Tech in Information Technology",
+        "institution": "National Institute of Technology Karnataka",
+        "graduation_year": 2021
+      },
+      "expected_experience": [
+        {
+          "company": "DataPulse Analytics",
+          "role": "Mid Frontend Developer",
+          "years": 4
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_002.txt"
+    },
+    {
+      "candidate_id": "SYN_DEMO_003",
+      "candidate_name": "Vikram Reddy",
+      "role_family": "Cybersecurity/Cloud",
+      "seniority_level": "senior",
+      "target_role": "Cloud Security Engineer",
+      "expected_skills": [
+        "AWS",
+        "CI/CD",
+        "Cryptography",
+        "Docker",
+        "Firewalls",
+        "IAM",
+        "Linux",
+        "Network Security",
+        "Terraform"
+      ],
+      "expected_education": {
+        "degree": "B.Tech in Computer Science",
+        "institution": "Birla Institute of Technology and Science Pilani",
+        "graduation_year": 2017
+      },
+      "expected_experience": [
+        {
+          "company": "CloudNative Systems",
+          "role": "Senior Cloud Security Engineer",
+          "years": 8
+        },
+        {
+          "company": "InnoSoft Innovations",
+          "role": "Mid Cloud Security Engineer",
+          "years": 3
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_003.txt"
+    },
+    {
+      "candidate_id": "SYN_DEMO_004",
+      "candidate_name": "Ananya Deshmukh",
+      "role_family": "Mobile/UI-UX",
+      "seniority_level": "junior",
+      "target_role": "Mobile App Engineer",
+      "expected_skills": [
+        "Figma",
+        "Git",
+        "Kotlin",
+        "REST APIs",
+        "Swift",
+        "UI/UX Design"
+      ],
+      "expected_education": {
+        "degree": "M.Tech in Information Technology",
+        "institution": "Vellore Institute of Technology",
+        "graduation_year": 2024
+      },
+      "expected_experience": [
+        {
+          "company": "InnoSoft Innovations",
+          "role": "Junior Mobile App Engineer",
+          "years": 1
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_004.txt"
+    },
+    {
+      "candidate_id": "SYN_DEMO_005",
+      "candidate_name": "Rohan Mehta",
+      "role_family": "Data/AI",
+      "seniority_level": "mid",
+      "target_role": "Data Scientist",
+      "expected_skills": [
+        "Data Visualization",
+        "Deep Learning",
+        "Machine Learning",
+        "PyTorch",
+        "Python",
+        "SQL",
+        "Scikit-Learn",
+        "TensorFlow"
+      ],
+      "expected_education": {
+        "degree": "B.Tech in Computer Science",
+        "institution": "Delhi Technological University",
+        "graduation_year": 2021
+      },
+      "expected_experience": [
+        {
+          "company": "NextGen Digital",
+          "role": "Mid Data Scientist",
+          "years": 4
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_005.txt"
+    },
+    {
+      "candidate_id": "SYN_DEMO_006",
+      "candidate_name": "Pooja Nair",
+      "role_family": "Web/Software",
+      "seniority_level": "senior",
+      "target_role": "Frontend Developer",
+      "expected_skills": [
+        "Docker",
+        "FastAPI",
+        "Git",
+        "JavaScript",
+        "Node.js",
+        "PostgreSQL",
+        "Python",
+        "React",
+        "TypeScript"
+      ],
+      "expected_education": {
+        "degree": "M.Tech in Information Technology",
+        "institution": "Anna University Chennai",
+        "graduation_year": 2017
+      },
+      "expected_experience": [
+        {
+          "company": "CyberShield Labs",
+          "role": "Senior Frontend Developer",
+          "years": 8
+        },
+        {
+          "company": "TechCorp Solutions",
+          "role": "Mid Frontend Developer",
+          "years": 3
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_006.txt"
+    },
+    {
+      "candidate_id": "SYN_DEMO_007",
+      "candidate_name": "Siddharth Verma",
+      "role_family": "Cybersecurity/Cloud",
+      "seniority_level": "junior",
+      "target_role": "Cloud Security Engineer",
+      "expected_skills": [
+        "Cryptography",
+        "Docker",
+        "Firewalls",
+        "IAM",
+        "Network Security",
+        "Terraform"
+      ],
+      "expected_education": {
+        "degree": "B.Tech in Computer Science",
+        "institution": "Indian Institute of Technology Madras",
+        "graduation_year": 2024
+      },
+      "expected_experience": [
+        {
+          "company": "TechCorp Solutions",
+          "role": "Junior Cloud Security Engineer",
+          "years": 1
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_007.txt"
+    },
+    {
+      "candidate_id": "SYN_DEMO_008",
+      "candidate_name": "Neha Kulkarni",
+      "role_family": "Mobile/UI-UX",
+      "seniority_level": "mid",
+      "target_role": "Mobile App Engineer",
+      "expected_skills": [
+        "Figma",
+        "Flutter",
+        "Git",
+        "Kotlin",
+        "Mobile Design",
+        "REST APIs",
+        "Swift",
+        "Wireframing"
+      ],
+      "expected_education": {
+        "degree": "M.Tech in Information Technology",
+        "institution": "National Institute of Technology Karnataka",
+        "graduation_year": 2021
+      },
+      "expected_experience": [
+        {
+          "company": "DataPulse Analytics",
+          "role": "Mid Mobile App Engineer",
+          "years": 4
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_008.txt"
+    },
+    {
+      "candidate_id": "SYN_DEMO_009",
+      "candidate_name": "Kavya Iyer",
+      "role_family": "Data/AI",
+      "seniority_level": "senior",
+      "target_role": "Data Scientist",
+      "expected_skills": [
+        "Data Visualization",
+        "Deep Learning",
+        "Machine Learning",
+        "NLP",
+        "Pandas",
+        "PyTorch",
+        "SQL",
+        "Scikit-Learn",
+        "TensorFlow"
+      ],
+      "expected_education": {
+        "degree": "B.Tech in Computer Science",
+        "institution": "Birla Institute of Technology and Science Pilani",
+        "graduation_year": 2017
+      },
+      "expected_experience": [
+        {
+          "company": "CloudNative Systems",
+          "role": "Senior Data Scientist",
+          "years": 8
+        },
+        {
+          "company": "InnoSoft Innovations",
+          "role": "Mid Data Scientist",
+          "years": 3
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_009.txt"
+    },
+    {
+      "candidate_id": "SYN_DEMO_010",
+      "candidate_name": "Arjun Menon",
+      "role_family": "Web/Software",
+      "seniority_level": "junior",
+      "target_role": "Frontend Developer",
+      "expected_skills": [
+        "FastAPI",
+        "Git",
+        "JavaScript",
+        "Node.js",
+        "PostgreSQL",
+        "TypeScript"
+      ],
+      "expected_education": {
+        "degree": "M.Tech in Information Technology",
+        "institution": "Vellore Institute of Technology",
+        "graduation_year": 2024
+      },
+      "expected_experience": [
+        {
+          "company": "InnoSoft Innovations",
+          "role": "Junior Frontend Developer",
+          "years": 1
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_010.txt"
+    },
+    {
+      "candidate_id": "SYN_DEMO_011",
+      "candidate_name": "Priya Chopra",
+      "role_family": "Cybersecurity/Cloud",
+      "seniority_level": "mid",
+      "target_role": "Cloud Security Engineer",
+      "expected_skills": [
+        "CI/CD",
+        "Docker",
+        "Firewalls",
+        "IAM",
+        "Kubernetes",
+        "Linux",
+        "Network Security",
+        "Terraform"
+      ],
+      "expected_education": {
+        "degree": "B.Tech in Computer Science",
+        "institution": "Delhi Technological University",
+        "graduation_year": 2021
+      },
+      "expected_experience": [
+        {
+          "company": "NextGen Digital",
+          "role": "Mid Cloud Security Engineer",
+          "years": 4
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_011.txt"
+    },
+    {
+      "candidate_id": "SYN_DEMO_012",
+      "candidate_name": "Rahul Sen",
+      "role_family": "Mobile/UI-UX",
+      "seniority_level": "senior",
+      "target_role": "Mobile App Engineer",
+      "expected_skills": [
+        "Figma",
+        "Flutter",
+        "Git",
+        "Kotlin",
+        "Mobile Design",
+        "REST APIs",
+        "React Native",
+        "Swift",
+        "Wireframing"
+      ],
+      "expected_education": {
+        "degree": "M.Tech in Information Technology",
+        "institution": "Anna University Chennai",
+        "graduation_year": 2017
+      },
+      "expected_experience": [
+        {
+          "company": "CyberShield Labs",
+          "role": "Senior Mobile App Engineer",
+          "years": 8
+        },
+        {
+          "company": "TechCorp Solutions",
+          "role": "Mid Mobile App Engineer",
+          "years": 3
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_012.txt"
+    },
+    {
+      "candidate_id": "SYN_DEMO_013",
+      "candidate_name": "Tanvi Naidu",
+      "role_family": "Data/AI",
+      "seniority_level": "junior",
+      "target_role": "Data Scientist",
+      "expected_skills": [
+        "Data Visualization",
+        "Deep Learning",
+        "NLP",
+        "Pandas",
+        "PyTorch",
+        "TensorFlow"
+      ],
+      "expected_education": {
+        "degree": "B.Tech in Computer Science",
+        "institution": "Indian Institute of Technology Madras",
+        "graduation_year": 2024
+      },
+      "expected_experience": [
+        {
+          "company": "TechCorp Solutions",
+          "role": "Junior Data Scientist",
+          "years": 1
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_013.txt"
+    },
+    {
+      "candidate_id": "SYN_DEMO_014",
+      "candidate_name": "Kunal Bose",
+      "role_family": "Web/Software",
+      "seniority_level": "mid",
+      "target_role": "Frontend Developer",
+      "expected_skills": [
+        "Docker",
+        "FastAPI",
+        "Git",
+        "JavaScript",
+        "PostgreSQL",
+        "REST APIs",
+        "React",
+        "TypeScript"
+      ],
+      "expected_education": {
+        "degree": "M.Tech in Information Technology",
+        "institution": "National Institute of Technology Karnataka",
+        "graduation_year": 2021
+      },
+      "expected_experience": [
+        {
+          "company": "DataPulse Analytics",
+          "role": "Mid Frontend Developer",
+          "years": 4
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_014.txt"
+    },
+    {
+      "candidate_id": "SYN_DEMO_015",
+      "candidate_name": "Divya Hegde",
+      "role_family": "Cybersecurity/Cloud",
+      "seniority_level": "senior",
+      "target_role": "Cloud Security Engineer",
+      "expected_skills": [
+        "AWS",
+        "CI/CD",
+        "Cryptography",
+        "Docker",
+        "Firewalls",
+        "IAM",
+        "Kubernetes",
+        "Linux",
+        "Terraform"
+      ],
+      "expected_education": {
+        "degree": "B.Tech in Computer Science",
+        "institution": "Birla Institute of Technology and Science Pilani",
+        "graduation_year": 2017
+      },
+      "expected_experience": [
+        {
+          "company": "CloudNative Systems",
+          "role": "Senior Cloud Security Engineer",
+          "years": 8
+        },
+        {
+          "company": "InnoSoft Innovations",
+          "role": "Mid Cloud Security Engineer",
+          "years": 3
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_015.txt"
+    },
+    {
+      "candidate_id": "SYN_DEMO_016",
+      "candidate_name": "Akash Rao",
+      "role_family": "Mobile/UI-UX",
+      "seniority_level": "junior",
+      "target_role": "Mobile App Engineer",
+      "expected_skills": [
+        "Figma",
+        "Flutter",
+        "REST APIs",
+        "React Native",
+        "Swift",
+        "Wireframing"
+      ],
+      "expected_education": {
+        "degree": "M.Tech in Information Technology",
+        "institution": "Vellore Institute of Technology",
+        "graduation_year": 2024
+      },
+      "expected_experience": [
+        {
+          "company": "InnoSoft Innovations",
+          "role": "Junior Mobile App Engineer",
+          "years": 1
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_016.txt"
+    },
+    {
+      "candidate_id": "SYN_DEMO_017",
+      "candidate_name": "Sneha Joshi",
+      "role_family": "Data/AI",
+      "seniority_level": "mid",
+      "target_role": "Data Scientist",
+      "expected_skills": [
+        "Deep Learning",
+        "Machine Learning",
+        "NLP",
+        "Pandas",
+        "PyTorch",
+        "SQL",
+        "Scikit-Learn",
+        "TensorFlow"
+      ],
+      "expected_education": {
+        "degree": "B.Tech in Computer Science",
+        "institution": "Delhi Technological University",
+        "graduation_year": 2021
+      },
+      "expected_experience": [
+        {
+          "company": "NextGen Digital",
+          "role": "Mid Data Scientist",
+          "years": 4
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_017.txt"
+    },
+    {
+      "candidate_id": "SYN_DEMO_018",
+      "candidate_name": "Varun Bhat",
+      "role_family": "Web/Software",
+      "seniority_level": "senior",
+      "target_role": "Frontend Developer",
+      "expected_skills": [
+        "Docker",
+        "FastAPI",
+        "Git",
+        "Node.js",
+        "PostgreSQL",
+        "Python",
+        "REST APIs",
+        "React",
+        "TypeScript"
+      ],
+      "expected_education": {
+        "degree": "M.Tech in Information Technology",
+        "institution": "Anna University Chennai",
+        "graduation_year": 2017
+      },
+      "expected_experience": [
+        {
+          "company": "CyberShield Labs",
+          "role": "Senior Frontend Developer",
+          "years": 8
+        },
+        {
+          "company": "TechCorp Solutions",
+          "role": "Mid Frontend Developer",
+          "years": 3
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_018.txt"
+    },
+    {
+      "candidate_id": "SYN_DEMO_019",
+      "candidate_name": "Meera Pillai",
+      "role_family": "Cybersecurity/Cloud",
+      "seniority_level": "junior",
+      "target_role": "Cloud Security Engineer",
+      "expected_skills": [
+        "AWS",
+        "Cryptography",
+        "Firewalls",
+        "IAM",
+        "Kubernetes",
+        "Terraform"
+      ],
+      "expected_education": {
+        "degree": "B.Tech in Computer Science",
+        "institution": "Indian Institute of Technology Madras",
+        "graduation_year": 2024
+      },
+      "expected_experience": [
+        {
+          "company": "TechCorp Solutions",
+          "role": "Junior Cloud Security Engineer",
+          "years": 1
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_019.txt"
+    },
+    {
+      "candidate_id": "SYN_DEMO_020",
+      "candidate_name": "Tarun Gupta",
+      "role_family": "Mobile/UI-UX",
+      "seniority_level": "mid",
+      "target_role": "Mobile App Engineer",
+      "expected_skills": [
+        "Flutter",
+        "Git",
+        "Kotlin",
+        "Mobile Design",
+        "REST APIs",
+        "React Native",
+        "Swift",
+        "Wireframing"
+      ],
+      "expected_education": {
+        "degree": "M.Tech in Information Technology",
+        "institution": "National Institute of Technology Karnataka",
+        "graduation_year": 2021
+      },
+      "expected_experience": [
+        {
+          "company": "DataPulse Analytics",
+          "role": "Mid Mobile App Engineer",
+          "years": 4
+        }
+      ],
+      "file_path": "C:/Users/mahim/Projects/ai-career-copilot/data/college_demo/resumes/SYN_DEMO_020.txt"
+    }
+  ],
+  "jobs": [
+    {
+      "job_id": "JOB_DEMO_001",
+      "title": "Senior Data Scientist",
+      "role_family": "Data/AI",
+      "required_skills": [
+        "Python",
+        "Machine Learning",
+        "PyTorch",
+        "SQL",
+        "Scikit-Learn",
+        "Deep Learning"
+      ],
+      "description": "Seeking a passionate Senior Data Scientist to build high-performance systems. Required proficiency in Python, Machine Learning, PyTorch, SQL, Scikit-Learn, Deep Learning."
+    },
+    {
+      "job_id": "JOB_DEMO_002",
+      "title": "Associate Machine Learning Engineer",
+      "role_family": "Data/AI",
+      "required_skills": [
+        "Python",
+        "Machine Learning",
+        "TensorFlow",
+        "Pandas",
+        "Git"
+      ],
+      "description": "Seeking a passionate Associate Machine Learning Engineer to build high-performance systems. Required proficiency in Python, Machine Learning, TensorFlow, Pandas, Git."
+    },
+    {
+      "job_id": "JOB_DEMO_003",
+      "title": "Data Analyst",
+      "role_family": "Data/AI",
+      "required_skills": [
+        "SQL",
+        "Pandas",
+        "Data Visualization",
+        "Python"
+      ],
+      "description": "Seeking a passionate Data Analyst to build high-performance systems. Required proficiency in SQL, Pandas, Data Visualization, Python."
+    },
+    {
+      "job_id": "JOB_DEMO_004",
+      "title": "Full Stack Developer",
+      "role_family": "Web/Software",
+      "required_skills": [
+        "React",
+        "Node.js",
+        "TypeScript",
+        "PostgreSQL",
+        "REST APIs",
+        "Git"
+      ],
+      "description": "Seeking a passionate Full Stack Developer to build high-performance systems. Required proficiency in React, Node.js, TypeScript, PostgreSQL, REST APIs, Git."
+    },
+    {
+      "job_id": "JOB_DEMO_005",
+      "title": "Backend Python Engineer",
+      "role_family": "Web/Software",
+      "required_skills": [
+        "Python",
+        "FastAPI",
+        "PostgreSQL",
+        "Docker",
+        "REST APIs"
+      ],
+      "description": "Seeking a passionate Backend Python Engineer to build high-performance systems. Required proficiency in Python, FastAPI, PostgreSQL, Docker, REST APIs."
+    },
+    {
+      "job_id": "JOB_DEMO_006",
+      "title": "DevOps & Cloud Engineer",
+      "role_family": "Web/Software",
+      "required_skills": [
+        "Docker",
+        "Git",
+        "PostgreSQL",
+        "CI/CD",
+        "Linux",
+        "REST APIs"
+      ],
+      "description": "Seeking a passionate DevOps & Cloud Engineer to build high-performance systems. Required proficiency in Docker, Git, PostgreSQL, CI/CD, Linux, REST APIs."
+    },
+    {
+      "job_id": "JOB_DEMO_007",
+      "title": "Cloud Security Architect",
+      "role_family": "Cybersecurity/Cloud",
+      "required_skills": [
+        "AWS",
+        "Kubernetes",
+        "IAM",
+        "Network Security",
+        "Terraform",
+        "Linux"
+      ],
+      "description": "Seeking a passionate Cloud Security Architect to build high-performance systems. Required proficiency in AWS, Kubernetes, IAM, Network Security, Terraform, Linux."
+    },
+    {
+      "job_id": "JOB_DEMO_008",
+      "title": "Cybersecurity Analyst",
+      "role_family": "Cybersecurity/Cloud",
+      "required_skills": [
+        "Network Security",
+        "Cryptography",
+        "Linux",
+        "Firewalls",
+        "IAM"
+      ],
+      "description": "Seeking a passionate Cybersecurity Analyst to build high-performance systems. Required proficiency in Network Security, Cryptography, Linux, Firewalls, IAM."
+    },
+    {
+      "job_id": "JOB_DEMO_009",
+      "title": "Senior Android Engineer",
+      "role_family": "Mobile/UI-UX",
+      "required_skills": [
+        "Kotlin",
+        "REST APIs",
+        "Git",
+        "Flutter",
+        "Mobile Design"
+      ],
+      "description": "Seeking a passionate Senior Android Engineer to build high-performance systems. Required proficiency in Kotlin, REST APIs, Git, Flutter, Mobile Design."
+    },
+    {
+      "job_id": "JOB_DEMO_010",
+      "title": "UI/UX Product Designer",
+      "role_family": "Mobile/UI-UX",
+      "required_skills": [
+        "Figma",
+        "UI/UX Design",
+        "Wireframing",
+        "Mobile Design"
+      ],
+      "description": "Seeking a passionate UI/UX Product Designer to build high-performance systems. Required proficiency in Figma, UI/UX Design, Wireframing, Mobile Design."
+    }
+  ],
+  "pairwise_ground_truth": [
+    {
+      "candidate_id": "SYN_DEMO_001",
+      "candidate_name": "Aarav Sharma",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Data/AI",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Machine Learning",
+        "PyTorch",
+        "Python",
+        "Scikit-Learn"
+      ],
+      "missing_skills": [
+        "Deep Learning",
+        "SQL"
+      ],
+      "match_ratio": 0.6667,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_001",
+      "candidate_name": "Aarav Sharma",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Machine Learning",
+        "Python",
+        "TensorFlow"
+      ],
+      "missing_skills": [
+        "Git",
+        "Pandas"
+      ],
+      "match_ratio": 0.6,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_001",
+      "candidate_name": "Aarav Sharma",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Data/AI",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Python"
+      ],
+      "missing_skills": [
+        "Data Visualization",
+        "Pandas",
+        "SQL"
+      ],
+      "match_ratio": 0.25,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant"
+    },
+    {
+      "candidate_id": "SYN_DEMO_001",
+      "candidate_name": "Aarav Sharma",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Data/AI",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "Git",
+        "Node.js",
+        "PostgreSQL",
+        "REST APIs",
+        "React",
+        "TypeScript"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_001",
+      "candidate_name": "Aarav Sharma",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Python"
+      ],
+      "missing_skills": [
+        "Docker",
+        "FastAPI",
+        "PostgreSQL",
+        "REST APIs"
+      ],
+      "match_ratio": 0.2,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_001",
+      "candidate_name": "Aarav Sharma",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "CI/CD",
+        "Docker",
+        "Git",
+        "Linux",
+        "PostgreSQL",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_001",
+      "candidate_name": "Aarav Sharma",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Data/AI",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "AWS",
+        "IAM",
+        "Kubernetes",
+        "Linux",
+        "Network Security",
+        "Terraform"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_001",
+      "candidate_name": "Aarav Sharma",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Data/AI",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "Cryptography",
+        "Firewalls",
+        "IAM",
+        "Linux",
+        "Network Security"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_001",
+      "candidate_name": "Aarav Sharma",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Flutter",
+        "Git",
+        "Kotlin",
+        "Mobile Design",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_001",
+      "candidate_name": "Aarav Sharma",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Data/AI",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Figma",
+        "Mobile Design",
+        "UI/UX Design",
+        "Wireframing"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_002",
+      "candidate_name": "Aditi Patel",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Web/Software",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Python"
+      ],
+      "missing_skills": [
+        "Deep Learning",
+        "Machine Learning",
+        "PyTorch",
+        "SQL",
+        "Scikit-Learn"
+      ],
+      "match_ratio": 0.1667,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_002",
+      "candidate_name": "Aditi Patel",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Git",
+        "Python"
+      ],
+      "missing_skills": [
+        "Machine Learning",
+        "Pandas",
+        "TensorFlow"
+      ],
+      "match_ratio": 0.4,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_002",
+      "candidate_name": "Aditi Patel",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Web/Software",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Python"
+      ],
+      "missing_skills": [
+        "Data Visualization",
+        "Pandas",
+        "SQL"
+      ],
+      "match_ratio": 0.25,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_002",
+      "candidate_name": "Aditi Patel",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Web/Software",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Git",
+        "Node.js",
+        "REST APIs",
+        "TypeScript"
+      ],
+      "missing_skills": [
+        "PostgreSQL",
+        "React"
+      ],
+      "match_ratio": 0.6667,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_002",
+      "candidate_name": "Aditi Patel",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Docker",
+        "FastAPI",
+        "Python",
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "PostgreSQL"
+      ],
+      "match_ratio": 0.8,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_002",
+      "candidate_name": "Aditi Patel",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Docker",
+        "Git",
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "CI/CD",
+        "Linux",
+        "PostgreSQL"
+      ],
+      "match_ratio": 0.5,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_002",
+      "candidate_name": "Aditi Patel",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Web/Software",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "AWS",
+        "IAM",
+        "Kubernetes",
+        "Linux",
+        "Network Security",
+        "Terraform"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_002",
+      "candidate_name": "Aditi Patel",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Web/Software",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "Cryptography",
+        "Firewalls",
+        "IAM",
+        "Linux",
+        "Network Security"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_002",
+      "candidate_name": "Aditi Patel",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [
+        "Git",
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "Flutter",
+        "Kotlin",
+        "Mobile Design"
+      ],
+      "match_ratio": 0.4,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_002",
+      "candidate_name": "Aditi Patel",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Web/Software",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Figma",
+        "Mobile Design",
+        "UI/UX Design",
+        "Wireframing"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_003",
+      "candidate_name": "Vikram Reddy",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Deep Learning",
+        "Machine Learning",
+        "PyTorch",
+        "Python",
+        "SQL",
+        "Scikit-Learn"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_003",
+      "candidate_name": "Vikram Reddy",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Git",
+        "Machine Learning",
+        "Pandas",
+        "Python",
+        "TensorFlow"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_003",
+      "candidate_name": "Vikram Reddy",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Data Visualization",
+        "Pandas",
+        "Python",
+        "SQL"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_003",
+      "candidate_name": "Vikram Reddy",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "Git",
+        "Node.js",
+        "PostgreSQL",
+        "REST APIs",
+        "React",
+        "TypeScript"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_003",
+      "candidate_name": "Vikram Reddy",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Docker"
+      ],
+      "missing_skills": [
+        "FastAPI",
+        "PostgreSQL",
+        "Python",
+        "REST APIs"
+      ],
+      "match_ratio": 0.2,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_003",
+      "candidate_name": "Vikram Reddy",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "CI/CD",
+        "Docker",
+        "Linux"
+      ],
+      "missing_skills": [
+        "Git",
+        "PostgreSQL",
+        "REST APIs"
+      ],
+      "match_ratio": 0.5,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_003",
+      "candidate_name": "Vikram Reddy",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [
+        "AWS",
+        "IAM",
+        "Linux",
+        "Network Security",
+        "Terraform"
+      ],
+      "missing_skills": [
+        "Kubernetes"
+      ],
+      "match_ratio": 0.8333,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_003",
+      "candidate_name": "Vikram Reddy",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [
+        "Cryptography",
+        "Firewalls",
+        "IAM",
+        "Linux",
+        "Network Security"
+      ],
+      "missing_skills": [],
+      "match_ratio": 1.0,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_003",
+      "candidate_name": "Vikram Reddy",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Flutter",
+        "Git",
+        "Kotlin",
+        "Mobile Design",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_003",
+      "candidate_name": "Vikram Reddy",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Figma",
+        "Mobile Design",
+        "UI/UX Design",
+        "Wireframing"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_004",
+      "candidate_name": "Ananya Deshmukh",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Deep Learning",
+        "Machine Learning",
+        "PyTorch",
+        "Python",
+        "SQL",
+        "Scikit-Learn"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_004",
+      "candidate_name": "Ananya Deshmukh",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Git"
+      ],
+      "missing_skills": [
+        "Machine Learning",
+        "Pandas",
+        "Python",
+        "TensorFlow"
+      ],
+      "match_ratio": 0.2,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_004",
+      "candidate_name": "Ananya Deshmukh",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Data Visualization",
+        "Pandas",
+        "Python",
+        "SQL"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_004",
+      "candidate_name": "Ananya Deshmukh",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Git",
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "Node.js",
+        "PostgreSQL",
+        "React",
+        "TypeScript"
+      ],
+      "match_ratio": 0.3333,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_004",
+      "candidate_name": "Ananya Deshmukh",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "Docker",
+        "FastAPI",
+        "PostgreSQL",
+        "Python"
+      ],
+      "match_ratio": 0.2,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_004",
+      "candidate_name": "Ananya Deshmukh",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Git",
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "CI/CD",
+        "Docker",
+        "Linux",
+        "PostgreSQL"
+      ],
+      "match_ratio": 0.3333,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_004",
+      "candidate_name": "Ananya Deshmukh",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "AWS",
+        "IAM",
+        "Kubernetes",
+        "Linux",
+        "Network Security",
+        "Terraform"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_004",
+      "candidate_name": "Ananya Deshmukh",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "Cryptography",
+        "Firewalls",
+        "IAM",
+        "Linux",
+        "Network Security"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_004",
+      "candidate_name": "Ananya Deshmukh",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [
+        "Git",
+        "Kotlin",
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "Flutter",
+        "Mobile Design"
+      ],
+      "match_ratio": 0.6,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_004",
+      "candidate_name": "Ananya Deshmukh",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [
+        "Figma",
+        "UI/UX Design"
+      ],
+      "missing_skills": [
+        "Mobile Design",
+        "Wireframing"
+      ],
+      "match_ratio": 0.5,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_005",
+      "candidate_name": "Rohan Mehta",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Data/AI",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Deep Learning",
+        "Machine Learning",
+        "PyTorch",
+        "Python",
+        "SQL",
+        "Scikit-Learn"
+      ],
+      "missing_skills": [],
+      "match_ratio": 1.0,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_005",
+      "candidate_name": "Rohan Mehta",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Machine Learning",
+        "Python",
+        "TensorFlow"
+      ],
+      "missing_skills": [
+        "Git",
+        "Pandas"
+      ],
+      "match_ratio": 0.6,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_005",
+      "candidate_name": "Rohan Mehta",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Data/AI",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Data Visualization",
+        "Python",
+        "SQL"
+      ],
+      "missing_skills": [
+        "Pandas"
+      ],
+      "match_ratio": 0.75,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_005",
+      "candidate_name": "Rohan Mehta",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Data/AI",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "Git",
+        "Node.js",
+        "PostgreSQL",
+        "REST APIs",
+        "React",
+        "TypeScript"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_005",
+      "candidate_name": "Rohan Mehta",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Python"
+      ],
+      "missing_skills": [
+        "Docker",
+        "FastAPI",
+        "PostgreSQL",
+        "REST APIs"
+      ],
+      "match_ratio": 0.2,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_005",
+      "candidate_name": "Rohan Mehta",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "CI/CD",
+        "Docker",
+        "Git",
+        "Linux",
+        "PostgreSQL",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_005",
+      "candidate_name": "Rohan Mehta",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Data/AI",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "AWS",
+        "IAM",
+        "Kubernetes",
+        "Linux",
+        "Network Security",
+        "Terraform"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_005",
+      "candidate_name": "Rohan Mehta",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Data/AI",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "Cryptography",
+        "Firewalls",
+        "IAM",
+        "Linux",
+        "Network Security"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_005",
+      "candidate_name": "Rohan Mehta",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Flutter",
+        "Git",
+        "Kotlin",
+        "Mobile Design",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_005",
+      "candidate_name": "Rohan Mehta",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Data/AI",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Figma",
+        "Mobile Design",
+        "UI/UX Design",
+        "Wireframing"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_006",
+      "candidate_name": "Pooja Nair",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Web/Software",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Python"
+      ],
+      "missing_skills": [
+        "Deep Learning",
+        "Machine Learning",
+        "PyTorch",
+        "SQL",
+        "Scikit-Learn"
+      ],
+      "match_ratio": 0.1667,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_006",
+      "candidate_name": "Pooja Nair",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Git",
+        "Python"
+      ],
+      "missing_skills": [
+        "Machine Learning",
+        "Pandas",
+        "TensorFlow"
+      ],
+      "match_ratio": 0.4,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_006",
+      "candidate_name": "Pooja Nair",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Web/Software",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Python"
+      ],
+      "missing_skills": [
+        "Data Visualization",
+        "Pandas",
+        "SQL"
+      ],
+      "match_ratio": 0.25,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_006",
+      "candidate_name": "Pooja Nair",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Web/Software",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Git",
+        "Node.js",
+        "PostgreSQL",
+        "React",
+        "TypeScript"
+      ],
+      "missing_skills": [
+        "REST APIs"
+      ],
+      "match_ratio": 0.8333,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_006",
+      "candidate_name": "Pooja Nair",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Docker",
+        "FastAPI",
+        "PostgreSQL",
+        "Python"
+      ],
+      "missing_skills": [
+        "REST APIs"
+      ],
+      "match_ratio": 0.8,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_006",
+      "candidate_name": "Pooja Nair",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Docker",
+        "Git",
+        "PostgreSQL"
+      ],
+      "missing_skills": [
+        "CI/CD",
+        "Linux",
+        "REST APIs"
+      ],
+      "match_ratio": 0.5,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_006",
+      "candidate_name": "Pooja Nair",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Web/Software",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "AWS",
+        "IAM",
+        "Kubernetes",
+        "Linux",
+        "Network Security",
+        "Terraform"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_006",
+      "candidate_name": "Pooja Nair",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Web/Software",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "Cryptography",
+        "Firewalls",
+        "IAM",
+        "Linux",
+        "Network Security"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_006",
+      "candidate_name": "Pooja Nair",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [
+        "Git"
+      ],
+      "missing_skills": [
+        "Flutter",
+        "Kotlin",
+        "Mobile Design",
+        "REST APIs"
+      ],
+      "match_ratio": 0.2,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_006",
+      "candidate_name": "Pooja Nair",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Web/Software",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Figma",
+        "Mobile Design",
+        "UI/UX Design",
+        "Wireframing"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_007",
+      "candidate_name": "Siddharth Verma",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Deep Learning",
+        "Machine Learning",
+        "PyTorch",
+        "Python",
+        "SQL",
+        "Scikit-Learn"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_007",
+      "candidate_name": "Siddharth Verma",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Git",
+        "Machine Learning",
+        "Pandas",
+        "Python",
+        "TensorFlow"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_007",
+      "candidate_name": "Siddharth Verma",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Data Visualization",
+        "Pandas",
+        "Python",
+        "SQL"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_007",
+      "candidate_name": "Siddharth Verma",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "Git",
+        "Node.js",
+        "PostgreSQL",
+        "REST APIs",
+        "React",
+        "TypeScript"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_007",
+      "candidate_name": "Siddharth Verma",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Docker"
+      ],
+      "missing_skills": [
+        "FastAPI",
+        "PostgreSQL",
+        "Python",
+        "REST APIs"
+      ],
+      "match_ratio": 0.2,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_007",
+      "candidate_name": "Siddharth Verma",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Docker"
+      ],
+      "missing_skills": [
+        "CI/CD",
+        "Git",
+        "Linux",
+        "PostgreSQL",
+        "REST APIs"
+      ],
+      "match_ratio": 0.1667,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_007",
+      "candidate_name": "Siddharth Verma",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [
+        "IAM",
+        "Network Security",
+        "Terraform"
+      ],
+      "missing_skills": [
+        "AWS",
+        "Kubernetes",
+        "Linux"
+      ],
+      "match_ratio": 0.5,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_007",
+      "candidate_name": "Siddharth Verma",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [
+        "Cryptography",
+        "Firewalls",
+        "IAM",
+        "Network Security"
+      ],
+      "missing_skills": [
+        "Linux"
+      ],
+      "match_ratio": 0.8,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_007",
+      "candidate_name": "Siddharth Verma",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Flutter",
+        "Git",
+        "Kotlin",
+        "Mobile Design",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_007",
+      "candidate_name": "Siddharth Verma",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Figma",
+        "Mobile Design",
+        "UI/UX Design",
+        "Wireframing"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_008",
+      "candidate_name": "Neha Kulkarni",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Deep Learning",
+        "Machine Learning",
+        "PyTorch",
+        "Python",
+        "SQL",
+        "Scikit-Learn"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_008",
+      "candidate_name": "Neha Kulkarni",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Git"
+      ],
+      "missing_skills": [
+        "Machine Learning",
+        "Pandas",
+        "Python",
+        "TensorFlow"
+      ],
+      "match_ratio": 0.2,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_008",
+      "candidate_name": "Neha Kulkarni",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Data Visualization",
+        "Pandas",
+        "Python",
+        "SQL"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_008",
+      "candidate_name": "Neha Kulkarni",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Git",
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "Node.js",
+        "PostgreSQL",
+        "React",
+        "TypeScript"
+      ],
+      "match_ratio": 0.3333,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_008",
+      "candidate_name": "Neha Kulkarni",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "Docker",
+        "FastAPI",
+        "PostgreSQL",
+        "Python"
+      ],
+      "match_ratio": 0.2,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_008",
+      "candidate_name": "Neha Kulkarni",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Git",
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "CI/CD",
+        "Docker",
+        "Linux",
+        "PostgreSQL"
+      ],
+      "match_ratio": 0.3333,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_008",
+      "candidate_name": "Neha Kulkarni",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "AWS",
+        "IAM",
+        "Kubernetes",
+        "Linux",
+        "Network Security",
+        "Terraform"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_008",
+      "candidate_name": "Neha Kulkarni",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "Cryptography",
+        "Firewalls",
+        "IAM",
+        "Linux",
+        "Network Security"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_008",
+      "candidate_name": "Neha Kulkarni",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [
+        "Flutter",
+        "Git",
+        "Kotlin",
+        "Mobile Design",
+        "REST APIs"
+      ],
+      "missing_skills": [],
+      "match_ratio": 1.0,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_008",
+      "candidate_name": "Neha Kulkarni",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [
+        "Figma",
+        "Mobile Design",
+        "Wireframing"
+      ],
+      "missing_skills": [
+        "UI/UX Design"
+      ],
+      "match_ratio": 0.75,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_009",
+      "candidate_name": "Kavya Iyer",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Data/AI",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Deep Learning",
+        "Machine Learning",
+        "PyTorch",
+        "SQL",
+        "Scikit-Learn"
+      ],
+      "missing_skills": [
+        "Python"
+      ],
+      "match_ratio": 0.8333,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_009",
+      "candidate_name": "Kavya Iyer",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Machine Learning",
+        "Pandas",
+        "TensorFlow"
+      ],
+      "missing_skills": [
+        "Git",
+        "Python"
+      ],
+      "match_ratio": 0.6,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_009",
+      "candidate_name": "Kavya Iyer",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Data/AI",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Data Visualization",
+        "Pandas",
+        "SQL"
+      ],
+      "missing_skills": [
+        "Python"
+      ],
+      "match_ratio": 0.75,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_009",
+      "candidate_name": "Kavya Iyer",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Data/AI",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "Git",
+        "Node.js",
+        "PostgreSQL",
+        "REST APIs",
+        "React",
+        "TypeScript"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_009",
+      "candidate_name": "Kavya Iyer",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "Docker",
+        "FastAPI",
+        "PostgreSQL",
+        "Python",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_009",
+      "candidate_name": "Kavya Iyer",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "CI/CD",
+        "Docker",
+        "Git",
+        "Linux",
+        "PostgreSQL",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_009",
+      "candidate_name": "Kavya Iyer",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Data/AI",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "AWS",
+        "IAM",
+        "Kubernetes",
+        "Linux",
+        "Network Security",
+        "Terraform"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_009",
+      "candidate_name": "Kavya Iyer",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Data/AI",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "Cryptography",
+        "Firewalls",
+        "IAM",
+        "Linux",
+        "Network Security"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_009",
+      "candidate_name": "Kavya Iyer",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Flutter",
+        "Git",
+        "Kotlin",
+        "Mobile Design",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_009",
+      "candidate_name": "Kavya Iyer",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Data/AI",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Figma",
+        "Mobile Design",
+        "UI/UX Design",
+        "Wireframing"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_010",
+      "candidate_name": "Arjun Menon",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Web/Software",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Deep Learning",
+        "Machine Learning",
+        "PyTorch",
+        "Python",
+        "SQL",
+        "Scikit-Learn"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_010",
+      "candidate_name": "Arjun Menon",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Git"
+      ],
+      "missing_skills": [
+        "Machine Learning",
+        "Pandas",
+        "Python",
+        "TensorFlow"
+      ],
+      "match_ratio": 0.2,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_010",
+      "candidate_name": "Arjun Menon",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Web/Software",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Data Visualization",
+        "Pandas",
+        "Python",
+        "SQL"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_010",
+      "candidate_name": "Arjun Menon",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Web/Software",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Git",
+        "Node.js",
+        "PostgreSQL",
+        "TypeScript"
+      ],
+      "missing_skills": [
+        "REST APIs",
+        "React"
+      ],
+      "match_ratio": 0.6667,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_010",
+      "candidate_name": "Arjun Menon",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "FastAPI",
+        "PostgreSQL"
+      ],
+      "missing_skills": [
+        "Docker",
+        "Python",
+        "REST APIs"
+      ],
+      "match_ratio": 0.4,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_010",
+      "candidate_name": "Arjun Menon",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Git",
+        "PostgreSQL"
+      ],
+      "missing_skills": [
+        "CI/CD",
+        "Docker",
+        "Linux",
+        "REST APIs"
+      ],
+      "match_ratio": 0.3333,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant"
+    },
+    {
+      "candidate_id": "SYN_DEMO_010",
+      "candidate_name": "Arjun Menon",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Web/Software",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "AWS",
+        "IAM",
+        "Kubernetes",
+        "Linux",
+        "Network Security",
+        "Terraform"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_010",
+      "candidate_name": "Arjun Menon",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Web/Software",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "Cryptography",
+        "Firewalls",
+        "IAM",
+        "Linux",
+        "Network Security"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_010",
+      "candidate_name": "Arjun Menon",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [
+        "Git"
+      ],
+      "missing_skills": [
+        "Flutter",
+        "Kotlin",
+        "Mobile Design",
+        "REST APIs"
+      ],
+      "match_ratio": 0.2,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_010",
+      "candidate_name": "Arjun Menon",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Web/Software",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Figma",
+        "Mobile Design",
+        "UI/UX Design",
+        "Wireframing"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_011",
+      "candidate_name": "Priya Chopra",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Deep Learning",
+        "Machine Learning",
+        "PyTorch",
+        "Python",
+        "SQL",
+        "Scikit-Learn"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_011",
+      "candidate_name": "Priya Chopra",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Git",
+        "Machine Learning",
+        "Pandas",
+        "Python",
+        "TensorFlow"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_011",
+      "candidate_name": "Priya Chopra",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Data Visualization",
+        "Pandas",
+        "Python",
+        "SQL"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_011",
+      "candidate_name": "Priya Chopra",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "Git",
+        "Node.js",
+        "PostgreSQL",
+        "REST APIs",
+        "React",
+        "TypeScript"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_011",
+      "candidate_name": "Priya Chopra",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Docker"
+      ],
+      "missing_skills": [
+        "FastAPI",
+        "PostgreSQL",
+        "Python",
+        "REST APIs"
+      ],
+      "match_ratio": 0.2,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_011",
+      "candidate_name": "Priya Chopra",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "CI/CD",
+        "Docker",
+        "Linux"
+      ],
+      "missing_skills": [
+        "Git",
+        "PostgreSQL",
+        "REST APIs"
+      ],
+      "match_ratio": 0.5,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_011",
+      "candidate_name": "Priya Chopra",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [
+        "IAM",
+        "Kubernetes",
+        "Linux",
+        "Network Security",
+        "Terraform"
+      ],
+      "missing_skills": [
+        "AWS"
+      ],
+      "match_ratio": 0.8333,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_011",
+      "candidate_name": "Priya Chopra",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [
+        "Firewalls",
+        "IAM",
+        "Linux",
+        "Network Security"
+      ],
+      "missing_skills": [
+        "Cryptography"
+      ],
+      "match_ratio": 0.8,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_011",
+      "candidate_name": "Priya Chopra",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Flutter",
+        "Git",
+        "Kotlin",
+        "Mobile Design",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_011",
+      "candidate_name": "Priya Chopra",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Figma",
+        "Mobile Design",
+        "UI/UX Design",
+        "Wireframing"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_012",
+      "candidate_name": "Rahul Sen",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Deep Learning",
+        "Machine Learning",
+        "PyTorch",
+        "Python",
+        "SQL",
+        "Scikit-Learn"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_012",
+      "candidate_name": "Rahul Sen",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Git"
+      ],
+      "missing_skills": [
+        "Machine Learning",
+        "Pandas",
+        "Python",
+        "TensorFlow"
+      ],
+      "match_ratio": 0.2,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_012",
+      "candidate_name": "Rahul Sen",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Data Visualization",
+        "Pandas",
+        "Python",
+        "SQL"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_012",
+      "candidate_name": "Rahul Sen",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Git",
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "Node.js",
+        "PostgreSQL",
+        "React",
+        "TypeScript"
+      ],
+      "match_ratio": 0.3333,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_012",
+      "candidate_name": "Rahul Sen",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "Docker",
+        "FastAPI",
+        "PostgreSQL",
+        "Python"
+      ],
+      "match_ratio": 0.2,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_012",
+      "candidate_name": "Rahul Sen",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Git",
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "CI/CD",
+        "Docker",
+        "Linux",
+        "PostgreSQL"
+      ],
+      "match_ratio": 0.3333,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_012",
+      "candidate_name": "Rahul Sen",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "AWS",
+        "IAM",
+        "Kubernetes",
+        "Linux",
+        "Network Security",
+        "Terraform"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_012",
+      "candidate_name": "Rahul Sen",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "Cryptography",
+        "Firewalls",
+        "IAM",
+        "Linux",
+        "Network Security"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_012",
+      "candidate_name": "Rahul Sen",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [
+        "Flutter",
+        "Git",
+        "Kotlin",
+        "Mobile Design",
+        "REST APIs"
+      ],
+      "missing_skills": [],
+      "match_ratio": 1.0,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_012",
+      "candidate_name": "Rahul Sen",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [
+        "Figma",
+        "Mobile Design",
+        "Wireframing"
+      ],
+      "missing_skills": [
+        "UI/UX Design"
+      ],
+      "match_ratio": 0.75,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_013",
+      "candidate_name": "Tanvi Naidu",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Data/AI",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Deep Learning",
+        "PyTorch"
+      ],
+      "missing_skills": [
+        "Machine Learning",
+        "Python",
+        "SQL",
+        "Scikit-Learn"
+      ],
+      "match_ratio": 0.3333,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant"
+    },
+    {
+      "candidate_id": "SYN_DEMO_013",
+      "candidate_name": "Tanvi Naidu",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Pandas",
+        "TensorFlow"
+      ],
+      "missing_skills": [
+        "Git",
+        "Machine Learning",
+        "Python"
+      ],
+      "match_ratio": 0.4,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_013",
+      "candidate_name": "Tanvi Naidu",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Data/AI",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Data Visualization",
+        "Pandas"
+      ],
+      "missing_skills": [
+        "Python",
+        "SQL"
+      ],
+      "match_ratio": 0.5,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_013",
+      "candidate_name": "Tanvi Naidu",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Data/AI",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "Git",
+        "Node.js",
+        "PostgreSQL",
+        "REST APIs",
+        "React",
+        "TypeScript"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_013",
+      "candidate_name": "Tanvi Naidu",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "Docker",
+        "FastAPI",
+        "PostgreSQL",
+        "Python",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_013",
+      "candidate_name": "Tanvi Naidu",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "CI/CD",
+        "Docker",
+        "Git",
+        "Linux",
+        "PostgreSQL",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_013",
+      "candidate_name": "Tanvi Naidu",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Data/AI",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "AWS",
+        "IAM",
+        "Kubernetes",
+        "Linux",
+        "Network Security",
+        "Terraform"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_013",
+      "candidate_name": "Tanvi Naidu",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Data/AI",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "Cryptography",
+        "Firewalls",
+        "IAM",
+        "Linux",
+        "Network Security"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_013",
+      "candidate_name": "Tanvi Naidu",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Flutter",
+        "Git",
+        "Kotlin",
+        "Mobile Design",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_013",
+      "candidate_name": "Tanvi Naidu",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Data/AI",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Figma",
+        "Mobile Design",
+        "UI/UX Design",
+        "Wireframing"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_014",
+      "candidate_name": "Kunal Bose",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Web/Software",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Deep Learning",
+        "Machine Learning",
+        "PyTorch",
+        "Python",
+        "SQL",
+        "Scikit-Learn"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_014",
+      "candidate_name": "Kunal Bose",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Git"
+      ],
+      "missing_skills": [
+        "Machine Learning",
+        "Pandas",
+        "Python",
+        "TensorFlow"
+      ],
+      "match_ratio": 0.2,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_014",
+      "candidate_name": "Kunal Bose",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Web/Software",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Data Visualization",
+        "Pandas",
+        "Python",
+        "SQL"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_014",
+      "candidate_name": "Kunal Bose",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Web/Software",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Git",
+        "PostgreSQL",
+        "REST APIs",
+        "React",
+        "TypeScript"
+      ],
+      "missing_skills": [
+        "Node.js"
+      ],
+      "match_ratio": 0.8333,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_014",
+      "candidate_name": "Kunal Bose",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Docker",
+        "FastAPI",
+        "PostgreSQL",
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "Python"
+      ],
+      "match_ratio": 0.8,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_014",
+      "candidate_name": "Kunal Bose",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Docker",
+        "Git",
+        "PostgreSQL",
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "CI/CD",
+        "Linux"
+      ],
+      "match_ratio": 0.6667,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_014",
+      "candidate_name": "Kunal Bose",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Web/Software",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "AWS",
+        "IAM",
+        "Kubernetes",
+        "Linux",
+        "Network Security",
+        "Terraform"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_014",
+      "candidate_name": "Kunal Bose",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Web/Software",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "Cryptography",
+        "Firewalls",
+        "IAM",
+        "Linux",
+        "Network Security"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_014",
+      "candidate_name": "Kunal Bose",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [
+        "Git",
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "Flutter",
+        "Kotlin",
+        "Mobile Design"
+      ],
+      "match_ratio": 0.4,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_014",
+      "candidate_name": "Kunal Bose",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Web/Software",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Figma",
+        "Mobile Design",
+        "UI/UX Design",
+        "Wireframing"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_015",
+      "candidate_name": "Divya Hegde",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Deep Learning",
+        "Machine Learning",
+        "PyTorch",
+        "Python",
+        "SQL",
+        "Scikit-Learn"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_015",
+      "candidate_name": "Divya Hegde",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Git",
+        "Machine Learning",
+        "Pandas",
+        "Python",
+        "TensorFlow"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_015",
+      "candidate_name": "Divya Hegde",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Data Visualization",
+        "Pandas",
+        "Python",
+        "SQL"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_015",
+      "candidate_name": "Divya Hegde",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "Git",
+        "Node.js",
+        "PostgreSQL",
+        "REST APIs",
+        "React",
+        "TypeScript"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_015",
+      "candidate_name": "Divya Hegde",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Docker"
+      ],
+      "missing_skills": [
+        "FastAPI",
+        "PostgreSQL",
+        "Python",
+        "REST APIs"
+      ],
+      "match_ratio": 0.2,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_015",
+      "candidate_name": "Divya Hegde",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "CI/CD",
+        "Docker",
+        "Linux"
+      ],
+      "missing_skills": [
+        "Git",
+        "PostgreSQL",
+        "REST APIs"
+      ],
+      "match_ratio": 0.5,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_015",
+      "candidate_name": "Divya Hegde",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [
+        "AWS",
+        "IAM",
+        "Kubernetes",
+        "Linux",
+        "Terraform"
+      ],
+      "missing_skills": [
+        "Network Security"
+      ],
+      "match_ratio": 0.8333,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_015",
+      "candidate_name": "Divya Hegde",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [
+        "Cryptography",
+        "Firewalls",
+        "IAM",
+        "Linux"
+      ],
+      "missing_skills": [
+        "Network Security"
+      ],
+      "match_ratio": 0.8,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_015",
+      "candidate_name": "Divya Hegde",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Flutter",
+        "Git",
+        "Kotlin",
+        "Mobile Design",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_015",
+      "candidate_name": "Divya Hegde",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Figma",
+        "Mobile Design",
+        "UI/UX Design",
+        "Wireframing"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_016",
+      "candidate_name": "Akash Rao",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Deep Learning",
+        "Machine Learning",
+        "PyTorch",
+        "Python",
+        "SQL",
+        "Scikit-Learn"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_016",
+      "candidate_name": "Akash Rao",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Git",
+        "Machine Learning",
+        "Pandas",
+        "Python",
+        "TensorFlow"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_016",
+      "candidate_name": "Akash Rao",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Data Visualization",
+        "Pandas",
+        "Python",
+        "SQL"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_016",
+      "candidate_name": "Akash Rao",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "Git",
+        "Node.js",
+        "PostgreSQL",
+        "React",
+        "TypeScript"
+      ],
+      "match_ratio": 0.1667,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_016",
+      "candidate_name": "Akash Rao",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "Docker",
+        "FastAPI",
+        "PostgreSQL",
+        "Python"
+      ],
+      "match_ratio": 0.2,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_016",
+      "candidate_name": "Akash Rao",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "CI/CD",
+        "Docker",
+        "Git",
+        "Linux",
+        "PostgreSQL"
+      ],
+      "match_ratio": 0.1667,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_016",
+      "candidate_name": "Akash Rao",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "AWS",
+        "IAM",
+        "Kubernetes",
+        "Linux",
+        "Network Security",
+        "Terraform"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_016",
+      "candidate_name": "Akash Rao",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "Cryptography",
+        "Firewalls",
+        "IAM",
+        "Linux",
+        "Network Security"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_016",
+      "candidate_name": "Akash Rao",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [
+        "Flutter",
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "Git",
+        "Kotlin",
+        "Mobile Design"
+      ],
+      "match_ratio": 0.4,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_016",
+      "candidate_name": "Akash Rao",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [
+        "Figma",
+        "Wireframing"
+      ],
+      "missing_skills": [
+        "Mobile Design",
+        "UI/UX Design"
+      ],
+      "match_ratio": 0.5,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_017",
+      "candidate_name": "Sneha Joshi",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Data/AI",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Deep Learning",
+        "Machine Learning",
+        "PyTorch",
+        "SQL",
+        "Scikit-Learn"
+      ],
+      "missing_skills": [
+        "Python"
+      ],
+      "match_ratio": 0.8333,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_017",
+      "candidate_name": "Sneha Joshi",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Machine Learning",
+        "Pandas",
+        "TensorFlow"
+      ],
+      "missing_skills": [
+        "Git",
+        "Python"
+      ],
+      "match_ratio": 0.6,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_017",
+      "candidate_name": "Sneha Joshi",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Data/AI",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Pandas",
+        "SQL"
+      ],
+      "missing_skills": [
+        "Data Visualization",
+        "Python"
+      ],
+      "match_ratio": 0.5,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_017",
+      "candidate_name": "Sneha Joshi",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Data/AI",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "Git",
+        "Node.js",
+        "PostgreSQL",
+        "REST APIs",
+        "React",
+        "TypeScript"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_017",
+      "candidate_name": "Sneha Joshi",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "Docker",
+        "FastAPI",
+        "PostgreSQL",
+        "Python",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_017",
+      "candidate_name": "Sneha Joshi",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "CI/CD",
+        "Docker",
+        "Git",
+        "Linux",
+        "PostgreSQL",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_017",
+      "candidate_name": "Sneha Joshi",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Data/AI",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "AWS",
+        "IAM",
+        "Kubernetes",
+        "Linux",
+        "Network Security",
+        "Terraform"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_017",
+      "candidate_name": "Sneha Joshi",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Data/AI",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "Cryptography",
+        "Firewalls",
+        "IAM",
+        "Linux",
+        "Network Security"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_017",
+      "candidate_name": "Sneha Joshi",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Data/AI",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Flutter",
+        "Git",
+        "Kotlin",
+        "Mobile Design",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_017",
+      "candidate_name": "Sneha Joshi",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Data/AI",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Figma",
+        "Mobile Design",
+        "UI/UX Design",
+        "Wireframing"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_018",
+      "candidate_name": "Varun Bhat",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Web/Software",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Python"
+      ],
+      "missing_skills": [
+        "Deep Learning",
+        "Machine Learning",
+        "PyTorch",
+        "SQL",
+        "Scikit-Learn"
+      ],
+      "match_ratio": 0.1667,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_018",
+      "candidate_name": "Varun Bhat",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Git",
+        "Python"
+      ],
+      "missing_skills": [
+        "Machine Learning",
+        "Pandas",
+        "TensorFlow"
+      ],
+      "match_ratio": 0.4,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_018",
+      "candidate_name": "Varun Bhat",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Web/Software",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Python"
+      ],
+      "missing_skills": [
+        "Data Visualization",
+        "Pandas",
+        "SQL"
+      ],
+      "match_ratio": 0.25,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_018",
+      "candidate_name": "Varun Bhat",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Web/Software",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Git",
+        "Node.js",
+        "PostgreSQL",
+        "REST APIs",
+        "React",
+        "TypeScript"
+      ],
+      "missing_skills": [],
+      "match_ratio": 1.0,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_018",
+      "candidate_name": "Varun Bhat",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Docker",
+        "FastAPI",
+        "PostgreSQL",
+        "Python",
+        "REST APIs"
+      ],
+      "missing_skills": [],
+      "match_ratio": 1.0,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_018",
+      "candidate_name": "Varun Bhat",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Docker",
+        "Git",
+        "PostgreSQL",
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "CI/CD",
+        "Linux"
+      ],
+      "match_ratio": 0.6667,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_018",
+      "candidate_name": "Varun Bhat",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Web/Software",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "AWS",
+        "IAM",
+        "Kubernetes",
+        "Linux",
+        "Network Security",
+        "Terraform"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_018",
+      "candidate_name": "Varun Bhat",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Web/Software",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "Cryptography",
+        "Firewalls",
+        "IAM",
+        "Linux",
+        "Network Security"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_018",
+      "candidate_name": "Varun Bhat",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Web/Software",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [
+        "Git",
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "Flutter",
+        "Kotlin",
+        "Mobile Design"
+      ],
+      "match_ratio": 0.4,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_018",
+      "candidate_name": "Varun Bhat",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Web/Software",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Figma",
+        "Mobile Design",
+        "UI/UX Design",
+        "Wireframing"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_019",
+      "candidate_name": "Meera Pillai",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Deep Learning",
+        "Machine Learning",
+        "PyTorch",
+        "Python",
+        "SQL",
+        "Scikit-Learn"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_019",
+      "candidate_name": "Meera Pillai",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Git",
+        "Machine Learning",
+        "Pandas",
+        "Python",
+        "TensorFlow"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_019",
+      "candidate_name": "Meera Pillai",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Data Visualization",
+        "Pandas",
+        "Python",
+        "SQL"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_019",
+      "candidate_name": "Meera Pillai",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "Git",
+        "Node.js",
+        "PostgreSQL",
+        "REST APIs",
+        "React",
+        "TypeScript"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_019",
+      "candidate_name": "Meera Pillai",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "Docker",
+        "FastAPI",
+        "PostgreSQL",
+        "Python",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_019",
+      "candidate_name": "Meera Pillai",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Web/Software",
+      "matched_skills": [],
+      "missing_skills": [
+        "CI/CD",
+        "Docker",
+        "Git",
+        "Linux",
+        "PostgreSQL",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_019",
+      "candidate_name": "Meera Pillai",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [
+        "AWS",
+        "IAM",
+        "Kubernetes",
+        "Terraform"
+      ],
+      "missing_skills": [
+        "Linux",
+        "Network Security"
+      ],
+      "match_ratio": 0.6667,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_019",
+      "candidate_name": "Meera Pillai",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [
+        "Cryptography",
+        "Firewalls",
+        "IAM"
+      ],
+      "missing_skills": [
+        "Linux",
+        "Network Security"
+      ],
+      "match_ratio": 0.6,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_019",
+      "candidate_name": "Meera Pillai",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Flutter",
+        "Git",
+        "Kotlin",
+        "Mobile Design",
+        "REST APIs"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_019",
+      "candidate_name": "Meera Pillai",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Cybersecurity/Cloud",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [],
+      "missing_skills": [
+        "Figma",
+        "Mobile Design",
+        "UI/UX Design",
+        "Wireframing"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_020",
+      "candidate_name": "Tarun Gupta",
+      "job_id": "JOB_DEMO_001",
+      "job_title": "Senior Data Scientist",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Deep Learning",
+        "Machine Learning",
+        "PyTorch",
+        "Python",
+        "SQL",
+        "Scikit-Learn"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_020",
+      "candidate_name": "Tarun Gupta",
+      "job_id": "JOB_DEMO_002",
+      "job_title": "Associate Machine Learning Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Data/AI",
+      "matched_skills": [
+        "Git"
+      ],
+      "missing_skills": [
+        "Machine Learning",
+        "Pandas",
+        "Python",
+        "TensorFlow"
+      ],
+      "match_ratio": 0.2,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_020",
+      "candidate_name": "Tarun Gupta",
+      "job_id": "JOB_DEMO_003",
+      "job_title": "Data Analyst",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Data/AI",
+      "matched_skills": [],
+      "missing_skills": [
+        "Data Visualization",
+        "Pandas",
+        "Python",
+        "SQL"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_020",
+      "candidate_name": "Tarun Gupta",
+      "job_id": "JOB_DEMO_004",
+      "job_title": "Full Stack Developer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Git",
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "Node.js",
+        "PostgreSQL",
+        "React",
+        "TypeScript"
+      ],
+      "match_ratio": 0.3333,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_020",
+      "candidate_name": "Tarun Gupta",
+      "job_id": "JOB_DEMO_005",
+      "job_title": "Backend Python Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "Docker",
+        "FastAPI",
+        "PostgreSQL",
+        "Python"
+      ],
+      "match_ratio": 0.2,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_020",
+      "candidate_name": "Tarun Gupta",
+      "job_id": "JOB_DEMO_006",
+      "job_title": "DevOps & Cloud Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Web/Software",
+      "matched_skills": [
+        "Git",
+        "REST APIs"
+      ],
+      "missing_skills": [
+        "CI/CD",
+        "Docker",
+        "Linux",
+        "PostgreSQL"
+      ],
+      "match_ratio": 0.3333,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_020",
+      "candidate_name": "Tarun Gupta",
+      "job_id": "JOB_DEMO_007",
+      "job_title": "Cloud Security Architect",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "AWS",
+        "IAM",
+        "Kubernetes",
+        "Linux",
+        "Network Security",
+        "Terraform"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_020",
+      "candidate_name": "Tarun Gupta",
+      "job_id": "JOB_DEMO_008",
+      "job_title": "Cybersecurity Analyst",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Cybersecurity/Cloud",
+      "matched_skills": [],
+      "missing_skills": [
+        "Cryptography",
+        "Firewalls",
+        "IAM",
+        "Linux",
+        "Network Security"
+      ],
+      "match_ratio": 0.0,
+      "relevance_label": 0,
+      "relevance_desc": "Not Relevant (Cross-Domain)"
+    },
+    {
+      "candidate_id": "SYN_DEMO_020",
+      "candidate_name": "Tarun Gupta",
+      "job_id": "JOB_DEMO_009",
+      "job_title": "Senior Android Engineer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [
+        "Flutter",
+        "Git",
+        "Kotlin",
+        "Mobile Design",
+        "REST APIs"
+      ],
+      "missing_skills": [],
+      "match_ratio": 1.0,
+      "relevance_label": 2,
+      "relevance_desc": "Strong Fit"
+    },
+    {
+      "candidate_id": "SYN_DEMO_020",
+      "candidate_name": "Tarun Gupta",
+      "job_id": "JOB_DEMO_010",
+      "job_title": "UI/UX Product Designer",
+      "candidate_family": "Mobile/UI-UX",
+      "job_family": "Mobile/UI-UX",
+      "matched_skills": [
+        "Mobile Design",
+        "Wireframing"
+      ],
+      "missing_skills": [
+        "Figma",
+        "UI/UX Design"
+      ],
+      "match_ratio": 0.5,
+      "relevance_label": 1,
+      "relevance_desc": "Partial Fit"
+    }
+  ]
+}

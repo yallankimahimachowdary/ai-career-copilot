@@ -1,0 +1,29 @@
+Varun Bhat
+Email: varun.bhat@example.com | Phone: +91-9876540017 | Location: Bangalore, India
+LinkedIn: linkedin.com/in/varunbhat | GitHub: github.com/varunbhat
+
+PROFESSIONAL SUMMARY
+Results-driven Frontend Developer with 8+ years of experience in Web/Software environments. Proven expertise in Docker, FastAPI, Git. Demonstrated track record of delivering high-impact solutions.
+
+TECHNICAL SKILLS
+- Core Skills: Docker, FastAPI, Git, Node.js, PostgreSQL, Python, REST APIs, React, TypeScript
+- Methodologies: Agile/Scrum, Version Control, Continuous Integration, Code Review
+
+PROFESSIONAL EXPERIENCE
+Senior Frontend Developer | CyberShield Labs (8 years)
+- Architected and implemented scalable features leveraging Docker and FastAPI.
+- Collaborated across functional teams to improve code quality, system latency, and throughput.
+- Optimized development pipelines utilizing modern engineering best practices.
+
+Mid Frontend Developer | TechCorp Solutions (3 years)
+- Architected and implemented scalable features leveraging Docker and FastAPI.
+- Collaborated across functional teams to improve code quality, system latency, and throughput.
+- Optimized development pipelines utilizing modern engineering best practices.
+
+EDUCATION
+M.Tech in Information Technology
+Anna University Chennai, Graduated: 2017
+
+CERTIFICATIONS
+- Certified Professional in Docker Fundamentals
+- Professional Software Engineering Standards Certificate

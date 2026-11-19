@@ -1,0 +1,24 @@
+Rohan Mehta
+Email: rohan.mehta@example.com | Phone: +91-9876540004 | Location: Bangalore, India
+LinkedIn: linkedin.com/in/rohanmehta | GitHub: github.com/rohanmehta
+
+PROFESSIONAL SUMMARY
+Results-driven Data Scientist with 4+ years of experience in Data/AI environments. Proven expertise in Data Visualization, Deep Learning, Machine Learning. Demonstrated track record of delivering high-impact solutions.
+
+TECHNICAL SKILLS
+- Core Skills: Data Visualization, Deep Learning, Machine Learning, PyTorch, Python, SQL, Scikit-Learn, TensorFlow
+- Methodologies: Agile/Scrum, Version Control, Continuous Integration, Code Review
+
+PROFESSIONAL EXPERIENCE
+Mid Data Scientist | NextGen Digital (4 years)
+- Architected and implemented scalable features leveraging Data Visualization and Deep Learning.
+- Collaborated across functional teams to improve code quality, system latency, and throughput.
+- Optimized development pipelines utilizing modern engineering best practices.
+
+EDUCATION
+B.Tech in Computer Science
+Delhi Technological University, Graduated: 2021
+
+CERTIFICATIONS
+- Certified Professional in Data Visualization Fundamentals
+- Professional Software Engineering Standards Certificate

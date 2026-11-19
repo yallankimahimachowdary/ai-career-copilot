@@ -1,0 +1,24 @@
+Ananya Deshmukh
+Email: ananya.deshmukh@example.com | Phone: +91-9876540003 | Location: Bangalore, India
+LinkedIn: linkedin.com/in/ananyadeshmukh | GitHub: github.com/ananyadeshmukh
+
+PROFESSIONAL SUMMARY
+Results-driven Mobile App Engineer with 1+ years of experience in Mobile/UI-UX environments. Proven expertise in Figma, Git, Kotlin. Demonstrated track record of delivering high-impact solutions.
+
+TECHNICAL SKILLS
+- Core Skills: Figma, Git, Kotlin, REST APIs, Swift, UI/UX Design
+- Methodologies: Agile/Scrum, Version Control, Continuous Integration, Code Review
+
+PROFESSIONAL EXPERIENCE
+Junior Mobile App Engineer | InnoSoft Innovations (1 years)
+- Architected and implemented scalable features leveraging Figma and Git.
+- Collaborated across functional teams to improve code quality, system latency, and throughput.
+- Optimized development pipelines utilizing modern engineering best practices.
+
+EDUCATION
+M.Tech in Information Technology
+Vellore Institute of Technology, Graduated: 2024
+
+CERTIFICATIONS
+- Certified Professional in Figma Fundamentals
+- Professional Software Engineering Standards Certificate

@@ -1,0 +1,24 @@
+Tarun Gupta
+Email: tarun.gupta@example.com | Phone: +91-9876540019 | Location: Bangalore, India
+LinkedIn: linkedin.com/in/tarungupta | GitHub: github.com/tarungupta
+
+PROFESSIONAL SUMMARY
+Results-driven Mobile App Engineer with 4+ years of experience in Mobile/UI-UX environments. Proven expertise in Flutter, Git, Kotlin. Demonstrated track record of delivering high-impact solutions.
+
+TECHNICAL SKILLS
+- Core Skills: Flutter, Git, Kotlin, Mobile Design, REST APIs, React Native, Swift, Wireframing
+- Methodologies: Agile/Scrum, Version Control, Continuous Integration, Code Review
+
+PROFESSIONAL EXPERIENCE
+Mid Mobile App Engineer | DataPulse Analytics (4 years)
+- Architected and implemented scalable features leveraging Flutter and Git.
+- Collaborated across functional teams to improve code quality, system latency, and throughput.
+- Optimized development pipelines utilizing modern engineering best practices.
+
+EDUCATION
+M.Tech in Information Technology
+National Institute of Technology Karnataka, Graduated: 2021
+
+CERTIFICATIONS
+- Certified Professional in Flutter Fundamentals
+- Professional Software Engineering Standards Certificate

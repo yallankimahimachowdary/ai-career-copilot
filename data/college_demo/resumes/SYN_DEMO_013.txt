@@ -1,0 +1,24 @@
+Tanvi Naidu
+Email: tanvi.naidu@example.com | Phone: +91-9876540012 | Location: Bangalore, India
+LinkedIn: linkedin.com/in/tanvinaidu | GitHub: github.com/tanvinaidu
+
+PROFESSIONAL SUMMARY
+Results-driven Data Scientist with 1+ years of experience in Data/AI environments. Proven expertise in Data Visualization, Deep Learning, NLP. Demonstrated track record of delivering high-impact solutions.
+
+TECHNICAL SKILLS
+- Core Skills: Data Visualization, Deep Learning, NLP, Pandas, PyTorch, TensorFlow
+- Methodologies: Agile/Scrum, Version Control, Continuous Integration, Code Review
+
+PROFESSIONAL EXPERIENCE
+Junior Data Scientist | TechCorp Solutions (1 years)
+- Architected and implemented scalable features leveraging Data Visualization and Deep Learning.
+- Collaborated across functional teams to improve code quality, system latency, and throughput.
+- Optimized development pipelines utilizing modern engineering best practices.
+
+EDUCATION
+B.Tech in Computer Science
+Indian Institute of Technology Madras, Graduated: 2024
+
+CERTIFICATIONS
+- Certified Professional in Data Visualization Fundamentals
+- Professional Software Engineering Standards Certificate

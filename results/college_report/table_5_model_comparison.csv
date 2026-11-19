@@ -1,0 +1,5 @@
+Case ID,Task Description,Gemini Mean Latency (ms),Gemini Consistency,Ollama Mean Latency (ms),Ollama Consistency,Cross-Model Agreement,Latency Ratio (Ollama/Gemini)
+TC-M01,Intent Routing & Semantic Classification,2859.0,100.0%,6795.1,100.0%,30.0%,2.4x
+TC-M02,Resume Technical Skill Extraction,3573.1,100.0%,3405.1,100.0%,100.0%,1.0x
+TC-M03,Interview Question & Evaluation Rubric,12904.3,100.0%,6585.4,40.4%,20.4%,0.5x
+TC-M04,Skill Gap Advisory & Recommendations,2633.6,100.0%,3452.8,100.0%,100.0%,1.3x

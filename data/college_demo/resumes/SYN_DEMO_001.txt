@@ -1,0 +1,24 @@
+Aarav Sharma
+Email: aarav.sharma@example.com | Phone: +91-9876540000 | Location: Bangalore, India
+LinkedIn: linkedin.com/in/aaravsharma | GitHub: github.com/aaravsharma
+
+PROFESSIONAL SUMMARY
+Results-driven Data Scientist with 1+ years of experience in Data/AI environments. Proven expertise in Machine Learning, NLP, PyTorch. Demonstrated track record of delivering high-impact solutions.
+
+TECHNICAL SKILLS
+- Core Skills: Machine Learning, NLP, PyTorch, Python, Scikit-Learn, TensorFlow
+- Methodologies: Agile/Scrum, Version Control, Continuous Integration, Code Review
+
+PROFESSIONAL EXPERIENCE
+Junior Data Scientist | TechCorp Solutions (1 years)
+- Architected and implemented scalable features leveraging Machine Learning and NLP.
+- Collaborated across functional teams to improve code quality, system latency, and throughput.
+- Optimized development pipelines utilizing modern engineering best practices.
+
+EDUCATION
+B.Tech in Computer Science
+Indian Institute of Technology Madras, Graduated: 2024
+
+CERTIFICATIONS
+- Certified Professional in Machine Learning Fundamentals
+- Professional Software Engineering Standards Certificate

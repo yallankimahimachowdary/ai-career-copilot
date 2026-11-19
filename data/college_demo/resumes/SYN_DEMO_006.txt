@@ -1,0 +1,29 @@
+Pooja Nair
+Email: pooja.nair@example.com | Phone: +91-9876540005 | Location: Bangalore, India
+LinkedIn: linkedin.com/in/poojanair | GitHub: github.com/poojanair
+
+PROFESSIONAL SUMMARY
+Results-driven Frontend Developer with 8+ years of experience in Web/Software environments. Proven expertise in Docker, FastAPI, Git. Demonstrated track record of delivering high-impact solutions.
+
+TECHNICAL SKILLS
+- Core Skills: Docker, FastAPI, Git, JavaScript, Node.js, PostgreSQL, Python, React, TypeScript
+- Methodologies: Agile/Scrum, Version Control, Continuous Integration, Code Review
+
+PROFESSIONAL EXPERIENCE
+Senior Frontend Developer | CyberShield Labs (8 years)
+- Architected and implemented scalable features leveraging Docker and FastAPI.
+- Collaborated across functional teams to improve code quality, system latency, and throughput.
+- Optimized development pipelines utilizing modern engineering best practices.
+
+Mid Frontend Developer | TechCorp Solutions (3 years)
+- Architected and implemented scalable features leveraging Docker and FastAPI.
+- Collaborated across functional teams to improve code quality, system latency, and throughput.
+- Optimized development pipelines utilizing modern engineering best practices.
+
+EDUCATION
+M.Tech in Information Technology
+Anna University Chennai, Graduated: 2017
+
+CERTIFICATIONS
+- Certified Professional in Docker Fundamentals
+- Professional Software Engineering Standards Certificate

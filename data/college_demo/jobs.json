@@ -1,0 +1,134 @@
+[
+  {
+    "job_id": "JOB_DEMO_001",
+    "title": "Senior Data Scientist",
+    "role_family": "Data/AI",
+    "required_skills": [
+      "Python",
+      "Machine Learning",
+      "PyTorch",
+      "SQL",
+      "Scikit-Learn",
+      "Deep Learning"
+    ],
+    "description": "Seeking a passionate Senior Data Scientist to build high-performance systems. Required proficiency in Python, Machine Learning, PyTorch, SQL, Scikit-Learn, Deep Learning."
+  },
+  {
+    "job_id": "JOB_DEMO_002",
+    "title": "Associate Machine Learning Engineer",
+    "role_family": "Data/AI",
+    "required_skills": [
+      "Python",
+      "Machine Learning",
+      "TensorFlow",
+      "Pandas",
+      "Git"
+    ],
+    "description": "Seeking a passionate Associate Machine Learning Engineer to build high-performance systems. Required proficiency in Python, Machine Learning, TensorFlow, Pandas, Git."
+  },
+  {
+    "job_id": "JOB_DEMO_003",
+    "title": "Data Analyst",
+    "role_family": "Data/AI",
+    "required_skills": [
+      "SQL",
+      "Pandas",
+      "Data Visualization",
+      "Python"
+    ],
+    "description": "Seeking a passionate Data Analyst to build high-performance systems. Required proficiency in SQL, Pandas, Data Visualization, Python."
+  },
+  {
+    "job_id": "JOB_DEMO_004",
+    "title": "Full Stack Developer",
+    "role_family": "Web/Software",
+    "required_skills": [
+      "React",
+      "Node.js",
+      "TypeScript",
+      "PostgreSQL",
+      "REST APIs",
+      "Git"
+    ],
+    "description": "Seeking a passionate Full Stack Developer to build high-performance systems. Required proficiency in React, Node.js, TypeScript, PostgreSQL, REST APIs, Git."
+  },
+  {
+    "job_id": "JOB_DEMO_005",
+    "title": "Backend Python Engineer",
+    "role_family": "Web/Software",
+    "required_skills": [
+      "Python",
+      "FastAPI",
+      "PostgreSQL",
+      "Docker",
+      "REST APIs"
+    ],
+    "description": "Seeking a passionate Backend Python Engineer to build high-performance systems. Required proficiency in Python, FastAPI, PostgreSQL, Docker, REST APIs."
+  },
+  {
+    "job_id": "JOB_DEMO_006",
+    "title": "DevOps & Cloud Engineer",
+    "role_family": "Web/Software",
+    "required_skills": [
+      "Docker",
+      "Git",
+      "PostgreSQL",
+      "CI/CD",
+      "Linux",
+      "REST APIs"
+    ],
+    "description": "Seeking a passionate DevOps & Cloud Engineer to build high-performance systems. Required proficiency in Docker, Git, PostgreSQL, CI/CD, Linux, REST APIs."
+  },
+  {
+    "job_id": "JOB_DEMO_007",
+    "title": "Cloud Security Architect",
+    "role_family": "Cybersecurity/Cloud",
+    "required_skills": [
+      "AWS",
+      "Kubernetes",
+      "IAM",
+      "Network Security",
+      "Terraform",
+      "Linux"
+    ],
+    "description": "Seeking a passionate Cloud Security Architect to build high-performance systems. Required proficiency in AWS, Kubernetes, IAM, Network Security, Terraform, Linux."
+  },
+  {
+    "job_id": "JOB_DEMO_008",
+    "title": "Cybersecurity Analyst",
+    "role_family": "Cybersecurity/Cloud",
+    "required_skills": [
+      "Network Security",
+      "Cryptography",
+      "Linux",
+      "Firewalls",
+      "IAM"
+    ],
+    "description": "Seeking a passionate Cybersecurity Analyst to build high-performance systems. Required proficiency in Network Security, Cryptography, Linux, Firewalls, IAM."
+  },
+  {
+    "job_id": "JOB_DEMO_009",
+    "title": "Senior Android Engineer",
+    "role_family": "Mobile/UI-UX",
+    "required_skills": [
+      "Kotlin",
+      "REST APIs",
+      "Git",
+      "Flutter",
+      "Mobile Design"
+    ],
+    "description": "Seeking a passionate Senior Android Engineer to build high-performance systems. Required proficiency in Kotlin, REST APIs, Git, Flutter, Mobile Design."
+  },
+  {
+    "job_id": "JOB_DEMO_010",
+    "title": "UI/UX Product Designer",
+    "role_family": "Mobile/UI-UX",
+    "required_skills": [
+      "Figma",
+      "UI/UX Design",
+      "Wireframing",
+      "Mobile Design"
+    ],
+    "description": "Seeking a passionate UI/UX Product Designer to build high-performance systems. Required proficiency in Figma, UI/UX Design, Wireframing, Mobile Design."
+  }
+]

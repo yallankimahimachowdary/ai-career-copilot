@@ -1,0 +1,29 @@
+Kavya Iyer
+Email: kavya.iyer@example.com | Phone: +91-9876540008 | Location: Bangalore, India
+LinkedIn: linkedin.com/in/kavyaiyer | GitHub: github.com/kavyaiyer
+
+PROFESSIONAL SUMMARY
+Results-driven Data Scientist with 8+ years of experience in Data/AI environments. Proven expertise in Data Visualization, Deep Learning, Machine Learning. Demonstrated track record of delivering high-impact solutions.
+
+TECHNICAL SKILLS
+- Core Skills: Data Visualization, Deep Learning, Machine Learning, NLP, Pandas, PyTorch, SQL, Scikit-Learn, TensorFlow
+- Methodologies: Agile/Scrum, Version Control, Continuous Integration, Code Review
+
+PROFESSIONAL EXPERIENCE
+Senior Data Scientist | CloudNative Systems (8 years)
+- Architected and implemented scalable features leveraging Data Visualization and Deep Learning.
+- Collaborated across functional teams to improve code quality, system latency, and throughput.
+- Optimized development pipelines utilizing modern engineering best practices.
+
+Mid Data Scientist | InnoSoft Innovations (3 years)
+- Architected and implemented scalable features leveraging Data Visualization and Deep Learning.
+- Collaborated across functional teams to improve code quality, system latency, and throughput.
+- Optimized development pipelines utilizing modern engineering best practices.
+
+EDUCATION
+B.Tech in Computer Science
+Birla Institute of Technology and Science Pilani, Graduated: 2017
+
+CERTIFICATIONS
+- Certified Professional in Data Visualization Fundamentals
+- Professional Software Engineering Standards Certificate

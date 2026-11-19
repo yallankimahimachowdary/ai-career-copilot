@@ -1,0 +1,24 @@
+Siddharth Verma
+Email: siddharth.verma@example.com | Phone: +91-9876540006 | Location: Bangalore, India
+LinkedIn: linkedin.com/in/siddharthverma | GitHub: github.com/siddharthverma
+
+PROFESSIONAL SUMMARY
+Results-driven Cloud Security Engineer with 1+ years of experience in Cybersecurity/Cloud environments. Proven expertise in Cryptography, Docker, Firewalls. Demonstrated track record of delivering high-impact solutions.
+
+TECHNICAL SKILLS
+- Core Skills: Cryptography, Docker, Firewalls, IAM, Network Security, Terraform
+- Methodologies: Agile/Scrum, Version Control, Continuous Integration, Code Review
+
+PROFESSIONAL EXPERIENCE
+Junior Cloud Security Engineer | TechCorp Solutions (1 years)
+- Architected and implemented scalable features leveraging Cryptography and Docker.
+- Collaborated across functional teams to improve code quality, system latency, and throughput.
+- Optimized development pipelines utilizing modern engineering best practices.
+
+EDUCATION
+B.Tech in Computer Science
+Indian Institute of Technology Madras, Graduated: 2024
+
+CERTIFICATIONS
+- Certified Professional in Cryptography Fundamentals
+- Professional Software Engineering Standards Certificate

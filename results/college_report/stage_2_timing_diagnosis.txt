@@ -1,0 +1,6 @@
+Stage 2 Rule Parser Latency Diagnosis:
+- Call 1 (Cold Start): 4,427.12 ms (4.427 s)
+- Call 2 (Warm State): 64.72 ms (0.065 s)
+- Ratio: 68.4x
+- Root Cause: Lazy loading of spaCy en_core_web_sm model on first call in worker process.
+- Retries Observed: 0 (no network or database retries occurred).

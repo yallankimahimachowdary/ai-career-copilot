@@ -1,0 +1,29 @@
+Vikram Reddy
+Email: vikram.reddy@example.com | Phone: +91-9876540002 | Location: Bangalore, India
+LinkedIn: linkedin.com/in/vikramreddy | GitHub: github.com/vikramreddy
+
+PROFESSIONAL SUMMARY
+Results-driven Cloud Security Engineer with 8+ years of experience in Cybersecurity/Cloud environments. Proven expertise in AWS, CI/CD, Cryptography. Demonstrated track record of delivering high-impact solutions.
+
+TECHNICAL SKILLS
+- Core Skills: AWS, CI/CD, Cryptography, Docker, Firewalls, IAM, Linux, Network Security, Terraform
+- Methodologies: Agile/Scrum, Version Control, Continuous Integration, Code Review
+
+PROFESSIONAL EXPERIENCE
+Senior Cloud Security Engineer | CloudNative Systems (8 years)
+- Architected and implemented scalable features leveraging AWS and CI/CD.
+- Collaborated across functional teams to improve code quality, system latency, and throughput.
+- Optimized development pipelines utilizing modern engineering best practices.
+
+Mid Cloud Security Engineer | InnoSoft Innovations (3 years)
+- Architected and implemented scalable features leveraging AWS and CI/CD.
+- Collaborated across functional teams to improve code quality, system latency, and throughput.
+- Optimized development pipelines utilizing modern engineering best practices.
+
+EDUCATION
+B.Tech in Computer Science
+Birla Institute of Technology and Science Pilani, Graduated: 2017
+
+CERTIFICATIONS
+- Certified Professional in AWS Fundamentals
+- Professional Software Engineering Standards Certificate

@@ -1,0 +1,24 @@
+Sneha Joshi
+Email: sneha.joshi@example.com | Phone: +91-9876540016 | Location: Bangalore, India
+LinkedIn: linkedin.com/in/snehajoshi | GitHub: github.com/snehajoshi
+
+PROFESSIONAL SUMMARY
+Results-driven Data Scientist with 4+ years of experience in Data/AI environments. Proven expertise in Deep Learning, Machine Learning, NLP. Demonstrated track record of delivering high-impact solutions.
+
+TECHNICAL SKILLS
+- Core Skills: Deep Learning, Machine Learning, NLP, Pandas, PyTorch, SQL, Scikit-Learn, TensorFlow
+- Methodologies: Agile/Scrum, Version Control, Continuous Integration, Code Review
+
+PROFESSIONAL EXPERIENCE
+Mid Data Scientist | NextGen Digital (4 years)
+- Architected and implemented scalable features leveraging Deep Learning and Machine Learning.
+- Collaborated across functional teams to improve code quality, system latency, and throughput.
+- Optimized development pipelines utilizing modern engineering best practices.
+
+EDUCATION
+B.Tech in Computer Science
+Delhi Technological University, Graduated: 2021
+
+CERTIFICATIONS
+- Certified Professional in Deep Learning Fundamentals
+- Professional Software Engineering Standards Certificate
